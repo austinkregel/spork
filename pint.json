@@ -1,0 +1,9 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "simplified_null_return": true,
+        "declare_strict_types": true,
+        "single_quote": true,
+        "no_closing_tag": true
+    }
+}

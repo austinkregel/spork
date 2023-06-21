@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Jobs\Deployment\Steps\SetupCloudflareDns;
 use App\Models\Credential;
 use Illuminate\Support\Facades\Artisan;

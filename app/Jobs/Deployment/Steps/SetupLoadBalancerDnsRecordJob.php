@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Deployment\Steps;
 
 use App\Jobs\Domains\VerifyDnsValue;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Contracts\ModelQuery;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
