@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Jobs\News;
+
+use App\Events\BatchFinishedRunningEvent;
+use App\Events\JobStatusUpdatedEvent;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
+use App\Models\FeatureList;
+
+class UpdateAllFeeds implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function handle()
+    {
+        $jobs = FeatureList::query()
+            ->where('feature', 'rss')
+            ->get()
+            ->map(fn ($feed) => new UpdateFeed($feed));
+
+       Bus::batch($jobs)
+           ->allowFailures()
+           ->name('Update All Feeds')
+           ->finally(function () {
+               broadcast(new BatchFinishedRunningEvent(...func_get_args()));
+           })
+           ->dispatch();
+    }
+}
