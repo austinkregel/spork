@@ -2,13 +2,8 @@
 
 namespace App\Services\Server;
 
-use App\Contracts\Services\DigitalOceanServiceContract;
-use App\Contracts\Services\OVHCloudService as OVHCloudServiceContract;
-use App\Models\Credential;
-use App\Services\Filters\DigitalOceanServerFilter;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Ovh\Api;
 use App\Contracts\Services\ServerServiceContract;
+use Ovh\Api;
 
 class OVHCloudService implements ServerServiceContract
 {
@@ -34,21 +29,21 @@ class OVHCloudService implements ServerServiceContract
 
     public function findAllRegions(): array
     {
-        $result = $this->ovh->get("/cloud/region");
+        $result = $this->ovh->get('/cloud/region');
 
         return $result;
     }
 
     public function findAllSizes(): array
     {
-        $result = $this->ovh->get("/cloud/flavor");
+        $result = $this->ovh->get('/cloud/flavor');
 
         return $result;
     }
 
     public function findAllServers(): array
     {
-        $result = $this->ovh->get("/cloud/project/instance");
+        $result = $this->ovh->get('/cloud/project/instance');
 
         return $result;
     }
@@ -85,7 +80,7 @@ class OVHCloudService implements ServerServiceContract
 
     public function findAllSshkeys(): array
     {
-        $result = $this->ovh->get("/cloud/project/sshkey");
+        $result = $this->ovh->get('/cloud/project/sshkey');
 
         return $result;
     }

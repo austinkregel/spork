@@ -2,8 +2,8 @@
 
 namespace App\Services\News;
 
-use GuzzleHttp\Client;
 use App\Contracts\Services\News\NewsServiceContract;
+use GuzzleHttp\Client;
 
 class NewsService implements NewsServiceContract
 {
@@ -100,11 +100,11 @@ class NewsService implements NewsServiceContract
             md5($endpoint.http_build_query($options)),
             now(),
             fn () => collect(json_decode($client->get('https://newsapi.org/v2/'.$endpoint.'?'.http_build_query($options))->getBody()->getContents())
-            ->articles)->map(function ($article) {
-                return array_merge([
-                    'id' => substr(sha1($article->url), 0, 10),
-                ], (array) $article);
-            })->toArray()
+                ->articles)->map(function ($article) {
+                    return array_merge([
+                        'id' => substr(sha1($article->url), 0, 10),
+                    ], (array) $article);
+                })->toArray()
         );
     }
 }

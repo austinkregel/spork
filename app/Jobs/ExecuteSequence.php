@@ -22,19 +22,21 @@ use Spatie\Tags\HasTags;
 class ExecuteSequence
 {
     public MustacheTemplateService $mustache;
+
     public function __construct(
         public Sequence $sequence
     ) {
 
     }
+
     public function handle(MustacheTemplateService $mustache)
     {
         $this->mustache = $mustache;
         $stepClosures = $this->sequence->steps()
-            ->orderBy('order','asc')
+            ->orderBy('order', 'asc')
             ->get()
             ->map(function (Step $step) {
-                 match ($step->actionable_type) {
+                match ($step->actionable_type) {
                     Request::class => $this->handleRequestStep($step),
                     Pipe::class => $this->handleActionStep($step),
                     Synchronization::class => $this->handleSynchronizationStep($step),
@@ -83,8 +85,7 @@ class ExecuteSequence
 
     protected function buildPipeFunction(Pipe $pipe, $data)
     {
-        $buildPhpClassFromPipe = function(Pipe $pipe): string
-        {
+        $buildPhpClassFromPipe = function (Pipe $pipe): string {
             $namespace = new PhpNamespace('App\\Models\\Pipes');
 
             $class = new ClassType(Str::studly($pipe->name));
@@ -103,22 +104,22 @@ class ExecuteSequence
                 dd('Only php has support for now');
             }
             $hash = md5($pipe->script);
-            $path = storage_path('app/action-' . $pipe->id . '-' . $hash);
+            $path = storage_path('app/action-'.$pipe->id.'-'.$hash);
 
-            if (!file_exists($path)) {
-                (new Filesystem)->makeDirectory($basePath = app_path('Models/Pipes'),0755,  true, true);
+            if (! file_exists($path)) {
+                (new Filesystem)->makeDirectory($basePath = app_path('Models/Pipes'), 0755, true, true);
                 file_put_contents($basePath.'/'.Str::studly($pipe->name).'.php', $content = $buildPhpClassFromPipe($pipe));
             }
 
-            $script = "App\\Models\\Pipes\\".Str::studly($pipe->name);
+            $script = 'App\\Models\\Pipes\\'.Str::studly($pipe->name);
 
-            if (!empty($script) && class_exists($script)){
+            if (! empty($script) && class_exists($script)) {
                 info('The script is not set for some reason.', [
                     'script' => $script,
                     'pipe' => $pipe,
                 ]);
 
-                return call_user_func([app($script), 'handle'] , $data);
+                return call_user_func([app($script), 'handle'], $data);
             } elseif (empty($script)) {
                 info('The script is not set for some reason.', [
                     'script' => $script,
@@ -127,7 +128,7 @@ class ExecuteSequence
             }
             // Not sure what else the script could be at the moment
         } finally {
-//                isset($path) && unlink($path);
+            //                isset($path) && unlink($path);
         }
     }
 
@@ -150,11 +151,11 @@ class ExecuteSequence
 
     protected function handleSynchronizationStep(Step $step)
     {
-        return function (mixed $data, \Closure $next) use ($step,) {
+        return function (mixed $data, \Closure $next) use ($step) {
             /** @var \App\Models\Synchronization $synchronization */
             $synchronization = $step->actionable;
 
-            $synchronization->load('credential','request','formatter');
+            $synchronization->load('credential', 'request', 'formatter');
 
             $response = $this->buildRequest($synchronization->request, $synchronization->credential, [
                 'step' => $step,
@@ -172,8 +173,8 @@ class ExecuteSequence
                 $formatterPipe->context['primary_key'] => $datum[$formatterPipe->context['primary_key']],
             ]);
 
-            $query =$this->buildQueryBuilderFromModel($synchronization);;
-            foreach($primaryKeys as $key => $ids) {
+            $query = $this->buildQueryBuilderFromModel($synchronization);
+            foreach ($primaryKeys as $key => $ids) {
                 $query->whereIn($key, $ids);
             }
             $rebuildQuery = $query->clone();
@@ -193,7 +194,7 @@ class ExecuteSequence
             foreach ($modelIdsToCreate as $modelId) {
                 foreach ($standardizedDataGroupedByPK->get($modelId) as $formattedData) {
                     $modelOrTable = $synchronization->model;
-                    $instance = class_exists($modelOrTable) ? new $modelOrTable: new \stdClass() ;
+                    $instance = class_exists($modelOrTable) ? new $modelOrTable : new \stdClass();
 
                     if (method_exists($instance, 'owner')) {
                         $instance->ownable_type = Credential::class;
@@ -218,20 +219,20 @@ class ExecuteSequence
                         unset($standardDataForOurModel['tags']);
 
                         foreach ($standardDataForOurModel as $key => $value) {
-                            if ($synchronization->on_update === 'not_empty' && !empty($standardDataForOurModel[$key])) {
+                            if ($synchronization->on_update === 'not_empty' && ! empty($standardDataForOurModel[$key])) {
                                 $this->updateProperty($modelToUpdateBecauseItIsRelatedToThePrimaryKey, $key, $standardDataForOurModel[$key], $synchronization);
-                            } else if (
+                            } elseif (
                                 $synchronization->on_update === 'changed'
                                 && $modelToUpdateBecauseItIsRelatedToThePrimaryKey->$key !== $standardDataForOurModel[$key]
                             ) {
                                 $this->updateProperty($modelToUpdateBecauseItIsRelatedToThePrimaryKey, $key, $standardDataForOurModel[$key], $synchronization);
-                            } else if (
+                            } elseif (
                                 $synchronization->on_update === 'changed'
                                 && $modelToUpdateBecauseItIsRelatedToThePrimaryKey->$key === $standardDataForOurModel[$key]
                             ) {
                                 continue;
                             } else {
-                                info ('instance to create', [
+                                info('instance to create', [
                                     'on_update' => $synchronization->on_update,
                                     $key => empty($modelToUpdateBecauseItIsRelatedToThePrimaryKey->$key),
                                     'equals' => [$modelToUpdateBecauseItIsRelatedToThePrimaryKey->$key, $standardDataForOurModel[$key]],
@@ -258,18 +259,18 @@ class ExecuteSequence
     protected function makeSave($modelToUpdateBecauseItIsRelatedToThePrimaryKey, Synchronization $synchronization, array $tags)
     {
         if ($modelToUpdateBecauseItIsRelatedToThePrimaryKey instanceof Model) {
-            if ($modelToUpdateBecauseItIsRelatedToThePrimaryKey->isDirty() && !$modelToUpdateBecauseItIsRelatedToThePrimaryKey->wasRecentlyCreated) {
-                info ('saving update to model', [
+            if ($modelToUpdateBecauseItIsRelatedToThePrimaryKey->isDirty() && ! $modelToUpdateBecauseItIsRelatedToThePrimaryKey->wasRecentlyCreated) {
+                info('saving update to model', [
                     'model' => $synchronization->model,
                     'primary_key' => $synchronization->formatter->context['primary_key'],
                 ]);
                 $modelToUpdateBecauseItIsRelatedToThePrimaryKey->save();
                 /** @var HasTags $modelToUpdateBecauseItIsRelatedToThePrimaryKey */
-//                if ($modelToUpdateBecauseItIsRelatedToThePrimaryKey->tags()->)
+                //                if ($modelToUpdateBecauseItIsRelatedToThePrimaryKey->tags()->)
                 $modelToUpdateBecauseItIsRelatedToThePrimaryKey->attachTags($tags);
                 dd($tags);
             } else {
-                info ('updating timestamps', [
+                info('updating timestamps', [
                     'model' => $synchronization->model,
                     'primary_key' => $synchronization->formatter->context['primary_key'],
                 ]);
@@ -279,17 +280,17 @@ class ExecuteSequence
             $modelToUpdateBecauseItIsRelatedToThePrimaryKey->attachTags($tags);
         } elseif ($modelToUpdateBecauseItIsRelatedToThePrimaryKey instanceof \stdClass) {
             if ($modelToUpdateBecauseItIsRelatedToThePrimaryKey->isDirty ?? false) {
-                info ('saving update to table', [
+                info('saving update to table', [
                     'model' => $synchronization->model,
                     'primary_key' => $synchronization->formatter->context['primary_key'],
                 ]);
-               $primaryKey = $synchronization->formatter->context['primary_key'];
-               $baseQuery =  \DB::table($synchronization->model)
+                $primaryKey = $synchronization->formatter->context['primary_key'];
+                $baseQuery = \DB::table($synchronization->model)
                     ->where($primaryKey, $modelToUpdateBecauseItIsRelatedToThePrimaryKey?->changes[$primaryKey] ?? $modelToUpdateBecauseItIsRelatedToThePrimaryKey->$primaryKey);
-               if ($baseQuery->exists()) {
-                   $baseQuery->update($modelToUpdateBecauseItIsRelatedToThePrimaryKey->changes);
-               } else {
-                   $fields = array_map(fn ($class) => $class->Field, \DB::select('describe ' .$synchronization->model));
+                if ($baseQuery->exists()) {
+                    $baseQuery->update($modelToUpdateBecauseItIsRelatedToThePrimaryKey->changes);
+                } else {
+                    $fields = array_map(fn ($class) => $class->Field, \DB::select('describe '.$synchronization->model));
 
                     if (in_array('ownable_type', $fields)) {
                         $this->updateProperty($modelToUpdateBecauseItIsRelatedToThePrimaryKey, 'ownable_type', Credential::class);
@@ -297,8 +298,8 @@ class ExecuteSequence
                     }
 
                     $this->updateProperty($modelToUpdateBecauseItIsRelatedToThePrimaryKey, 'created_at', now());
-                   $baseQuery->insert($modelToUpdateBecauseItIsRelatedToThePrimaryKey?->changes);
-               }
+                    $baseQuery->insert($modelToUpdateBecauseItIsRelatedToThePrimaryKey?->changes);
+                }
             }
         }
     }
@@ -315,12 +316,13 @@ class ExecuteSequence
 
             if (($model->$key ?? null) == $data) {
                 info('---- Not changing shit, the value is already set to that');
+
                 return;
             }
 
             $model->changes[$key] = $data;
             $model->changes['updated_at'] = now();
-            info("Changed $key to $data for a table: ". ($model->$key ?? ''));
+            info("Changed $key to $data for a table: ".($model->$key ?? ''));
             $model->isDirty = true;
         }
     }
@@ -329,10 +331,11 @@ class ExecuteSequence
     {
         if (str_contains($synchronization->model, '\\')) {
             $model = $synchronization->model;
+
             return $model::query();
         }
 
-        return  \DB::table($synchronization->model);
+        return \DB::table($synchronization->model);
     }
 
     protected function buildRequest(Request $request, Credential $credential, array $context = [])
@@ -340,7 +343,7 @@ class ExecuteSequence
         /** @var Source $source */
         $source = $request->source;
 
-        if (!empty($request->body)) {
+        if (! empty($request->body)) {
             $body = $this->render($request->body, array_merge([
                 'source' => $source,
                 'credential' => $credential,
@@ -349,19 +352,19 @@ class ExecuteSequence
 
         $baseClient = Http::withHeaders(array_merge([
             'Content-type' => $source->response_type,
-        ], match($request->authentication) {
+        ], match ($request->authentication) {
             'none' => [],
             'basic' => [
                 'Authorization' => 'Basic '.base64_encode($credential->access_token.':'.$credential->refresh_token),
             ],
             'bearer', 'token' => [
-                'Authorization' => 'Bearer ' . $credential->access_token,
+                'Authorization' => 'Bearer '.$credential->access_token,
             ],
             'ovh-style' => [
                 'X-Ovh-Signature' => '$1$'.sha1(
-                        $credential->settings['application_secret'].'+'.$credential->settings['consumer_key']
-                        .'+'.$source->base_url.$request->url.'+'.json_encode($body ?? '') .'+'.time()
-                    ),
+                    $credential->settings['application_secret'].'+'.$credential->settings['consumer_key']
+                    .'+'.$source->base_url.$request->url.'+'.json_encode($body ?? '').'+'.time()
+                ),
                 'X-Ovh-Consumer' => $credential->settings['consumer_key'],
                 'X-Ovh-Application' => $credential->settings['application_key'],
             ],

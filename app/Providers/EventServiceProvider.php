@@ -2,14 +2,13 @@
 
 namespace App\Providers;
 
-use App\Events\Domains\DnsRecordVerified;
+use App\Events;
+use App\Listeners;
 use App\Listeners\Pages\GenerateNewRoutesFileFromDatabase;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
-use App\Events;
-use App\Listeners;
 
 class EventServiceProvider extends ServiceProvider
 {

@@ -5,14 +5,8 @@ namespace App\Jobs\Servers;
 use App\Models\Server;
 use App\Services\Factories\ServerServiceFactory;
 use App\Services\LaravelForgeService;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
-class LaravelForgeServersSyncJob extends  AbstractSyncServerResourceJob
+class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
 {
     public function handle(ServerServiceFactory $serviceFactory)
     {
@@ -40,10 +34,11 @@ class LaravelForgeServersSyncJob extends  AbstractSyncServerResourceJob
                     'internal_ip_address' => $server['private_ip_address'],
                 ]);
                 info('Noserver found for forge');
+
                 continue;
             }
 
-            if ($localServer->isDirty() || !$localServer->exists()) {
+            if ($localServer->isDirty() || ! $localServer->exists()) {
                 $localServer->save();
             }
 

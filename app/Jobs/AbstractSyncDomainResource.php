@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Contracts\Services\DomainServiceContract;
-use App\Jobs\AbstractSyncResourceJob;
 use App\Services\Factories\DomainServiceFactory;
 
 abstract class AbstractSyncDomainResource extends AbstractSyncResourceJob

@@ -7,7 +7,6 @@ use App\Models\Credential;
 use App\Models\Domain;
 use App\Services\Factories\DomainServiceFactory;
 use App\Services\Factories\RegistrarServiceFactory;
-use App\Services\Registrar\Domain\CloudflareService;
 
 class SetupCloudflareDns
 {

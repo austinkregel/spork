@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\Credential;
 use App\Models\Domain;
-use App\Models\DomainRecord;
 use App\Services\Factories\DomainServiceFactory;
 use App\Services\Factories\RegistrarServiceFactory;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -43,9 +42,9 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
                 $localDomain = Domain::where('name', $domain['domain'])->first();
 
                 if (empty($localDomain)) {
-                    info ("No local domain for the provided credentials", [
+                    info('No local domain for the provided credentials', [
                         'domain' => $domain['domain'],
-                        'credential' => $localDomain
+                        'credential' => $localDomain,
                     ]);
                     // If we don't have the domain in question synced via registrars we don't want to touch it.
                     continue;
@@ -59,7 +58,7 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
                     $localDomain->save();
                 }
 
-//                $registrarService->updateDomainNs($localDomain->name, $domain['name_servers']);
+                //                $registrarService->updateDomainNs($localDomain->name, $domain['name_servers']);
 
                 $localDomain->records()->delete();
                 if (empty($localDomain->cloudflare_id)) {

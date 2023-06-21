@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('redirect', 2048)->nullable();
             $table->boolean('is_active')->default(true);
             $table->mediumInteger('sort_order')->unsigned()->default(0);
-            $table->dateTime('published_at');;
+            $table->dateTime('published_at');
             $table->timestamps();
             $table->softDeletes();
 
@@ -38,8 +38,6 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down(): void
     {

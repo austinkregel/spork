@@ -17,12 +17,12 @@ use Spatie\LaravelIgnition\Solutions\SolutionProviders\MissingImportSolutionProv
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\MissingLivewireComponentSolutionProvider;
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\MissingMixManifestSolutionProvider;
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\MissingViteManifestSolutionProvider;
+use Spatie\LaravelIgnition\Solutions\SolutionProviders\OpenAiSolutionProvider;
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\RunningLaravelDuskInProductionProvider;
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\TableNotFoundSolutionProvider;
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\UndefinedViewVariableSolutionProvider;
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\UnknownValidationSolutionProvider;
 use Spatie\LaravelIgnition\Solutions\SolutionProviders\ViewNotFoundSolutionProvider;
-use Spatie\LaravelIgnition\Solutions\SolutionProviders\OpenAiSolutionProvider;
 
 return [
 
@@ -231,7 +231,7 @@ return [
         DumpRecorder::class,
         JobRecorder::class,
         LogRecorder::class,
-        QueryRecorder::class
+        QueryRecorder::class,
     ],
 
     /*

@@ -4,8 +4,6 @@ namespace App\Listeners\Domains;
 
 use App\Events\Domains\DomainCreated;
 use App\Jobs\Deployment\Steps\SetupCloudflareDns;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class UpdateDomainToUseCloudflareDns
 {

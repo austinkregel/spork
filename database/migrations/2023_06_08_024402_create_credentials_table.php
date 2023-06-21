@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('type')->index();
             // namecheap, cloudflare, digital-ocean, vultr, ovhcloud, google, other random APIs
             $table->string('service')->index();
-            $table->string('api_key',2048)->nullable();
-            $table->string('secret_key',2048)->nullable();
-            $table->string('access_token',2048)->nullable();
+            $table->string('api_key', 2048)->nullable();
+            $table->string('secret_key', 2048)->nullable();
+            $table->string('access_token', 2048)->nullable();
             $table->string('refresh_token')->nullable();
             $table->json('settings')->nullable();
 

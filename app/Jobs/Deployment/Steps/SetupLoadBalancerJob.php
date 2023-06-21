@@ -6,7 +6,6 @@ use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Server;
 use App\Services\Development\ForgeDevelopmentService;
-use App\Services\Factories\DomainServiceFactory;
 use Illuminate\Support\Collection;
 
 class SetupLoadBalancerJob

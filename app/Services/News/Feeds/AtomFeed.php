@@ -44,13 +44,14 @@ class AtomFeed extends AbstractFeed
                 array_push($items, $element);
             }
         }
-        return collect($items)->filter(fn($item) => !empty($item))->map(function ($post) {
+
+        return collect($items)->filter(fn ($item) => ! empty($item))->map(function ($post) {
             $xmlPost = $post;
             // Due to the whole `@attributes` bit, it's pretty difficult to leave this as an objects.
             // But this does loose any namespaced objects which is a pretty big loss.
             $post = json_decode(json_encode($xmlPost), true);
 
-            if (!isset($post['id'])) {
+            if (! isset($post['id'])) {
                 dd(54, $post);
             }
 
@@ -86,7 +87,7 @@ class AtomFeed extends AbstractFeed
 
         $feedItem->authorName = $xmlPost['author']['name'] ?? null;
         $feedItem->attachment = $xmlPost['group']['thumbnail']['@attributes']['url'];
-        $feedItem->content = is_array($xmlPost['group']['description'] ?? null) ?($xmlPost['group']['description']['title'] ?? ''): $xmlPost['group']['description'];
+        $feedItem->content = is_array($xmlPost['group']['description'] ?? null) ? ($xmlPost['group']['description']['title'] ?? '') : $xmlPost['group']['description'];
 
         if (is_array($feedItem->content)) {
             info('description', ['context' => $xmlPost['group']['description']]);

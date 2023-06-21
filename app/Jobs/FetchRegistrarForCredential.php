@@ -6,11 +6,9 @@ use App\Jobs\Registrar\CloudflareSyncJob;
 use App\Jobs\Registrar\NamecheapSyncJob;
 use App\Models\Credential;
 use App\Models\User;
-use App\Services\Factories\RegistrarServiceFactory;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Bus\Dispatcher;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -28,8 +26,7 @@ class FetchRegistrarForCredential implements ShouldQueue
     public function __construct(
         public Credential $credential,
         public ?User $user = null
-    )
-    {
+    ) {
         $this->user = $user ?? auth()->user();
     }
 
@@ -42,6 +39,7 @@ class FetchRegistrarForCredential implements ShouldQueue
     {
         if ($this->credential->type !== Credential::TYPE_REGISTRAR) {
             info('Credential is not of registrar type.');
+
             return;
         }
 

@@ -6,7 +6,6 @@ use App\Models\Credential;
 use App\Models\Server;
 use App\Services\LaravelForgeService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -22,9 +21,8 @@ class RefreshForgeServersJob implements ShouldQueue
     public function __construct(
         public Credential $credential,
         public ?LaravelForgeService $service
-    )
-    {
-        $this->service =  new LaravelForgeService($credential);
+    ) {
+        $this->service = new LaravelForgeService($credential);
     }
 
     /**
@@ -35,7 +33,7 @@ class RefreshForgeServersJob implements ShouldQueue
         $servers = $this->service->getServers();
 
         foreach ($servers as $server) {
-//            $localServer = Server::where()
+            //            $localServer = Server::where()
         }
     }
 }

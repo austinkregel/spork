@@ -11,7 +11,7 @@ class DomainServiceFactory
 {
     public function make(Credential $credential): DomainServiceContract
     {
-        return match($credential->service) {
+        return match ($credential->service) {
             Credential::CLOUDFLARE => new CloudflareDomainService($credential),
             Credential::DIGITAL_OCEAN => new DigitalOceanService($credential)
         };

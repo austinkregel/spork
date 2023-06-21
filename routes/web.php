@@ -38,7 +38,7 @@ Route::middleware([
         return Inertia::render('Projects/Projects', []);
     })->middleware('auth:sanctum')->name('projects');
 
-    Route::get('/projects/{project}', function (\App\Models\Project $project) {
+    Route::get('/projects/{project}', function (App\Models\Project $project) {
         $project->load([
             'servers.tags',
             'domains.records',
@@ -46,7 +46,7 @@ Route::middleware([
             'research',
             'domains' => function ($domainQuery) {
                 $domainQuery->with([
-                    'domainAnalytics' => function ($analyticsQuery) use ($domainQuery) {
+                    'domainAnalytics' => function ($analyticsQuery) {
                         $analyticsQuery
                             ->select([
                                 \DB::raw('sum(query_count) as query_count'),
@@ -56,11 +56,11 @@ Route::middleware([
                             ])
                             ->where('date', '>=', now()->startOfDay())
                             ->where('date', '<=', now())
-                        ->groupBy('domain_id')
-                        ->orderBy('query_count', 'desc');
-                    }
+                            ->groupBy('domain_id')
+                            ->orderBy('query_count', 'desc');
+                    },
                 ]);
-            }
+            },
         ]);
 
         return Inertia::render('Projects/Project', [
@@ -78,7 +78,7 @@ Route::middleware([
     Route::get('/credentials', function () {
         return Inertia::render('Credentials', []);
     })->middleware('auth:sanctum')->name('credentials');
-    Route::get('/servers/{server}', function (\App\Models\Server $project) {
+    Route::get('/servers/{server}', function (App\Models\Server $project) {
         return Inertia::render('Servers', [
             'project' => $project,
         ]);
@@ -87,7 +87,7 @@ Route::middleware([
     Route::get('/domains', function () {
         return Inertia::render('Domains', []);
     })->middleware('auth:sanctum')->name('domains');
-    Route::get('/domains/{domain}', function (\App\Models\Domain $domain) {
+    Route::get('/domains/{domain}', function (App\Models\Domain $domain) {
         return Inertia::render('Domains', [
             'domain' => $domain,
         ]);
@@ -97,8 +97,9 @@ Route::middleware([
         return Inertia::render('API/QueryBuilderPage', [
             'models' => collect(app(Filesystem::class)->allFiles(app_path('Models')))->map(function (SplFileInfo $file) {
                 $modelClass = ucfirst(str_replace('/', '\\', str_replace('.php', '', substr(str_replace(base_path(), '', $file), 1))));
+
                 return new $modelClass;
-            })->filter(fn ($thing) => ($thing instanceof ModelQuery))->map(fn ($model) =>  $model->getTable())->values(),
+            })->filter(fn ($thing) => ($thing instanceof ModelQuery))->map(fn ($model) => $model->getTable())->values(),
         ]);
     })->middleware(\App\Http\Middleware\Authenticate::class);
 });

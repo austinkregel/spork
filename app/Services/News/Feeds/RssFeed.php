@@ -49,6 +49,7 @@ class RssFeed extends AbstractFeed
             if (empty($feedItem->getTitle())) {
                 dd($feedItem, $post);
             }
+
             return $feedItem;
         }, ((array) $this->element->channel)['item']);
     }

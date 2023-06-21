@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Contracts\ModelQuery;
-use App\Models\Contracts\CrudContract;
 use App\Models\Credential;
 use App\Models\User;
 use Illuminate\Bus\Batchable;

@@ -6,28 +6,42 @@ use App\Contracts\ModelQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Credential extends Model implements  ModelQuery
+class Credential extends Model implements ModelQuery
 {
     use HasFactory;
+
     public $guarded = [];
 
     public const DIGITAL_OCEAN = 'digital-ocean';
+
     public const CLOUDFLARE = 'cloudflare';
+
     public const NAMECHEAP = 'namecheap';
+
     public const OVH_CLOUD = 'ovhcloud';
+
     public const VULTR = 'vultr';
+
     public const LINODE = 'linode';
 
     public const GO_DADDY = 'godaddy';
+
     public const GOOGLE_DOMAINS = 'google-domains';
+
     public const AWS_ROUTE_53 = 'aws-route53';
+
     public const GITHUB_SOURCE = 'github';
+
     public const FORGE_DEVELOPMENT = 'forge';
 
     public const TYPE_SERVER = 'server';
+
     public const TYPE_DOMAIN = 'domain';
+
     public const TYPE_REGISTRAR = 'registrar';
+
     public const TYPE_DEVELOPMENT = 'development';
+
     public const TYPE_SOURCE = 'source';
 
     public const ALL_DOMAIN_PROVIDERS = [
@@ -58,10 +72,11 @@ class Credential extends Model implements  ModelQuery
     ];
 
     public const ALL_DEVELOPMENT_PROVIDERS = [
-        self::FORGE_DEVELOPMENT
+        self::FORGE_DEVELOPMENT,
     ];
+
     public const ALL_SOURCE_PROVIDERS = [
-        self::GITHUB_SOURCE
+        self::GITHUB_SOURCE,
     ];
 
     public $hidden = [
@@ -71,6 +86,6 @@ class Credential extends Model implements  ModelQuery
     ];
 
     public $casts = [
-        'settings' => 'json'
+        'settings' => 'json',
     ];
 }

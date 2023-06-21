@@ -4,7 +4,6 @@ namespace App\Services\Registrar;
 
 use App\Contracts\Services\CloudflareRegistrarServiceContract;
 use App\Models\Credential;
-use App\Services\Domain\CloudflareDomainService;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Http;
@@ -14,7 +13,9 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
     public const CLOUDFLARE_URL = 'https://api.cloudflare.com/client/v4/';
 
     protected string $email;
+
     protected string $apiKey;
+
     protected string $accountId;
 
     public function __construct(
@@ -34,7 +35,7 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
             'Content-Type' => 'application/json',
             'X-Auth-Email' => $this->email,
             'X-Auth-Key' => $this->apiKey,
-        ])->get(static::CLOUDFLARE_URL.'accounts/'. $this->accountId .'/registrar/domains', []);
+        ])->get(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains', []);
 
         return new LengthAwarePaginator(
             array_map(fn ($zone) => [

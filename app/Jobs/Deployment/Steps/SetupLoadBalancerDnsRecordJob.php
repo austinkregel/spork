@@ -6,7 +6,6 @@ use App\Jobs\Domains\VerifyDnsValue;
 use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Server;
-use App\Services\Development\ForgeDevelopmentService;
 use App\Services\Factories\DomainServiceFactory;
 use Illuminate\Support\Collection;
 
@@ -28,7 +27,7 @@ class SetupLoadBalancerDnsRecordJob
             'type' => 'A',
             'name' => '@',
             'content' => $this->server->ip_address,
-            'ttl' => 'auto'
+            'ttl' => 'auto',
         ]);
 
         dispatch(new VerifyDnsValue($this->domain->name, 'A', $this->server->ip_address));

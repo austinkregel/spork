@@ -26,7 +26,7 @@ class LocalAdminController extends Controller
 
     public function fields(IndexRequest $request, Model $model)
     {
-        $fields = array_map(fn ($query) => $query->Field, DB::select('describe '. (new $model)->getTable()));
+        $fields = array_map(fn ($query) => $query->Field, DB::select('describe '.(new $model)->getTable()));
 
         $returnTypes = array_reduce(get_class_methods($model), function ($allClassMethods, $method) use ($model) {
             $ref = new \ReflectionMethod($model, $method);
@@ -46,8 +46,8 @@ class LocalAdminController extends Controller
         $relations = array_filter($methodsThatReturnAClass, function ($type) {
             $c = new \ReflectionClass($type->getName());
 
-            if (!empty($parentClass = $c->getParentClass())) {
-                if (!empty($parentParentClass = $parentClass->getParentClass())) {
+            if (! empty($parentClass = $c->getParentClass())) {
+                if (! empty($parentParentClass = $parentClass->getParentClass())) {
                     if ($parentParentClass->getName() === \Illuminate\Database\Eloquent\Relations\Relation::class) {
                         return true;
                     }
@@ -68,7 +68,7 @@ class LocalAdminController extends Controller
             'actions' => [
                 'get',
                 'paginate:14',
-                'first'
+                'first',
             ],
         ]);
     }
@@ -76,7 +76,7 @@ class LocalAdminController extends Controller
     /**
      * @throws Exception
      */
-    public function index(IndexRequest $request,  ModelQuery $model)
+    public function index(IndexRequest $request, ModelQuery $model)
     {
         $action = new ActionFilter(request()->get('action', 'paginate:14'));
 
@@ -97,8 +97,8 @@ class LocalAdminController extends Controller
         $relations = array_filter($methodsThatReturnAClass, function ($type) {
             $c = new \ReflectionClass($type->getName());
 
-            if (!empty($parentClass = $c->getParentClass())) {
-                if (!empty($parentParentClass = $parentClass->getParentClass())) {
+            if (! empty($parentClass = $c->getParentClass())) {
+                if (! empty($parentParentClass = $parentClass->getParentClass())) {
                     if ($parentParentClass->getName() === \Illuminate\Database\Eloquent\Relations\Relation::class) {
                         return true;
                     }
@@ -116,14 +116,14 @@ class LocalAdminController extends Controller
         });
 
         $query = QueryBuilder::for(get_class($model))
-            ->allowedFields(array_map(fn ($query) => $query->Field, DB::select('describe '. (new $model)->getTable())))
+            ->allowedFields(array_map(fn ($query) => $query->Field, DB::select('describe '.(new $model)->getTable())))
             ->allowedFilters(array_merge([
-                Filter::scope('q')
+                Filter::scope('q'),
             ]))
             ->allowedIncludes(array_keys($relations))
             ->allowedSorts([
                 'id', 'updated_at', 'created_at',
-                'name'
+                'name',
             ]);
 
         return $action->execute($query);
@@ -135,6 +135,7 @@ class LocalAdminController extends Controller
         $resource = new $model;
         $resource->fill($request->all());
         $resource->save();
+
         return $resource->refresh();
     }
 
@@ -143,11 +144,11 @@ class LocalAdminController extends Controller
         $query = QueryBuilder::for(get_class($model));
 
         return $query->find($abstractEloquentModel) ?? response([
-            'message' => 'No resource found by that id.'
+            'message' => 'No resource found by that id.',
         ], 404);
     }
 
-    public function update(UpdateRequest $request, ModelQuery $model, $abstractEloquentModel= null)
+    public function update(UpdateRequest $request, ModelQuery $model, $abstractEloquentModel = null)
     {
         $abstractEloquentModel->update($request->all());
 
@@ -163,8 +164,9 @@ class LocalAdminController extends Controller
 
     public function forceDestroy(ForceDeleteRequest $request, ModelQuery $model, ModelQuery $abstractEloquentModel)
     {
-        if (!$model->usesSoftdeletes()) {
-            abort(404, "You cannot force delete an item of this type.");
+        if (! $model->usesSoftdeletes()) {
+            abort(404, 'You cannot force delete an item of this type.');
+
             return;
         }
 
@@ -175,8 +177,9 @@ class LocalAdminController extends Controller
 
     public function restore(RestoreRequest $request, ModelQuery $model, ModelQuery $abstractEloquentModel)
     {
-        if (!$model->usesSoftdeletes()) {
-            abort(404, "You cannot restore an item of this type.");
+        if (! $model->usesSoftdeletes()) {
+            abort(404, 'You cannot restore an item of this type.');
+
             return;
         }
 

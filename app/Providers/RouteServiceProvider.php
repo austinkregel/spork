@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Contracts\ModelQuery;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -31,10 +30,11 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
         Route::bind('abstract_model', function ($tableName) {
-            return  collect(app(Filesystem::class)->allFiles(app_path('Models')))->map(function (SplFileInfo $file) {
+            return collect(app(Filesystem::class)->allFiles(app_path('Models')))->map(function (SplFileInfo $file) {
                 $modelClass = ucfirst(str_replace('/', '\\', str_replace('.php', '', substr(str_replace(base_path(), '', $file), 1))));
+
                 return new $modelClass;
-            })->filter(function ($model) use ($tableName){
+            })->filter(function ($model) use ($tableName) {
                 return $model->getTable() === $tableName;
             })->first();
         });

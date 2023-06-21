@@ -5,8 +5,6 @@ namespace App\Listeners\Pages;
 use App\Events\Pages\PageCreated;
 use App\Events\Pages\PageUpdated;
 use App\Models\Page;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class GenerateNewRoutesFileFromDatabase
 {
@@ -21,7 +19,7 @@ class GenerateNewRoutesFileFromDatabase
     /**
      * Handle the event.
      */
-    public function handle(PageCreated | PageUpdated $event): void
+    public function handle(PageCreated|PageUpdated $event): void
     {
         $pagesByDomain = Page::all()->groupBy('domain');
 

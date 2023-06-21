@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
-class Project extends Model  implements  ModelQuery
+class Project extends Model implements ModelQuery
 {
     use HasFactory;
 
@@ -18,9 +18,8 @@ class Project extends Model  implements  ModelQuery
 
     public function scopeQ(Builder $query, string $string): void
     {
-         $query->where('name', 'like', '%'.$string.'%');
+        $query->where('name', 'like', '%'.$string.'%');
     }
-
 
     public function domains(): MorphToMany
     {
@@ -30,6 +29,7 @@ class Project extends Model  implements  ModelQuery
             'project_resources'
         );
     }
+
     public function servers(): MorphToMany
     {
         return $this->morphedByMany(

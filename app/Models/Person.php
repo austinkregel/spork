@@ -6,8 +6,9 @@ use App\Contracts\ModelQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Person extends Model implements  ModelQuery
+class Person extends Model implements ModelQuery
 {
     use HasFactory;
+
     public $guarded = [];
 }

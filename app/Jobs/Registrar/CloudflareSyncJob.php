@@ -5,12 +5,6 @@ namespace App\Jobs\Registrar;
 use App\Models\Domain;
 use App\Models\Registrar;
 use Carbon\Carbon;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Str;
 
 class CloudflareSyncJob extends AbstractSyncRegistrarResourceJob
@@ -44,9 +38,9 @@ class CloudflareSyncJob extends AbstractSyncRegistrarResourceJob
 
                 foreach ($data as $key => $value) {
                     if ($localDomain->$key instanceof Carbon || $value instanceof Carbon) {
-                        if ($value instanceof Carbon && !$value->equalTo($localDomain->$key)) {
+                        if ($value instanceof Carbon && ! $value->equalTo($localDomain->$key)) {
                             $localDomain->$key = $value;
-                        } elseif ($localDomain->$key instanceof Carbon && !$localDomain->$key->equalTo($value)) {
+                        } elseif ($localDomain->$key instanceof Carbon && ! $localDomain->$key->equalTo($value)) {
                             $localDomain->$key = $value;
                         }
                     } elseif ($localDomain->$key !== $value) {
@@ -55,7 +49,7 @@ class CloudflareSyncJob extends AbstractSyncRegistrarResourceJob
                     }
                 }
 
-                if ($localDomain->isDirty() || !$localDomain->exists()) {
+                if ($localDomain->isDirty() || ! $localDomain->exists()) {
                     $localDomain->save();
                 }
             }

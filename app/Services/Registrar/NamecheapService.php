@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Services\Registrar;
 
 use App\Contracts\Services\NamecheapDomainServiceContract;
@@ -19,7 +21,7 @@ class NamecheapService implements NamecheapDomainServiceContract
 
     public function getDomains(int $limit = 10, int $page = 1): LengthAwarePaginator
     {
-        $url =static::NAMECHEAP_URL.'?'.http_build_query([
+        $url = static::NAMECHEAP_URL.'?'.http_build_query([
             'ApiUser' => $this->credential->settings['api_user'],
             'ApiKey' => $this->credential->access_token,
             'UserName' => $this->credential->settings['username'],
@@ -29,7 +31,7 @@ class NamecheapService implements NamecheapDomainServiceContract
             'Page' => $page,
         ]);
 
-        $response = cache()->remember($url, now()->addHour(), fn() => Http::get($url)->body());
+        $response = cache()->remember($url, now()->addHour(), fn () => Http::get($url)->body());
 
         $domainResponse = json_decode(json_encode(simplexml_load_string($response)));
 
@@ -62,15 +64,15 @@ class NamecheapService implements NamecheapDomainServiceContract
     {
         [$domainPart, $tld] = explode('.', $domain);
         $url = static::NAMECHEAP_URL.'?'.http_build_query([
-                'ApiUser' => $this->credential->settings['api_user'],
-                'ApiKey' => $this->credential->access_token,
-                'UserName' => $this->credential->settings['username'],
-                'Command' => 'namecheap.domains.dns.getList',
-                'ClientIp' => $this->credential->settings['client_ip'],
-                'SLD' => $domainPart,
-                'TLD' => $tld,
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'Command' => 'namecheap.domains.dns.getList',
+            'ClientIp' => $this->credential->settings['client_ip'],
+            'SLD' => $domainPart,
+            'TLD' => $tld,
         ]);
-        $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn() => Http::get($url)->body());
+        $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn () => Http::get($url)->body());
 
         $domainResponse = json_decode(json_encode(simplexml_load_string($xmlDebugResponse)));
 
@@ -90,15 +92,15 @@ class NamecheapService implements NamecheapDomainServiceContract
         [$domainPart, $tld] = explode('.', $domain);
 
         $response = Http::get(static::NAMECHEAP_URL.'?'.http_build_query([
-                'ApiUser' => $this->credential->settings['api_user'],
-                'ApiKey' => $this->credential->access_token,
-                'UserName' => $this->credential->settings['username'],
-                'Command' => 'namecheap.domains.dns.setCustom',
-                'ClientIp' => $this->credential->settings['client_ip'],
-                'SLD' => $domainPart,
-                'TLD' => $tld,
-                'Nameservers' => implode(',', $nameservers),
-            ]));
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'Command' => 'namecheap.domains.dns.setCustom',
+            'ClientIp' => $this->credential->settings['client_ip'],
+            'SLD' => $domainPart,
+            'TLD' => $tld,
+            'Nameservers' => implode(',', $nameservers),
+        ]));
 
         $domainResponse = json_decode(json_encode(simplexml_load_string($xmlDebugResponse = $response->body())));
 

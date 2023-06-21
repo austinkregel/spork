@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -18,7 +17,8 @@ class DnsVerificationSuccessful extends Notification
         public string $host,
         public string $type,
         public string|array $expectedValue,
-    ) { }
+    ) {
+    }
 
     /**
      * Get the notification's delivery channels.
@@ -36,8 +36,8 @@ class DnsVerificationSuccessful extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The DNS value for host: '. $this->host. ' has been verified as '. $this->expectedValue)
-                    ->line('Thank you for using our application!');
+            ->line('The DNS value for host: '.$this->host.' has been verified as '.$this->expectedValue)
+            ->line('Thank you for using our application!');
     }
 
     /**

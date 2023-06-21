@@ -2,6 +2,11 @@
 
 namespace App\Jobs\News;
 
+use App\Models\Article;
+use App\Models\FeatureList;
+use App\Services\News\Feeds\AbstractFeed;
+use App\Services\News\Feeds\FeedItem;
+use App\Services\News\RssFeedService;
 use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -9,11 +14,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Article;
-use App\Services\News\Feeds\AbstractFeed;
-use App\Services\News\Feeds\FeedItem;
-use App\Services\News\RssFeedService;
-use App\Models\FeatureList;
 
 class UpdateFeed implements ShouldQueue
 {
@@ -49,9 +49,10 @@ class UpdateFeed implements ShouldQueue
                 if (str_contains($feedItem->title, '#shorts')) {
                     $item = Article::firstWhere('external_guid', $feedItem->getExternalId());
 
-                    if (!empty($item)) {
+                    if (! empty($item)) {
                         $item->delete();
                     }
+
                     continue;
                 }
 

@@ -8,7 +8,7 @@ use DigitalOceanV2\Entity\Network;
 class DigitalOceanServerFilter extends Filter
 {
     /**
-     * @param Droplet $server
+     * @param  Droplet  $server
      */
     public function filter($server): array
     {
@@ -22,11 +22,11 @@ class DigitalOceanServerFilter extends Filter
             'disk' => $server->size->disk,
             'region' => $server->region->slug,
             'features' => $server->features,
-            'image' => sprintf('%s %s',  $server->image->distribution, $server->image->name),
+            'image' => sprintf('%s %s', $server->image->distribution, $server->image->name),
             'status' => $server->status,
             'volumes' => $server->volumeIds,
             'backups' => $server->backupsEnabled,
-            'networks' => array_reduce($server->networks, fn(array $networks, Network $network) => array_merge($networks, [
+            'networks' => array_reduce($server->networks, fn (array $networks, Network $network) => array_merge($networks, [
                 $network->type.'_v'.$network->version => $network->ipAddress,
             ]), []),
         ];

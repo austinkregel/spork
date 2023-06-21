@@ -15,8 +15,11 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 class CloudflareDomainService implements CloudflareDomainServiceContract
 {
     public const CLOUDFLARE_URL = 'https://api.cloudflare.com/client/v4/';
+
     protected string $apiKey;
+
     protected string $email;
+
     protected string $accountId;
 
     public function __construct(
@@ -33,13 +36,13 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     public function getDomains(int $limit = 10, int $page = 1): LengthAwarePaginator
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' .$this->apiKey,
+            'Authorization' => 'Bearer '.$this->apiKey,
             'Content-Type' => 'application/json',
             'X-Auth-Email' => $this->email,
         ])->get(static::CLOUDFLARE_URL.'/zones', [
             'per_page' => $limit,
             'page' => $page,
-//            'status' => 'active',
+            //            'status' => 'active',
             'match' => 'all',
         ]);
 
@@ -78,7 +81,6 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     }
 
     /**
-     * @param string $domain
      * @return array Nameservers
      */
     public function createDomain(string $domain): array
@@ -86,7 +88,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         $response = Http::withHeaders([
             'Authorization' => 'Bearer '.$this->apiKey,
             'x-auth-email' => $this->email,
-        ])->post(static::CLOUDFLARE_URL."/zones", [
+        ])->post(static::CLOUDFLARE_URL.'/zones', [
             'account' => [
                 'id' => $this->accountId,
             ],
@@ -97,7 +99,8 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         if (empty($response->json('result.name_servers'))) {
             if (str_contains($response->json('errors.0.message'), 'already exists')) {
                 $domains = array_filter($allDomains = $this->getDomains(1000, 1)->items(), fn ($domain) => $domain['domain'] === $domain);
-                dd($response->json(), $domains , $domain, $allDomains);
+                dd($response->json(), $domains, $domain, $allDomains);
+
                 return [];
             }
 
@@ -160,21 +163,22 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
             'type' => 'TXT',
             'name' => $domain->name,
             'content' => 'v=spf1 -all',
-            'ttl' => 'auto'
+            'ttl' => 'auto',
         ]);
         $service->createDnsRecord($domain->name, [
             'type' => 'TXT',
             'name' => '*._domainkey',
             'content' => 'v=DKIM1; p=',
-            'ttl' => 'auto'
+            'ttl' => 'auto',
         ]);
         $service->createDnsRecord($domain->name, [
             'type' => 'TXT',
             'name' => '_dmarc',
             'content' => 'v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s;',
-            'ttl' => 'auto'
+            'ttl' => 'auto',
         ]);
     }
+
     public function createEmailRouting(Domain $domain)
     {
         $this->createDnsRecord($domain->name, [
@@ -182,27 +186,27 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
             'name' => '@',
             'content' => 'route1.mx.cloudflare.net',
             'priority' => 79,
-            'ttl' => 'auto'
+            'ttl' => 'auto',
         ]);
         $this->createDnsRecord($domain->name, [
             'type' => 'mx',
             'name' => '@',
             'content' => 'route2.mx.cloudflare.net',
             'priority' => 39,
-            'ttl' => 'auto'
+            'ttl' => 'auto',
         ]);
         $this->createDnsRecord($domain->name, [
             'type' => 'mx',
             'name' => '@',
             'content' => 'route3.mx.cloudflare.net',
             'priority' => 11,
-            'ttl' => 'auto'
+            'ttl' => 'auto',
         ]);
         $this->createDnsRecord($domain->name, [
             'type' => 'TXT',
             'name' => '@',
             'content' => 'v=spf1 include:_spf.mx.cloudflare.net ~all',
-            'ttl' => 'auto'
+            'ttl' => 'auto',
         ]);
     }
 
@@ -214,19 +218,19 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
             'x-auth-email' => $this->email,
             'content-type' => 'application/json',
         ])->get(static::CLOUDFLARE_URL."/zones/$zone/dns_analytics/report/bytime?".http_build_query([
-                'dimensions' => implode(',', $dimensions = [
-                    'queryName',
-                    'responseCode',
-                    'origin',
-                ]),
-                'metrics' => implode(',', $metrics = [
-                    'queryCount',
-                    'uncachedCount',
-                    'staleCount',
-                ]),
-                'since' => $startDate->subDay()->startOfDay(),
-                'until' => $endDate->endOfDay(),
-            ]));
+            'dimensions' => implode(',', $dimensions = [
+                'queryName',
+                'responseCode',
+                'origin',
+            ]),
+            'metrics' => implode(',', $metrics = [
+                'queryCount',
+                'uncachedCount',
+                'staleCount',
+            ]),
+            'since' => $startDate->subDay()->startOfDay(),
+            'until' => $endDate->endOfDay(),
+        ]));
 
         $results = $response->json('result.data');
         $intervals = $response->json('result.time_intervals');
@@ -245,16 +249,15 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
                             'date' => Carbon::parse($intervalSet[0]),
                             'domain_id' => $domain->id,
                         ],
-                        'metrics'  => [
+                        'metrics' => [
                             'query_count' => $metric['queryCount'][$dataIndex],
                             'uncached_count' => $metric['uncachedCount'][$dataIndex],
                             'stale_count' => $metric['staleCount'][$dataIndex],
-                        ]
+                        ],
                     ];
                 }
             }
         }
-
 
         foreach ($actualData as $rowOfData) {
             // Won't Guarantee unique data...
@@ -265,7 +268,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
 
             $analytic = DomainAnalytics::firstOrCreate($dimensions, $metrics);
 
-            if (!$analytic->wasRecentlyCreated) {
+            if (! $analytic->wasRecentlyCreated) {
                 $analytic->update($metrics);
             }
         }

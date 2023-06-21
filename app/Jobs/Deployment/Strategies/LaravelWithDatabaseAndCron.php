@@ -9,7 +9,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Laravel\Forge\Forge;
 
@@ -27,7 +26,8 @@ class LaravelWithDatabaseAndCron implements ShouldQueue
         protected string $domain,
         protected int $server,
         protected Credential $credential
-    ) {}
+    ) {
+    }
 
     /**
      * Execute the job.
@@ -51,7 +51,7 @@ class LaravelWithDatabaseAndCron implements ShouldQueue
             'project_type' => 'php',
             'directory' => '/public',
             'isolated' => true,
-            'username' => $table
+            'username' => $table,
         ]);
 
         \DB::statement("CREATE DATABASE IF NOT EXISTS $table;");

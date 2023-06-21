@@ -19,5 +19,5 @@ return [
     'taggable' => [
         'table_name' => 'taggables',
         'morph_name' => 'taggable',
-    ]
+    ],
 ];

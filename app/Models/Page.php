@@ -9,5 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class Page extends Model implements ModelQuery
 {
     use HasFactory;
+
     public $guarded = [];
 }

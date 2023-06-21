@@ -5,11 +5,9 @@ namespace App\Jobs;
 use App\Jobs\Domains\CloudflareSyncAndPurgeJob;
 use App\Models\Credential;
 use App\Models\User;
-use App\Services\Factories\DomainServiceFactory;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Bus\Dispatcher;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -27,8 +25,7 @@ class FetchDomainsForCredential implements ShouldQueue
     public function __construct(
         public Credential $credential,
         public ?User $user
-    )
-    {
+    ) {
         $this->user = $user ?? auth()->user();
     }
 
@@ -43,7 +40,7 @@ class FetchDomainsForCredential implements ShouldQueue
             return;
         }
         if ($this->credential->type !== Credential::TYPE_DOMAIN) {
-            return ;
+            return;
         }
 
         $dispatcher->dispatchSync(match ($this->credential->service) {

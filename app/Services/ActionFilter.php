@@ -79,11 +79,12 @@ class ActionFilter
 
         if (count($parts) === 1) {
             $this->hasArguments = false;
+
             return;
         }
 
         $this->arguments = array_filter(explode(',', end($parts)), function ($bit) {
-            return !empty($bit);
+            return ! empty($bit);
         });
 
         $this->hasArguments = count($this->arguments) > 0;
@@ -91,7 +92,7 @@ class ActionFilter
 
     protected function validateAction(string $action): string
     {
-        if (!in_array($action, static::WHITELISTED_ACTIONS)) {
+        if (! in_array($action, static::WHITELISTED_ACTIONS)) {
             return static::DEFAULT_ACTION;
         }
 
@@ -105,6 +106,7 @@ class ActionFilter
         }
 
         $this->orderByField = $field;
+
         return $this;
     }
 
@@ -115,6 +117,7 @@ class ActionFilter
         }
 
         $this->groupByField = $field;
+
         return $this;
     }
 

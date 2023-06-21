@@ -5,9 +5,7 @@ namespace App\Jobs;
 use App\Models\Domain;
 use App\Models\Project;
 use App\Models\Server;
-use App\Models\Tag;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -24,7 +22,7 @@ class RunDeployment implements ShouldQueue
      */
     public function __construct(
         public Project $project,
-    ){
+    ) {
     }
 
     public function handle()
@@ -32,7 +30,7 @@ class RunDeployment implements ShouldQueue
         $this->project->load('servers.tags', 'domains');
         // .... Do stuff?...
         $this->project->domains->each(function (Domain $domain) {
-            $this->project->servers->each(function (Server $server) use ($domain) {
+            $this->project->servers->each(function (Server $server) {
 
             });
         });

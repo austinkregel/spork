@@ -2,8 +2,6 @@
 
 namespace App\Services\Development;
 
-use App\Contracts\Services\DomainServiceContract;
-use App\Contracts\Services\ServerServiceContract;
 use App\Models\Credential;
 use Illuminate\Support\Collection;
 use Laravel\Forge\Exceptions\ValidationException;
@@ -60,7 +58,7 @@ class ForgeDevelopmentService
             $site = $this->client->post("https://forge.laravel.com/api/v1/servers/$server->server_id/sites", [
                 'domain' => $domain->name,
                 'project_type' => 'php',
-                'aliases' => $domains->map(fn($domain) => $domain->name)->toArray(),
+                'aliases' => $domains->map(fn ($domain) => $domain->name)->toArray(),
                 'directory' => 'public',
                 'isolated' => false,
             ]);
@@ -100,10 +98,9 @@ class ForgeDevelopmentService
         return $site['site'];
     }
 
-
     public function setupSslCertificate(\App\Models\Domain $domain, Collection $domains, \App\Models\Server $server, array $site)
     {
-        $certificates = $this->client->get("https://forge.laravel.com/api/v1/servers/{$server->server_id}/sites/". $site['id']. '/certificates');
+        $certificates = $this->client->get("https://forge.laravel.com/api/v1/servers/{$server->server_id}/sites/".$site['id'].'/certificates');
 
         foreach ($certificates['certificates'] as $certificate) {
             if ($certificate['active']) {
@@ -112,16 +109,16 @@ class ForgeDevelopmentService
         }
 
         $data = [
-            'domains' => $domains->map(fn($d) => $d->name)->concat([$domain->name])->toArray(),
+            'domains' => $domains->map(fn ($d) => $d->name)->concat([$domain->name])->toArray(),
             'type' => 'cloudflare',
             'dns_provider' => [
                 // TODO: Come back to this and use a better credential form.
-                'cloudflare_api_token' => Credential::where('service', 'cloudflare')->first()->access_token
-            ]
+                'cloudflare_api_token' => Credential::where('service', 'cloudflare')->first()->access_token,
+            ],
         ];
 
         try {
-            $certificate = $this->client->post("https://forge.laravel.com/api/v1/servers/{$server->server_id}/sites/" . $site['id'] . '/certificates/letsencrypt', $data);
+            $certificate = $this->client->post("https://forge.laravel.com/api/v1/servers/{$server->server_id}/sites/".$site['id'].'/certificates/letsencrypt', $data);
         } catch (ValidationException $e) {
             dd($e->errors(), $data);
         }
@@ -138,5 +135,4 @@ class ForgeDevelopmentService
          */
         return $certificate['certificate'];
     }
-
 }

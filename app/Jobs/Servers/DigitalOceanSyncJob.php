@@ -3,14 +3,8 @@
 namespace App\Jobs\Servers;
 
 use App\Models\Server;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
-class DigitalOceanSyncJob extends  AbstractSyncServerResourceJob
+class DigitalOceanSyncJob extends AbstractSyncServerResourceJob
 {
     public function sync(): void
     {
@@ -60,7 +54,7 @@ class DigitalOceanSyncJob extends  AbstractSyncServerResourceJob
                 }
             }
 
-            if ($localServer->isDirty() || !$localServer->exists()) {
+            if ($localServer->isDirty() || ! $localServer->exists()) {
                 $localServer->save();
             }
         }

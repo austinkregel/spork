@@ -32,6 +32,7 @@ class DigitalOceanService implements DigitalOceanServiceContract
 
         $this->serverFilter = new DigitalOceanServerFilter();
     }
+
     public function createServer(array $config): array
     {
         return [];
@@ -66,12 +67,12 @@ class DigitalOceanService implements DigitalOceanServiceContract
 
     public function removeServerKey($identifier): void
     {
-//        $this->digitalOcean->key()->delete($identifier);
+        //        $this->digitalOcean->key()->delete($identifier);
     }
 
     public function deleteServer(int $identifier): void
     {
-//        $this->digitalOcean->droplet()->delete($identifier);
+        //        $this->digitalOcean->droplet()->delete($identifier);
     }
 
     public function powerOnServer(int $identifier): void

@@ -6,7 +6,6 @@ use App\Events\Domains\DomainCreated;
 use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Registrar;
-use App\Models\Server;
 use Illuminate\Support\Str;
 
 class NamecheapSyncJob extends AbstractSyncRegistrarResourceJob
@@ -43,7 +42,7 @@ class NamecheapSyncJob extends AbstractSyncRegistrarResourceJob
                     }
                 }
 
-                if ($localDomain->isDirty() || !$localDomain->exists()) {
+                if ($localDomain->isDirty() || ! $localDomain->exists()) {
                     $localDomain->save();
                     if ($localDomain->wasRecentlyCreated) {
                         event(new DomainCreated($localDomain, $this->credential, Credential::find(4)));

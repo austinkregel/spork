@@ -13,8 +13,7 @@ class DeploySslCertificateJob
         public Server $server,
         public Domain $domain,
         public Credential $credential
-    )
-    {
+    ) {
     }
 
     public function handle()
@@ -30,6 +29,6 @@ class DeploySslCertificateJob
         $service->setupSslCertificate($this->domain, $this->server, $site);
 
         $service->setupSsl($this->domain, $this->server);
-        dd(dns_get_record($this->domain->name, DNS_A), );
+        dd(dns_get_record($this->domain->name, DNS_A));
     }
 }

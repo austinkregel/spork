@@ -9,7 +9,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 use Laravel\Forge\Forge;
 
 class LaravelWithDatabase implements ShouldQueue
@@ -26,7 +25,8 @@ class LaravelWithDatabase implements ShouldQueue
         protected string $domain,
         protected int $server,
         protected Credential $credential
-    ) {}
+    ) {
+    }
 
     /**
      * Execute the job.

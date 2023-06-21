@@ -2,10 +2,10 @@
 
 namespace App\Services\News;
 
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Http;
 use App\Contracts\Services\News\RssServiceContract;
 use App\Services\News\Feeds\AbstractFeed;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Http;
 
 class RssFeedService implements RssServiceContract
 {
@@ -39,7 +39,8 @@ class RssFeedService implements RssServiceContract
                 }
             );
         } catch (ConnectionException $e) {
-            info('Exception occurred', [ $e->getMessage(), $url]);
+            info('Exception occurred', [$e->getMessage(), $url]);
+
             return null;
         }
 
@@ -48,6 +49,7 @@ class RssFeedService implements RssServiceContract
             info('Found an HTML document hiding in our RSS feeds', [
                 'url' => $request['url'],
             ]);
+
             return null;
         }
 

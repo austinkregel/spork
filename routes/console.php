@@ -2,10 +2,7 @@
 
 use App\Jobs\Deployment\Steps\SetupCloudflareDns;
 use App\Models\Credential;
-use App\Services\LaravelForgeService;
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,12 +24,11 @@ Artisan::command('verify:dns {domain} {expected}', function ($domain, $expected)
 })->purpose('Display an inspiring quote');
 
 Artisan::command('page-test', function () {
-//    event(new \App\Events\Pages\PageUpdated(\App\Models\Page::first()));
+    //    event(new \App\Events\Pages\PageUpdated(\App\Models\Page::first()));
     dispatch_sync(new \App\Jobs\Servers\LaravelForgeServersSyncJob(
         Credential::find(1),
     ));
 });
-
 
 Artisan::command('seed-servers', function () {
     $credential = Credential::find(2);
@@ -46,10 +42,10 @@ Artisan::command('seed-servers', function () {
 });
 
 Artisan::command('this-is-a-test', function () {
-//    dispatch_sync(new \App\Jobs\Deployment\Strategies\SetupCloudflareDns(
-//        \App\Models\Domain::find(1),
-//         Credential::find(4)
-//    ));
+    //    dispatch_sync(new \App\Jobs\Deployment\Strategies\SetupCloudflareDns(
+    //        \App\Models\Domain::find(1),
+    //         Credential::find(4)
+    //    ));
     $all = \App\Models\Domain::whereNull('cloudflare_id')->get();
     $credential = Credential::find(4);
     $registrar = Credential::find(2);
@@ -60,10 +56,10 @@ Artisan::command('this-is-a-test', function () {
             $registrar
         ));
     }
-//    dispatch_sync(new \App\Jobs\Deployment\Stratagies\SetupLoadBalancerJob(
-//        \App\Models\Server::find(4),
-//        \App\Models\Domain::find(1),
-//        collect([]),
-//        Credential::find(1)
-//    ));
+    //    dispatch_sync(new \App\Jobs\Deployment\Stratagies\SetupLoadBalancerJob(
+    //        \App\Models\Server::find(4),
+    //        \App\Models\Domain::find(1),
+    //        collect([]),
+    //        Credential::find(1)
+    //    ));
 });

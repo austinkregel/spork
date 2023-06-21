@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Research extends Model
 {
     use HasFactory;
+
     public $casts = [
         'sources' => 'json',
     ];
+
     public $guarded = [];
 }
