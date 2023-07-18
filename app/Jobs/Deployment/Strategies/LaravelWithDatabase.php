@@ -56,10 +56,9 @@ class LaravelWithDatabase implements ShouldQueue
 
         $laravelForgeService = new ForgeDevelopmentService($forgeCredential);
 
-
         $laravelForgeService->createRedirectIfNotExists($this->domain,
-        $this->server,
-        $this->redirectTo);
+            $this->server,
+            $this->redirectTo);
         $client->createRedirectRule($this->server, $site->id, [
             'from' => '/',
             'to' => $this->redirectTo,

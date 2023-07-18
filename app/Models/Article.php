@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -12,16 +13,16 @@ class Article extends Model
     use HasFactory;
 
     public $fillable = [
-        'uuid' ,
+        'uuid',
         'external_guid',
-        'author_type'  ,
+        'author_type',
         'author_id',
         'last_modified',
-        'etag' ,
-        'headline' ,
-        'content'  ,
-        'attachment'   ,
-        'url'  ,
+        'etag',
+        'headline',
+        'content',
+        'attachment',
+        'url',
     ];
 
     public static function fromFeedItem(ExternalRssFeed $feed, FeedItem $item): self

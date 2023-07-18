@@ -8,7 +8,6 @@ use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Project;
 use App\Models\Server;
-use App\Models\Tag;
 use Illuminate\Support\Collection;
 use Laravel\Forge\Exceptions\ValidationException;
 use Laravel\Forge\Forge;
@@ -50,7 +49,7 @@ class ForgeDevelopmentService
         dd($servers);
     }
 
-    public function createDomainIfNotExists(\App\Models\Domain $domain, Collection $domains, \App\Models\Server $server)
+    public function createDomainIfNotExists(Domain $domain, Collection $domains, Server $server)
     {
         $sites = $this->client->sites($server->server_id);
 
@@ -105,7 +104,7 @@ class ForgeDevelopmentService
         return $site['site'];
     }
 
-    public function setupSslCertificate(\App\Models\Domain $domain, Collection $domains, \App\Models\Server $server, array $site)
+    public function setupSslCertificate(Domain $domain, Collection $domains, Server $server, array $site)
     {
         $certificates = $this->client->certificates($server->server_id, $site['id']);
 
@@ -162,8 +161,10 @@ class ForgeDevelopmentService
         } catch (ValidationException $e) {
             dd($e->errors());
         }
+
         return $daemon['daemon'];
     }
+
     public function createCronIfNotExists(Domain $domain, Server $server, array $cron)
     {
         $servers = $this->client->jobs($server->server_id);
@@ -180,8 +181,10 @@ class ForgeDevelopmentService
         } catch (ValidationException $e) {
             dd($e->errors());
         }
+
         return $cron['cron'];
     }
+
     // create a redirect in laravel forge if there isn't already an existing redirect
     public function createRedirectIfNotExists(Domain $domain, Server $server, array $redirect)
     {
@@ -194,10 +197,11 @@ class ForgeDevelopmentService
         }
 
         try {
-            $redirect = $this->client->createRedirectRule($server->server_id, $domain->domain_id,  $redirect, true);
+            $redirect = $this->client->createRedirectRule($server->server_id, $domain->domain_id, $redirect, true);
         } catch (ValidationException $e) {
             dd($e->errors());
         }
+
         return $redirect['redirect'];
     }
 
@@ -214,6 +218,7 @@ class ForgeDevelopmentService
         } catch (ValidationException $e) {
             dd($e->errors());
         }
+
         return $script['script'];
     }
 
@@ -250,6 +255,7 @@ class ForgeDevelopmentService
 
         return false;
     }
+
     public function updateLoadBalancer(Domain $domain, Project $project, array $site)
     {
         $servers = $project->servers()->with('tags')->get();
@@ -273,15 +279,15 @@ class ForgeDevelopmentService
         ];
 
         try {
-        $this->client->put("https://forge.laravel.com/api/v1/servers/{$loadBalancingServer->server_id}/sites/{$site['id']}/balancing", [
-            'json' => [
-                'servers' => $appServers->map($mapFunction)
-                    ->concat($webServers->map($mapFunction))
-                    ->concat($jobServers->map($mapFunction))
-                ->toArray(),
-                'method' => 'least_conn',
-            ]
-        ]);
+            $this->client->put("https://forge.laravel.com/api/v1/servers/{$loadBalancingServer->server_id}/sites/{$site['id']}/balancing", [
+                'json' => [
+                    'servers' => $appServers->map($mapFunction)
+                        ->concat($webServers->map($mapFunction))
+                        ->concat($jobServers->map($mapFunction))
+                        ->toArray(),
+                    'method' => 'least_conn',
+                ],
+            ]);
         } catch (ValidationException $e) {
             dd($e->errors());
         }
@@ -300,7 +306,7 @@ class ForgeDevelopmentService
         $this->client->createSSHKey($server->server_id, [
             'name' => 'Reforged Spork - Automation SSH Key',
             'key' => $credential->settings['pub_key'],
-            'username' => 'forge'
+            'username' => 'forge',
         ], true);
     }
 }

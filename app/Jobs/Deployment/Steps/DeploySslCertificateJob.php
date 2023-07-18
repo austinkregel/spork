@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Jobs\Deployment\Steps;
 
-use App\Jobs\Domains\VerifyDnsValue;
 use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Project;
@@ -21,6 +20,7 @@ use Laravel\Forge\Resources\Site;
 class DeploySslCertificateJob implements ShouldQueue
 {
     use DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+
     public function __construct(
         public Server $server,
         public Domain $domain,
@@ -45,14 +45,13 @@ class DeploySslCertificateJob implements ShouldQueue
             return;
         }
 
-        $service->setupSslCertificate($this->domain, $domainAliases,  $this->server, (array) $site);
+        $service->setupSslCertificate($this->domain, $domainAliases, $this->server, (array) $site);
     }
 
     protected function aRecordForOurServerDoesntAlreadyExist(Domain $domain, Server $server, array $site): bool
     {
         $aRecordValues = array_map(fn (array $record) => $record['ip'], dns_get_record($domain->name, DNS_A));
 
-        return !in_array($server->ip_address, $aRecordValues);
+        return ! in_array($server->ip_address, $aRecordValues);
     }
-
 }

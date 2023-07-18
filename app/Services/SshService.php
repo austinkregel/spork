@@ -7,7 +7,6 @@ namespace App\Services;
 use Exception;
 
 class SshService
-
 {
     private mixed $connection;
 
@@ -20,24 +19,24 @@ class SshService
     ) {
         $this->connection = ssh2_connect($this->host, $this->port);
 
-        if (!$this->connection) {
+        if (! $this->connection) {
             throw new Exception('Connection failed.');
         }
 
-        if (!ssh2_auth_pubkey_file($this->connection, $this->username, $this->publicKeyFile, $this->privateKeyFile)) {
+        if (! ssh2_auth_pubkey_file($this->connection, $this->username, $this->publicKeyFile, $this->privateKeyFile)) {
             throw new Exception('Public key authentication failed.');
         }
     }
 
     public function execute(string $command, string $directory = ''): string
     {
-        if (!empty($directory)) {
-            $command = 'cd ' . escapeshellarg($directory) . ' && ' . $command;
+        if (! empty($directory)) {
+            $command = 'cd '.escapeshellarg($directory).' && '.$command;
         }
 
         $stream = ssh2_exec($this->connection, $command);
 
-        if (!$stream) {
+        if (! $stream) {
             throw new Exception('Command execution failed.');
         }
 

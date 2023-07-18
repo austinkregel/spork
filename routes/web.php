@@ -75,33 +75,33 @@ Route::middleware([
                     'name' => 'Total Queries',
                     'stat' => $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('query_count'), 0),
                     'duration' => $project->domains->reduce(function (int $carry, $domain) {
-                            $maxDate = $domain->domainAnalytics->map->min_date->min() ;
-                            $minDate = $domain->domainAnalytics->map->max_date->max();
+                        $maxDate = $domain->domainAnalytics->map->min_date->min();
+                        $minDate = $domain->domainAnalytics->map->max_date->max();
 
-                            return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
-                        }, 0). ' hours',
+                        return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
+                    }, 0).' hours',
                 ],
                 [
                     'name' => 'Total Uncached',
                     'stat' => $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('uncached_count'), 0),
                     'duration' => $project->domains->reduce(function (int $carry, $domain) {
-                            $maxDate = $domain->domainAnalytics->map->min_date->min() ;
-                            $minDate = $domain->domainAnalytics->map->max_date->max();
+                        $maxDate = $domain->domainAnalytics->map->min_date->min();
+                        $minDate = $domain->domainAnalytics->map->max_date->max();
 
-                            return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
-                        }, 0). ' hours',
+                        return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
+                    }, 0).' hours',
                 ],
                 [
-                    'name' => 'Total Stale' ,
-                    'stat' =>  $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('stale_count'), 0),
+                    'name' => 'Total Stale',
+                    'stat' => $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('stale_count'), 0),
                     'duration' => $project->domains->reduce(function (int $carry, $domain) {
-                            $maxDate = $domain->domainAnalytics->map->min_date->min() ;
-                            $minDate = $domain->domainAnalytics->map->max_date->max();
+                        $maxDate = $domain->domainAnalytics->map->min_date->min();
+                        $minDate = $domain->domainAnalytics->map->max_date->max();
 
-                            return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
-                        }, 0). ' hours',
+                        return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
+                    }, 0).' hours',
 
-                ]
+                ],
             ],
         ]);
     })->name('projects.show');
@@ -145,8 +145,7 @@ Route::middleware([
         ]);
     })->middleware(\App\Http\Middleware\Authenticate::class);
 
-
-    Route::post('project/{project}/deploy', function (\App\Models\Project $project) {
+    Route::post('project/{project}/deploy', function (App\Models\Project $project) {
         $project->load([
             'servers.tags', 'domains',
         ]);
@@ -164,7 +163,7 @@ Route::middleware([
             foreach ($project->domains as $domain) {
                 if (in_array('loadbalancer', $tags)) {
                     // Each one of these jobs should look to see if the configuration is already where we want it.
-                    dispatch_sync(new \App\Jobs\Deployment\Steps\SetupCloudflareDns( $domain, $cloudflareCredential, $namecheapCredential));
+                    dispatch_sync(new \App\Jobs\Deployment\Steps\SetupCloudflareDns($domain, $cloudflareCredential, $namecheapCredential));
                     dispatch_sync(new \App\Jobs\Deployment\Steps\SetupLoadBalancerJob($server, $domain, $project));
                     dispatch_sync(new \App\Jobs\Deployment\Steps\SetupLoadBalancerDnsRecordJob($server, $domain, $project));
                     dispatch_sync(new \App\Jobs\Deployment\Steps\DeploySslCertificateJob($server, $domain, $forgeCredential));
@@ -178,7 +177,7 @@ Route::middleware([
                 }
                 // Basically a queue worker, or a project with a prod env that isn't _the_ prod server.
                 if (in_array('app', $tags)) {
-                # Queue workers are not setup to handle traffic from the load balancer
+                    // Queue workers are not setup to handle traffic from the load balancer
                     // Setup domain on server
                     // Setup project for server (setup git, setup deployment webhook, etc etc...)
                     // Update the environment variables with share values.
@@ -188,10 +187,8 @@ Route::middleware([
             }
         }
 
-        return;
     });
 });
-
 
 Route::middleware([
     'auth:sanctum',

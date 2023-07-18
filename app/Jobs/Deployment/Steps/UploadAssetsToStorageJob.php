@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Jobs\Deployment\Steps;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 class UploadAssetsToStorageJob implements ShouldQueue
 {
     use DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+
     public function __construct(
         public Server $server,
         public Domain $domain,
@@ -32,20 +34,20 @@ class UploadAssetsToStorageJob implements ShouldQueue
         $vendorPath = base_path('vendor');
 
         // Create a temporary zip file
-        $zipPath = sys_get_temp_dir() . '/assets.zip';
+        $zipPath = sys_get_temp_dir().'/assets.zip';
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
         // Add the compiled assets to the zip file
         $compiledAssetsFiles = Storage::files($compiledAssetsPath);
         foreach ($compiledAssetsFiles as $file) {
-            $zip->addFile(public_path($file), 'assets/' . $file);
+            $zip->addFile(public_path($file), 'assets/'.$file);
         }
 
         // Add the vendor files to the zip file
         $vendorFiles = Storage::allFiles($vendorPath);
         foreach ($vendorFiles as $file) {
-            $zip->addFile(base_path($file), 'vendor/' . $file);
+            $zip->addFile(base_path($file), 'vendor/'.$file);
         }
 
         // Close the zip file

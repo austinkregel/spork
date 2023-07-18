@@ -60,6 +60,7 @@ class Project extends Model implements ModelQuery
             'project_resources'
         );
     }
+
     public function credentials(): MorphToMany
     {
         return $this->morphedByMany(
@@ -73,6 +74,7 @@ class Project extends Model implements ModelQuery
     {
         return $this->belongsTo(Team::class);
     }
+
     public function credentialFor(string $service): ?Credential
     {
         return $this->credentials()->where('service', $service)->firstOrFail();

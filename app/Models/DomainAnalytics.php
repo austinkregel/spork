@@ -21,6 +21,7 @@ class DomainAnalytics extends Model
         'stale_count',
         'date',
     ];
+
     public function domain(): BelongsTo
     {
         return $this->belongsTo(Domain::class);

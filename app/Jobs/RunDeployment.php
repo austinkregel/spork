@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Jobs\Deployment\Steps\AddSSHKeyToServerJob;
@@ -13,14 +15,10 @@ use App\Jobs\Deployment\Steps\SetupLoadBalancerJob;
 use App\Jobs\Deployment\Steps\SetupWebServerJob;
 use App\Models\Credential;
 use App\Models\Project;
-use App\Models\Server;
-use App\Models\Domain;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -30,9 +28,9 @@ class RunDeployment implements ShouldQueue
 {
     use DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels, Batchable;
 
-
     public function __construct(public Project $project)
-    {}
+    {
+    }
 
     public function handle()
     {
@@ -46,7 +44,7 @@ class RunDeployment implements ShouldQueue
             if ($domain->cloudflare_id === null) {
                 continue;
             }
-            if (!isset($jobsByDomain[$domain->name])) {
+            if (! isset($jobsByDomain[$domain->name])) {
                 $jobsByDomain[$domain->name] = [];
             }
             $jobsByDomain[$domain->name][] = new SetupCloudflareDns($domain, $this->project->credentialFor(Credential::CLOUDFLARE), $this->project->credentialFor(Credential::NAMECHEAP));
@@ -56,7 +54,7 @@ class RunDeployment implements ShouldQueue
         $otherDomains = $domains->slice(1);
         foreach ($servers as $server) {
             $serverJobs = [];
-            if (!isset($jobsByDomain[$primaryDomain->name])) {
+            if (! isset($jobsByDomain[$primaryDomain->name])) {
                 $jobsByDomain[$primaryDomain->name] = [];
             }
             $tags = $server->tags->map->name;
@@ -72,7 +70,7 @@ class RunDeployment implements ShouldQueue
             if ($tags->contains('app') || $tags->contains('web')) {
                 $serverJobs[] = new CompileNpmAssetsJob($server, $primaryDomain, $this->project);
                 $serverJobs[] = new SetupWebServerJob($server, $primaryDomain, $this->project);
-//                $serverJobs[] = new UploadAssetsJob($server);
+                //                $serverJobs[] = new UploadAssetsJob($server);
             }
 
             if ($tags->contains('jobs')) {
@@ -80,9 +78,9 @@ class RunDeployment implements ShouldQueue
                 $serverJobs[] = new SetupHorizonSchedulerJob($server, $primaryDomain, $this->project);
             }
 
-//                if ($server->tags->contains('database')) {
-//                    $serverJobs[] = new CreateDatabaseJob($server, $this->project);
-//                }
+            //                if ($server->tags->contains('database')) {
+            //                    $serverJobs[] = new CreateDatabaseJob($server, $this->project);
+            //                }
 
             array_push($jobsByDomain[$primaryDomain->name], ...$serverJobs);
         }

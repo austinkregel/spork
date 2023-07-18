@@ -1,20 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Models\Article;
 use App\Models\ExternalRssFeed;
-use App\Models\Post;
 use App\Services\Feeds\FeedItem;
 use App\Services\RssFeedService;
-use App\Services\RssParserFactory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Http;
 
 class PopulateExternalRssFeeds implements ShouldQueue
 {
@@ -37,7 +35,7 @@ class PopulateExternalRssFeeds implements ShouldQueue
         }
 
         /** @var FeedItem $item */
-        foreach($rssFeed->getData() as $item) {
+        foreach ($rssFeed->getData() as $item) {
             Article::fromFeedItem($this->feed, $item);
         }
     }

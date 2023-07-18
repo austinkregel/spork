@@ -39,7 +39,7 @@ class SetupCloudflareDns implements ShouldQueue
             $domainPaginator = $service->getDomains(100, $page++);
             foreach ($domainPaginator->items() as $domain) {
                 if ($domain['domain'] === $this->domain->name) {
-//                    $registrar->updateDomainNs($this->domain->name, $domain['name_servers']);
+                    //                    $registrar->updateDomainNs($this->domain->name, $domain['name_servers']);
                     break 2;
                 }
             }

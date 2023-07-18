@@ -8,7 +8,6 @@ use App\Contracts\Services\CloudflareDomainServiceContract;
 use App\Contracts\Services\DomainServiceContract;
 use App\Models\Credential;
 use App\Models\Domain;
-use App\Models\DomainAnalytics;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Http;
@@ -115,7 +114,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         return $response->json('result.name_servers');
     }
 
-    public function getDns(string $domain, ?string $type = null, int $limit = 10, int $page = 1): LengthAwarePaginator
+    public function getDns(string $domain, string $type = null, int $limit = 10, int $page = 1): LengthAwarePaginator
     {
         $response = Http::withHeaders([
             'Authorization' => 'Bearer '.$this->apiKey,
@@ -127,10 +126,9 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
 
         $data = $response->json('result');
 
-        if (!isset($data)) {
+        if (! isset($data)) {
             dd($response->json());
         }
-
 
         return new LengthAwarePaginator(
             array_map(fn ($dnsRecord) => [

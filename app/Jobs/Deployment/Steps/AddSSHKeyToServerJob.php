@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Deployment\Steps;
 
 use App\Models\Credential;
@@ -7,7 +9,6 @@ use App\Models\Server;
 use App\Services\Development\ForgeDevelopmentService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -24,7 +25,7 @@ class AddSSHKeyToServerJob implements ShouldQueue
         public Server $server,
         public Credential $credential,
         public Credential $forgeCredential,
-    )    {
+    ) {
         //
     }
 

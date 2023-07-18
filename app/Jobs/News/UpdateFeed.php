@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\News;
 
 use App\Models\Article;
@@ -12,8 +14,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Http;
 
 class UpdateFeed implements ShouldQueue
 {
@@ -51,7 +51,7 @@ class UpdateFeed implements ShouldQueue
             // Sub one minute just in case the time parsing doesn't quite match up.
             $mostRecentPost = $mostRecentPost ?? $this->feed->articles()->first();
 
-            if (!empty($mostRecentPost) && $feedItem->getPublishedAt()->lessThanOrEqualTo($mostRecentPost->created_at->subMinute())) {
+            if (! empty($mostRecentPost) && $feedItem->getPublishedAt()->lessThanOrEqualTo($mostRecentPost->created_at->subMinute())) {
                 break;
             }
 
@@ -60,16 +60,16 @@ class UpdateFeed implements ShouldQueue
 
         $this->feed->name = $rssFeed->getName();
 
-        if (!empty($rssFeed->getPhoto())) {
+        if (! empty($rssFeed->getPhoto())) {
             $this->feed->profile_photo_path = $rssFeed->getPhoto();
         }
 
-        if (!empty($rssFeed->getLastModified())) {
-//            $this->feed->last_modified = $rssFeed->getLastModified();
+        if (! empty($rssFeed->getLastModified())) {
+            //            $this->feed->last_modified = $rssFeed->getLastModified();
         }
 
-        if (!empty($rssFeed->getEtag())) {
-//            $this->feed->etag = $rssFeed->getEtag();
+        if (! empty($rssFeed->getEtag())) {
+            //            $this->feed->etag = $rssFeed->getEtag();
         }
 
         if ($this->feed->isDirty()) {

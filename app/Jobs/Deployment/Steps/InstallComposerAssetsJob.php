@@ -8,18 +8,17 @@ use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Project;
 use App\Models\Server;
-use App\Services\Development\ForgeDevelopmentService;
 use App\Services\SshService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 
 class InstallComposerAssetsJob
 {
     use DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+
     public function __construct(
         public Server $server,
         public Domain $domain,
@@ -41,7 +40,7 @@ class InstallComposerAssetsJob
                 $sshCredential->getPrivateKey()
             );  // replace with your server details
 
-            $installLog = $service->execute('composer install', '/home/forge/'. $this->domain->name);
+            $installLog = $service->execute('composer install', '/home/forge/'.$this->domain->name);
         } catch (\Exception $e) {
             dd($e);
         }

@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Listeners;
+declare(strict_types=1);
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+namespace App\Listeners;
 
 class DebugEventListener
 {
@@ -20,7 +19,7 @@ class DebugEventListener
      */
     public function handle(object $event): void
     {
-        info('Event fired: ' . get_class($event), [
+        info('Event fired: '.get_class($event), [
             'event' => $event,
         ]);
     }

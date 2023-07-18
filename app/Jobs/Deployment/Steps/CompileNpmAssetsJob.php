@@ -8,7 +8,6 @@ use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Project;
 use App\Models\Server;
-use App\Services\Development\ForgeDevelopmentService;
 use App\Services\SshService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -16,7 +15,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 
 class CompileNpmAssetsJob implements ShouldQueue
 {
@@ -43,9 +41,8 @@ class CompileNpmAssetsJob implements ShouldQueue
                 $sshCredential->getPrivateKey()
             );  // replace with your server details
 
-            $installLog = $service->execute('npm install', '/home/forge/'. $this->domain->name);
-            $buildLog = $service->execute('npm run build', '/home/forge/'. $this->domain->name);
-
+            $installLog = $service->execute('npm install', '/home/forge/'.$this->domain->name);
+            $buildLog = $service->execute('npm run build', '/home/forge/'.$this->domain->name);
 
         } catch (\Exception $e) {
             dd($e);

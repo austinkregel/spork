@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Jobs\Servers\DigitalOceanSyncJob;
 use App\Jobs\Servers\LaravelForgeServersSyncJob;
 use App\Models\Credential;
-use App\Models\User;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Bus\Dispatcher;

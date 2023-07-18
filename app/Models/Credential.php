@@ -8,7 +8,6 @@ use App\Contracts\ModelQuery;
 use App\Models\Traits\HasProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Credential extends Model implements ModelQuery
 {
@@ -47,6 +46,7 @@ class Credential extends Model implements ModelQuery
     public const TYPE_DEVELOPMENT = 'development';
 
     public const TYPE_SOURCE = 'source';
+
     public const TYPE_SSH = 'ssh';
 
     public const ALL_DOMAIN_PROVIDERS = [
@@ -122,7 +122,6 @@ class Credential extends Model implements ModelQuery
     public function getPrivateKey(): string
     {
         $privateKeyFile = storage_path('app/ssh-keys/'.$this->id);
-
 
         if (! file_exists($privateKeyFile)) {
             file_put_contents($privateKeyFile, $this->settings['private_key'] ?? '');

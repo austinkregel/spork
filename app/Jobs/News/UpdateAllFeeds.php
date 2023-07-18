@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Jobs\News;
 
 use App\Models\ExternalRssFeed;
-use App\Services\News\Feeds\RssFeed;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
