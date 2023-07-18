@@ -146,16 +146,20 @@ export default {
             }
         },
         async fetch({ page, limit, ...args }) {
-            const { data: { data, ...pagination} } = await axios.get(buildUrl(
-                '/api/credentials', {
-                    page, limit,
-                    ...args,
-                    include: []
-                }
-            ));
+            try {
+                const {data: {data, ...pagination}} = await axios.get(buildUrl(
+                    '/api/credentials', {
+                        page, limit,
+                        ...args,
+                        include: []
+                    }
+                ));
 
-            this.data = data;
-            this.pagination = pagination;
+                this.data = data;
+                this.pagination = pagination;
+            } catch (e) {
+                toaster.error(e.message)
+            }
         }
     },
 

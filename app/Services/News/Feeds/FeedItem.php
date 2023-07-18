@@ -62,7 +62,7 @@ class FeedItem
     public function setUrl($post)
     {
         if (isset($post->link)) {
-            $this->url = $post->link;
+            $this->url = (string) $post->link;
 
             return;
         }

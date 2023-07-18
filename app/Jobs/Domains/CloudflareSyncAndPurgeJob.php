@@ -16,7 +16,7 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
         if ($this->batch()?->cancelled()) {
             return;
         }
-        $credentials = Credential::ownedBy($this->credential->owner)->where('uuid', $this->credential->uuid)->get();
+        $credentials = Credential::where('service', 'cloudflare')->get();
         foreach ($credentials as $credential) {
             try {
                 $this->service = $serviceFactory->make($credential);

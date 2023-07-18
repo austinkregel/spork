@@ -26,7 +26,7 @@ class FetchServersForCredential implements ShouldQueue
      */
     public function __construct(
         public Credential $credential,
-        public ?User $user
+        public ?User $user = null,
     ) {
         $this->user = $user ?? auth()->user();
     }

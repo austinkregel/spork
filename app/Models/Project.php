@@ -8,11 +8,13 @@ use App\Contracts\ModelQuery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Spatie\Tags\HasTags;
 
 class Project extends Model implements ModelQuery
 {
-    use HasFactory;
+    use HasFactory, HasTags;
 
     public $guarded = [];
 
@@ -57,5 +59,22 @@ class Project extends Model implements ModelQuery
             'resource',
             'project_resources'
         );
+    }
+    public function credentials(): MorphToMany
+    {
+        return $this->morphedByMany(
+            Credential::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+    public function credentialFor(string $service): ?Credential
+    {
+        return $this->credentials()->where('service', $service)->firstOrFail();
     }
 }

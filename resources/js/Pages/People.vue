@@ -7,6 +7,8 @@
             @destroy="onDelete"
             @index="({ page, limit }) => $store.dispatch('getFeatureLists', { page, limit, feature: 'contacts' })"
             @execute="onExecute"
+            @save="save"
+            :save="save"
             :data="$store.getters?.features?.contacts ?? []"
             :paginator="$store.getters.featuresPagination"
             :feature="true"

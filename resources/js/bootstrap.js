@@ -5,9 +5,41 @@
  */
 
 import axios from 'axios';
-window.axios = axios;
+import { createToaster } from "@meforma/vue-toaster";
 
+const toaster = createToaster({ /* options */ });
+window.toaster = toaster;
+
+window.axios = axios;
+window.axios.defaults.withCredentials = true;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+
+window.axios.interceptors.request.use(function (config) {
+    return config;
+}, function (error) {
+    const status = error?.response?.status
+    if (status === 401) {
+        window.location = "/login"
+        return Promise.reject(error);
+    }
+
+    if (status === 403) {
+        toaster.error('You do not have permission to perform this action.');
+    } else  if (status === 404) {
+        toaster.error('The requested resource was not found.');
+    } else if (status >= 500 || status === 422) {
+        toaster.error(error?.response?.data?.message ?? error.message)
+    }
+
+    return Promise.reject(error);
+}, {
+
+});
+
+window.onerror = (error) => {
+    toaster.error(error.message);
+}
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

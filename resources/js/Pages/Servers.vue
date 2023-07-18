@@ -15,8 +15,6 @@
                         @destroy="onDelete"
                         @index="({ page, limit, ...args }) => fetch({ page, limit, ...args })"
                         @execute="onExecute"
-                        @save="save"
-                        :save="save"
                         :data="data"
                         :paginator="pagination"
                     >
@@ -32,7 +30,7 @@
                                 </div>
                                 <div class="flex flex-wrap gap-2">
                                     <div class="text-xs dark:text-stone-300">
-                                        {{ data }}
+                                        {{ data?.tags?.map(tag => tag?.name?.en) }}
                                     </div>
                                 </div>
                             </div>
@@ -131,9 +129,10 @@ export default {
         async fetch({ page, limit, ...args }) {
             const { data: { data, ...pagination} } = await axios.get(buildUrl(
                 '/api/servers', {
-                    page, limit,
+                    page,
+                    limit,
                     ...args,
-                    include: []
+                    include: ['tags',]
                 }
             ));
 

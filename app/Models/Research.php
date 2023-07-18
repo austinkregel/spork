@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Research extends Model
 {
@@ -15,5 +16,18 @@ class Research extends Model
         'sources' => 'json',
     ];
 
-    public $guarded = [];
+    public $fillable = [
+        'topic',
+        'notes',
+        'sources',
+    ];
+
+    public function projects(): MorphToMany
+    {
+        return $this->morphToMany(
+            Project::class,
+            'resource',
+            'project_resources'
+        );
+    }
 }

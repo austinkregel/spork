@@ -15,8 +15,6 @@
                         @destroy="onDelete"
                         @index="({ page, limit, ...args}) => fetch({ page, limit, ...args })"
                         @execute="onExecute"
-                        @save="save"
-                        :save="save"
                         :data="data"
                         :paginator="pagination"
                     >

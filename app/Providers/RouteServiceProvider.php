@@ -32,9 +32,8 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
         Route::bind('abstract_model', function ($tableName) {
-            return collect(app(Filesystem::class)->allFiles(app_path('Models')))->map(function (SplFileInfo $file) {
-                $modelClass = ucfirst(str_replace('/', '\\', str_replace('.php', '', substr(str_replace(base_path(), '', $file), 1))));
-
+            return collect(app(Filesystem::class)->allFiles(app_path('Models')))->filter(fn (SplFileInfo $file) => !str_contains(strtolower($file->getRealPath()), 'trait'))->map(function (SplFileInfo $file) {
+                $modelClass = ucfirst(str_replace('/', '\\', str_replace('.php', '', substr(str_replace(base_path(), '', $file->getRealPath()), 1))));
                 return new $modelClass;
             })->filter(function ($model) use ($tableName) {
                 return $model->getTable() === $tableName;

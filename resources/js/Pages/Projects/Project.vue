@@ -15,9 +15,10 @@
                 <div class="mx-4">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Last 30 days</h3>
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
-                        <div v-for="item in stats" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
+                        <div v-for="item in $page.props.project_analytics" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
                             <dt class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">{{ item.name }}</dt>
                             <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">{{ item.stat }}</dd>
+                            <dd class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">Over {{ item.duration }}</dd>
                         </div>
                     </dl>
                 </div>
@@ -59,7 +60,6 @@
                 <div class="border-t border-zinc-600"></div>
                 <div class="mx-4">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Domains</h3>
-
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
                         <div v-for="item in $page.props.project.domains" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
                             <dd class="mt-1 font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
@@ -80,14 +80,17 @@
 
                                 </div>
                                 <div class="flex flex-wrap justify-between">
-                                    <div class="text-2xl">{{ item.name }}</div>
+                                    <div class="flex flex-col">
+                                        <div class="text-2xl">{{ item.name }}</div>
+                                        <div class="text-sm">{{ item.expires_at }}</div>
+                                    </div>
 
                                     <spork-button secondary @click="detach(item)">
                                         Delete
                                     </spork-button>
                                 </div>
                             </dd>
-                            <dt class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">{{ item.expires_at }}</dt>
+                            <dt class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">{{ item.registered_at }}</dt>
 
                         </div>
                         <div v-if="$page.props.project.domains.length === 0" class="p-4 rounded bg-zinc-700 italic col-span-2">
@@ -104,30 +107,100 @@
                         </Link>
                     </div>
                 </div>
+
+                <div class="mx-4">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Credentials</h3>
+                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
+                        <div v-for="item in $page.props.project.credentials" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
+                            <dd class="mt-1 font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+                                <div class="flex flex-wrap justify-between">
+                                    <div class="text-2xl">
+                                        {{ item.name }}
+
+                                        <div class="text-sm">{{ item.service }}</div>
+                                    </div>
+
+                                    <spork-button secondary @click="detach(item)">
+                                        Delete
+                                    </spork-button>
+                                </div>
+                            </dd>
+                            <dt class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">{{ item.expires_at }}</dt>
+
+                        </div>
+                        <div v-if="!$page.props.project.credentials?.length" class="p-4 rounded bg-zinc-700 italic col-span-2">
+                            There are no credentials on this project
+                        </div>
+                    </dl>
+
+                    <div class="text-slate-300 text-sm font-semibold mt-2 flex justify-between">
+                        <button @click="() => {attachOpen = !attachOpen; fetchCredentials({ page: 1, limit: 100})}">
+                            Attach a credential
+                        </button>
+                        <Link href="">
+                            View all credentials
+                        </Link>
+                    </div>
+                </div>
                     <div class="border-t border-zinc-600"></div>
                     <div class="mx-4">
                         <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Pages</h3>
-
                         <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
-                            <div v-for="item in $page.props.project.pages" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
-                                <dt class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">{{ item.title }}</dt>
+                            <div v-for="item in $page.props.project.pages" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 p-4 shadow sm:p-6">
+                                <dt class="truncate flex flex-wrap items-center gap-1  font-medium text-gray-500 dark:text-zinc-300">
+                                    <CheckCircleIcon class="w-5 h-5 text-green-500" v-if="item.is_active" />
+                                    <ExclamationTriangleIcon class="w-5 h-5 text-yellow-500" v-else />
+                                    {{ item.title }}
+                                </dt>
                                 <dd class="mt-1 font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
-                                    <span class="text-3xl">{{ item.domain }}{{item.uri}}</span>
+                                    <span class="text-3xl">{{item.uri}}</span>
                                 </dd>
-                                <dd v-if="item.is_active" class="flex flex-wrap items-center gap-1">
-                                    <CheckIcon class="w-5 h-5 text-white" /> Active
-                                </dd>
+                                <div class="flex items-center flex-wrap justify-between">
+                                    <div class="flex flex-wrap items-center gap-6">
+                                        <div v-if="item.redirect" class="flex flex-wrap items-center gap-2 text-stone-300">
+                                            {{ item.domain.name}}
+                                            <ArrowLongRightIcon class="w-4 h-4 text-stone-100" />
+                                            <!-- SSL  -->
+                                            <LockClosedIcon class="w-4 h-4 text-green-500" />
+                                            undefined.services
+                                        </div>
+                                        <div v-else class="flex flex-wrap items-center gap-2 text-stone-300">
+                                            <LockClosedIcon class="w-4 h-4 text-green-500" />
+                                            {{ item.domain.name}}
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <div class="flex items-center gap-2 bg-stone-800 p-1 rounded">
+                                            <!-- Page is currently published -->
+                                            <ShieldCheckIcon v-if="item.published_at" class="w-5 h-5 text-emerald-500" />
+                                            <!-- Page with a custom function  -->
+                                            <CodeBracketIcon v-if="item.content" class=" w-5 h-5 text-stone-400" />
+                                            <!-- Page with a redirect  -->
+                                            <ForwardIcon v-if="item.redirect" class="w-5 h-5 text-blue-400" />
+                                            <!-- Has a custom view -->
+                                            <DocumentIcon v-if="item.view" class="w-5 h-5 text-stone-300" />
+                                        </div>
+                                        <button class="target:outline-none" @click="detach(item)">
+                                            <TrashIcon class="w-5 h-5 text-white" />
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div v-if="$page.props.project.pages.length === 0" class="p-4 rounded bg-zinc-700 italic col-span-2">
                                 There are no pages on this project
                             </div>
                         </dl>
-
-                        <pre>{{ $page.props.project.pages}}</pre>
                         <div class="text-slate-300 text-sm font-semibold mt-2 flex justify-between">
-                            <button @click="() => {}">
-                                Draft a Page
-                            </button>
+                            <div class="flex flex-wrap items-center gap-4">
+                                <button @click="() => {attachOpen = !attachOpen; fetchPages({ page: 1, limit: 100})}">
+                                    Attach a Page
+                                </button>
+                                <Link href="/pages/create">
+                                    Create a Page
+                                </Link>
+                            </div>
+
                             <Link href="">
                                 View all pages
                             </Link>
@@ -141,7 +214,7 @@
                     </div>
                 </template>
                 <template #content>
-                    <div class="max-h-72 overflow-y-scroll dark:text-zinc-200 p-4 flex flex-col gap-2">
+                    <div class="max-h-72 overflow-y-scroll dark:text-zinc-200 p-4 flex flex-col gap-2 border dark:border-zinc-600 rounded-lg">
                         <button @click="allSelected = !allSelected" class="cursor-pointer flex flex-wrap items-center gap-2">
                             <input
                                 class="dark:bg-zinc-700"
@@ -162,7 +235,7 @@
                                     :value="item.id"
                                 />
                                 <span>
-                                    {{ item.name}} ({{item?.server_id ?? item?.credential?.name ?? item?.credential_id}})
+                                    {{ item.name ?? item.title}} ({{item?.server_id ?? item?.credential?.name ?? item?.credential_id ?? item.slug }})
                                 </span>
                             </label>
                         </div>
@@ -190,10 +263,25 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
-import {ChevronRightIcon, CheckIcon} from "@heroicons/vue/20/solid";
+import {
+    ShieldCheckIcon,
+    ChevronRightIcon,
+    CheckIcon,
+    CheckCircleIcon,
+    TrashIcon,
+    LockClosedIcon,
+    CodeBracketIcon,
+    ForwardIcon,
+    ExclamationTriangleIcon,
+} from "@heroicons/vue/24/outline";
+import {
+    ArrowLongRightIcon,
+    DocumentIcon,
+} from "@heroicons/vue/20/solid";
 import Modal from "@/Components/Modal.vue";
 import DialogModal from "@/Components/DialogModal.vue";
 import SporkButton from "@/Components/Spork/SporkButton.vue";
+
 export default {
     components: {
         SporkButton,
@@ -204,16 +292,18 @@ export default {
         ChevronRightIcon,
         SporkInput,
         Link,
-        CheckIcon
+        CheckIcon,
+        CheckCircleIcon,
+        ShieldCheckIcon,
+        TrashIcon,
+        LockClosedIcon,
+        CodeBracketIcon,
+        ForwardIcon,
+        DocumentIcon,
+        ExclamationTriangleIcon,
+        ArrowLongRightIcon,
     },
     setup() {
-        const stats = [
-            { name: 'Total visits', stat: '71,897' },
-            { name: 'Avg. Open Rate', stat: '58.16%' },
-            { name: 'Avg. Click Rate', stat: '24.57%' },
-        ]
-
-
         return {
             console,
             allSelected: ref(false),
@@ -224,7 +314,6 @@ export default {
             })),
             data: ref([]),
             pagination: ref({}),
-            stats,
             attach: ref([]),
             resources: ref([]),
             attachOpen: ref(false),
@@ -284,17 +373,9 @@ export default {
             }
         },
         async fetch({ page, limit }) {
-            const { data: { data, ...pagination} } = await axios.get(buildUrl(
-                '/api/projects', {
-                    page, limit,
-                    include: ['domains', 'servers']
-                }
-            ));
-
-            this.data = data;
-            this.pagination = pagination;
         },
         async fetchServers({ page, limit }) {
+
             const { data: { data, ...pagination} } = await axios.get(buildUrl(
                 '/api/servers', {
                     page, limit,
@@ -308,21 +389,46 @@ export default {
             this.resources = data.filter(server => server?.tags?.map(tag => tag.name.en).includes('default'))?.map(server => server.id) ?? [];
         },
         async fetchDomains({ page, limit }) {
-                const {data: {data, ...pagination}} = await axios.get(buildUrl(
-                    '/api/domains', {
-                        page, limit,
-                        action: 'pagination:100',
-                        sort: 'name',
-                        include: ['projects']
-                    }
-                ));
+            const {data: {data, ...pagination}} = await axios.get(buildUrl(
+                '/api/domains', {
+                    page, limit,
+                    action: 'pagination:100',
+                    sort: 'name',
+                    include: ['projects']
+                }
+            ));
 
-                this.type = 'App\\Models\\Domain';
-                this.attach = data.filter(domain => domain.projects.length === 0);
+            this.type = 'App\\Models\\Domain';
+            this.attach = data.filter(domain => domain.projects.length === 0);
+        },
+        async fetchCredentials({ page, limit }) {
+            const {data: {data, ...pagination}} = await axios.get(buildUrl(
+                '/api/credentials', {
+                    page, limit,
+                    action: 'pagination:100',
+                    sort: 'name',
+                    include: []
+                }
+            ));
+
+            this.type = 'App\\Models\\Credential';
+            this.attach = data;
+        },
+        async fetchPages({ page, limit }) {
+            const {data: {data, ...pagination}} = await axios.get(buildUrl(
+                '/api/pages', {
+                    page, limit,
+                    action: 'pagination:100',
+                    include: []
+                }
+            ));
+
+            this.type = 'App\\Models\\Page';
+            this.attach = data;
         },
         async attachToProject(type, model) {
             Promise.all(this.resources.map(async (modelId) => {
-                await axios.post('/api/project/' + this.$page.props.project.id + '/attach', {
+                await axios.post('/project/' + this.$page.props.project.id + '/attach', {
                     resource_type: type,
                     resource_id: modelId,
                 })
@@ -333,7 +439,7 @@ export default {
             });
         },
         async detach(item) {
-            await axios.post('/api/project/' + this.$page.props.project.id + '/detach', item.pivot);
+            await axios.post('/project/' + this.$page.props.project.id + '/detach', item.pivot);
             router.reload({ only: ['project'] })
         }
     },

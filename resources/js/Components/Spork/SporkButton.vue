@@ -56,7 +56,7 @@ export default {
             }
 
             if (this.secondary) {
-                return 'border-zinc-100 dark:border-zinc-50 dark:text-zinc-50 hover:border-zinc-200 focus:ring-zinc-500'
+                return 'border-zinc-100 dark:border-zinc-500 dark:text-zinc-50 hover:border-zinc-200 focus:ring-zinc-500'
             }
             if (this.danger) {
                 return 'border-transparent bg-red-100 hover:bg-red-200 focus:ring-red-500'

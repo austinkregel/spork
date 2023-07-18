@@ -100,15 +100,17 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
 
         if (empty($response->json('result.name_servers'))) {
             if (str_contains($response->json('errors.0.message'), 'already exists')) {
-                $domains = array_filter($allDomains = $this->getDomains(1000, 1)->items(), fn ($domain) => $domain['domain'] === $domain);
-                dd($response->json(), $domains, $domain, $allDomains);
+                $domains = array_filter($allDomains = $this->getDomains(1000, 1)->items(), fn ($d) => $d['domain'] === $domain);
 
-                return [];
+                foreach ($domains as $domain) {
+                    return $domain['name_servers'];
+                }
+
+                throw new \Exception('Domain exists but could not be found');
             }
 
             throw $response->toException();
         }
-        dd($response->json());
 
         return $response->json('result.name_servers');
     }
@@ -124,6 +126,11 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         ], isset($type) ? compact('type') : []));
 
         $data = $response->json('result');
+
+        if (!isset($data)) {
+            dd($response->json());
+        }
+
 
         return new LengthAwarePaginator(
             array_map(fn ($dnsRecord) => [
@@ -142,10 +149,17 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
 
     public function createDnsRecord(string $domain, array $dnsRecordArray): void
     {
-        Http::withHeaders([
+        $response = Http::withHeaders([
             'Authorization' => 'Bearer '.$this->apiKey,
             'x-auth-email' => $this->email,
+            'content-type' => 'application/json',
         ])->post(static::CLOUDFLARE_URL."/zones/$domain/dns_records", $dnsRecordArray);
+
+        $id = $response->json('result.id');
+
+        if (empty($id)) {
+            throw new \Exception('Could not create DNS record');
+        }
     }
 
     public function hasEmailRouting(string $domain): bool
@@ -230,7 +244,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
                 'uncachedCount',
                 'staleCount',
             ]),
-            'since' => $startDate->subDay()->startOfDay(),
+            'since' => $startDate->startOfDay(),
             'until' => $endDate->endOfDay(),
         ]));
 
@@ -268,7 +282,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
                 'dimensions' => $dimensions,
             ] = $rowOfData;
 
-            $analytic = DomainAnalytics::firstOrCreate($dimensions, $metrics);
+            $analytic = $domain->domainAnalytics()->firstOrCreate($dimensions, $metrics);
 
             if (! $analytic->wasRecentlyCreated) {
                 $analytic->update($metrics);

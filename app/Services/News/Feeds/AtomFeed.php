@@ -30,7 +30,7 @@ class AtomFeed extends AbstractFeed
 
     public function getName(): string
     {
-        return $this->element->title;
+        return (string) $this->element?->title;
     }
 
     public function getData(): array

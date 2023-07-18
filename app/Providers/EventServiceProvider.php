@@ -22,21 +22,28 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+            Listeners\DebugEventListener::class
         ],
         Events\Pages\PageCreated::class => [
             GenerateNewRoutesFileFromDatabase::class,
+            Listeners\DebugEventListener::class
         ],
         Events\Pages\PageUpdated::class => [
             GenerateNewRoutesFileFromDatabase::class,
+            Listeners\DebugEventListener::class
         ],
-        Events\DataRefreshRequested::class => [],
+        Events\DataRefreshRequested::class => [
+            Listeners\DebugEventListener::class
+        ],
         Events\Domains\DomainCreated::class => [
             Listeners\Domains\UpdateDomainToUseCloudflareDns::class,
+            Listeners\DebugEventListener::class
         ],
         Events\Domains\DnsRecordVerified::class => [
-
+            Listeners\DebugEventListener::class
         ],
         Events\Domains\NameServerRecordVerified::class => [
+            Listeners\DebugEventListener::class
 
         ],
     ];
