@@ -1,7 +1,7 @@
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <div class=" flex items-center font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <div class=" flex items-center gap-2 font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
                 <Link href="/projects" class="underline">
                     Projects
                 </Link>

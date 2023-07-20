@@ -88,6 +88,7 @@ class Credential extends Model implements ModelQuery
         'api_key',
         'access_token',
         'refresh_token',
+        'user_id'
     ];
 
     public $casts = [
@@ -107,15 +108,16 @@ class Credential extends Model implements ModelQuery
         'enabled_on',
     ];
 
+    public static function booted(){
+      parent::booted();
+        static::creating(function ($credential) {
+            $credential->user_id = auth()->id() ?? 1;
+        });
+    }
+
     public function getPublicKey(): string
     {
         $publicKeyFile = storage_path('app/ssh-keys/'.$this->id.'.pub');
-
-        if (! file_exists($publicKeyFile)) {
-            file_put_contents($publicKeyFile, $this->settings['pub_key'] ?? '');
-            chmod($publicKeyFile, 0600);
-        }
-
         return $publicKeyFile;
     }
 

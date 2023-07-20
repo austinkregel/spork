@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs\Servers;
 
 use App\Models\Server;
+use App\Services\Development\ForgeDevelopmentService;
 use App\Services\Factories\ServerServiceFactory;
 use App\Services\LaravelForgeService;
 
@@ -18,7 +19,7 @@ class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
     public function sync(): void
     {
         // this means all servers need to respond with the keys.
-        $servers = (new LaravelForgeService($this->credential))->getServers();
+        $servers = (new ForgeDevelopmentService($this->credential))->findAllServers();
 
         foreach ($servers as $server) {
             $localServer = Server::where('server_id', $server['id'])

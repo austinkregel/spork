@@ -46,9 +46,6 @@ class NamecheapSyncJob extends AbstractSyncRegistrarResourceJob
 
                 if ($localDomain->isDirty() || ! $localDomain->exists()) {
                     $localDomain->save();
-                    if ($localDomain->wasRecentlyCreated) {
-                        event(new DomainCreated($localDomain, $this->credential, Credential::find(4)));
-                    }
                 }
             }
         } while ($domains->hasMorePages());

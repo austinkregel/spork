@@ -26,20 +26,20 @@ class ForgeDevelopmentService
 
     public function findAllServers()
     {
-        $servers = $this->client->get('https://forge.laravel.com/api/v1/servers');
+        $servers = $this->client->servers();
 
-        return array_map(fn ($serverConfig) => [
-            'id' => $serverConfig['id'],
-            'name' => $serverConfig['name'],
-            'size' => $serverConfig['size'],
-            'ip_address' => $serverConfig['ip_address'],
-            'private_ip_address' => $serverConfig['private_ip_address'],
-            'ssh_port' => $serverConfig['ssh_port'],
-            'network' => $serverConfig['network'],
-            'php_version' => $serverConfig['php_version'],
-            'type' => $serverConfig['type'],
-            'created_at' => $serverConfig['created_at'],
-        ], $servers['servers']);
+        return array_map(fn (\Laravel\Forge\Resources\Server $serverConfig) => [
+            'id' => $serverConfig->id,
+            'name' => $serverConfig->name,
+            'size' => $serverConfig->size,
+            'ip_address' => $serverConfig->ipAddress,
+            'private_ip_address' => $serverConfig->privateIpAddress,
+            'ssh_port' => $serverConfig->sshPort,
+            'network' => $serverConfig->network,
+            'php_version' => $serverConfig->phpVersion,
+            'type' => $serverConfig->type,
+            'created_at' => $serverConfig->createdAt,
+        ], $servers);
     }
 
     public function getDomains($serverId)

@@ -30,8 +30,6 @@ class CompileNpmAssetsJob implements ShouldQueue
     public function handle()
     {
         $sshCredential = $this->project->credentialFor(Credential::TYPE_SSH);
-        // Run npm install, then npm run production
-        // upload assets to s3
 
         try {
             $service = new SshService(

@@ -48,23 +48,49 @@
                                         <spork-input v-model="form.name" type="text" name="name" id="name" />
                                     </div>
 
+
                                     <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">Api key</label>
-                                        <spork-input v-model="form.api_key" type="text" name="api_key" id="api_key" />
+                                        <label for="name" class="block text-sm font-medium">Type</label>
+                                        <spork-select v-model="form.type" type="text" name="refresh_token" id="refresh_token">
+                                            <option value="">Select one</option>
+                                            <option v-for="type in ['domain','registrar', 'ssh','development']" :value="type">{{type}}</option>
+                                        </spork-select>
+                                    </div>
+                                    <div class="col-span-6">
+                                        <label for="name" class="block text-sm font-medium">Service</label>
+                                        <spork-select v-model="form.service" type="text" name="refresh_token" id="refresh_token">
+                                            <option value="">Select one</option>
+                                            <option v-for="type in ['namecheap', 'forge', 'cloudflare', 'digitalocean']" :value="type">{{type}}</option>
+                                        </spork-select>
                                     </div>
 
                                     <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">Secret key</label>
-                                        <spork-input v-model="form.secret_key" type="text" name="secret_key" id="secret_key" />
-                                    </div>
-                                    <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">Access token</label>
+                                        <label for="access_token" class="block text-sm font-medium">Api key/Access Token</label>
                                         <spork-input v-model="form.access_token" type="text" name="access_token" id="access_token" />
                                     </div>
-                                    <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">Refresh token</label>
-                                        <spork-input v-model="form.refresh_token" type="text" name="refresh_token" id="refresh_token" />
+
+                                    <div class="col-span-6" v-if="form.service === 'namecheap'">
+                                        <label for="api_user" class="block text-sm font-medium">API User</label>
+                                        <spork-input v-model="form.settings.api_user" type="text" name="api_user" id="api_user" />
                                     </div>
+                                    <div class="col-span-6" v-if="form.service === 'namecheap'">
+                                        <label for="username" class="block text-sm font-medium">Username</label>
+                                        <spork-input v-model="form.settings.username" type="text" name="username" id="username" />
+                                    </div>
+                                    <div class="col-span-6" v-if="form.service === 'namecheap'">
+                                        <label for="client_ip" class="block text-sm font-medium">Client IP</label>
+                                        <spork-input v-model="form.settings.client_ip" type="text" name="client_ip" id="client_ip" />
+                                    </div>
+
+                                    <div class="col-span-6" v-if="form.service === 'cloudflare'">
+                                        <label for="account_email" class="block text-sm font-medium">Account Email</label>
+                                        <spork-input v-model="form.settings.email" type="text" name="account_email" id="account_email" />
+                                    </div>
+                                    <div class="col-span-6" v-if="form.service === 'cloudflare'">
+                                        <label for="account_id" class="block text-sm font-medium">Account ID</label>
+                                        <spork-input v-model="form.settings.account_id" type="text" name="account_id" id="account_id" />
+                                    </div>
+
 
                                 </div>
                             </div>
@@ -84,8 +110,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
+import SporkSelect from "@/Components/Spork/SporkSelect.vue";
 export default {
     components: {
+        SporkSelect,
         CrudView,
         AppLayout,
         SporkInput
@@ -95,14 +123,18 @@ export default {
             createOpen: ref(false),
             form: ref(({
                 name: '',
+                type: '',
+                service: '',
                 api_key: '',
                 secret_key: '',
                 access_token: '',
                 refresh_token: '',
+                settings: {
+
+                },
             })),
             data: ref([]),
             pagination: ref({}),
-
         }
     },
     watch: {
@@ -162,10 +194,5 @@ export default {
             }
         }
     },
-
 }
 </script>
-
-<style scoped>
-
-</style>

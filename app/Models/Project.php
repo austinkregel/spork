@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Services\SshKeyGeneratorService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -77,6 +78,27 @@ class Project extends Model implements ModelQuery
 
     public function credentialFor(string $service): ?Credential
     {
-        return $this->credentials()->where('service', $service)->firstOrFail();
+        $credential = $this->credentials()->where('service', $service)->first();
+
+        if (! $credential) {
+            if (Credential::TYPE_SSH === $service) {
+                $generatorService = new SshKeyGeneratorService();
+
+                $credential = $this->credentials()->create([
+                    'service' => Credential::TYPE_SSH,
+                    'type' => Credential::TYPE_SSH,
+                    'name' => 'Forge',
+                    'pub_key' => encrypt($generatorService->getPublicKey()),
+                    'private_key' => encrypt($generatorService->getPrivateKey()),
+                    'user_id' => auth()->id(),
+                ]);
+
+                return $credential;
+            }
+
+            throw new \Exception('No credential found for '.$service);
+        }
+
+        return $credential;
     }
 }
