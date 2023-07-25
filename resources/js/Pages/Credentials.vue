@@ -91,6 +91,15 @@
                                         <spork-input v-model="form.settings.account_id" type="text" name="account_id" id="account_id" />
                                     </div>
 
+                                    <div class="col-span-6" v-if="form.type === 'ssh'">
+                                        <label for="account_id" class="block text-sm font-medium">SSH Private Key</label>
+                                        <spork-input ref="private_key" @change="onFileUploadForPrivateKey" type="file" name="account_id" id="account_id" />
+                                    </div>
+                                    <div class="col-span-6" v-if="form.type === 'ssh'">
+                                        <label for="account_id" class="block text-sm font-medium">SSH Public Key</label>
+                                        <spork-input ref="public_key" @change="onFileUploadForPublicKey" type="file" name="account_id" id="account_id" />
+                                    </div>
+
 
                                 </div>
                             </div>
@@ -133,6 +142,8 @@ export default {
 
                 },
             })),
+            private_key: ref(null),
+            public_key: ref(null),
             data: ref([]),
             pagination: ref({}),
         }
@@ -192,7 +203,21 @@ export default {
             } catch (e) {
                 toaster.error(e.message)
             }
-        }
+        },
+        onFileUploadForPrivateKey(event) {
+            var fr=new FileReader();
+            fr.onload=function(){
+                this.form.settings.private_key = fr.result;
+            }.bind(this);
+            fr.readAsText(event.target.files[0]);
+        },
+        onFileUploadForPublicKey(event) {
+            var fr=new FileReader();
+            fr.onload=function(){
+                this.form.settings.pub_key = fr.result;
+            }.bind(this);
+            fr.readAsText(event.target.files[0]);
+        },
     },
 }
 </script>

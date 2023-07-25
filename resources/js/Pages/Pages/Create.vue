@@ -1,112 +1,128 @@
-<script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import CreateTeamForm from '@/Pages/Teams/Partials/CreateTeamForm.vue';
-import SporkInput from "@/Components/Spork/SporkInput.vue";
-import SporkLabel from "@/Components/Spork/SporkLabel.vue";
-import {ref} from "vue";
-import FormSection from "../../Components/FormSection.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
-
-const form = ref({
-    title: '',
-    uri: '',
-    slug: '',
-    route: '',
-    middleware: '',
-    subtitle: '',
-    excerpt: '',
-    content: '',
-    view: '',
-    redirect: '',
-    is_active: '',
-    sort_order: '',
-    published_at: ''
-});
-</script>
-
 <template>
-    <AppLayout title="Create Team">
-        <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
-                Create Team
-            </h2>
-        </template>
+    <div id="app" class="h-screen grid grid-cols-4 gap-4 p-4">
+        <!-- Components List -->
+        <div class="col-span-1 bg-blue-200 rounded-lg p-4 overflow-y-auto h-full">
+            <h2 class="text-2xl mb-4 font-bold">Component Library</h2>
+            <VueDraggableNext
+                v-model="components"
+                :options="{ group: { name: 'components', pull: 'clone', put: false } }"
+                @start="dragStart"
+                @end="dragEnd"
+                :drag="false"
+            >
+                <div
+                    v-for="(element, index) in components"
+                     :key="index"
+                    class="bg-white p-2 rounded my-1"
+                    v-html="element.svg"
+                ></div>
+            </VueDraggableNext>
+        </div>
 
-        <div>
-            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <!-- Build a form using the Sporkinput component, SporkLabel component, and SporkSelect component to create a form that allows our user to create pages for their projects -->
-                <FormSection>
-                    <template #title>
-                        <span>Thing</span>
-                    </template>
-                    <template #description>
-                        <span>Thing</span>
-                    </template>
-                    <!-- Label, then input-->
-                    <template #form>
-                            <div class="w-full">
-                                <spork-label for="title" class="block text-sm font-medium">Title</spork-label>
-                                <spork-input v-model="form.title" type="text" name="title" id="title" />
-                            </div>
-                        <div class="w-full">
-                                <spork-label for="uri" class="block text-sm font-medium">URI</spork-label>
-                                <spork-input v-model="form.uri" type="text" name="uri" id="uri" />
-                            </div>
-                        <div class="w-full">
-                                <spork-label for="slug" class="block text-sm font-medium">Slug</spork-label>
-                                <spork-input v-model="form.slug" type="text" name="slug" id="slug" />
-                            </div>
-                        <div class="w-full">
-                                <spork-label for="route" class="block text-sm font-medium">Route</spork-label>
-                                <spork-input v-model="form.route" type="text" name="route" id="route" />
-                            </div>
-                        <div class="w-full">
-                                <spork-label for="middleware" class="block text-sm font-medium">Middleware</spork-label>
-                                <spork-input v-model="form.middleware" type="text" name="middleware" id="middleware" />
-                            </div>
-                        <div class="w-full">
-                                <spork-label for="subtitle" class="block text-sm font-medium">Subtitle</spork-label>
-                                <spork-input v-model="form.subtitle" type="text" name="subtitle" id="subtitle" />
-                            </div>
-                        <div class="w-full">
-                                <spork-label for="excerpt" class="block text-sm font-medium">Excerpt</spork-label>
-                                <spork-input v-model="form.excerpt" type="text" name="excerpt" id="excerpt" />
-                            </div>
-                            <div>
-                                <spork-label for="content" class="block text-sm font-medium">Content</spork-label>
-                                <spork-input v-model="form.content" type="text" name="content" id="content" />
-                            </div>
-                            <div>
-                                <spork-label for="view" class="block text-sm font-medium">View</spork-label>
-                                <spork-input v-model="form.view" type="text" name="view" id="view" />
-                            </div>
-                            <div>
-                                <spork-label for="redirect" class="block text-sm font-medium">Redirect</spork-label>
-                                <spork-input v-model="form.redirect" type="text" name="redirect" id="redirect" />
-                            </div>
-                            <div>
-                                <spork-label for="is_active" class="block text-sm font-medium">Is Active</spork-label>
-                                <spork-input v-model="form.is_active" type="text" name="is_active" id="is_active" />
-                            </div>
-                            <div>
-                                <spork-label for="sort_order" class="block text-sm font-medium">Sort Order</spork-label>
-                                <spork-input v-model="form.sort_order" type="text" name="sort_order" id="sort_order" />
-                            </div>
-                            <div>
-                                <spork-label for="published_at" class="block text-sm font-medium">Published At</spork-label>
+        <!-- Canvas Area -->
+        <div class="col-span-2 bg-green-200 rounded-lg p-4 overflow-y-auto h-full">
+            <h2 class="text-2xl mb-4 font-bold">Website Canvas</h2>
+            <VueDraggableNext
+                v-model="canvasComponents"
+                :options="{ group: { name: 'canvas' } }"
+                @add="cloneComponent"
+                class="py-4 bg-green-800"
+            >
+                <component
+                    v-for="component in canvasComponents"
+                    @click="selectedComponent = component"
+                    :key="component.id"
+                    :is="component.name"
+                    class="my-4"
+                    v-bind="component.props"
+                ></component>
+            </VueDraggableNext>
 
-                                <spork-input v-model="form.published_at" type="text" name="published_at" id="published_at" />
-                            </div>
-                    </template>
 
-                    <template #actions>
-                        <div class="flex flex-wrap gap-4">
-                            <spork-button secondary>cancel</spork-button>
-                            <spork-button primary>Save</spork-button>
-                        </div>
-                    </template>
-                </FormSection>
+        </div>
+
+        <!-- Properties Panel -->
+        <div class="h-full w-64 border overflow-auto p-2">
+            <h2 class="text-2xl mb-4">Properties Panel</h2>
+            <div v-if="selectedComponent">
+                <h3>{{ selectedComponent.type }}</h3>
+                <div v-for="(value, propName) in selectedComponent.props" :key="propName">
+                    <label :for="propName" class="block text-sm font-medium text-gray-700">
+                        {{ propName }}
+                    </label>
+                    <input
+                        :id="propName"
+                        v-model="selectedComponent.props[propName]"
+                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                </div>
+            </div>
+            <div v-else>
+                <p>Select a component to view its properties.</p>
             </div>
         </div>
-    </AppLayout>
+
+    </div>
 </template>
+
+<script>
+import { VueDraggableNext } from 'vue-draggable-next';
+import Hero from '../../Components/Hero.vue';
+
+export default {
+    name: 'App',
+    components: {
+        VueDraggableNext,
+        Hero,
+    },
+    data() {
+        return {
+            components: [
+                {
+                    id: 1,
+                    name: 'Hero',
+                    svg: `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+        <path d="M10 25 Q 15 5, 20 25 Q 25 45, 30 25 Q 35 5, 40 25" stroke="black" fill="transparent"/>
+      </svg>
+    `,
+                    props: {
+                        background: '',
+                        title: 'Hello, Vue!',
+                        description: 'This is a hero component',
+                        ctaText: 'Learn more',
+                        ctaLink: '#',
+                    },
+                },
+            ]
+            ,
+            canvasComponents: [],
+            selectedComponent: null,
+            draggedComponent: null,
+        };
+    },
+    methods: {
+        selectComponent(component) {
+            this.selectedComponent = component;
+        },
+        dragStart(evt) {
+            this.draggedComponent = this.components[evt.oldIndex];
+            console.log(this.draggedComponent, evt);
+        },
+        dragEnd(evt) {
+            this.cloneComponent(evt);
+        },
+        cloneComponent(evt) {
+            console.log('logging');
+            this.canvasComponents[evt.newIndex] = {
+                ...this.draggedComponent,
+                id: Date.now(),
+                props: { ...this.draggedComponent.props }
+            };
+
+            console.log(this.canvasComponents, evt);
+        },
+
+    },
+};
+</script>
