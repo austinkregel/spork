@@ -19,9 +19,9 @@ $ ./sail up -d
  - [x] DNS Validation/Verification
  - [x] Projects, with relations to domains, servers, rss feeds, pages (and redirects), and people in a one to many association for organization.
  - [-] Automatically adding and configuring purchased domains to Cloudflare & Laravel Forge, and provision out the routing automatically. (Still in progress)
+ - [x] Automatic SSL configuration via forge.
 
 ## Planned 
- - [ ] Automatic SSL configuration via forge.
  - [ ] IFTTT inspired Dynamic Automations
  - [ ] Plaid integration for asset syncing
  - [ ] Budgeting per project
@@ -32,6 +32,29 @@ $ ./sail up -d
    - [ ] List tasks from all projects
    - [ ] List events from all projects
    - [ ] List budget usage -- if applicable.
+ - [ ] Domain Purchasing and Renewals
 
+# Domain Feature Details
+This presently uses Cloudflare DNS. 
 
-### Happily built with Laravel Jetstream Inertia
+We can configure and manage any DNS records that Cloudflare supports.
+
+We also want to be able to update the NS of registrars to point to Cloudflare
+
+## Domain Syncing
+This will sync domains from Namecheap to Cloudflare. It will also sync domains from Cloudflare to Laravel Forge.
+
+# Server Feature Details
+We can manage any server listed in our database as long as there is at least an SSH server configured.
+
+Servers house code or perform jobs. They are not necessarily web servers, but can be. When accessed via SSH, you have full access to everything that user has access to.
+
+## Server Feature Details
+Laravel Forge, and Digital Ocean are both supported providers, but any server can be added manually and accessed via SSH.
+
+# RSS Feature Details
+RSS feeds are synced and updated on a schedule. This is done via a job that runs every 15 minutes.
+
+# Page Feature Details  
+Pages are dynamic routes that can be configured to point to any domain, or server. They can also be configured to redirect to another page, or domain.
+
