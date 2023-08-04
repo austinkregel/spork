@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Exception;
-use Illuminate\Support\Facades\Crypt;
 
 class SshKeyGeneratorService
 {
@@ -23,7 +22,7 @@ class SshKeyGeneratorService
         protected bool $overwrite = false,
         protected string $encryptedPrivateKey = '',
         protected string $encryptedPublicKey = '',
-        protected  string $passKey = "",
+        protected string $passKey = '',
     ) {
         $res = openssl_pkey_new([
             'curve_name' => $this->curveName,
@@ -48,7 +47,7 @@ class SshKeyGeneratorService
         }
 
         if (! file_exists($this->publicKeyFile)) {
-//            dd(sprintf('echo "%s"', $this->passKey).' && ssh-keygen -y -f '.$this->privateKeyFile.' > '.$this->publicKeyFile);
+            //            dd(sprintf('echo "%s"', $this->passKey).' && ssh-keygen -y -f '.$this->privateKeyFile.' > '.$this->publicKeyFile);
             file_put_contents($this->publicKeyFile, $this->encryptedPublicKey);
             chmod($this->publicKeyFile, 0600);
         }

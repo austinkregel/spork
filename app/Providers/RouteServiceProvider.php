@@ -67,7 +67,7 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::domains([
                 'petoskey.localhost',
-                'petoskey.today'
+                'petoskey.today',
             ], function () {
                 Route::middleware('web')
                     ->group(base_path('routes/pages/petoskey.php'));
