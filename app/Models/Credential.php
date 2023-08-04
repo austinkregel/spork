@@ -88,7 +88,7 @@ class Credential extends Model implements ModelQuery
         'api_key',
         'access_token',
         'refresh_token',
-        'user_id'
+        'user_id',
     ];
 
     public $casts = [
@@ -108,8 +108,9 @@ class Credential extends Model implements ModelQuery
         'enabled_on',
     ];
 
-    public static function booted(){
-      parent::booted();
+    public static function booted()
+    {
+        parent::booted();
         static::creating(function ($credential) {
             $credential->user_id = auth()->id() ?? 1;
         });
@@ -120,7 +121,7 @@ class Credential extends Model implements ModelQuery
         $publicKeyFile = $this->settings['pub_key_file'];
 
         if (! file_exists($publicKeyFile)) {
-            file_put_contents($publicKeyFile, $this->settings['private_key'] ?? '');
+            file_put_contents($publicKeyFile, $this->settings['pub_key'] ?? '');
             chmod($publicKeyFile, 0600);
         }
         return $publicKeyFile;

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 class SshKeyGeneratorService
 {
     protected string $privateKey;
+
     protected string $publicKey;
 
     /**
@@ -25,11 +26,11 @@ class SshKeyGeneratorService
         protected  string $passKey = "",
     ) {
         $res = openssl_pkey_new([
-            "curve_name" => $this->curveName,
-            "private_key_type" => OPENSSL_KEYTYPE_EC,
+            'curve_name' => $this->curveName,
+            'private_key_type' => OPENSSL_KEYTYPE_EC,
         ]);
 
-        if (!$res) {
+        if (! $res) {
             throw new Exception('Could not generate the key pair.');
         }
 

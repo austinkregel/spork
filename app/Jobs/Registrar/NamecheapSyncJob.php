@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Jobs\Registrar;
 
-use App\Events\Domains\DomainCreated;
-use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Registrar;
 use Illuminate\Support\Str;
