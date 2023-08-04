@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Jobs\Registrar;
 
 use App\Models\Domain;
-use App\Models\Registrar;
 use Illuminate\Support\Str;
 
 class NamecheapSyncJob extends AbstractSyncRegistrarResourceJob
