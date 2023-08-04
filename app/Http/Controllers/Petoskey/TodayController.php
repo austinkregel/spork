@@ -14,7 +14,7 @@ class TodayController
         return view('petoskey.today', [
             'articles' => Article::query()
                 ->where('author_type', ExternalRssFeed::class)
-                ->where('author_id', ExternalRssFeed::query()
+                ->whereIn('author_id', ExternalRssFeed::query()
                     ->with('articles')
                     ->where('name', 'Petoskey Area')
                     ->pluck('id')
