@@ -37,7 +37,8 @@ class InstallComposerAssetsJob
                 $this->server->internal_ip_address,
                 'forge',
                 $sshCredential->getPublicKey(),
-                $sshCredential->getPrivateKey()
+                $sshCredential->getPrivateKey(),
+                passKey: $sshCredential->getPasskey(),
             );  // replace with your server details
 
             $installLog = $service->execute('composer install', '/home/forge/'.$this->domain->name);

@@ -8,14 +8,15 @@ use Exception;
 
 class SshService
 {
-    private mixed $connection;
+    protected mixed $connection;
 
     public function __construct(
-        private string $host,
-        private string $username,
-        private string $publicKeyFile,
-        private string $privateKeyFile,
-        private int $port = 22,
+        protected string $host,
+        protected string $username,
+        protected string $publicKeyFile,
+        protected string $privateKeyFile,
+        protected int $port = 22,
+        protected string $passKey = "",
     ) {
         $this->connection = ssh2_connect($this->host, $this->port);
 
@@ -23,8 +24,8 @@ class SshService
             throw new Exception('Connection failed.');
         }
 
-        if (! ssh2_auth_pubkey_file($this->connection, $this->username, $this->publicKeyFile, $this->privateKeyFile)) {
-            throw new Exception('Public key authentication failed.');
+        if (! ssh2_auth_pubkey_file($this->connection, $this->username, $this->publicKeyFile, $this->privateKeyFile, $this->passKey)) {
+             throw new Exception('Public key authentication failed. '.$this->username.'@'.$this->host.':'.$this->port);
         }
     }
 

@@ -33,10 +33,11 @@ class CompileNpmAssetsJob implements ShouldQueue
 
         try {
             $service = new SshService(
-                $this->server->internal_ip_address,
-                'forge',
-                $sshCredential->getPublicKey(),
-                $sshCredential->getPrivateKey()
+                host: $this->server->internal_ip_address,
+                username: 'forge',
+                publicKeyFile: $sshCredential->getPublicKey(),
+                privateKeyFile: $sshCredential->getPrivateKey(),
+                passKey: $sshCredential->getPasskey()
             );  // replace with your server details
 
             $installLog = $service->execute('npm install', '/home/forge/'.$this->domain->name);

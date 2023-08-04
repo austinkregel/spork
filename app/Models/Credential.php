@@ -117,13 +117,18 @@ class Credential extends Model implements ModelQuery
 
     public function getPublicKey(): string
     {
-        $publicKeyFile = storage_path('app/ssh-keys/'.$this->id.'.pub');
+        $publicKeyFile = $this->settings['pub_key_file'];
+
+        if (! file_exists($publicKeyFile)) {
+            file_put_contents($publicKeyFile, $this->settings['private_key'] ?? '');
+            chmod($publicKeyFile, 0600);
+        }
         return $publicKeyFile;
     }
 
     public function getPrivateKey(): string
     {
-        $privateKeyFile = storage_path('app/ssh-keys/'.$this->id);
+        $privateKeyFile = $this->settings['private_key_file'];
 
         if (! file_exists($privateKeyFile)) {
             file_put_contents($privateKeyFile, $this->settings['private_key'] ?? '');
@@ -131,5 +136,10 @@ class Credential extends Model implements ModelQuery
         }
 
         return $privateKeyFile;
+    }
+
+    public function getPasskey(): string
+    {
+        return decrypt($this->settings['pass_key'] ?? '');
     }
 }

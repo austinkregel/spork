@@ -68,7 +68,7 @@ class RunDeployment implements ShouldQueue
             }
 
             if ($tags->contains('app') || $tags->contains('web')) {
-                $serverJobs[] = new CompileNpmAssetsJob($server, $primaryDomain, $this->project);
+//                $serverJobs[] = new CompileNpmAssetsJob($server, $primaryDomain, $this->project);
                 $serverJobs[] = new SetupWebServerJob($server, $primaryDomain, $this->project);
                 //                $serverJobs[] = new UploadAssetsJob($server);
             }

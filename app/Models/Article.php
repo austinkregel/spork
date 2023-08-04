@@ -25,6 +25,9 @@ class Article extends Model
         'url',
     ];
 
+    public $casts = [
+        'last_modified' => 'datetime',
+    ];
     public static function fromFeedItem(ExternalRssFeed $feed, FeedItem $item): self
     {
         if ($post = self::firstWhere('external_guid', $item->getExternalId())) {

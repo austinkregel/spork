@@ -28,6 +28,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Route::macro('domains', function (array $domains, $callback) {
+            foreach ($domains as $domain) {
+                Route::domain($domain)->group($callback);
+            }
+        });
+
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
@@ -49,22 +55,32 @@ class RouteServiceProvider extends ServiceProvider
             return $model::find($value);
         });
         $this->routes(function () {
-            Route::middleware('api')
-                ->prefix('api')
-                ->group(base_path('routes/api.php'));
-
             if (file_exists(base_path('routes/generate-pages.php'))) {
                 include_once base_path('routes/generate-pages.php');
             }
-
-            Route::middleware('web')
-                ->group(base_path('routes/web.php'));
 
             if (config('app.env') === 'local') {
                 Route::prefix('api')
                     ->middleware(config('jetstream.middleware', ['web']))
                     ->group(base_path('routes/crud.php'));
             }
+
+            Route::domains([
+                'petoskey.localhost',
+                'petoskey.today'
+            ], function () {
+                Route::middleware('web')
+                    ->group(base_path('routes/pages/petoskey.php'));
+            });
+
+            Route::domains([
+                'spork.zone',
+                'spork.localhost',
+            ], function () {
+                Route::middleware('web')
+                    ->group(base_path('routes/pages/spork.php'));
+            });
+
         });
     }
 }

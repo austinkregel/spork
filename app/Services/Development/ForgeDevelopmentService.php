@@ -13,6 +13,7 @@ use Laravel\Forge\Exceptions\ValidationException;
 use Laravel\Forge\Forge;
 use Laravel\Forge\Resources\Certificate;
 use Laravel\Forge\Resources\Job;
+use Laravel\Forge\Resources\Site;
 
 class ForgeDevelopmentService
 {
@@ -61,6 +62,7 @@ class ForgeDevelopmentService
         }
 
         try {
+            /** @var Site $site */
             $site = $this->client->createSite($server->server_id, [
                 'domain' => $domain->name,
                 'project_type' => 'php',
@@ -101,7 +103,7 @@ class ForgeDevelopmentService
          *       "tags": []
          *   }
          */
-        return $site['site'];
+        return (array) $site;
     }
 
     public function setupSslCertificate(Domain $domain, Collection $domains, Server $server, array $site)

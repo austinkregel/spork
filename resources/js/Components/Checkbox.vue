@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import {computed, onMounted  } from 'vue';
 
 const emit = defineEmits(['update:checked']);
 
@@ -23,6 +23,8 @@ const proxyChecked = computed({
         emit('update:checked', val);
     },
 });
+
+
 </script>
 
 

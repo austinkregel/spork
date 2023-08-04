@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Jobs;
+namespace App\Jobs\News;
 
 use App\Models\Article;
 use App\Models\ExternalRssFeed;
-use App\Services\Feeds\FeedItem;
-use App\Services\RssFeedService;
+use App\Services\News\Feeds\FeedItem;
+use App\Services\News\RssFeedService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

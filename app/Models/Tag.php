@@ -8,7 +8,7 @@ use App\Contracts\ModelQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tag extends Model implements ModelQuery
+class Tag extends \Spatie\Tags\Tag implements ModelQuery
 {
     use HasFactory;
 

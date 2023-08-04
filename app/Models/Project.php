@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Str;
 use Spatie\Tags\HasTags;
 
 class Project extends Model implements ModelQuery
@@ -82,15 +83,26 @@ class Project extends Model implements ModelQuery
 
         if (! $credential) {
             if (Credential::TYPE_SSH === $service) {
-                $generatorService = new SshKeyGeneratorService();
+                $randomName = Str::random(16);
+
+                $generatorService = new SshKeyGeneratorService(
+                    privateKeyFile: $privateKeyFile = storage_path('app/keys/'.$randomName.'.key'),
+                    publicKeyFile: $publicKeyFile = storage_path('app/keys/'.$randomName.'.pub'),
+                    passKey: $passKey = ''//''tr::random(16),
+                );
 
                 $credential = $this->credentials()->create([
                     'service' => Credential::TYPE_SSH,
                     'type' => Credential::TYPE_SSH,
                     'name' => 'Forge',
-                    'pub_key' => encrypt($generatorService->getPublicKey()),
-                    'private_key' => encrypt($generatorService->getPrivateKey()),
-                    'user_id' => auth()->id(),
+                    'user_id' => 1,
+                    'settings' => [
+                        'pub_key' => $generatorService->getPublicKey(),
+                        'pub_key_file' => $publicKeyFile,
+                        'private_key' => $generatorService->getPrivateKey(),
+                        'private_key_file' => $privateKeyFile,
+                        'pass_key' => encrypt($passKey),
+                    ],
                 ]);
 
                 return $credential;

@@ -30,6 +30,11 @@ class SetupLoadBalancerDnsRecordJob implements ShouldQueue
 
     public function handle()
     {
+        $this->project->load([
+            'domains' => function ($query) {
+                $query->whereNotNull('cloudflare_id');
+            },
+        ]);
         $dnsService = (new DomainServiceFactory)->make($this->project->credentialFor(Credential::CLOUDFLARE));
         $this->project->domains->each(function (Domain $domain) use ($dnsService) {
             $page = 1;
