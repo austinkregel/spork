@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     /*
@@ -11,7 +13,7 @@ return [
     */
     'paths' => [
         'screenshots' => storage_path('laravel-console-dusk/screenshots'),
-        'log'         => storage_path('laravel-console-dusk/log'),
+        'log' => storage_path('laravel-console-dusk/log'),
     ],
 
     /*

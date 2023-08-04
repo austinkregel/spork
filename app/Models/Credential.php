@@ -124,6 +124,7 @@ class Credential extends Model implements ModelQuery
             file_put_contents($publicKeyFile, $this->settings['pub_key'] ?? '');
             chmod($publicKeyFile, 0600);
         }
+
         return $publicKeyFile;
     }
 
