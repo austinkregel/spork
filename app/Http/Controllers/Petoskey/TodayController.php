@@ -15,8 +15,9 @@ class TodayController
             ->where('author_id', ExternalRssFeed::query()
                 ->with('articles')
                 ->where('name', 'Petoskey Area')
-                ->pluck('id'))
-                ->paginate(15, ['*'], 'articles'),
+                ->pluck('id')
+            )
+            ->paginate(15, ['*'], 'articles'),
         ]);
     }
 }
