@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Petoskey;
 use App\Models\Article;
 use App\Models\ExternalRssFeed;
 use App\Services\Weather\OpenWeatherService;
-use App\Services\Weather\WeatherApiService;
 use Illuminate\Support\Arr;
 
 class TodayController
