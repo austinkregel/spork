@@ -25,7 +25,11 @@ class AtomFeed extends AbstractFeed
 
     public function getPhoto(): ?string
     {
-        return $this->element->icon ?? null;
+        if (!isset($this->element->icon)) {
+            return null;
+        }
+
+        return  (string) $this->element->icon;
     }
 
     public function getName(): string

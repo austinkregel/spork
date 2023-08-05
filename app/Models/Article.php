@@ -53,6 +53,6 @@ class Article extends Model
 
     public function author()
     {
-        return $this->morphTo('author', ExternalRssFeed::class, 'author_id', 'id');
+        return $this->morphTo();
     }
 }

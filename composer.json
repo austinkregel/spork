@@ -6,10 +6,10 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "ext-openssl": "*",
-        "ext-ssh2": "*",
-        "ext-simplexml": "*",
         "ext-dom": "*",
+        "ext-openssl": "*",
+        "ext-simplexml": "*",
+        "ext-ssh2": "*",
         "guzzlehttp/guzzle": "^7.7",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laravel/forge-sdk": "^3.13",
@@ -20,6 +20,7 @@
         "laravel/tinker": "^2.8",
         "mustache/mustache": "^2.14",
         "nunomaduro/laravel-console-dusk": "^1.11",
+        "spatie/laravel-feed": "^4.2",
         "spatie/laravel-query-builder": "^5.2",
         "spatie/laravel-tags": "^4.4",
         "tightenco/ziggy": "^1.0"
