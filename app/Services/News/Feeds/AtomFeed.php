@@ -63,7 +63,8 @@ class AtomFeed extends AbstractFeed
 
             $feedItem = new FeedItem();
             $feedItem->id = $post['id'];
-            $feedItem->title = $post['title'];
+            $feedItem->title = $post['title'] ?? null;
+            $feedItem->content = $post['content'] ?? null;
             $feedItem->published_at = $post['published'] ?? $post['updated'];
 
             if (isset($post['link']) && is_string($post['link'])) {

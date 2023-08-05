@@ -13,22 +13,11 @@ export default {
             type: Number,
             default: 12,
         },
-        items: {
-            type: Array,
-            default:  [],
-        },
     },
     components: {
         DraggableComponent,
     },
     methods: {
-        updateChildren(newChildren, index) {
-            this.items[index] = newChildren;
-            this.$emit('update', this.items);
-        },
-        selectComponent(component, index) {
-            this.$emit('select', { component, index });
-        },
     },
 };
 </script>

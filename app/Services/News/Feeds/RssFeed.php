@@ -49,10 +49,6 @@ class RssFeed extends AbstractFeed
             $feedItem->content = (string) $post->description ?? null;
             $feedItem->authorName = (string) $post->source ?? null;
 
-            if (empty($feedItem->getTitle())) {
-                dd($feedItem, $post);
-            }
-
             return $feedItem;
         }, ((array) $this->element->channel)['item']);
     }

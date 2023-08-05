@@ -12,7 +12,7 @@ class FeedItem
 
     public ?string $uuid;
 
-    public string $title;
+    public ?string $title;
 
     public string $url;
 
@@ -46,7 +46,12 @@ class FeedItem
 
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? '';
+    }
+
+    public function getContent(): ? string
+    {
+        return $this->content;
     }
 
     public function getUrl(): string

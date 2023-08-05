@@ -41,7 +41,8 @@ class Article extends Model
         $post->external_guid = $item->getExternalId();
         $post->author_id = $feed->id;
         $post->author_type = get_class($feed);
-        $post->content = $item->getTitle();
+        $post->headline = $item->getTitle();
+        $post->content = $item->getContent();
         $post->attachment = $item->getUrl();
         $post->url = $item->getUrl();
         $post->created_at = $item->getPublishedAt();
