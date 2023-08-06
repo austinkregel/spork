@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Weather;
 
 use App\Contracts\Services\WeatherServiceContract;
-use App\Models\Forecast;
+use App\Forecast;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 
