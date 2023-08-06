@@ -12,4 +12,9 @@ class Tag extends \Spatie\Tags\Tag implements ModelQuery
     use HasFactory;
 
     public $guarded = [];
+
+    public function articles()
+    {
+        return $this->morphedByMany(Article::class, 'taggable');
+    }
 }
