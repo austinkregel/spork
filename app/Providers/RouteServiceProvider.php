@@ -59,19 +59,17 @@ class RouteServiceProvider extends ServiceProvider
                 include_once base_path('routes/generate-pages.php');
             }
 
-            if (config('app.env') === 'local') {
-                Route::prefix('api')
-                    ->domain(config('app.env') === 'production' ? 'spork.zone' : 'spork.localhost')
-                    ->middleware(config('jetstream.middleware', ['web']))
-                    ->group(base_path('routes/crud.php'));
-            }
+            Route::prefix('api')
+                ->domain(config('app.env') == 'production' ? 'spork.zone' : 'spork.localhost')
+                ->middleware(config('jetstream.middleware', ['web']))
+                ->group(base_path('routes/crud.php'));
 
             Route::middleware('web')
-                ->domain(config('app.env') === 'production' ? 'petoskey.today' : 'petoskey.localhost')
+                ->domain(config('app.env') == 'production' ? 'petoskey.today' : 'petoskey.localhost')
                 ->group(base_path('routes/pages/petoskey.php'));
 
             Route::middleware('web')
-                ->domain(config('app.env') === 'production' ? 'spork.zone' : 'spork.localhost')
+                ->domain(config('app.env') == 'production' ? 'spork.zone' : 'spork.localhost')
                 ->group(base_path('routes/pages/spork.php'));
         });
     }
