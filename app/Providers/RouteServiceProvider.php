@@ -61,7 +61,7 @@ class RouteServiceProvider extends ServiceProvider
 
             if (config('app.env') === 'local') {
                 Route::prefix('api')
-                    ->domain(config('app.env') === 'production' ? 'spork.zone' : 'spork.localhost'
+                    ->domain(config('app.env') === 'production' ? 'spork.zone' : 'spork.localhost')
                     ->middleware(config('jetstream.middleware', ['web']))
                     ->group(base_path('routes/crud.php'));
             }
