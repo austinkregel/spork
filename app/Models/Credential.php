@@ -150,7 +150,7 @@ class Credential extends Model implements ModelQuery
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'type', 'service', 'enabled_on',])
+            ->logOnly(['name', 'type', 'service', 'enabled_on'])
             ->useLogName('credential')
             ->logOnlyDirty();
     }
