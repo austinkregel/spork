@@ -26,7 +26,7 @@ class ExternalRssFeed extends Model
         return $this->morphMany(Article::class, 'author');
     }
 
-    public function getLogOptions(): LogOptions
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly(['uuid', 'url', 'name', 'profile_photo_path'])
