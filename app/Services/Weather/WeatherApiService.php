@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Weather;
@@ -17,10 +18,9 @@ class WeatherApiService implements WeatherServiceContract
         $weather = cache()->remember(
             'key',
             now(),
-            fn () =>
-            json_decode(
+            fn () => json_decode(
                 $client
-                    ->get(sprintf('http://api.weatherapi.com/v1/forecast.json?key=%s&q=%s&aqi=no&alerts=yes&days=3', env("WEATHER_API_KEY"), $address))
+                    ->get(sprintf('http://api.weatherapi.com/v1/forecast.json?key=%s&q=%s&aqi=no&alerts=yes&days=3', env('WEATHER_API_KEY'), $address))
                     ->getBody()
                     ->getContents()
             )

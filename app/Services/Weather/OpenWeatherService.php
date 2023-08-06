@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Weather;
@@ -17,10 +18,9 @@ class OpenWeatherService implements WeatherServiceContract
         $weather = cache()->remember(
             'current-weather-for-petoskey',
             now()->addMinutes(30),
-            fn () =>
-            json_decode(
+            fn () => json_decode(
                 $client
-                    ->get(sprintf('https://api.openweathermap.org/data/2.5/weather?lat=45.3757675&lon=-84.961903&appid=%s&units=imperial', env("OPEN_WEATHER_KEY")))
+                    ->get(sprintf('https://api.openweathermap.org/data/2.5/weather?lat=45.3757675&lon=-84.961903&appid=%s&units=imperial', env('OPEN_WEATHER_KEY')))
                     ->getBody()
                     ->getContents()
             )
@@ -60,8 +60,11 @@ class OpenWeatherService implements WeatherServiceContract
         $forecast->cloud_cover = $weather->clouds->all;
         $forecast->chance_of_rain = 0;
         $forecast->chance_of_snow = $weather->snow->all ?? 0;
+<<<<<<< HEAD
         $forecast->sunset =  Carbon::parse($weather->sys->sunset, 'UTC')->setTimezone('America/Detroit')->format('Y-m-d H:i');
 $forecast->sunrise =  Carbon::parse($weather->sys->sunrise, 'UTC')->setTimezone('America/Detroit')->format('Y-m-d H:i');
+=======
+>>>>>>> df06e56150f2b4a89b5a0a132f3112d6f712d7ca
 
         return [
             $forecast,
