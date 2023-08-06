@@ -60,11 +60,8 @@ class OpenWeatherService implements WeatherServiceContract
         $forecast->cloud_cover = $weather->clouds->all;
         $forecast->chance_of_rain = 0;
         $forecast->chance_of_snow = $weather->snow->all ?? 0;
-<<<<<<< HEAD
         $forecast->sunset =  Carbon::parse($weather->sys->sunset, 'UTC')->setTimezone('America/Detroit')->format('Y-m-d H:i');
-$forecast->sunrise =  Carbon::parse($weather->sys->sunrise, 'UTC')->setTimezone('America/Detroit')->format('Y-m-d H:i');
-=======
->>>>>>> df06e56150f2b4a89b5a0a132f3112d6f712d7ca
+        $forecast->sunrise =  Carbon::parse($weather->sys->sunrise, 'UTC')->setTimezone('America/Detroit')->format('Y-m-d H:i');
 
         return [
             $forecast,
