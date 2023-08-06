@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Petoskey;
 
 use App\Models\Article;
 use App\Models\ExternalRssFeed;
+use App\Models\Tag;
 use App\Services\Weather\OpenWeatherService;
 use Illuminate\Support\Arr;
 use Inertia\Inertia;
@@ -20,7 +21,7 @@ class TodayController
                 ->with('author:id,name')
                 ->where('author_type', ExternalRssFeed::class)
                 ->whereIn('author_id', ExternalRssFeed::query()
-                    ->whereHas('tags', fn ($query) => $query->where('name->en', 'petoskey'))
+                    ->whereHas('tags', fn ($query) => $query->where('id', Tag::findOrCreate('Petoskey')->id))
                     ->pluck('id')
                 )
                 ->where('last_modified', '>=', now()->subDays(7))
