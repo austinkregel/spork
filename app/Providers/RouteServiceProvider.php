@@ -30,7 +30,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::macro('domains', function (array $domains, $callback) {
             foreach ($domains as $domain) {
-                Route::domain($domain)->group($callback);
+                Route::domain($domain)->group($callback)->name($domain);
             }
         });
 
