@@ -116,7 +116,6 @@ class Project extends Model implements ModelQuery
         return $credential;
     }
 
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

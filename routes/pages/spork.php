@@ -42,7 +42,7 @@ Route::middleware([
             'activity_logs' => \Spatie\Activitylog\Models\Activity::query()
                 ->with('causer')
                 ->orderBy('created_at', 'desc')
-                ->paginate( 10 ),
+                ->paginate(10),
         ]);
     })->name('dashboard');
 
