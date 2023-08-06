@@ -37,6 +37,7 @@ class Forecast implements Arrayable
     public int $chance_of_snow;
 
     public ?string $sunrise;
+
     public ?string $sunset;
 
     public function toArray()
