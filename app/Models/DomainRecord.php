@@ -7,10 +7,12 @@ namespace App\Models;
 use App\Contracts\ModelQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class DomainRecord extends Model implements ModelQuery
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'name',
@@ -26,5 +28,13 @@ class DomainRecord extends Model implements ModelQuery
     public function domain()
     {
         return $this->belongsTo(Domain::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->useLogName('domain-record');
     }
 }

@@ -7,10 +7,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Research extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     public $casts = [
         'sources' => 'json',
@@ -29,5 +31,13 @@ class Research extends Model
             'resource',
             'project_resources'
         );
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['topic', 'notes', 'sources'])
+            ->useLogName('research')
+            ->logOnlyDirty();
     }
 }

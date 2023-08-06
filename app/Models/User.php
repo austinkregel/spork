@@ -12,6 +12,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable implements ModelQuery
 {
@@ -20,6 +22,7 @@ class User extends Authenticatable implements ModelQuery
     use HasProfilePhoto;
     use HasTeams;
     use Notifiable;
+    use LogsActivity;
     use TwoFactorAuthenticatable;
 
     /**
@@ -60,4 +63,12 @@ class User extends Authenticatable implements ModelQuery
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email'])
+            ->useLogName('user')
+            ->logOnlyDirty();
+    }
 }

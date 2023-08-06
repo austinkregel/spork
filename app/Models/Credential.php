@@ -8,10 +8,12 @@ use App\Contracts\ModelQuery;
 use App\Models\Traits\HasProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Credential extends Model implements ModelQuery
 {
-    use HasFactory, HasProjectResource;
+    use HasFactory, HasProjectResource, LogsActivity;
 
     public $guarded = [];
 
@@ -143,5 +145,13 @@ class Credential extends Model implements ModelQuery
     public function getPasskey(): string
     {
         return decrypt($this->settings['pass_key'] ?? '');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'type', 'service', 'enabled_on',])
+            ->useLogName('credential')
+            ->logOnlyDirty();
     }
 }

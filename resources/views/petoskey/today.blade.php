@@ -1,4 +1,4 @@
-@php use App\Models\Forecast; @endphp
+@php use App\Forecast; @endphp
 @php
     /**
     * @var Forecast $weather

@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
 class Server extends Model implements ModelQuery
 {
-    use HasFactory, HasTags;
+    use HasFactory, HasTags, LogsActivity;
 
     public $fillable = [
         'server_id',
@@ -45,5 +47,13 @@ class Server extends Model implements ModelQuery
             'resource',
             'project_resources'
         );
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'vcpu', 'memory', 'disk', 'cost_per_hour', 'internal_url', 'last_ping_at', 'booted_at', 'turned_off_at', 'os'])
+            ->useLogName('server')
+            ->logOnlyDirty();
     }
 }

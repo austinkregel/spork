@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Domain extends Model implements ModelQuery
 {
-    use HasFactory,  HasProjectResource;
+    use HasFactory,  HasProjectResource, LogsActivity;
 
     public $fillable = [
         'name',
@@ -36,5 +38,13 @@ class Domain extends Model implements ModelQuery
     public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'domain_id', 'registered_at'])
+            ->useLogName('domain')
+            ->logOnlyDirty();
     }
 }

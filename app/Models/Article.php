@@ -7,10 +7,12 @@ namespace App\Models;
 use App\Services\News\Feeds\FeedItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Article extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     public $fillable = [
         'uuid',
@@ -55,5 +57,14 @@ class Article extends Model
     public function author()
     {
         return $this->morphTo();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['headline', 'content', 'attachment', 'url'])
+            ->useLogName('article')
+            ->logFillable()
+            ->logOnlyDirty();
     }
 }

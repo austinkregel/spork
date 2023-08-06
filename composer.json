@@ -20,6 +20,7 @@
         "laravel/tinker": "^2.8",
         "mustache/mustache": "^2.14",
         "nunomaduro/laravel-console-dusk": "^1.11",
+        "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-feed": "^4.2",
         "spatie/laravel-ignition": "^2.2",
         "spatie/laravel-query-builder": "^5.2",

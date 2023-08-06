@@ -33,7 +33,17 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
+        return Inertia::render('Dashboard', [
+            'project_count' => \App\Models\Project::count(),
+            'server_count' => \App\Models\Server::count(),
+            'domain_count' => \App\Models\Domain::count(),
+            'credential_count' => \App\Models\Credential::count(),
+            'user_count' => \App\Models\User::count(),
+            'activity_logs' => \Spatie\Activitylog\Models\Activity::query()
+                ->with('causer')
+                ->orderBy('created_at', 'desc')
+                ->paginate( 10 ),
+        ]);
     })->name('dashboard');
 
     Route::get('/projects', function () {

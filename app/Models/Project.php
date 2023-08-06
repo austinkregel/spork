@@ -12,11 +12,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
 class Project extends Model implements ModelQuery
 {
-    use HasFactory, HasTags;
+    use HasFactory, HasTags, LogsActivity;
 
     public $guarded = [];
 
@@ -112,5 +114,14 @@ class Project extends Model implements ModelQuery
         }
 
         return $credential;
+    }
+
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'team_id'])
+            ->useLogName('project')
+            ->logOnlyDirty();
     }
 }
