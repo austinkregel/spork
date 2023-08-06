@@ -61,26 +61,18 @@ class RouteServiceProvider extends ServiceProvider
 
             if (config('app.env') === 'local') {
                 Route::prefix('api')
+                    ->domain(config('app.env') === 'production' ? 'spork.zone' : 'spork.localhost'
                     ->middleware(config('jetstream.middleware', ['web']))
                     ->group(base_path('routes/crud.php'));
             }
 
-            Route::domains([
-                'petoskey.localhost',
-                'petoskey.today',
-            ], function () {
-                Route::middleware('web')
-                    ->group(base_path('routes/pages/petoskey.php'));
-            });
+            Route::middleware('web')
+                ->domain(config('app.env') === 'production' ? 'petoskey.today' : 'petoskey.localhost')
+                ->group(base_path('routes/pages/petoskey.php'));
 
-            Route::domains([
-                'spork.zone',
-                'spork.localhost',
-            ], function () {
-                Route::middleware('web')
-                    ->group(base_path('routes/pages/spork.php'));
-            });
-
+            Route::middleware('web')
+                ->domain(config('app.env') === 'production' ? 'spork.zone' : 'spork.localhost')
+                ->group(base_path('routes/pages/spork.php'));
         });
     }
 }
