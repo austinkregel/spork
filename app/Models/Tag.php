@@ -17,4 +17,9 @@ class Tag extends \Spatie\Tags\Tag implements ModelQuery
     {
         return $this->morphedByMany(Article::class, 'taggable');
     }
+
+    public function feeds()
+    {
+        return $this->morphedByMany(ExternalRssFeed::class, 'taggable');
+    }
 }
