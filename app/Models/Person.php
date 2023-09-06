@@ -13,4 +13,11 @@ class Person extends Model implements ModelQuery
     use HasFactory;
 
     public $guarded = [];
+
+    public $casts = [
+        'birthdate' => 'date',
+        'phone_numbers' => 'array',
+        'addresses' => 'array',
+        'emails' => 'array',
+    ];
 }
