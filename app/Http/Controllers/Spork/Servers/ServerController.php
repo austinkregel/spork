@@ -1,14 +1,11 @@
 <?php
 
-declare(strict_types=1);
+namespace App\Http\Controllers\Spork\Servers;
 
-namespace App\Http\Controllers;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
-use App\Http\Requests\StorePageRequest;
-use App\Http\Requests\UpdatePageRequest;
-use App\Models\Page;
-
-class PageController extends Controller
+class ServerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,7 +18,7 @@ class PageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePageRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -29,7 +26,7 @@ class PageController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Page $page)
+    public function show(string $id)
     {
         //
     }
@@ -37,7 +34,7 @@ class PageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePageRequest $request, Page $page)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -45,7 +42,7 @@ class PageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Page $page)
+    public function destroy(string $id)
     {
         //
     }

@@ -1,14 +1,11 @@
 <?php
 
-declare(strict_types=1);
+namespace App\Http\Controllers\Spork\Domains;
 
-namespace App\Http\Controllers;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
-use App\Http\Requests\StoreCredentialRequest;
-use App\Http\Requests\UpdateCredentialRequest;
-use App\Models\Credential;
-
-class CredentialController extends Controller
+class DomainController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,7 +18,7 @@ class CredentialController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCredentialRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -29,7 +26,7 @@ class CredentialController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Credential $credential)
+    public function show(string $id)
     {
         //
     }
@@ -37,7 +34,7 @@ class CredentialController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCredentialRequest $request, Credential $credential)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -45,7 +42,7 @@ class CredentialController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Credential $credential)
+    public function destroy(string $id)
     {
         //
     }
