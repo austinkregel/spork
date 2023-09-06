@@ -16,7 +16,7 @@ use Illuminate\Queue\SerializesModels;
 
 class FetchResourcesFromCredentials implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.

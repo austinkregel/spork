@@ -84,7 +84,7 @@ class Project extends Model implements ModelQuery
         $credential = $this->credentials()->where('service', $service)->first();
 
         if (! $credential) {
-            if (Credential::TYPE_SSH === $service) {
+            if ($service === Credential::TYPE_SSH) {
                 $randomName = Str::random(16);
 
                 $generatorService = new SshKeyGeneratorService(

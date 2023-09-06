@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Contracts\ModelQuery;
+use App\Http\Controllers;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Symfony\Component\Finder\SplFileInfo;
-use App\Http\Controllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +50,7 @@ Route::middleware([
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class])->name('servers.show');
 
     Route::get('/domains', Controllers\Spork\DomainsController::class)->name('domains');
-    Route::get('/domains/{domain}', )->name('domains.show');
+    Route::get('/domains/{domain}')->name('domains.show');
 
     Route::get('/user/api-query', function () {
         return Inertia::render('API/QueryBuilderPage', [
@@ -80,7 +80,7 @@ Route::middleware([
     ]));
 });
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])
     ->post('project/{project}/attach', [Controllers\Spork\ProjectsController::class, 'attach']);
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])->post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach']);
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach']);

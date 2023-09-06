@@ -47,7 +47,7 @@ class CloudflareSyncJob extends AbstractSyncRegistrarResourceJob
                         } elseif ($localDomain->$key instanceof Carbon && ! $localDomain->$key->equalTo($value)) {
                             $localDomain->$key = $value;
                         }
-                    } elseif ($localDomain->$key !== $value) {
+                    } elseif ($value !== $localDomain->$key) {
                         // Only set the new value if its different
                         $localDomain->$key = $value;
                     }

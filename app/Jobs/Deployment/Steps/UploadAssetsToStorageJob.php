@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
 
 class UploadAssetsToStorageJob implements ShouldQueue
 {
-    use DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+    use Batchable, DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         public Server $server,

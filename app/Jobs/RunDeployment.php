@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Bus;
 
 class RunDeployment implements ShouldQueue
 {
-    use DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+    use Batchable, DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(public Project $project)
     {

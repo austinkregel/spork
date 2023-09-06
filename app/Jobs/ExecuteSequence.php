@@ -225,12 +225,12 @@ class ExecuteSequence
                                 $this->updateProperty($modelToUpdateBecauseItIsRelatedToThePrimaryKey, $key, $standardDataForOurModel[$key], $synchronization);
                             } elseif (
                                 $synchronization->on_update === 'changed'
-                                && $modelToUpdateBecauseItIsRelatedToThePrimaryKey->$key !== $standardDataForOurModel[$key]
+                                && $standardDataForOurModel[$key] !== $modelToUpdateBecauseItIsRelatedToThePrimaryKey->$key
                             ) {
                                 $this->updateProperty($modelToUpdateBecauseItIsRelatedToThePrimaryKey, $key, $standardDataForOurModel[$key], $synchronization);
                             } elseif (
                                 $synchronization->on_update === 'changed'
-                                && $modelToUpdateBecauseItIsRelatedToThePrimaryKey->$key === $standardDataForOurModel[$key]
+                                && $standardDataForOurModel[$key] === $modelToUpdateBecauseItIsRelatedToThePrimaryKey->$key
                             ) {
                                 continue;
                             } else {

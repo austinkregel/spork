@@ -35,7 +35,7 @@ class NamecheapSyncJob extends AbstractSyncRegistrarResourceJob
                 }
 
                 foreach ($data as $key => $value) {
-                    if ($localDomain->$key !== $value) {
+                    if ($value !== $localDomain->$key) {
                         // Only set the new value if its different
                         $localDomain->$key = $value;
                     }

@@ -48,6 +48,7 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
                         'domain' => $domain['domain'],
                         'credential' => $localDomain,
                     ]);
+
                     // If we don't have the domain in question synced via registrars we don't want to touch it.
                     continue;
                 }
