@@ -92,6 +92,9 @@ const logout = () => {
                                             <DropdownLink :href="route('credentials')">
                                                 Credentials
                                             </DropdownLink>
+                                            <DropdownLink :href="route('people')">
+                                                People
+                                            </DropdownLink>
                                         </template>
                                     </Dropdown>
                                 </div>

@@ -32,7 +32,12 @@ defineProps({
 
                 <div class="col-span-5 border-t border-zinc-700"> </div>
                 <div class="col-span-5 text-white">
-                    {{ activity_logs}}
+                    <div v-for="log in activity_logs.data">
+                        {{ log.log_name}}
+                        {{ log.description}}
+                        {{ log.causer_type}}
+                        {{ log.subject_type}}
+                    </div>
                 </div>
             </div>
         </div>
