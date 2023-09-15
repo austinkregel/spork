@@ -90,7 +90,13 @@
                 <div class="py-2">
                     {{ total }} total items, {{ currentPage  }} of {{ paginator?.total}}
                 </div>
-                <SporkButton @click="() => getData(currentPage + 1)" :disabled="hasNextPage" plain xlarge :class="[!hasNextPage ? 'opacity-50 cursor-not-allowed': 'cursor-pointer']">Next</SporkButton>
+                <SporkButton @click="() => {
+                    getData(currentPage + 1);
+                    console.log(currentPage);
+                }" :disabled="hasNextPage" plain xlarge
+
+                             :class="[!hasNextPage ? 'opacity-50 cursor-not-allowed': 'cursor-pointer']"
+                >Next</SporkButton>
             </div>
         </div>
     </div>
@@ -192,6 +198,7 @@ export default {
             actionToRun: ref(null),
             searchQuery: ref(localStorage.getItem('searchQuery') ? localStorage.getItem('searchQuery') : ''),
             debounceSearch: ref(null),
+            console,
         }
     },
     watch: {

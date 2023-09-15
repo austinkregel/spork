@@ -10,12 +10,17 @@ use Inertia\Inertia;
 class DomainsController extends Controller
 {
     public function __invoke() {
-        return Inertia::render('Domains', []);
+        return Inertia::render('Domains', [
+            'domains' => Domain::query()
+            ->withCount('records', 'domainAnalytics')
+            ->paginate(request('limit'), ['*'], 'page', request('page'))
+        ]);
     }
 
     public function show(Domain $domain)
     {
-        return Inertia::render('Domains', [
+        $domain->load('domainAnalytics', 'records');
+        return Inertia::render('Domain', [
             'domain' => $domain,
         ]);
     }

@@ -9,7 +9,8 @@ use Inertia\Inertia;
 
 class ServersController extends Controller
 {
-    public function __invoke() {
+    public function index()
+    {
         return Inertia::render('Servers', []);
     }
 

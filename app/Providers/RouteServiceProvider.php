@@ -54,6 +54,7 @@ class RouteServiceProvider extends ServiceProvider
 
             return $model::find($value);
         });
+
         $this->routes(function () {
             if (file_exists(base_path('routes/generate-pages.php'))) {
                 include_once base_path('routes/generate-pages.php');

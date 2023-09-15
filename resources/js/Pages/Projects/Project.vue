@@ -7,7 +7,6 @@
                 </Link>
                 <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                 {{ $page.props.project.name}}
-
             </div>
         </template>
         <div class="py-12">
@@ -81,7 +80,9 @@
                                 </div>
                                 <div class="flex flex-wrap justify-between">
                                     <div class="flex flex-col">
-                                        <div class="text-2xl">{{ item.name }}</div>
+                                        <div class="text-2xl">
+                                            <Link class="underline" :href="'/domains/'+item.id">{{ item.name }}</Link>
+                                        </div>
                                         <div class="text-sm">{{ item.expires_at }}</div>
                                     </div>
 
@@ -107,6 +108,7 @@
                         </Link>
                     </div>
                 </div>
+                <div class="border-t border-zinc-600"></div>
 
                 <div class="mx-4">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Credentials</h3>
@@ -142,71 +144,71 @@
                         </Link>
                     </div>
                 </div>
-                    <div class="border-t border-zinc-600"></div>
-                    <div class="mx-4">
-                        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Pages</h3>
-                        <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
-                            <div v-for="item in $page.props.project.pages" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 p-4 shadow sm:p-6">
-                                <dt class="truncate flex flex-wrap items-center gap-1  font-medium text-gray-500 dark:text-zinc-300">
-                                    <CheckCircleIcon class="w-5 h-5 text-green-500" v-if="item.is_active" />
-                                    <ExclamationTriangleIcon class="w-5 h-5 text-yellow-500" v-else />
-                                    {{ item.title }}
-                                </dt>
-                                <dd class="mt-1 font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
-                                    <span class="text-3xl">{{item.uri}}</span>
-                                </dd>
-                                <div class="flex items-center flex-wrap justify-between">
-                                    <div class="flex flex-wrap items-center gap-6">
-                                        <div v-if="item.redirect" class="flex flex-wrap items-center gap-2 text-stone-300">
-                                            {{ item.domain.name}}
-                                            <ArrowLongRightIcon class="w-4 h-4 text-stone-100" />
-                                            <!-- SSL  -->
-                                            <LockClosedIcon class="w-4 h-4 text-green-500" />
-                                            undefined.services
-                                        </div>
-                                        <div v-else class="flex flex-wrap items-center gap-2 text-stone-300">
-                                            <LockClosedIcon class="w-4 h-4 text-green-500" />
-                                            {{ item.domain.name}}
-                                        </div>
+                <div class="border-t border-zinc-600"></div>
+                <div class="mx-4">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Pages</h3>
+                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
+                        <div v-for="item in $page.props.project.pages" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 p-4 shadow sm:p-6">
+                            <dt class="truncate flex flex-wrap items-center gap-1  font-medium text-gray-500 dark:text-zinc-300">
+                                <CheckCircleIcon class="w-5 h-5 text-green-500" v-if="item.is_active" />
+                                <ExclamationTriangleIcon class="w-5 h-5 text-yellow-500" v-else />
+                                {{ item.title }}
+                            </dt>
+                            <dd class="mt-1 font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+                                <span class="text-3xl">{{item.uri}}</span>
+                            </dd>
+                            <div class="flex items-center flex-wrap justify-between">
+                                <div class="flex flex-wrap items-center gap-6">
+                                    <div v-if="item.redirect" class="flex flex-wrap items-center gap-2 text-stone-300">
+                                        {{ item.domain.name}}
+                                        <ArrowLongRightIcon class="w-4 h-4 text-stone-100" />
+                                        <!-- SSL  -->
+                                        <LockClosedIcon class="w-4 h-4 text-green-500" />
+                                        undefined.services
                                     </div>
-
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <div class="flex items-center gap-2 bg-stone-800 p-1 rounded">
-                                            <!-- Page is currently published -->
-                                            <ShieldCheckIcon v-if="item.published_at" class="w-5 h-5 text-emerald-500" />
-                                            <!-- Page with a custom function  -->
-                                            <CodeBracketIcon v-if="item.content" class=" w-5 h-5 text-stone-400" />
-                                            <!-- Page with a redirect  -->
-                                            <ForwardIcon v-if="item.redirect" class="w-5 h-5 text-blue-400" />
-                                            <!-- Has a custom view -->
-                                            <DocumentIcon v-if="item.view" class="w-5 h-5 text-stone-300" />
-                                        </div>
-                                        <button class="target:outline-none" @click="detach(item)">
-                                            <TrashIcon class="w-5 h-5 text-white" />
-                                        </button>
+                                    <div v-else class="flex flex-wrap items-center gap-2 text-stone-300">
+                                        <LockClosedIcon class="w-4 h-4 text-green-500" />
+                                        {{ item.domain.name}}
                                     </div>
                                 </div>
-                            </div>
-                            <div v-if="$page.props.project.pages.length === 0" class="p-4 rounded bg-zinc-700 italic col-span-2">
-                                There are no pages on this project
-                            </div>
-                        </dl>
-                        <div class="text-slate-300 text-sm font-semibold mt-2 flex justify-between">
-                            <div class="flex flex-wrap items-center gap-4">
-                                <button @click="() => {attachOpen = !attachOpen; fetchPages({ page: 1, limit: 100})}">
-                                    Attach a Page
-                                </button>
-                                <Link href="/pages/create">
-                                    Create a Page
-                                </Link>
-                            </div>
 
-                            <Link href="">
-                                View all pages
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <div class="flex items-center gap-2 bg-stone-800 p-1 rounded">
+                                        <!-- Page is currently published -->
+                                        <ShieldCheckIcon v-if="item.published_at" class="w-5 h-5 text-emerald-500" />
+                                        <!-- Page with a custom function  -->
+                                        <CodeBracketIcon v-if="item.content" class=" w-5 h-5 text-stone-400" />
+                                        <!-- Page with a redirect  -->
+                                        <ForwardIcon v-if="item.redirect" class="w-5 h-5 text-blue-400" />
+                                        <!-- Has a custom view -->
+                                        <DocumentIcon v-if="item.view" class="w-5 h-5 text-stone-300" />
+                                    </div>
+                                    <button class="target:outline-none" @click="detach(item)">
+                                        <TrashIcon class="w-5 h-5 text-white" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="$page.props.project.pages.length === 0" class="p-4 rounded bg-zinc-700 italic col-span-2">
+                            There are no pages on this project
+                        </div>
+                    </dl>
+                    <div class="text-slate-300 text-sm font-semibold mt-2 flex justify-between">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <button @click="() => {attachOpen = !attachOpen; fetchPages({ page: 1, limit: 100})}">
+                                Attach a Page
+                            </button>
+                            <Link href="/pages/create">
+                                Create a Page
                             </Link>
                         </div>
+
+                        <Link href="">
+                            View all pages
+                        </Link>
                     </div>
                 </div>
+            </div>
             <DialogModal :show="attachOpen" :closeable="true" @close="attachOpen = false" >
                 <template #title>
                     <div class="dark:text-zinc-200 p-4">
@@ -373,6 +375,7 @@ export default {
             }
         },
         async fetch({ page, limit }) {
+            console.log('attempting to fetch', { page, limit })
         },
         async fetchServers({ page, limit }) {
 

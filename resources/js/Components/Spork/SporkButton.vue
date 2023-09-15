@@ -4,7 +4,7 @@
     type="button"
     class="inline-flex items-center border shadow-sm font-medium rounded-md focus:outline-none"
     :class="[colors, size]"
-    >
+  >
     <component :is="icon" class="-ml-0.5 mr-2 h-4 w-4" aria-hidden="true"></component>
     <slot></slot>
   </button>
@@ -91,6 +91,6 @@ export default {
 
             return '-ml-1 mr-2 h-5 w-5'
         }
-    }
+    },
 }
 </script>

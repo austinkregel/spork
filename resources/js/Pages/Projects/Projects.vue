@@ -1,9 +1,11 @@
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
-                Projects
-            </h2>
+          <div class=" flex items-center gap-2 font-semibold text-2xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <Link href="/projects" class="underline">
+              Projects
+            </Link>
+          </div>
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -75,8 +77,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
+import {ChevronRightIcon} from "@heroicons/vue/24/solid/index.js";
 export default {
     components: {
+      ChevronRightIcon,
         CrudView,
         AppLayout,
         SporkInput,

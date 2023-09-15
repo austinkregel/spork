@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
 
-            $table->string('primary_number');
-            $table->string('primary_address');
-            $table->string('primary_email');
+            $table->string('primary_number')->nullable();
+            $table->string('primary_address')->nullable();
+            $table->string('primary_email')->nullable();
 
             $table->string('pronouns')->nullable();
             $table->date('birthdate')->nullable();

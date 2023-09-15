@@ -26,11 +26,13 @@
                         <template v-slot:data="{ data }">
                             <div class="flex flex-col">
                                 <div class="text-lg text-left">
-                                    {{ data.name }}
+                                    <Link :href="'/domains/'+ data.id" class="underline">
+                                        {{ data.name }}
+                                    </Link>
                                 </div>
                                 <div class="flex flex-wrap gap-2">
                                     <div class="text-xs dark:text-stone-300">
-                                        {{ data }}
+                                        Expires At: {{ data.expires_at.split(' ')[0] }}
                                     </div>
                                 </div>
                             </div>
@@ -68,21 +70,25 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
+
 export default {
     components: {
+        Link,
         CrudView,
         AppLayout,
         SporkInput
     },
-    setup() {
+    props: ['domains'],
+    setup(props) {
+        let { data, ...pagination } = props.domains;
         return {
             createOpen: ref(false),
             form: ref(({
                 name: '',
                 settings: {},
             })),
-            data: ref([]),
-            pagination: ref({}),
+            data: ref(data ?? []),
+            pagination: ref(pagination ?? {}),
 
         }
     },
@@ -131,7 +137,7 @@ export default {
                 '/api/domains', {
                     page, limit,
                     ...args,
-                    include: []
+                    include: [],
                 }
             ));
 

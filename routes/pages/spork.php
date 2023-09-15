@@ -27,7 +27,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('welcome');
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -45,12 +45,12 @@ Route::middleware([
 
     Route::get('/people', Controllers\Spork\PeopleController::class)->name('people');
 
-    Route::get('/servers', Controllers\Spork\ServersController::class)->name('servers');
+    Route::get('/servers', [Controllers\Spork\ServersController::class, 'index'])->name('servers');
+    Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
     Route::get('/credentials', Controllers\Spork\CredentialsController::class)->name('credentials');
-    Route::get('/servers/{server}', [Controllers\Spork\ServersController::class])->name('servers.show');
 
     Route::get('/domains', Controllers\Spork\DomainsController::class)->name('domains');
-    Route::get('/domains/{domain}', )->name('domains.show');
+    Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
     Route::get('/user/api-query', function () {
         return Inertia::render('API/QueryBuilderPage', [
@@ -60,9 +60,9 @@ Route::middleware([
                 return new $modelClass;
             })->filter(fn ($thing) => ($thing instanceof ModelQuery))->map(fn ($model) => $model->getTable())->values(),
         ]);
-    })->middleware(\App\Http\Middleware\Authenticate::class);
+    })->middleware(\App\Http\Middleware\Authenticate::class)->name('user.api-query');
 
-    Route::post('project/{project}/deploy', [Controllers\Spork\ProjectsController::class, 'deploy']);
+    Route::post('project/{project}/deploy', [Controllers\Spork\ProjectsController::class, 'deploy'])->name('project.deploy');
 });
 
 Route::middleware([
@@ -78,9 +78,12 @@ Route::middleware([
         'memory' => (int) request()->get('memory'),
         'last_ping_at' => \Carbon\Carbon::parse(request()->get('last_ping_at')),
     ]));
-});
+})->name('register-device');
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])
-    ->post('project/{project}/attach', [Controllers\Spork\ProjectsController::class, 'attach']);
+    ->post('project/{project}/attach', [Controllers\Spork\ProjectsController::class, 'attach'])
+->name('project.attach');
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])->post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach']);
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])
+    ->post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach'])
+->name('project.detach');
