@@ -10,6 +10,7 @@
         "ext-openssl": "*",
         "ext-simplexml": "*",
         "ext-ssh2": "*",
+        "dealerinspire/laravel-operations": "dev-master",
         "guzzlehttp/guzzle": "^7.7",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laravel/forge-sdk": "^3.13",
@@ -64,6 +65,12 @@
             "@php artisan key:generate --ansi"
         ]
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./bench/laravel-operations"
+        }
+    ],
     "extra": {
         "laravel": {
             "dont-discover": []
@@ -78,6 +85,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
