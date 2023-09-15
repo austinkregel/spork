@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Chunks;
 
 use Illuminate\Bus\Queueable;
@@ -19,7 +21,7 @@ class BulkFindOrCreateJob implements ShouldQueue
     public function __construct(
         public string $model,
         public array $chunks = []
-    ){
+    ) {
         //
     }
 
@@ -33,7 +35,6 @@ class BulkFindOrCreateJob implements ShouldQueue
             ->select('name', 'primary_address')
             ->get()
             ->map(fn ($row) => md5($row->name.$row->primary_address));
-
 
         foreach ($this->chunks as $chunk) {
             if ($existingThings->contains($hash = md5($chunk['name'].$chunk['primary_address']))) {

@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Contracts\ModelQuery;
+use App\Http\Controllers;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Symfony\Component\Finder\SplFileInfo;
-use App\Http\Controllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,10 +80,10 @@ Route::middleware([
     ]));
 })->name('register-device');
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])
     ->post('project/{project}/attach', [Controllers\Spork\ProjectsController::class, 'attach'])
-->name('project.attach');
+    ->name('project.attach');
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])
     ->post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach'])
-->name('project.detach');
+    ->name('project.detach');

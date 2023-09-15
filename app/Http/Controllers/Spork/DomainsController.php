@@ -1,25 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
 use App\Models\Domain;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DomainsController extends Controller
 {
-    public function __invoke() {
+    public function __invoke()
+    {
         return Inertia::render('Domains', [
             'domains' => Domain::query()
-            ->withCount('records', 'domainAnalytics')
-            ->paginate(request('limit'), ['*'], 'page', request('page'))
+                ->withCount('records', 'domainAnalytics')
+                ->paginate(request('limit'), ['*'], 'page', request('page')),
         ]);
     }
 
     public function show(Domain $domain)
     {
         $domain->load('domainAnalytics', 'records');
+
         return Inertia::render('Domain', [
             'domain' => $domain,
         ]);

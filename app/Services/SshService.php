@@ -27,11 +27,11 @@ class SshService
             throw new Exception('Connection failed.');
         }
 
-//        try {
-            ssh2_auth_pubkey_file($this->connection, $username, $publicKeyFile, $privateKeyFile, $passKey);
-//        } catch (\Throwable $e) {
-//            throw new Exception('Public key authentication failed. ' . $this->username . '@' . $this->host . ':' . $this->port);
-//        }
+        //        try {
+        ssh2_auth_pubkey_file($this->connection, $username, $publicKeyFile, $privateKeyFile, $passKey);
+        //        } catch (\Throwable $e) {
+        //            throw new Exception('Public key authentication failed. ' . $this->username . '@' . $this->host . ':' . $this->port);
+        //        }
     }
 
     public function __destruct()
@@ -61,20 +61,20 @@ class SshService
 
     public function run(Script $script, string $directory = ''): array
     {
-        $localFilePath = storage_path('scripts/' . Str::slug($script->name) . '_server.sh');
+        $localFilePath = storage_path('scripts/'.Str::slug($script->name).'_server.sh');
 
         file_put_contents($localFilePath, $script->script);
 
         // Ensure our .basement folder exists
-        ssh2_exec($this->connection, "mkdir /tmp/.spork -f");
+        ssh2_exec($this->connection, 'mkdir /tmp/.spork -f');
         stream_set_blocking($this->connection, true);
 
         // Create a local copy of our script to make sure it runs like we'd expect.
-        ssh2_scp_send($this->connection, $localFilePath, $file = "/tmp/.spork/".Str::random(32).'.sh');
+        ssh2_scp_send($this->connection, $localFilePath, $file = '/tmp/.spork/'.Str::random(32).'.sh');
 
         unlink($localFilePath);
         // Run a command that will probably write to stderr (unless you have a folder named /hom)
-        $stream_out = ssh2_exec($this->connection, "bash ".escapeshellcmd($file));
+        $stream_out = ssh2_exec($this->connection, 'bash '.escapeshellcmd($file));
 
         $stream_error = ssh2_fetch_stream($this->connection, SSH2_STREAM_STDERR);
         ssh2_exec($this->connection, "rm $file -f");
@@ -88,7 +88,7 @@ class SshService
     /**
      * @throws Exception
      */
-    public static function factory(string $host, string $username = 'forge', ?Credential $credential = null): static
+    public static function factory(string $host, string $username = 'forge', Credential $credential = null): static
     {
         if (! $credential) {
             $randomName = Str::random(16);

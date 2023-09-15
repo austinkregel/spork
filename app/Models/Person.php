@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 
 class Person extends Model implements ModelQuery
 {
@@ -27,10 +27,8 @@ class Person extends Model implements ModelQuery
         'education' => 'array',
     ];
 
-
     public function scopeQ(Builder $query, string $string): void
     {
         $query->where('name', 'like', '%'.$string.'%');
     }
-
 }
