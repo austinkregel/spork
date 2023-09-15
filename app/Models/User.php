@@ -21,8 +21,8 @@ class User extends Authenticatable implements ModelQuery
     use HasFactory;
     use HasProfilePhoto;
     use HasTeams;
-    use Notifiable;
     use LogsActivity;
+    use Notifiable;
     use TwoFactorAuthenticatable;
 
     /**

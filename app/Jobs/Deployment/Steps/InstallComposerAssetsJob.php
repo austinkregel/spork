@@ -17,7 +17,7 @@ use Illuminate\Queue\SerializesModels;
 
 class InstallComposerAssetsJob
 {
-    use DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+    use Batchable, DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         public Server $server,

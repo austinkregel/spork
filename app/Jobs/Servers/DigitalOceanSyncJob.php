@@ -49,7 +49,7 @@ class DigitalOceanSyncJob extends AbstractSyncServerResourceJob
                 ];
 
                 foreach ($data as $key => $value) {
-                    if ($localServer->$key !== $value) {
+                    if ($value !== $localServer->$key) {
                         // Only set the new value if its different
                         $localServer->$key = $value;
                     }

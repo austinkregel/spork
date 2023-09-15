@@ -19,7 +19,7 @@ use Laravel\Forge\Resources\Site;
 
 class SetupLoadBalancerJob implements ShouldQueue
 {
-    use DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+    use Batchable, DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         public Server $server,

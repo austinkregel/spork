@@ -11,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class FetchCloudflareAnalytics implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue;
+    use InteractsWithQueue, Queueable;
 
     public function handle()
     {

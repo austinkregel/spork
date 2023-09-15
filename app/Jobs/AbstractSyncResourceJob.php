@@ -16,7 +16,7 @@ use Illuminate\Queue\SerializesModels;
 
 abstract class AbstractSyncResourceJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected ModelQuery $model;
 

@@ -73,6 +73,7 @@ class ForgeDevelopmentService
         } catch (ValidationException $e) {
             dd($e->errors());
         }
+
         /**
          * {
          *       "id": 2,
@@ -133,6 +134,7 @@ class ForgeDevelopmentService
         } catch (ValidationException $e) {
             dd($e->errors(), $data);
         }
+
         /**
          * We've got
          * {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
@@ -15,7 +17,8 @@ class ProjectsController extends Controller
         return Inertia::render('Projects/Projects', []);
     }
 
-    public function show(Project $project) {
+    public function show(Project $project)
+    {
         $project->load([
             'servers.tags',
             'domains.records',
@@ -50,38 +53,39 @@ class ProjectsController extends Controller
                     'name' => 'Total Queries',
                     'stat' => $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('query_count'), 0),
                     'duration' => $project->domains->reduce(function (int $carry, $domain) {
-                            $maxDate = $domain->domainAnalytics->map->min_date->min();
-                            $minDate = $domain->domainAnalytics->map->max_date->max();
+                        $maxDate = $domain->domainAnalytics->map->min_date->min();
+                        $minDate = $domain->domainAnalytics->map->max_date->max();
 
-                            return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
-                        }, 0).' hours',
+                        return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
+                    }, 0).' hours',
                 ],
                 [
                     'name' => 'Total Uncached',
                     'stat' => $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('uncached_count'), 0),
                     'duration' => $project->domains->reduce(function (int $carry, $domain) {
-                            $maxDate = $domain->domainAnalytics->map->min_date->min();
-                            $minDate = $domain->domainAnalytics->map->max_date->max();
+                        $maxDate = $domain->domainAnalytics->map->min_date->min();
+                        $minDate = $domain->domainAnalytics->map->max_date->max();
 
-                            return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
-                        }, 0).' hours',
+                        return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
+                    }, 0).' hours',
                 ],
                 [
                     'name' => 'Total Stale',
                     'stat' => $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('stale_count'), 0),
                     'duration' => $project->domains->reduce(function (int $carry, $domain) {
-                            $maxDate = $domain->domainAnalytics->map->min_date->min();
-                            $minDate = $domain->domainAnalytics->map->max_date->max();
+                        $maxDate = $domain->domainAnalytics->map->min_date->min();
+                        $minDate = $domain->domainAnalytics->map->max_date->max();
 
-                            return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
-                        }, 0).' hours',
+                        return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
+                    }, 0).' hours',
 
                 ],
             ],
         ]);
     }
 
-    public function deploy(Project $project) {
+    public function deploy(Project $project)
+    {
         $project->load([
             'servers.tags', 'domains',
         ]);
@@ -125,7 +129,8 @@ class ProjectsController extends Controller
 
     }
 
-    public function attach(Project $project) {
+    public function attach(Project $project)
+    {
         //    request()
         request()->validate([
             'resource_type' => \Illuminate\Validation\Rule::in([
@@ -154,7 +159,8 @@ class ProjectsController extends Controller
         ]);
     }
 
-    public function detach(Project $project) {
+    public function detach(Project $project)
+    {
         //    request()
         request()->validate([
             'resource_type' => \Illuminate\Validation\Rule::in([
