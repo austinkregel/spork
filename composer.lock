@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2b0b65dbf7dc383f0ffb6f1917e9d77",
+    "content-hash": "154a5c6960d416bc84326c01142e64b9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -164,56 +164,6 @@
                 "source": "https://github.com/DASPRiD/Enum/tree/1.0.5"
             },
             "time": "2023-08-25T16:18:39+00:00"
-        },
-        {
-            "name": "dealerinspire/laravel-operations",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "./bench/laravel-operations",
-                "reference": "ed9611760b8595eb7f25963310f90fb6aa8cb404"
-            },
-            "require": {
-                "laravel/framework": ">=7.0",
-                "php": ">=7.2.5"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^5.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "DealerInspire\\Operations\\OperationServiceProvider"
-                    ],
-                    "aliases": {
-                        "Operator": "DealerInspire\\Operations\\Facades\\Operations"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "DealerInspire\\Operations\\": "src"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "DealerInspire\\Operations\\Tests\\": "tests"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "Operations allow you to schedule your jobs in a programmatic, database-driven way",
-            "keywords": [
-                "jobs",
-                "laravel",
-                "laravel-operations",
-                "operations"
-            ],
-            "transport-options": {
-                "relative": true
-            }
         },
         {
             "name": "dflydev/dot-access-data",
@@ -2406,6 +2356,66 @@
                 }
             ],
             "time": "2023-09-07T19:22:17+00:00"
+        },
+        {
+            "name": "league/flysystem-ftp",
+            "version": "3.16.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/flysystem-ftp.git",
+                "reference": "60b6c44194ee94d53eb81971637ef017e123fb20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-ftp/zipball/60b6c44194ee94d53eb81971637ef017e123fb20",
+                "reference": "60b6c44194ee94d53eb81971637ef017e123fb20",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ftp": "*",
+                "league/flysystem": "^3.0.0",
+                "league/mime-type-detection": "^1.0.0",
+                "php": "^8.0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\Flysystem\\Ftp\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frankdejonge.nl"
+                }
+            ],
+            "description": "FTP filesystem adapter for Flysystem.",
+            "keywords": [
+                "Flysystem",
+                "file",
+                "files",
+                "filesystem",
+                "ftp",
+                "ftpd"
+            ],
+            "support": {
+                "source": "https://github.com/thephpleague/flysystem-ftp/tree/3.16.0"
+            },
+            "funding": [
+                {
+                    "url": "https://ecologi.com/frankdejonge",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/frankdejonge",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-08-30T10:17:23+00:00"
         },
         {
             "name": "league/flysystem-local",

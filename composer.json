@@ -10,7 +10,6 @@
         "ext-openssl": "*",
         "ext-simplexml": "*",
         "ext-ssh2": "*",
-        "dealerinspire/laravel-operations": "dev-master",
         "guzzlehttp/guzzle": "^7.7",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laravel/forge-sdk": "^3.13",
@@ -19,6 +18,7 @@
         "laravel/jetstream": "^3.2",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
+        "league/flysystem-ftp": "^3.0",
         "mustache/mustache": "^2.14",
         "nunomaduro/laravel-console-dusk": "^1.11",
         "spatie/laravel-activitylog": "^4.7",
@@ -65,12 +65,6 @@
             "@php artisan key:generate --ansi"
         ]
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "./bench/laravel-operations"
-        }
-    ],
     "extra": {
         "laravel": {
             "dont-discover": []
