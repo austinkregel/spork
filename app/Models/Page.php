@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Page extends Model implements ModelQuery
+class Page extends Model implements ModelQuery, Crud
 {
     use HasFactory, HasProjectResource;
 
@@ -28,6 +28,12 @@ class Page extends Model implements ModelQuery
         'is_active',
         'sort_order',
         'published_at',
+    ];
+
+    public $casts = [
+        'is_active' => 'boolean',
+        'middleware' => 'json',
+        'settings' => 'json',
     ];
 
     public function domain(): BelongsTo

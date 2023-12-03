@@ -43,7 +43,6 @@ class EventServiceProvider extends ServiceProvider
         ],
         Events\Domains\NameServerRecordVerified::class => [
             Listeners\DebugEventListener::class,
-
         ],
     ];
 

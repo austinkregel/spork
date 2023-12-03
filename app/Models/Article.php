@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Article extends Model
+class Article extends Model implements Crud
 {
     use HasFactory, LogsActivity;
 

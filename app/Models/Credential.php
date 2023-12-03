@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Credential extends Model implements ModelQuery
+class Credential extends Model implements ModelQuery, Crud
 {
     use HasFactory, HasProjectResource, LogsActivity;
 
@@ -90,7 +90,6 @@ class Credential extends Model implements ModelQuery
         'api_key',
         'access_token',
         'refresh_token',
-        'user_id',
     ];
 
     public $casts = [
@@ -99,7 +98,6 @@ class Credential extends Model implements ModelQuery
 
     public $fillable = [
         'name',
-        'user_id',
         'type',
         'service',
         'api_key',
@@ -116,6 +114,11 @@ class Credential extends Model implements ModelQuery
         static::creating(function ($credential) {
             $credential->user_id = auth()->id() ?? 1;
         });
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function getPublicKey(): string

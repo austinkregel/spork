@@ -7,7 +7,7 @@ namespace App\Models;
 use App\Contracts\ModelQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Tag extends \Spatie\Tags\Tag implements ModelQuery
+class Tag extends \Spatie\Tags\Tag implements ModelQuery, Crud
 {
     use HasFactory;
 

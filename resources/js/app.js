@@ -1,6 +1,6 @@
 import './bootstrap';
 import '../css/app.css';
-
+import Toaster from "@meforma/vue-toaster";
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -9,6 +9,7 @@ import { createStore } from "vuex";
 import Hero from './Builder/Components/Heros/Classic.vue';
 import BuilderButton from './Builder/Components/BuilderButton.vue';
 import BuilderText from './Builder/Components/BuilderText.vue';
+import Notifications from 'notiwind';
 import Grid from './Components/Grid.vue';
 import TitleAndFooterTextCard from "./Builder/Components/Cards/TitleAndFooterTextCard.vue";
 const registeredComponents = [];
@@ -38,7 +39,9 @@ createInertiaApp({
 
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(Notifications)
             .use(store)
+            .use(Toaster)
             .use(ZiggyVue, Ziggy);
         const addComponentToRegistry = (component) => {
             const name = (component.__name ?? component.name ?? component.__file ?? '').split('/').pop().split('.')[0];

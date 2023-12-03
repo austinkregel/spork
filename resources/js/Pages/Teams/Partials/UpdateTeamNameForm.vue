@@ -13,7 +13,7 @@ const props = defineProps({
 });
 
 const form = useForm({
-    name: props.team.name,
+    name: props.team?.name ?? '',
 });
 
 const updateTeamName = () => {

@@ -1,6 +1,6 @@
 <script setup>
 import dayjs from 'dayjs';
-import { defineProps, ref, onBeforeMount, onUnmounted } from 'vue';
+import { ref, onBeforeMount, onUnmounted } from 'vue';
 
 defineProps({
     weather: Object,

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('slug')->nullable();
             $table->string('route');
             $table->json('middleware')->nullable();
+            $table->json('settings')->nullable();
             // 1 sentence
             $table->string('subtitle')->nullable();
             $table->text('excerpt')->nullable();

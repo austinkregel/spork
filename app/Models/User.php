@@ -71,4 +71,9 @@ class User extends Authenticatable implements ModelQuery
             ->useLogName('user')
             ->logOnlyDirty();
     }
+
+    public function codes()
+    {
+        return $this->hasMany(ShortCode::class);
+    }
 }

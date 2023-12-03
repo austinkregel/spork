@@ -135,13 +135,13 @@ export default {
         },
         async save(form) {
             if (!form.id) {
-                await axios.post('/api/pages', form);
+                await axios.post('/api/crud/pages', form);
             } else {
                 console.log('No edit method defined')
             }
         },
         async onDelete(data) {
-            await axios.delete('/api/pages/' + form.id);
+            await axios.delete('/api/crud/pages/' + form.id);
         },
         async onExecute({ actionToRun, selectedItems}) {
             try {
@@ -158,7 +158,7 @@ export default {
         },
         async fetch({ page, limit, ...args }) {
             const { data: { data, ...pagination} } = await axios.get(buildUrl(
-                '/api/pages', {
+                '/api/crud/pages', {
                     page, limit,
                     ...args,
                     include: []

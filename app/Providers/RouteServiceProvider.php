@@ -72,6 +72,13 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->domain(config('app.env') == 'production' ? 'spork.zone' : 'spork.localhost')
                 ->group(base_path('routes/pages/spork.php'));
+
+            Route::middleware('api')
+                ->domain(config('app.env') == 'production' ? 'deploy.kregel.host' : 'deploy.localhost')
+                ->group(base_path('routes/pages/deploy.php'));
+
+            Route::domain(env("LINK_SHORTENING_DOMAIN"))
+                ->group(base_path('routes/pages/link-shortening.php'));
         });
     }
 }

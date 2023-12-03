@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Services;
+
+use Carbon\Carbon;
+use GuzzleHttp\Client;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\HeaderUtils;
+use function PHPUnit\Framework\returnValueMap;
+use function Symfony\Component\String\b;
+
+class ImapService
+{
+    public function findAllMailboxes()
+    {
+        return collect(imap_listmailbox($inbox = imap_open(
+            $this->buildMailboxString(),
+            env('IMAP_USERNAME'),
+            env("IMAP_PASSWORD")
+        ), $this->buildMailboxString(), '*'))
+            ->tap(fn () => imap_close($inbox));
+    }
+    public function findAllFromDate(string $mailbox, Carbon $date): Collection
+    {
+        return collect(imap_search($inbox = imap_open(
+            sprintf('%s%s', $this->buildMailboxString(), $mailbox),
+            env('IMAP_USERNAME'),
+            env("IMAP_PASSWORD")
+        ),
+            sprintf('SINCE "%s"', $date->format("Y-m-d"))
+        ))
+            ->map(function ($messageNumber) use ($inbox) {
+                $headers = Str::of($headerRaw = imap_fetchheader($inbox, $messageNumber, ))
+                    ->explode("\r\n")
+                    ->filter()
+                    ->reduce(fn ($lines, $line) => array_merge(
+                        $lines,
+                        [explode(": ", $line, 2)[0] => explode(": ", $line, 2)[1] ?? null]
+                    ), []);
+
+                $rfcHeaders = imap_rfc822_parse_headers($headerRaw);
+                $body = null;
+                $overview = Arr::first(imap_fetch_overview($inbox, $messageNumber));
+
+                return [
+                    'id' => imap_uid($inbox, $messageNumber),
+                    'to' => $this->extractEmailAndName($headers['To']),
+                    'addressed-to' => $this->extractEmailAndName($headers['X-Simplelogin-Envelope-To'] ?? $headers['X-Original-To'] ?? null),
+                    'addressed-from' => $this->extractEmailAndName($rfcHeaders->fromaddress ?? $headers['X-Pm-External-Id'] ?? null),
+                    'date' => Carbon::parse($headers['Date']),
+                    'human_date' => Carbon::parse($headers['Date'])->fromNow(),
+                    'subject' => imap_utf8($headers['Subject']),
+                    'from' => $this->extractEmailAndName($rfcHeaders->senderaddress ?? $rfcHeaders->fromaddress ?? $headers['From'], $headers),
+                    'reply-to' => $this->extractEmailAndName($rfcHeaders->reply_toaddress ?? $headers['Reply-To']),
+                    'spam' => intval($headers['X-Pm-Spamscore'] ?? 0),
+                    'seen' => (bool) $overview->seen ?? false,
+                    'deleted' => (bool) $overview->deleted ?? false,
+                    'answered' => (bool) $overview->answered ?? false,
+                    'recent' => (bool) $overview->recent ?? false,
+                    'draft' => (bool) $overview->draft ?? false,
+                ];
+            })
+            ->sortByDesc('date')
+            ->values()
+            ->tap(fn () => imap_close($inbox));
+    }
+
+    public function findMessage(string $messageNumber, bool $peak = true): array
+    {
+        $mailbox = new \PhpImap\Mailbox(
+            sprintf('{'.env('IMAP_HOST').':'.env('IMAP_PORT').'/imap/'.env('IMAP_ENCRYPTION', 'notls').'}INBOX'), // IMAP server and mailbox folder
+            env('IMAP_USERNAME'), // Username for the before configured mailbox
+            env('IMAP_PASSWORD'), // Password for the before configured username
+            storage_path(), // Directory, where attachments will be saved (optional)
+            'UTF-8', // Server encoding (optional)
+            true, // Trim leading/ending whitespaces of IMAP path (optional)
+            false // Attachment filename mode (optional; false = random filename; true = original filename)
+        );
+
+        $message = $mailbox->getMail($messageNumber, false);
+
+        $headers = Str::of($message->headersRaw)
+            ->explode("\r\n")
+            ->filter()
+            ->reduce(fn ($lines, $line) => array_merge(
+                $lines,
+                [explode(": ", $line, 2)[0] => explode(": ", $line, 2)[1] ?? null]
+            ), []);
+
+        $rfcHeaders = imap_rfc822_parse_headers($message->headersRaw);
+        return [
+            'id' => $messageNumber,
+            'to' => $this->extractEmailAndName($headers['To']),
+            'addressed-to' => $this->extractEmailAndName($headers['X-Simplelogin-Envelope-To'] ?? $headers['X-Original-To'] ?? null),
+            'addressed-from' => $this->extractEmailAndName($rfcHeaders->fromaddress ?? $headers['X-Pm-External-Id'] ?? null),
+            'date' => Carbon::parse($headers['Date']),
+            'human_date' => Carbon::parse($headers['Date'])->fromNow(),
+            'subject' => imap_utf8($headers['Subject']),
+            'from' => $this->extractEmailAndName($rfcHeaders->senderaddress ?? $rfcHeaders->fromaddress ?? $headers['From'], $headers),
+            'reply-to' => $this->extractEmailAndName($rfcHeaders->reply_toaddress ?? $headers['Reply-To']),
+            'spam' => $headers['X-Pm-Spamscore'],
+            'seen' => $message->isSeen ?? false,
+            'deleted' => $message->isDeleted ?? false,
+            'answered' => $message->isAnswered ?? false,
+            'recent' => $message->isRecent ?? false,
+            'draft' => $message->isDraft ?? false,
+            'body' => base64_encode($message->textHtml),
+        ];
+    }
+
+    protected function buildMailboxString()
+    {
+        return sprintf('{'.env('IMAP_HOST').':'.env('IMAP_PORT').'/imap/'.env('IMAP_ENCRYPTION', 'notls').'}');
+    }
+
+    protected function extractEmailAndName(?string $value, $headers = [])
+    {
+        if (empty($value)) {
+            return $value
+;        }
+
+        if (!str_contains($value, '<')) {
+            return array_merge([
+                'email' => $value
+            ]);
+        }
+
+        if (str_contains($value, '"')) {
+            preg_match_all('/(\".*\")?(\s)?(\<.*\>)/', $value, $matches);
+        } else {
+            preg_match_all('/(.*)(\s)(\<.*\>)/', $value, $matches);
+        }
+        return match (count($matches)) {
+            3 => [
+                'email' => trim(Arr::first($matches[2])),
+                'original' => $value
+            ],
+            4 => empty(trim(Arr::first($matches[1]), "\"'")) ? [
+                // Address
+                'email' => trim(Arr::first($matches[3]), "<>"),
+                'original' => $value
+            ] : [
+                // Name
+                'name' => trim(Arr::first($matches[1]), "\"'"),
+                // Address
+                'email' => trim(Arr::first($matches[3]), "<>"),
+                'original' => $value
+            ],
+        };
+    }
+}

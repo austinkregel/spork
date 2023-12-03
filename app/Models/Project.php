@@ -16,7 +16,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
-class Project extends Model implements ModelQuery
+class Project extends Model implements ModelQuery, Crud
 {
     use HasFactory, HasTags, LogsActivity;
 

@@ -10,7 +10,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
-class ExternalRssFeed extends Model
+class ExternalRssFeed extends Model implements Crud
 {
     use HasFactory, HasTags, LogsActivity;
 

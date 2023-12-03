@@ -1,11 +1,11 @@
 <template>
     <div class="w-full">
-        <div class="flex flex-wrap shadow rounded-lg">
+        <div class="flex flex-wrap shadow rounded-lg gap-4">
             <div v-if="title" class="text-4xl mb-4 font-medium text-stone-900 dark:text-zinc-200">
                 {{ title }}
             </div>
 
-            <div class="border-b border-zinc-700 w-full flex flex-wrap items-center justify-between  p-4">
+            <div class="w-full flex flex-wrap items-center justify-between">
                 <div class="relative flex flex-1 max-w-2xl text-zinc-700 dark:text-zinc-300 items-center">
                     <spork-input v-model="searchQuery" type="text" placeholder="Search..." class="pl-9" />
                     <div class="absolute top-0 left-0 right-0  z-0 ml-3 mt-2 pointer-events-none">
@@ -24,7 +24,7 @@
                     </div>
                 </div>
             </div>
-
+            <div class="border-b border-zinc-700 dark:border-zinc-600 w-full"></div>
             <div class="w-full dark:text-white bg-white dark:bg-zinc-700  rounded-lg flex flex-wrap items-center justify-between">
                 <div class="bg-zinc-600 dark:bg-zinc-800 relative border-b border-zinc-300 w-full p-4 flex flex-wrap justify-between items-center rounded-t-lg">
                     <input @change="selectAll" type="checkbox">
@@ -88,7 +88,7 @@
             <div class="w-full dark:text-white flex justify-between flex-wrap bg-zinc-100 dark:bg-zinc-800 px-4 py-2">
                 <SporkButton :disabled="hasPreviousPage" :plain="true" :xlarge="true" :class="[!hasPreviousPage ? 'opacity-50 cursor-not-allowed': '']">Previous</SporkButton>
                 <div class="py-2">
-                    {{ total }} total items, {{ currentPage  }} of {{ paginator?.total}}
+                    {{ (currentPage * itemsPerPage) - itemsPerPage }} total items, {{ currentPage  }} of {{ paginator?.total}}
                 </div>
                 <SporkButton @click="() => {
                     getData(currentPage + 1);
@@ -179,10 +179,6 @@ export default {
         paginator: {
             type: Object,
             default: () => ({}),
-        },
-        feature: {
-            type: String,
-            default: () => 'core',
         },
         settings: {
             type: Object,

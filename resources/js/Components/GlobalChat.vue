@@ -1,0 +1,121 @@
+<template>
+    <div class="fixed transition-all bottom-0 right-0 bg-blue-200 m-8 overflow-hidden z-0 shadow rounded dark:bg-slate-900 dark:text-white" :style="{ width, height }" :class="[open ? 'rounded' : 'rounded-full']">
+        <div class="py-2 px-4 bg-amber-200 dark:bg-stone-700 flex items-center justify-between" v-if="open">
+            <div class="flex flex-wrap items-center justify-center gap-4">
+                <button @click="() => {active.chat = null; active.messages = []; title = 'Chat' }">
+                    <ChevronLeftIcon  class="w-6 h-6 text-gray-100" />
+                </button>
+                {{ title }}
+            </div>
+
+            <div class="flex items-center">
+                <button @click="open = !open">
+                    <XMarkIcon  class="h-5 w-5 text-gray-800 dark:text-gray-50" />
+                </button>
+            </div>
+        </div>
+
+        <div v-else>
+            <button @click="open = !open">Open</button>
+        </div>
+
+        <div class="overflow-hidden transition-all" :class="[active.chat != null ? 'h-full' : 'h-0']">
+            <div class="flex justify-between items-center gap-x-6 py-2 px-4" v-if="active.chat">
+                <div class="flex items-center min-w-0 gap-x-2">
+                    <img class="h-8 w-8 flex-none rounded-full bg-gray-50 dark:bg-gray-600" :src="active.chat.imageUrl" alt="" />
+                    <div class="min-w-0 flex-auto">
+                        <div class="text-sm text-left font-semibold leading-1 text-gray-900 dark:text-gray-50 w-full text-wrap">
+                            {{ active.chat.name }}
+                        </div>
+                        <p class="mt-1 truncate text-xs leading-1 text-gray-500 dark:text-gray-300">{{ active.chat.email }}</p>
+                    </div>
+                </div>
+                <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+                    <p class="text-sm leading-2 text-gray-900 dark:text-gray-50">{{ active.chat.role }}</p>
+                    <p v-if="active.chat.lastSeen" class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400">
+                        Last seen <time :datetime="active.chat.lastSeenDateTime">{{ active.chat.lastSeen }}</time>
+                    </p>
+                    <div v-else class="mt-1 flex items-center gap-x-1.5">
+                        <div class="flex-none rounded-full bg-emerald-500/20 p-1">
+                            <div class="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        </div>
+                        <p class="text-xs leading-1 text-gray-500 dark:text-gray-400">Online</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-100 dark:bg-slate-800 relative flex flex-col justify-between">
+                <div style="height: calc(450px - 96px - 40px)" class="overflow-y-scroll">
+                    <div v-for="message in active.messages">
+                        {{ message.message}}
+                    </div>
+                </div>
+                <div class=" flex ">
+                    <SporkInput v-model="input"/>
+                    <button>Submit</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bg-slate-800 h-full rounded-b divide-y divide-gray-400 dark:divide-gray-700 overflow-y-scroll">
+            <div v-for="person in page.props.conversations.data" class="flex justify-between items-center gap-x-6 py-2 px-4">
+                <div class="flex items-center min-w-0 gap-x-2">
+                    <img class="h-8 w-8 flex-none rounded-full bg-gray-50 dark:bg-gray-600" :src="person.imageUrl" alt="" />
+                    <div class="min-w-0 flex-auto">
+                        <button  @click="() => { showChat = true; active.chat = person; title = 'Chatting with ' + person.name}" class="text-sm text-left font-semibold leading-1 text-gray-900 dark:text-gray-50 w-full text-wrap">
+                            {{ person.name }}
+                        </button>
+                        <p class="mt-1 truncate text-xs leading-1 text-gray-500 dark:text-gray-300">{{ person.email }}</p>
+                    </div>
+                </div>
+                <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+                    <p class="text-sm leading-2 text-gray-900 dark:text-gray-50">{{ person.role }}</p>
+                    <p v-if="person.lastSeen" class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400">
+                        Last seen <time :datetime="person.lastSeenDateTime">{{ person.lastSeen }}</time>
+                    </p>
+                    <div v-else class="mt-1 flex items-center gap-x-1.5">
+                        <div class="flex-none rounded-full bg-emerald-500/20 p-1">
+                            <div class="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        </div>
+                        <p class="text-xs leading-1 text-gray-500 dark:text-gray-400">Online</p>
+                    </div>
+                </div>
+            </div>{{page.props.conversations}}
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue';
+import {Head, Link, router, usePage} from '@inertiajs/vue3';
+import { XMarkIcon } from '@heroicons/vue/24/solid'
+import { ChevronLeftIcon  } from '@heroicons/vue/20/solid'
+import SporkInput from "@/Components/Spork/SporkInput.vue";
+
+const open = ref(false);
+
+const page = usePage();
+const width = computed(() => {
+  if (open.value) {
+    return '325px'
+  }
+
+  return '40px';
+});
+
+const height = computed(() => {
+  if (open.value) {
+    return '450px'
+  }
+
+  return '40px';
+})
+const active = ref({
+  chat: null,
+  messages: []
+});
+
+const showChat = ref(false);
+const title = ref('Chat');
+const input = ref('');
+</script>

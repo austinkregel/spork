@@ -29,7 +29,6 @@ defineProps({
                 <MetricCard title="Servers" :value="server_count" />
                 <MetricCard title="Domains" :value="domain_count" />
                 <MetricCard title="Credentials" :value="credential_count" />
-
                 <div class="col-span-5 border-t border-zinc-700"> </div>
                 <div class="col-span-5 text-white">
                     <div v-for="log in activity_logs.data">

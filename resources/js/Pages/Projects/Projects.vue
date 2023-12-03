@@ -55,8 +55,8 @@
                                     </div>
 
                                     <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">Type</label>
-                                        <spork-input v-model="form.settings.type" type="text" name="name" id="name" />
+                                        <label for="username" class="block text-sm font-medium">Project Username</label>
+                                        <spork-input v-model="form.settings.username" type="text" name="username" id="username" />
                                     </div>
 
                                 </div>
@@ -91,7 +91,9 @@ export default {
             createOpen: ref(false),
             form: ref(({
                 name: '',
-                settings: {},
+                settings: {
+
+                },
             })),
             data: ref([]),
             pagination: ref({}),
@@ -117,7 +119,7 @@ export default {
         },
         async save(form) {
             if (!form.id) {
-                await axios.post('/api/projects', {
+                await axios.post('/api/crud/projects', {
                     ...form,
                     team_id: this.$page.props.auth.user.current_team.id,
                 });
@@ -128,7 +130,7 @@ export default {
             }
         },
         async onDelete(data) {
-            await axios.delete('/api/projects/' + data.id);
+            await axios.delete('/api/crud/projects/' + data.id);
             await this.fetch({
                 page: 1, limit: 15,
             })
@@ -148,7 +150,7 @@ export default {
         },
         async fetch({ page, limit, ...args }) {
             const { data: { data, ...pagination} } = await axios.get(buildUrl(
-                '/api/projects', {
+                '/api/crud/projects', {
                     page, limit,
                     ...args,
                     include: ['domains', 'servers']

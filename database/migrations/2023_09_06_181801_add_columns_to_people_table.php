@@ -24,6 +24,7 @@ return new class extends Migration
             $table->json('education')->nullable()->after('emails');
             $table->string('estimated_income')->nullable()->after('emails');
             $table->string('estimated_home_value')->nullable()->after('emails');
+            $table->string('photo_url', 2048)->nullable()->after('estimated_home_value');
 
         });
     }

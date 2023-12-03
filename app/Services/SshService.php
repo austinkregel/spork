@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\Credential;
 use App\Models\Spork\Script;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Str;
 
@@ -88,9 +89,19 @@ class SshService
     /**
      * @throws Exception
      */
-    public static function factory(string $host, string $username = 'forge', Credential $credential = null): static
+    public static function factory(string $host, User $user = null): Credential
     {
-        if (! $credential) {
+        $credential = Credential::query()->where(array_merge([
+            'service' => Credential::TYPE_SSH,
+            'type' => Credential::TYPE_SSH
+        ], $user ? ['user_id' => $user->id]: []))->first();
+
+        if (empty($user) && empty($credential)) {
+            abort(404, 'user does ot exist');
+        }
+
+
+        if (empty($credential)) {
             $randomName = Str::random(16);
 
             $generatorService = new SshKeyGeneratorService(
@@ -99,11 +110,11 @@ class SshService
                 passKey: $passKey = ''// Str::random(16),
             );
 
-            $credential = Credential::create([
+            return Credential::create([
                 'service' => Credential::TYPE_SSH,
                 'type' => Credential::TYPE_SSH,
-                'name' => 'Forge',
-                'user_id' => 1,
+                'name' => $host.' ssh',
+                'user_id' => $user->id,
                 'settings' => [
                     'pub_key' => $generatorService->getPublicKey(),
                     'pub_key_file' => $publicKeyFile,
@@ -114,12 +125,6 @@ class SshService
             ]);
         }
 
-        return new static(
-            host: $host,
-            username: $username,
-            publicKeyFile: $credential->getPublicKey(),
-            privateKeyFile: $credential->getPrivateKey(),
-            passKey: $credential->getPasskey()
-        );
+        return $credential;
     }
 }

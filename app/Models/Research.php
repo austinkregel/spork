@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Research extends Model
+class Research extends Model implements Crud
 {
     use HasFactory, LogsActivity;
 
