@@ -18,11 +18,11 @@
                 <div v-for="account in $store.getters.allAccountsFromFeatures" class="flex items-center gap-2" :key="account.account_id">
                     <span  :style="'background: #' + account.account_id.substr(0, 6)" class="p-2 w-4 h-4 rounded-full"></span>{{account.name}} (${{ account.balance ?? 0 }}/{{account.available ?? 0}})
                 </div>
-                
+
                 <div class="flex items-center gap-2"><span class="bg-yellow-500 p-2 w-4 h-4 rounded-full"></span>Reserved for budgets/savings (${{ reservedAmount }})</div>
             </div>
         </div>
-        
+
         <div class="w-full px-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-50">
                 Month to date
@@ -46,7 +46,7 @@
                 <div class="flex w-full items-center gap-2" v-for="transaction in paidBudgets" :key="transaction">
                     <div class="w-8">
                         <check-icon class="text-green-500 fill-current"></check-icon>
-                    </div>  
+                    </div>
 
                     <div class="flex flex-wrap w-full items-center py-2">
                         <div class="w-full flex justify-between items-center">
@@ -54,7 +54,7 @@
                             <div class="text-right text-gray-700 dark:text-gray-200 font-bold">${{ transaction.amount}}</div>
                         </div>
 
-                        <div class="w-full flex justify-between items-center text-sm text-gray-600">
+                        <div class="w-full flex justify-between items-center text-sm text-gray-600 dark:text-gray-300">
                             <div class="text-gray-500 dark:text-gray-300">{{ transaction.category }}</div>
                             <div class="text-right">{{ transaction.date }}</div>
                         </div>
@@ -72,15 +72,15 @@
                 <div class="flex w-full items-center gap-2" v-for="transaction in pendingBudgets" :key="transaction">
                     <div class="w-8">
                         <refresh-icon class="text-yellow-500 fill-current"></refresh-icon>
-                    </div>  
-                        
+                    </div>
+
                     <div class="flex flex-wrap w-full items-center py-2">
                         <div class="w-full flex justify-between items-center">
                             <div class="font-medium">{{ transaction.name }}</div>
                             <div class="text-right text-gray-700 dark:text-gray-200 font-bold">${{ transaction.amount}}</div>
                         </div>
 
-                        <div class="w-full flex justify-between items-center text-sm text-gray-600">
+                        <div class="w-full flex justify-between items-center text-sm text-gray-600 dark:text-gray-300">
                             <div class="text-gray-500 dark:text-gray-300">{{ transaction.category }}</div>
                             <div class="text-right">{{ transaction.date }}</div>
                         </div>
@@ -98,14 +98,14 @@
                     <div class="w-8">
                         <clock-icon class="text-yellow-600 fill-current"></clock-icon>
                     </div>
-                        
+
                     <div class="flex flex-wrap w-full items-center py-2">
                         <div class="w-full flex justify-between items-center">
                             <div class="font-medium">{{ transaction.name }}</div>
                             <div class="text-right text-gray-700 dark:text-gray-200 font-bold">${{ transaction.settings.amount}}</div>
                         </div>
 
-                        <div class="w-full flex justify-between items-center text-sm text-gray-600">
+                        <div class="w-full flex justify-between items-center text-sm text-gray-600 dark:text-gray-300">
                             <div class="text-gray-500 dark:text-gray-300">{{ transaction.tags?.map(tag => tag?.en ?? '')?.join(', ') }}</div>
                             <div class="text-right">{{ transaction.repeatable }}</div>
                         </div>
@@ -120,12 +120,12 @@
 </template>
 
 <script>
-import { 
+import {
     CheckCircleIcon,
-    ChevronRightIcon, 
-    MailIcon, 
-    CheckIcon, 
-    RefreshIcon, 
+    ChevronRightIcon,
+    MailIcon,
+    CheckIcon,
+    RefreshIcon,
     ClockIcon,
     UsersIcon,
     MailOpenIcon,

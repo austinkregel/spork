@@ -1,10 +1,10 @@
 <template>
     <div class="flex flex-wrap justify-center p-4 w-full h-screen overflow-y-scroll">
-        <div class="w-full flex flex-col gap-4">  
+        <div class="w-full flex flex-col gap-4">
             <div class="flex flex-wrap justify-between">
                 <div class="dark:text-gray-100 text-gray-700 font-bold text-3xl">Recent Headlines</div>
 
-                <select @change="changeCategory" name="category" id="category" class="text-gray-600 bg-white py-1 px-2 rounded dark:bg-gray-600 dark:text-gray-100">
+                <select @change="changeCategory" name="category" id="category" class="text-gray-600 dark:text-gray-300 bg-white py-1 px-2 rounded dark:bg-gray-600 dark:text-gray-100">
                     <option value="">All Categories</option>
                     <option value="business">Business</option>
                     <option value="entertainment">Entertainment</option>
@@ -29,11 +29,11 @@
                             <p class="text-base" v-html="event.description"></p>
                         </div>
                         <div class="p-2 w-full flex justify-between text-xs">
-                            <span class="inline-block bg-gray-100 dark:bg-gray-500 rounded-full px-3 py-1  font-semibold text-gray-600 dark:text-gray-200">
+                            <span class="inline-block bg-gray-100 dark:bg-gray-500 rounded-full px-3 py-1  font-semibold text-gray-600 dark:text-gray-300 dark:text-gray-200">
                                 #{{event.source.name.toLowerCase().replace(' ','-')}}
                             </span>
 
-                            
+
                             <button @click="() => markAsRead(event)" class="text-red-500 hover:text-red-700  font-bold px-2 rounded">
                                 Marked as read
                             </button>

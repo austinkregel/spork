@@ -4,14 +4,14 @@
             <div class="md:col-span-1">
                 <div class="px-4 sm:px-0">
                     <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">Accounts</h3>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-200">
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-300 dark:text-gray-200">
                         This is where you can manage your accounts. CSVs must have the following columns: <code>account_id, and type</code>, the rest are technically optional.
                     </p>
                 </div>
             </div>
             <div class="mt-5 md:mt-0 md:col-span-2">
                 <div v-for="(tokens, $i) in [$store.getters.manualFinance].filter(v => v)" :key="$i" class="mx-4">
-                    <div class="w-full text-gray-600 uppercase">{{ tokens.name }}</div>
+                    <div class="w-full text-gray-600 dark:text-gray-300 uppercase">{{ tokens.name }}</div>
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" v-if="tokens?.accounts?.length > 0">
                         <div v-for="item in tokens?.accounts" :key="item.id" class="relative pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden bg-white dark:bg-gray-600">
                             <dt>
@@ -39,7 +39,7 @@
                             </dd>
                         </div>
                     </dl>
-                    <div v-else class="p-4 bg-white dark:bg-gray-600 italic text-gray-600 dark:text-gray-200 shadow rounded mt-2">
+                    <div v-else class="p-4 bg-white dark:bg-gray-600 italic text-gray-600 dark:text-gray-300 dark:text-gray-200 shadow rounded mt-2">
                         No accounts found.
                     </div>
                 </div>
@@ -81,7 +81,7 @@
             <div class="md:col-span-1">
                 <div class="px-4 sm:px-0">
                     <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">Transactions</h3>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">
                         You can upload your transactions here.
                     </p>
                 </div>

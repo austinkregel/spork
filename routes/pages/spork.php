@@ -83,7 +83,7 @@ Route::middleware([
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
 
     Route::get('finance/settings', function () {
-        return Inertia::render('Banking/Settings', [
+        return Inertia::render('Finance/Settings', [
 
         ]);
     });
@@ -168,12 +168,6 @@ Route::group(['prefix' => '-', ], function () {
         ]);
     });
 
-    Route::get('/manage', function () {
-
-        return Inertia::render('Manage/Index', [
-
-        ]);
-    });
     Route::get('/postal', function () {
         return Inertia::render('Postal/Index', [
             'threads' => \App\Models\Thread::query()
@@ -245,23 +239,11 @@ Route::group(['prefix' => '-', ], function () {
         ]);
     });
 
-    Route::get('/manage/{link}', function ($link) {
-        $basename = \Illuminate\Support\Str::title(Str::singular($link));
-        $models = array_filter(
-            array_map(fn (SplFileInfo $file) => basename($file->getBasename()), (new Filesystem)->allFiles(app_path('Models'))),
-            fn ($file) => $file === $basename.'.php',
-        );
-        $files = array_filter(
-            array_map(fn (SplFileInfo $file) => basename($file->getBasename()), (new Filesystem)->allFiles(resource_path('js/Pages/Manage'))),
-            fn ($file) => str_contains($file, $basename),
-        );
-
-        abort_if(count($models) !== 1, 404);
-
-        $file = explode('.', Arr::first($models), 2);
-        $vueFile = explode('.', Arr::first($files) ?? '', 2);
-
-        $model = 'App\\Models\\'. $file[0];
+    Route::get('/manage', function () {
+        return Inertia::render('Manage/Index', []);
+    });
+    Route::get('/manage/{link}', function ($model) {
+        info($model);
 
         $description = (new DescribeTableService)->describe(new $model);
 
@@ -272,14 +254,15 @@ Route::group(['prefix' => '-', ], function () {
         $data = $paginator->items();
         $paginator = $paginator->toArray();
 
-        unset($paginator['data']);
+        $vueFile = Str::ucfirst(class_basename($model));
 
+        unset($paginator['data']);
         if (!empty($files)) {;
-            return Inertia::render('Manage/'.$vueFile[0], [
+            return Inertia::render('Manage/'.$vueFile, [
                 'description' => $description,
-                'singular' => $file[0],
-                'plural' => Str::title($link),
-                'link' => $link,
+                'singular' => Str::singular((new $model)->getTable()),
+                'plural' => Str::title((new $model)->getTable()),
+                'link' => '/'.(new $model)->getTable(),
                 'data' => $data,
                 'paginator' => $paginator
             ]);
@@ -287,13 +270,13 @@ Route::group(['prefix' => '-', ], function () {
 
         return Inertia::render('Manage/Index', [
             'description' => $description,
-            'singular' => $file[0],
-            'plural' => Str::title($link),
-            'link' => $link,
+            'singular' => Str::singular((new $model)->getTable()),
+            'plural' => Str::title((new $model)->getTable()),
+            'link' => '/'.(new $model)->getTable(),
             'data' => $data,
             'paginator' => $paginator
         ]);
-    })->where('link', '(projects|pages|people|servers|domains|tags|scripts|research|credentials|articles)')
+    })
         ->name('crud');
 })->middleware([
     'auth:sanctum',

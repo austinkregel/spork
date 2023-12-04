@@ -6,7 +6,7 @@
         <div class="grid grid-cols-4 gap-4 w-full px-4" v-if="$store.getters.allAccountsFromFeatures">
             <div class="min-w-1/4 flex-1" v-for="(account, i) in $store.getters.allAccountsFromFeatures?.slice(0, 8)" :key="'dashboard'+i">
                 <div class="bg-white dark:bg-gray-600 shadow rounded-xl flex flex-col w-full p-4">
-                    <div class="text-gray-600 dark:text-gray-300">{{account.name}}</div>
+                    <div class="text-gray-600 dark:text-gray-300 dark:text-gray-300">{{account.name}}</div>
 
                     <div class="flex flex-col my-8 ">
                         <div class="text-3xl font-medium text-gray-900 dark:text-gray-100">
@@ -27,7 +27,7 @@
                 View all accounts
             </a>
         </div>
-        
+
         <div class="w-1/2" v-if="$store.getters.allAccountsFromFeatures">
             <div class="m-4 text-xl font-medium">My Transactions</div>
             <div class="bg-white dark:bg-gray-600 shadow overflow-hidden sm:rounded-md m-4">

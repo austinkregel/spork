@@ -43,7 +43,7 @@
                 class="cursor-pointer w-8 h-8 align-middle justify-center items-center flex flex-col text-center text-sm leading-none rounded-full leading-loose transition ease-in-out duration-100"
                 :class="{
                                     'bg-blue-500 text-white dark:bg-blue-700': isToday(date),
-                                    'dark:hover:text-gray-200 dark:hover:bg-blue-700 hover:text-gray-600 hover:bg-blue-200': isToday(date) === false,
+                                    'dark:hover:text-gray-200 dark:hover:bg-blue-700 hover:text-gray-600 dark:text-gray-300 hover:bg-blue-200': isToday(date) === false,
                                     'bg-gray-100 dark:bg-gray-800': daysInTheMonth.includes(date)
                                 }"
             >

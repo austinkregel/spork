@@ -82,7 +82,7 @@
                 Loading...
             </div>
 
-            <div v-if="!$store.getters.research.total && !$store.getters.researchLoading" class="px-4 italic text-gray-600 dark:text-gray-300">
+            <div v-if="!$store.getters.research.total && !$store.getters.researchLoading" class="px-4 italic text-gray-600 dark:text-gray-300 dark:text-gray-300">
                 No search results
             </div>
 
@@ -275,7 +275,7 @@ export default {
             this.showBold = true;
             setTimeout(() => {
                 this.showBold = false;
-            }, 200) 
+            }, 200)
         },
     },
     async mounted() {

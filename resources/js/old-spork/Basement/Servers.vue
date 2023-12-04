@@ -28,7 +28,7 @@
                         <div class="w-full bg-gray-100 dark:bg-slate-600 p-4 flex justify-between">
                             <div class="flex flex-col leading-tight">
                                 <router-link class="text-blue-500 font-semibold" :to="'/servers/' + server.id">More Information</router-link>
-                                <div class="text-xs text-gray-600">{{ server.updated_at | date }}</div>
+                                <div class="text-xs text-gray-600 dark:text-gray-300">{{ server.updated_at | date }}</div>
                             </div>
                             <div class="flex items-center">
                                 <button class="focus:outline-none" @click="$store.dispatch('deleteServer', server)">

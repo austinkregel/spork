@@ -9,7 +9,7 @@
                 <div class="flex flex-col gap-2">
                     <div class="flex justify-between items-center">
                         <div class="font-bold">{{ service.name }}</div>
-                        <div class="text-gray-600 text-xs">{{ service.fqdn }}</div>
+                        <div class="text-gray-600 dark:text-gray-300 text-xs">{{ service.fqdn }}</div>
                     </div>
                     <div class="text-gray-500 text-xs tracking-wide">{{ service.addresses.filter(addr => addr.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gm)).map(d => d+':'+service.port).join(', ') }}</div>
                 </div>

@@ -5,7 +5,7 @@
       <div class="md:col-span-1">
         <div class="px-4 sm:px-0">
           <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">Personal Information</h3>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">
             Use a permanent address where you can receive mail.
           </p>
         </div>
@@ -67,7 +67,7 @@
                   <span class="inline-block h-12 w-12 rounded-full overflow-hidden bg-gray-100">
                     <img :src="$store.getters.isAuthenticated.profile_photo" :alt="$store.getters.isAuthenticated.name" class="rounded-full w-12 object-cover">
                   </span>
-                  <button @click="selectNewPhoto" type="button" 
+                  <button @click="selectNewPhoto" type="button"
                   class="ml-5 bg-white dark:bg-gray-500 dark:border-gray-500 py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                       Select A New Photo
                   </button>
@@ -102,7 +102,7 @@
       <div class="md:col-span-1">
         <div class="px-4 sm:px-0">
           <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">Notifications</h3>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">
             Decide which communications you'd like to receive and how.
           </p>
         </div>
@@ -249,7 +249,7 @@ export default defineComponent({
         });
       }
     },
-    
+
     updatePhotoPreview() {
         const photo = this.$refs.photo.files[0];
         if (! photo) return;

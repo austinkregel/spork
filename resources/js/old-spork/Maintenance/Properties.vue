@@ -58,7 +58,7 @@
                             <spork-input v-model="form.settings.zip" type="text" name="zip" id="zip" />
                         </div>
 
-                        <div class="font-bold uppercase col-span-6 text-xs text-gray-600 dark:text-gray-50 tracking-wide">calendar integration</div>
+                        <div class="font-bold uppercase col-span-6 text-xs text-gray-600 dark:text-gray-300 dark:text-gray-50 tracking-wide">calendar integration</div>
                         <div class="col-span-6 flex items-center mx-4">
                             <div class="flex items-center h-5">
                                 <input v-model="form.settings.track_air_filter" id="track_air_filter" name="track_air_filter" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" />
