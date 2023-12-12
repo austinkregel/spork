@@ -10,17 +10,20 @@ import CrudView from "@/Components/Spork/CrudView.vue";
 import { buildUrl } from '@kbco/query-builder';
 import Manage from "@/Layouts/Manage.vue";
 const page = usePage()
-const { data, paginator } = defineProps({
+const { title, data, description, paginator, link, apiLink, body } = defineProps({
   data: Array,
+  title: String,
   paginator: Object,
-  description: String,
+  description: Object,
   singular: String,
   link: String,
+  body: String,
+  apiLink: String,
 })
 const form = ref({});
 
 const fetch = async (options) => {
-  const response = await axios.get(buildUrl(selectedPage.value.settings.api_url, {
+  const response = await axios.get(buildUrl(apiLink, {
     page: 1,
     limit: 15,
     ...(options ?? {})
@@ -30,11 +33,27 @@ const fetch = async (options) => {
     data.value =pageOfData;
     paginator.value = pagination_;
 }
+const onDelete = () => {}
+const onExecute = () => {}
+const onSave = () => {}
 
+const possibleDescriptionForData = (data) => {
+  const fieldsToUse = description?.fields?.filter(field => ![
+    'id', 'name', 'user_id', 'created_at', 'updated_at', 'icon', 'href', 'order',
+  ]?.includes(field) && !field.endsWith('_id') && typeof data[field] !== 'boolean')
+      .filter(field => data[field]);
+
+  return data[fieldsToUse[0] ?? 0] ?? ''
+}
+const possibleRelations = (data) => {
+  const fieldsToUse = description?.fields?.filter(field => field.endsWith('id') && typeof data[field.replace('_id', '')] == "object")
+
+  return fieldsToUse;
+}
 </script>
 
 <template>
-  <Manage>
+  <Manage :title="title">
     <!-- We need to figure out a better way to get the crud actions. -->
     <crud-view
         v-if="singular"
@@ -44,8 +63,10 @@ const fetch = async (options) => {
         @destroy="onDelete"
         @index="({ page, limit, ...args }) => fetch({ page, limit, ...args })"
         @execute="onExecute"
+        @save="onSave"
+        :save="onSave"
         :data="data"
-        :paginator="pagination"
+        :paginator="paginator"
     >
       <template #modal-title>
         <div>
@@ -59,12 +80,14 @@ const fetch = async (options) => {
           </div>
           <div class="flex flex-wrap gap-2">
             <div class="text-xs dark:text-stone-300">
-              {{ data }}
+              {{ possibleDescriptionForData(data) }}
             </div>
           </div>
         </div>
       </template>
-      <template #no-data>No data</template>
+      <template #no-data>
+        <div class="w-full p-4 italic text-center">No project data</div>
+      </template>
 
       <template #form>
         <div>

@@ -79,7 +79,6 @@ class NamecheapService implements NamecheapDomainServiceContract
         if (isset($domainResponse->Errors->Error)) {
             throw new \Exception($domainResponse->Errors->Error);
         }
-
         try {
             return $domainResponse->CommandResponse->DomainDNSGetListResult->Nameserver;
         } catch (\Throwable $e) {

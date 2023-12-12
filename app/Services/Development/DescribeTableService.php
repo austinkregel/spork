@@ -72,7 +72,7 @@ class DescribeTableService
         });
 
         return [
-            'actions' => ActionFilter::WHITELISTED_ACTIONS,
+            'query_actions' => ActionFilter::WHITELISTED_ACTIONS,
             'fillable' => empty($model->getFillable()) ? ['name'] :$model->getFillable(),
             'fields' => $fields,
             'filters' => array_map(fn ($query) => $query->Column_name, $indexes),

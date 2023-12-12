@@ -70,7 +70,7 @@ class ImapService
     public function findMessage(string $messageNumber, bool $peak = true): array
     {
         $mailbox = new \PhpImap\Mailbox(
-            sprintf('{'.env('IMAP_HOST').':'.env('IMAP_PORT').'/imap/'.env('IMAP_ENCRYPTION', 'notls').'}INBOX'), // IMAP server and mailbox folder
+            sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
             env('IMAP_USERNAME'), // Username for the before configured mailbox
             env('IMAP_PASSWORD'), // Password for the before configured username
             storage_path(), // Directory, where attachments will be saved (optional)
@@ -118,8 +118,8 @@ class ImapService
     protected function extractEmailAndName(?string $value, $headers = [])
     {
         if (empty($value)) {
-            return $value
-;        }
+            return $value;
+        }
 
         if (!str_contains($value, '<')) {
             return array_merge([
@@ -149,5 +149,35 @@ class ImapService
                 'original' => $value
             ],
         };
+    }
+
+    public function markAsRead(string $messageId)
+    {
+        $mailbox = new \PhpImap\Mailbox(
+            sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
+            env('IMAP_USERNAME'), // Username for the before configured mailbox
+            env('IMAP_PASSWORD'), // Password for the before configured username
+            storage_path(), // Directory, where attachments will be saved (optional)
+            'UTF-8', // Server encoding (optional)
+            true, // Trim leading/ending whitespaces of IMAP path (optional)
+            false // Attachment filename mode (optional; false = random filename; true = original filename)
+        );
+
+        $mailbox->getMail($messageId, true);
+    }
+
+    public function markAsUnread(string $messageId)
+    {
+        $mailbox = new \PhpImap\Mailbox(
+            sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
+            env('IMAP_USERNAME'), // Username for the before configured mailbox
+            env('IMAP_PASSWORD'), // Password for the before configured username
+            storage_path(), // Directory, where attachments will be saved (optional)
+            'UTF-8', // Server encoding (optional)
+            true, // Trim leading/ending whitespaces of IMAP path (optional)
+            false // Attachment filename mode (optional; false = random filename; true = original filename)
+        );
+
+        $mailbox->markMailAsUnread($messageId);
     }
 }

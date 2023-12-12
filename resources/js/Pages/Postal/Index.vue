@@ -1,14 +1,10 @@
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Messages">
         <!-- component -->
         <main class="flex w-full h-full min-h-screen shadow-lg justify">
-            <section class="flex flex-col pt-3 bg-gray-50 dark:bg-stone-900 w-1/3 h-full min-h-screen overflow-y-scroll">
-                <label class="px-3">
-                    <input class="rounded-lg p-4 bg-gray-100 dark:bg-stone-800 transition duration-200 focus:outline-none focus:ring-2 w-full" placeholder="Search your inbox..." />
-                </label>
-
-                <ul class="mt-6">
-                    <li v-for="thread in page.props.threads.data" class="py-5 border-b text-white px-3 transition hover:bg-indigo-100 dark:hover:bg-indigo-600">
+            <section class="flex flex-col bg-gray-50 dark:bg-stone-900 w-1/3 h-full min-h-screen overflow-y-scroll">
+                <ul>
+                    <li v-for="thread in page.props.threads.data" class="py-4 border-b text-white px-3 transition hover:bg-indigo-100 dark:hover:bg-indigo-600">
                         <Link :href="'/-/postal/' + thread.id" class="flex flex-col">
                             <h3 class="text-md font-semibold dark:text-gray-50">{{ thread.participants.map(p => p.name).join(", ") }}</h3>
                           <div class="text-sm truncate">{{ thread.name}}</div>
@@ -40,11 +36,8 @@ import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
 
 const page = usePage();
-
-const data = ref([]);
+const data = ref(null);
 const pagination = ref({});
-
-
 const hasErrors = (error) => {
   if (!this.form.errors) {
     return '';
@@ -76,7 +69,7 @@ const onExecute = async({ actionToRun, selectedItems}) => {
   }
 }
 const fetch = async ({ page, limit, ...args }) => {
-  const { data: { data: _data, ...pagination} } = await axios.get(buildUrl(
+  const { data: { data: _data, ...paginationData} } = await axios.get(buildUrl(
       '/api/crud/servers', {
         page,
         limit,
@@ -86,7 +79,7 @@ const fetch = async ({ page, limit, ...args }) => {
   ));
 
   data.value = _data;
-  pagination = pagination;
+  pagination.value = paginationData;
 }
 </script>
 

@@ -79,9 +79,9 @@
                         </div>
                     </div>
                 </div>
-                <div v-else class="w-full p-4 italic text-center">
-                    No {{ singular.toLowerCase() }} data
-                </div>
+                <slot name="no-data" v-else class="w-full p-4 italic text-center">
+                  No {{ singular.toLowerCase() }} data
+                </slot>
 
             </div>
 
@@ -183,6 +183,15 @@ export default {
         settings: {
             type: Object,
             default: () => ({})
+        },
+        description: {
+            default :  () => ({
+              query_actions: [],
+              fillable: [],
+              fields: [],
+              required: [],
+              sorts: [],
+            })
         }
     },
     setup() {

@@ -348,7 +348,7 @@ export default {
         },
         async save(form) {
             if (!form.id) {
-                await axios.post('/api/projects', {
+                await axios.post('/api/crud/projects', {
                     ...form,
                     team_id: this.$page.props.auth.user.current_team.id,
                 });
@@ -359,7 +359,7 @@ export default {
             }
         },
         async onDelete(data) {
-            await axios.delete('/api/projects/' + form.id);
+            await axios.delete('/api/crud/projects/' + form.id);
         },
         async onExecute({ actionToRun, selectedItems}) {
             try {
@@ -380,7 +380,7 @@ export default {
         async fetchServers({ page, limit }) {
 
             const { data: { data, ...pagination} } = await axios.get(buildUrl(
-                '/api/servers', {
+                '/api/crud/servers', {
                     page, limit,
                 include:  ['tags']
                 }
@@ -393,7 +393,7 @@ export default {
         },
         async fetchDomains({ page, limit }) {
             const {data: {data, ...pagination}} = await axios.get(buildUrl(
-                '/api/domains', {
+                '/api/crud/domains', {
                     page, limit,
                     action: 'pagination:100',
                     sort: 'name',
@@ -406,7 +406,7 @@ export default {
         },
         async fetchCredentials({ page, limit }) {
             const {data: {data, ...pagination}} = await axios.get(buildUrl(
-                '/api/credentials', {
+                '/api/crud/credentials', {
                     page, limit,
                     action: 'pagination:100',
                     sort: 'name',
@@ -419,7 +419,7 @@ export default {
         },
         async fetchPages({ page, limit }) {
             const {data: {data, ...pagination}} = await axios.get(buildUrl(
-                '/api/pages', {
+                '/api/crud/pages', {
                     page, limit,
                     action: 'pagination:100',
                     include: []

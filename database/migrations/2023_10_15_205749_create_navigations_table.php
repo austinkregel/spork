@@ -36,6 +36,13 @@ return new class extends Migration
             'authentication_required' => true,
         ]);
         \App\Models\Navigation::create([
+            'name' => 'Projects',
+            'icon' => 'ClipboardIcon',
+            'href' => '/-/projects',
+            'order' => 5,
+            'authentication_required' => true,
+        ]);
+        \App\Models\Navigation::create([
             'name' => 'Files',
             'icon' => 'FolderIcon',
             'href' => '/-/file-manager',
@@ -76,6 +83,13 @@ return new class extends Migration
             ]);
         }
 
+        \App\Models\Navigation::create([
+            'name' => 'Email',
+            'icon' => 'EnvelopeOpenIcon',
+            'href' => '/-/inbox',
+            'order' => 9,
+            'authentication_required' => true,
+        ]);
         \App\Models\Navigation::create([
             'name' => 'Settings',
             'icon' => 'Cog6ToothIcon',

@@ -32,8 +32,7 @@ class Project extends Model implements ModelQuery, Crud
     public function domains(): MorphToMany
     {
         return $this->morphedByMany(
-            Domain::class,
-            'resource',
+            Domain::class,            'resource',
             'project_resources'
         );
     }

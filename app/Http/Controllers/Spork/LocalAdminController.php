@@ -35,11 +35,9 @@ class LocalAdminController extends Controller
 
 protected function getModel(Request $request)
 {
-$parts = $request->path();
-$split = explode('/', $parts);
-
-
-return cache()->get(end($split));
+    $parts = $request->path();
+    $split = explode('/', $parts);
+    return cache()->get(end($split));
 }
 
     /**
@@ -58,7 +56,7 @@ return cache()->get(end($split));
             ->allowedFilters(array_merge([
                 Filter::scope('q'),
             ], $description['filters']))
-            ->allowedIncludes(array_keys($description['includes']))
+            ->allowedIncludes($description['includes'])
             ->allowedSorts($description['sorts']);
 
         return $action->execute($query);
@@ -66,7 +64,8 @@ return cache()->get(end($split));
 
     public function store(CreateRequest $request)
     {
-        $description = (new DescribeTableService)->describe($model = $this->getModel($request));
+        $model = $this->getModel($request);
+        $description = (new DescribeTableService)->describe(new $model);
 
         $request->validate(array_reduce($description['required'], fn ($all, $field) => array_merge(
             $all,

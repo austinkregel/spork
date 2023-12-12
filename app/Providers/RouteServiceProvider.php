@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Services\Code;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Symfony\Component\Finder\SplFileInfo;
 
 class RouteServiceProvider extends ServiceProvider
@@ -55,6 +59,22 @@ class RouteServiceProvider extends ServiceProvider
             return $model::find($value);
         });
 
+        Route::bind('link', function ($value) {
+            $model = Arr::first(array_values(array_filter(
+                Code::instancesOf(Model::class)
+                    ->getClasses(),
+                function ($class)use ($value) {
+                    try {
+                        return (new $class)->getTable() === Str::slug($value, '_');
+                    } catch (\Throwable $e) {
+                        return false;
+                    }
+                })));
+
+            abort_unless(isset($model), 404);
+
+            return $model;
+        });
         $this->routes(function () {
             if (file_exists(base_path('routes/generate-pages.php'))) {
                 include_once base_path('routes/generate-pages.php');

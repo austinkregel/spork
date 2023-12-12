@@ -80,6 +80,14 @@ Route::middleware([
         ];
     })->name('setup-device');
 
+    Route::post('/api/mail/mark-as-read', Controllers\Api\Mail\MarkAsReadController::class);
+    Route::post('/api/mail/mark-as-unread', Controllers\Api\Mail\MarkAsUnreadController::class);
+    Route::post('/api/mail/mark-as-spam', Controllers\Api\Mail\MarkAsSpamAndMoveController::class);
+    Route::post('/api/mail/reply', Controllers\Api\Mail\ReplyController::class);
+    Route::post('/api/mail/reply-all', Controllers\Api\Mail\ReplyAllController::class);
+    Route::post('/api/mail/forward', Controllers\Api\Mail\ForwardMessageController::class);
+    Route::post('/api/mail/destroy', Controllers\Api\Mail\DestroyMailController::class);
+
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
 
     Route::get('finance/settings', function () {
@@ -117,54 +125,16 @@ Route::middleware([
 
 Route::group(['prefix' => '-', ], function () {
     Route::get('/', function () {
-        $filesystem = new Illuminate\Filesystem\Filesystem();
-        $env = array_filter(array_reduce(explode("\n", $filesystem->get(base_path('.env'))), function ($all, $some) {
-            $envKeyValue = explode('=', $some);
-            return array_merge($all, [
-                $envKeyValue[0] => $envKeyValue[1] ?? null,
-            ]);
-        }, []));
-
-        $allEnvValues = array_map(function (SplFileInfo $file) use ($env) {
-            return [
-                'env' => collect(explode("\n", file_get_contents(config_path($file->getFilename()))))
-                    ->filter(fn($line) => str_contains($line, 'env('))
-                    ->map(function ($line) {
-                        $matches = [];
-                        preg_match_all("/env\(([^)]+)\s*,\s*([^)]+)\)(,?)$/i", $line, $matches, PREG_SET_ORDER);
-                        return $matches;
-                    })
-                    ->filter()
-                    ->map(function ($matches) {
-                        try {
-                            [$match, $key, $default] = $matches[0];
-
-                            $key = trim($key, '\"\'');
-                            $default = trim($default, '\"\'');
-
-                            if (trim($default) === ',') {
-                                $default = null;
-                            }
-
-                            return compact('match', 'key', 'default');
-                        } catch (\Throwable $e) {
-                            dd($matches, $e);
-                        }
-                    })->reduce(function ($all, $item) use ($env) {
-                        try {
-                            $all[$item['key']] = json_decode($item['default'], false, 5, JSON_THROW_ON_ERROR);
-                        } catch (\Throwable $e) {
-                            $all[$item['key']] = $item['default'];
-                        }
-                        return $all;
-                    }, []),
-                'name' => $file->getFilename(),
-            ];
-        }, $filesystem->files(config_path()));
-
-        return Inertia::render('Settings2', [
-            'config' => array_filter($allEnvValues, fn($item) => !empty($item['env'])),
-            'env' => $env,
+        return Inertia::render('Dashboard', [
+            'project_count' => \App\Models\Project::count(),
+            'server_count' => \App\Models\Server::count(),
+            'domain_count' => \App\Models\Domain::count(),
+            'credential_count' => \App\Models\Credential::count(),
+            'user_count' => \App\Models\User::count(),
+            'activity_logs' => \Spatie\Activitylog\Models\Activity::query()
+                ->with('causer')
+                ->orderBy('created_at', 'desc')
+                ->paginate(20),
         ]);
     });
 
@@ -176,9 +146,12 @@ Route::group(['prefix' => '-', ], function () {
                         $query->where('name', 'not like', '%bridge bot%');
                     }
                 ])
-                ->where('updated_at', '>=', now()->subWeek(2))
                 ->orderByDesc('origin_server_ts')
                 ->paginate(request('limit', 15), ['*'], 'page', 1)
+        ]);
+    });
+    Route::get('/projects', function () {
+        return Inertia::render('Projects/Projects', [
         ]);
     });
     Route::get('/inbox', function () {
@@ -189,7 +162,19 @@ Route::group(['prefix' => '-', ], function () {
     });
     Route::get('/inbox/{number}', function ($messageNumber) {
         $message = (new \App\Services\ImapService)->findMessage($messageNumber, true);
-        return base64_decode($message['body']);
+        $messageBody = base64_decode($message['body']);
+
+        $bodyWithTheImagesDisabledForPrivacy = str_replace(' src=', ' data-src=', $messageBody);
+
+        $messageBodyWithOurScript =
+            '<div style="width:100%; align-items: center; display: flex; justify-content: center;"><button onclick="document.querySelectorAll(\'[data-src]\').forEach(e => {
+e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
+})">Load images</button></div>'.
+            $bodyWithTheImagesDisabledForPrivacy
+            .'<script></script>';
+
+
+        return $messageBodyWithOurScript;
     });
     Route::get('/postal/{thread}', function ($thread) {
         return Inertia::render('Postal/Thread', [
@@ -200,7 +185,6 @@ Route::group(['prefix' => '-', ], function () {
                     }
                 ])
 
-                ->where('origin_server_ts', '>=', now()->subWeek(2))
                 ->orderByDesc('origin_server_ts')
                 ->paginate(request('limit', 15), ['*'], 'page', 1),
             'thread' => \App\Models\Thread::query()
@@ -240,11 +224,11 @@ Route::group(['prefix' => '-', ], function () {
     });
 
     Route::get('/manage', function () {
-        return Inertia::render('Manage/Index', []);
+        return Inertia::render('Manage/Index', [
+            'title' => 'Manage ',
+        ]);
     });
     Route::get('/manage/{link}', function ($model) {
-        info($model);
-
         $description = (new DescribeTableService)->describe(new $model);
 
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
@@ -254,30 +238,27 @@ Route::group(['prefix' => '-', ], function () {
         $data = $paginator->items();
         $paginator = $paginator->toArray();
 
-        $vueFile = Str::ucfirst(class_basename($model));
-
         unset($paginator['data']);
-        if (!empty($files)) {;
-            return Inertia::render('Manage/'.$vueFile, [
-                'description' => $description,
-                'singular' => Str::singular((new $model)->getTable()),
-                'plural' => Str::title((new $model)->getTable()),
-                'link' => '/'.(new $model)->getTable(),
-                'data' => $data,
-                'paginator' => $paginator
-            ]);
-        }
 
         return Inertia::render('Manage/Index', [
+            'title' => 'CRUD '.Str::ucfirst(str_replace('_', ' ', Str::ascii((new $model)->getTable(), 'en'))),
             'description' => $description,
             'singular' => Str::singular((new $model)->getTable()),
             'plural' => Str::title((new $model)->getTable()),
             'link' => '/'.(new $model)->getTable(),
+            'apiLink' => '/api/crud/'. (new $model)->getTable(),
             'data' => $data,
-            'paginator' => $paginator
+            'paginator' => $paginator,
         ]);
-    })
-        ->name('crud');
+    })->name('crud');
+    Route::get('/settings', function () {
+        // settings are things that can be configured in between requests.
+        // They cannot be changed at run time, and might even require a restart of the servers.
+        return Inertia::render('Settings/Index', [
+            'title' => 'Settings',
+            'settings' => new class() {}
+        ]);
+    });
 })->middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),

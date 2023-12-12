@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                         </template>
-                        <template #no-data>No projects</template>
+                      <template #no-data><div class="p-4">No projects</div></template>
 
                         <template #form>
                             <div>

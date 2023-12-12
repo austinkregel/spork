@@ -94,13 +94,13 @@ export default {
         },
         async save(form) {
             if (!form.id) {
-                await axios.post('/api/domains', form);
+                await axios.post('/api/crud/domains', form);
             } else {
                 console.log('No edit method defined')
             }
         },
         async onDelete(data) {
-            await axios.delete('/api/domains/' + form.id);
+            await axios.delete('/api/crud/domains/' + form.id);
         },
         async onExecute({ actionToRun, selectedItems}) {
             try {
@@ -117,7 +117,7 @@ export default {
         },
         async fetch({ page, limit, ...args }) {
             const {data: {data, ...pagination}} = await axios.get(buildUrl(
-                '/api/domains', {
+                '/api/crud/domains', {
                     page, limit,
                     ...args,
                     include: []

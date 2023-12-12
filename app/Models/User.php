@@ -14,6 +14,7 @@ use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements ModelQuery
 {
@@ -24,7 +25,7 @@ class User extends Authenticatable implements ModelQuery
     use LogsActivity;
     use Notifiable;
     use TwoFactorAuthenticatable;
-
+    use HasRoles;
     /**
      * The attributes that are mass assignable.
      *

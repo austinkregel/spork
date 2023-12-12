@@ -3,11 +3,7 @@
         <!-- component -->
         <main class="grid grid-cols-3">
             <section class="flex flex-col pt-3 bg-gray-50 dark:bg-stone-900 overflow-y-auto" style="height: calc(100vh - 66px);">
-                <label class="px-3">
-                    <input class="rounded-lg p-4 bg-gray-100 dark:bg-stone-800 transition duration-200 focus:outline-none focus:ring-2 w-full" placeholder="Search your inbox..." />
-                </label>
-
-                <ul class="mt-6">
+                <ul>
                     <li v-for="thread in page.props.threads.data" class="py-5 border-b px-3 transition hover:bg-indigo-100 dark:hover:bg-indigo-600">
                         <Link :href="'/-/postal/' + thread.id" class="flex flex-col">
                             <h3 class="text-md font-semibold dark:text-gray-50">{{ thread.participants.map(p => p.name).join(", ") }}</h3>

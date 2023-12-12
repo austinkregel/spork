@@ -154,11 +154,11 @@ const logout = () => {
                         <input id="search-field" class="block h-full w-full border-0 dark:bg-neutral-900 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm" placeholder="Search..." type="search" name="search" />
                     </form>
                     <div class="flex items-center gap-x-4 lg:gap-x-6">
-                        <Link href="/-/postal" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 relative">
+                        <button @click="" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 relative">
                             <span class="sr-only">View notifications</span>
                             <BellIcon class="h-6 w-6" aria-hidden="true" />
                             <span class="bg-red-500 absolute top-0 right-0 rounded-full text-sm text-white py-0.5 px-1">1</span>
-                        </Link>
+                        </button>
 
                         <!-- Separator -->
                         <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" aria-hidden="true" />
