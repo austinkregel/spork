@@ -2,7 +2,9 @@
 
 namespace App\Services\Development;
 
+use App\Contracts\ActionInterface;
 use App\Services\ActionFilter;
+use App\Services\Code;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -71,7 +73,12 @@ class DescribeTableService
             return false;
         });
 
+//        $actions = Code::instancesOf(ActionInterface::class)->getClasses();
+//
+//        dd(array_map(fn ($q) => new $q, $actions));
+
         return [
+            'actions' => [],
             'query_actions' => ActionFilter::WHITELISTED_ACTIONS,
             'fillable' => empty($model->getFillable()) ? ['name'] :$model->getFillable(),
             'fields' => $fields,

@@ -1,9 +1,9 @@
 <template>
     <div class="flex flex-wrap mt-4 w-full">
-        <div class="w-full py-2 px-4 text-2xl font-bold text-gray-800 dark:text-gray-200">Food Dashboard</div>
+        <div class="w-full py-2 px-4 text-2xl font-bold text-stone-800 dark:text-stone-200">Food Dashboard</div>
 
         <div class="w-full px-2 pt-4">
-            
+
             <all-recipes
                     :original-recipes="recipes"
                     :prep-time="prepTime"

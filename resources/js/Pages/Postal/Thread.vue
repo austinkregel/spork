@@ -2,16 +2,16 @@
     <AppLayout title="Dashboard">
         <!-- component -->
         <main class="grid grid-cols-3">
-            <section class="flex flex-col pt-3 bg-gray-50 dark:bg-stone-900 overflow-y-auto" style="height: calc(100vh - 66px);">
+            <section class="flex flex-col pt-3 bg-stone-50 dark:bg-stone-900 overflow-y-auto" style="height: calc(100vh - 66px);">
                 <ul>
-                    <li v-for="thread in page.props.threads.data" class="py-5 border-b px-3 transition hover:bg-indigo-100 dark:hover:bg-indigo-600">
+                    <li v-for="thread in page.props.threads.data" class="py-5 border-b px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
                         <Link :href="'/-/postal/' + thread.id" class="flex flex-col">
-                            <h3 class="text-md font-semibold dark:text-gray-50">{{ thread.participants.map(p => p.name).join(", ") }}</h3>
-                          <div class="text-sm truncate dark:text-gray-200">{{ thread.name}}</div>
+                            <h3 class="text-md font-semibold dark:text-stone-50">{{ thread.participants.map(p => p.name).join(", ") }}</h3>
+                          <div class="text-sm truncate dark:text-stone-200">{{ thread.name}}</div>
                         </Link>
                       <div class="flex flex-wrap">
-                        <div class="text-md italic text-gray-400 dark:text-gray-200">{{ thread.description }}</div>
-                        <p class="text-md text-gray-400">{{ thread.human_timestamp}}</p>
+                        <div class="text-md italic text-stone-400 dark:text-stone-200">{{ thread.description }}</div>
+                        <p class="text-md text-stone-400">{{ thread.human_timestamp}}</p>
                       </div>
                     </li>
                 </ul>
@@ -23,15 +23,15 @@
                             <img src="https://placehold.it/60x60" loading="lazy" class="h-full w-full object-cover" />
                         </div>
                         <div class="flex flex-col">
-                            <h3 class="font-semibold text-lg dark:text-gray-50">{{
+                            <h3 class="font-semibold text-lg dark:text-stone-50">{{
                                 thread.participants.map(particpant =>
                                     particpant.name).join(', ')
                               }}</h3>
-                            <p class="text-light text-gray-400 dark:text-gray-200">{{thread.topic}}</p>
+                            <p class="text-light text-stone-400 dark:text-stone-200">{{thread.topic}}</p>
                         </div>
                     </div>
                     <div>
-                        <ul class="flex text-gray-400 space-x-4">
+                        <ul class="flex text-stone-400 space-x-4">
                             <li class="w-6 h-6">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <section class="flex-grow overflow-y-auto">
-                    <article class="mt-8 text-gray-500 dark:text-gray-200 leading-7 tracking-wider gap-1 flex flex-col">
+                    <article class="mt-8 text-stone-500 dark:text-stone-200 leading-7 tracking-wider gap-1 flex flex-col">
                         <div v-for="message in thread.messages" class="flex" :class="message.is_user ? 'justify-end' : 'justify-start'">
                           <div
                               :class="[message.is_user ? 'text-right bg-blue-600': 'text-left bg-green-500']"
@@ -80,10 +80,10 @@
                         </div>
                     </article>
                 </section>
-                <section class="mt-6  border dark:border-gray-800 rounded-xl bg-gray-50 dark:bg-gray-900 mb-3">
-                    <textarea class="w-full bg-gray-50 dark:bg-gray-900 p-2 rounded-xl dark:border-gray-600" placeholder="Type your reply here..." rows="3"></textarea>
+                <section class="mt-6  border dark:border-stone-800 rounded-xl bg-stone-50 dark:bg-stone-900 mb-3">
+                    <textarea class="w-full bg-stone-50 dark:bg-stone-900 p-2 rounded-xl dark:border-stone-600" placeholder="Type your reply here..." rows="3"></textarea>
                     <div class="flex items-center justify-between p-2">
-                        <button class="h-6 w-6 text-gray-400">
+                        <button class="h-6 w-6 text-stone-400">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />

@@ -16,7 +16,7 @@
                     <div class="text-lg text-left">
                         {{ data.calendarEvent.name }}
                     </div>
-                    <div class="text-slate-600 dark:text-slate-300">
+                    <div class="text-stone-600 dark:text-stone-300">
                         <span v-date="data.nextOccurrences(dayjs(), dayjs().add(1, 'day'))[0] ?? data.calendarEvent.date_start"></span>
                     </div>
                 </div>
@@ -46,16 +46,16 @@
                         <label class="block text-sm font-bold mb-2" for="color">
                             Reminder Color
                         </label>
-                        <div class="flex items-center p-1 rounded-md overflow-hidden dark:bg-gray-500">
-                            <input v-model="form.color" class="w-10 h-10 border focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:border-gray-500 dark:bg-gray-500 dark:placeholder-gray-300" :class="{'border-red-500': form.hasErrors('color') }" id="color" type="color" />
-                            <input v-model="form.color" placeholder="#db4a39" type="text" class="flex-1 border border-gray-300 dark:border-gray-500 dark:bg-gray-500 dark:placeholder-gray-300" :class="{'border-red-500': form.hasErrors('color') }">
+                        <div class="flex items-center p-1 rounded-md overflow-hidden dark:bg-stone-500">
+                            <input v-model="form.color" class="w-10 h-10 border focus:ring-slate-500 focus:border-slate-500 border-stone-300 dark:border-stone-500 dark:bg-stone-500 dark:placeholder-stone-300" :class="{'border-red-500': form.hasErrors('color') }" id="color" type="color" />
+                            <input v-model="form.color" placeholder="#db4a39" type="text" class="flex-1 border border-stone-300 dark:border-stone-500 dark:bg-stone-500 dark:placeholder-stone-300" :class="{'border-red-500': form.hasErrors('color') }">
                         </div>
                         <div v-if="form.hasErrors('color')" class="w-full text-red-500 text-sm italic">
                             {{ form.error('color')}}
                         </div>
                     </div>
 
-                    <div class="w-full flex flex-wrap border border-slate-200 dark:border-slate-500 rounded divide-y divide-slate-200 dark:divide-slate-500">
+                    <div class="w-full flex flex-wrap border border-stone-200 dark:border-stone-500 rounded divide-y divide-stone-200 dark:divide-stone-500">
                         <div class="w-full flex">
                             <div class="py-2 px-4 w-2/3">All-Day</div>
                             <div class="py-2 px-4 w-1/3 text-right">
@@ -75,7 +75,7 @@
                                 <span v-else>after</span>
                             </div>
                             <spork-input v-model="form.frequency" />
-                            <select v-model="form.for_set_position" class="mt-1 py-2 px-4 border focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 dark:border-gray-500 dark:bg-gray-500 dark:placeholder-gray-300 rounded-md" >
+                            <select v-model="form.for_set_position" class="mt-1 py-2 px-4 border focus:ring-slate-500 focus:border-slate-500 block shadow-sm sm:text-sm border-stone-300 dark:border-stone-500 dark:bg-stone-500 dark:placeholder-stone-300 rounded-md" >
                                 <option value="for_week_numbers">week</option>
                                 <option value="for_month_day">month</option>
                                 <option value="for_year_day">year</option>
@@ -90,7 +90,7 @@
                             <spork-input v-model="form[form.for_set_position]" />
                         </div>
                         <div v-if="form.for_set_position === 'for_month'" class="flex items-center w-full py-4">
-                            <select v-model="form.settings[form.for_set_position]" class="mt-1 py-2 px-4 border focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 dark:border-gray-500 dark:bg-gray-500 dark:placeholder-gray-300 rounded-md" >
+                            <select v-model="form.settings[form.for_set_position]" class="mt-1 py-2 px-4 border focus:ring-slate-500 focus:border-slate-500 block shadow-sm sm:text-sm border-stone-300 dark:border-stone-500 dark:bg-stone-500 dark:placeholder-stone-300 rounded-md" >
                                 <option value="">For month</option>
                             </select>
                         </div>
@@ -108,12 +108,12 @@
                                         form.date_end = dayjs().format('YYYY-MM-DD')+'T'+dayjs().format('HH:ss')
                                     }
                                 }"
-                                :class="form.date_end ? 'bg-blue-900 dark:bg-blue-400' : 'bg-slate-500 dark:bg-slate-400'"
+                                :class="form.date_end ? 'bg-blue-900 dark:bg-blue-400' : 'bg-stone-500 dark:bg-stone-400'"
                                 class="relative inline-flex h-6 w-11 items-center rounded-full"
                             >
                                 <span
-                                :class="form.date_end ? 'translate-x-6' : 'translate-x-1'"
-                                class="inline-block h-4 w-4 transform transition rounded-full bg-white dark:bg-slate-600"
+                                :class="form.date_end ? 'transtone-x-6' : 'transtone-x-1'"
+                                class="inline-block h-4 w-4 transform transition rounded-full bg-white dark:bg-stone-600"
                                 />
                             </Switch>
                         </div>

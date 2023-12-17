@@ -1,15 +1,15 @@
 <template>
-    <div class="bg-white dark:bg-slate-600 flex flex-col items-center justify-between">
+    <div class="bg-white dark:bg-stone-600 flex flex-col items-center justify-between">
         <div class="flex flex-col gap-2 p-6 w-full h-full">
-            <p class="text-xl font-medium text-gray-900 dark:text-slate-50">{{ props.composerPackage.name }}</p>
-            <p class="text-base text-gray-500 dark:text-slate-300">{{ props.composerPackage.description }}</p>
+            <p class="text-xl font-medium text-stone-900 dark:text-stone-50">{{ props.composerPackage.name }}</p>
+            <p class="text-base text-stone-500 dark:text-stone-300">{{ props.composerPackage.description }}</p>
         </div>
         <div class="px-6 pb-6 w-full flex justify-between">
-            <p class="text-base text-gray-500 dark:text-slate-300">{{ props.composerPackage.version }}</p>
-            <p class="text-base text-gray-500 dark:text-slate-300">{{ downloadsOrDate }}</p>
+            <p class="text-base text-stone-500 dark:text-stone-300">{{ props.composerPackage.version }}</p>
+            <p class="text-base text-stone-500 dark:text-stone-300">{{ downloadsOrDate }}</p>
 
         </div>
-        <div class="flex justify-end gap-4 bg-slate-700 w-full p-4">
+        <div class="flex justify-end gap-4 bg-stone-700 w-full p-4">
             <JetstreamButton
                 :disabled="uninstalling || isEnabled || systemPackages.includes(props.composerPackage.name)"
                 purpose="danger"
@@ -108,7 +108,7 @@
                             id="name"
                             v-model="enableServiceForm.client_id"
                             type="text"
-                            class="mt-1 block w-full placeholder:text-slate-400"
+                            class="mt-1 block w-full placeholder:text-stone-400"
                             autofocus
                             placeholder="420"
                         />
@@ -122,7 +122,7 @@
                             v-model="enableServiceForm.client_secret"
                             type="text"
                             name="__client_secret"
-                            class="mt-1 block w-full placeholder:text-slate-400"
+                            class="mt-1 block w-full placeholder:text-stone-400"
                             placeholder="af0020a8efa29feb34a3b2a93201a0f840a0282"
                         />
                         <JetInputError :message="enableServiceForm.errors.client_secret" class="mt-2" />
@@ -133,7 +133,7 @@
                             id="redirect_url"
                             v-model="enableServiceForm.redirect"
                             type="text"
-                            class="mt-1 block w-full placeholder:text-slate-400"
+                            class="mt-1 block w-full placeholder:text-stone-400"
                             placeholder="https://aut.hair/callback/service"
                         />
                         <JetInputError :message="enableServiceForm.errors.redirect" class="mt-2" />

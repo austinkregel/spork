@@ -164,9 +164,9 @@ body,
         </Panel>
     </VueFlow>
         <div  v-if="openContext">
-            <div @click="openContext = false" class="absolute inset-0 z-0 bg-gray-900/20 cusor-pointer"></div>
+            <div @click="openContext = false" class="absolute inset-0 z-0 bg-stone-900/20 cusor-pointer"></div>
 
-            <div class="absolute z-10 mt-2 w-56 overflow-hidden rounded-md shadow-lg bg-white dark:bg-slate-600 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
+            <div class="absolute z-10 mt-2 w-56 overflow-hidden rounded-md shadow-lg bg-white dark:bg-stone-600 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
                  :style="'top: '+contextY+'px; left: '+contextX+'px;'"
             >
                 <div class="flex flex-col" role="none">
@@ -178,9 +178,9 @@ body,
                     </div>
 
                     <div class="flex flex-col">
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="createDirectory">New Directory</button>
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="createFile">New File</button>
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="destroy">Delete</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="createDirectory">New Directory</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="createFile">New File</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="destroy">Delete</button>
                     </div>
                 </div>
             </div>

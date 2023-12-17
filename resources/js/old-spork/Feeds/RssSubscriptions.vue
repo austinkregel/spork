@@ -83,8 +83,8 @@ export default {
             return this.form.errors[error] ?? null;
         },
         dateFormat(rss) {
-            return '<span class="text-gray-900">' + rss.starts_at  + '  at </span>' +
-                '<span class="text-gray-800">' + dayjs(rss.last_occurrence || rss.remind_at).format('h:mma') + '</span>'
+            return '<span class="text-stone-900">' + rss.starts_at  + '  at </span>' +
+                '<span class="text-stone-800">' + dayjs(rss.last_occurrence || rss.remind_at).format('h:mma') + '</span>'
         },
         async save(form) {
             if (!form.id) {

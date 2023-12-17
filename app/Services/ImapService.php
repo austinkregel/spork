@@ -44,13 +44,19 @@ class ImapService
                 $body = null;
                 $overview = Arr::first(imap_fetch_overview($inbox, $messageNumber));
 
+                try {
+                    Carbon::parse($headers['X-Pm-Date']);
+                } catch (\Throwable $e) {
+                    dd($headers);
+                }
+
                 return [
                     'id' => imap_uid($inbox, $messageNumber),
                     'to' => $this->extractEmailAndName($headers['To']),
                     'addressed-to' => $this->extractEmailAndName($headers['X-Simplelogin-Envelope-To'] ?? $headers['X-Original-To'] ?? null),
                     'addressed-from' => $this->extractEmailAndName($rfcHeaders->fromaddress ?? $headers['X-Pm-External-Id'] ?? null),
-                    'date' => Carbon::parse($headers['Date']),
-                    'human_date' => Carbon::parse($headers['Date'])->fromNow(),
+                    'date' => Carbon::parse($headers['X-Pm-Date']),
+                    'human_date' => Carbon::parse($headers['X-Pm-Date'])->fromNow(),
                     'subject' => imap_utf8($headers['Subject']),
                     'from' => $this->extractEmailAndName($rfcHeaders->senderaddress ?? $rfcHeaders->fromaddress ?? $headers['From'], $headers),
                     'reply-to' => $this->extractEmailAndName($rfcHeaders->reply_toaddress ?? $headers['Reply-To']),
@@ -95,8 +101,8 @@ class ImapService
             'to' => $this->extractEmailAndName($headers['To']),
             'addressed-to' => $this->extractEmailAndName($headers['X-Simplelogin-Envelope-To'] ?? $headers['X-Original-To'] ?? null),
             'addressed-from' => $this->extractEmailAndName($rfcHeaders->fromaddress ?? $headers['X-Pm-External-Id'] ?? null),
-            'date' => Carbon::parse($headers['Date']),
-            'human_date' => Carbon::parse($headers['Date'])->fromNow(),
+            'date' => Carbon::parse($headers['X-Pm-Date']),
+            'human_date' => Carbon::parse($headers['X-Pm-Date'])->fromNow(),
             'subject' => imap_utf8($headers['Subject']),
             'from' => $this->extractEmailAndName($rfcHeaders->senderaddress ?? $rfcHeaders->fromaddress ?? $headers['From'], $headers),
             'reply-to' => $this->extractEmailAndName($rfcHeaders->reply_toaddress ?? $headers['Reply-To']),

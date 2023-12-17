@@ -22,14 +22,14 @@ const form = ref({
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
                 Settings
             </h2>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-8">
-                <div v-for="group in page.props.config" class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg grid grid-cols-3">
+                <div v-for="group in page.props.config" class="bg-white dark:bg-stone-800 overflow-hidden shadow-xl sm:rounded-lg grid grid-cols-3">
                     <div class="col-span-1 px-4 pt-8 text-white">
                         config/{{ group.name }}
                     </div>

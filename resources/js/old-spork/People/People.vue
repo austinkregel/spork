@@ -62,8 +62,8 @@ export default {
             return this.form.errors[error] ?? null;
         },
         dateFormat(contact) {
-            return '<span class="text-gray-900">' + contact.starts_at  + '  at </span>' +
-                '<span class="text-gray-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
+            return '<span class="text-stone-900">' + contact.starts_at  + '  at </span>' +
+                '<span class="text-stone-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
         },
         async save(form) {
             if (!form.id) {

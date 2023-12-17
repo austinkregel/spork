@@ -57,15 +57,15 @@ export default {
     computed: {
         colors() {
             if (this.primary || this.purpose === 'primary') {
-                return 'border-transparent text-white bg-slate-600 dark:bg-slate-800 dark:text-slate-100 hover:bg-slate-700 focus:ring-2 focus:ring-offset-2 focus:ring-slate-500'
+                return 'border-transparent text-white bg-stone-600 dark:bg-stone-800 dark:text-stone-100 hover:bg-stone-700 focus:ring-2 focus:ring-offset-2 focus:ring-stone-500'
             }
             if (this.secondary || this.purpose === 'secondary') {
-                return 'border-slate-100 dark:border-slate-500 dark:text-slate-50 hover:border-slate-200 focus:ring-slate-500'
+                return 'border-stone-100 dark:border-stone-500 dark:text-stone-50 hover:border-stone-200 focus:ring-stone-500'
             }
             if (this.danger || this.purpose === 'danger') {
                 return 'border-transparent bg-red-500 dark:bg-red-600 hover:bg-red-200 focus:ring-red-500'
             }
-            return 'border-gray-300 text-gray-700 dark:border-slate-600 dark:text-slate-200 focus:ring-slate-500'
+            return 'border-stone-300 text-stone-700 dark:border-stone-600 dark:text-stone-200 focus:ring-stone-500'
         },
         size() {
             if (this.small) {

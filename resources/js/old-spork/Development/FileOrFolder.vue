@@ -2,18 +2,18 @@
     <div>
         <div class="pl-2 flex flex-col w-full"
                 :class="[
-                    ['app', 'src', 'resources', 'system'].includes(name) ? 'bg-blue-500/10' :'', 
+                    ['app', 'src', 'resources', 'system'].includes(name) ? 'bg-blue-500/10' :'',
                     ['bootstrap', 'public'].includes(name) ? 'bg-stone-700/10' :'',
                     ['vendor', 'node_modules'].includes(name) ? 'bg-orange-500/10' :'',
                     $store.getters.features?.development?.map(feature => feature?.settings?.path ?? null).includes(file.file_path) ? 'bg-amber-600/10 dark:bg-amber-400/10' :'',
             ]"
 >
-            <button 
+            <button
                 v-if="folder"
-                class="flex gap-1 items-center dark:hover:bg-zinc-900/50 focus:bg-zinc-900/50 focus:ring-2 focus:ring-blue-800 text-slate-700 dark:text-slate-200"
+                class="flex gap-1 items-center dark:hover:bg-zinc-900/50 focus:bg-zinc-900/50 focus:ring-2 focus:ring-blue-800 text-stone-700 dark:text-stone-200"
                 :class="[
-                    ['tests'].includes(name) ? 'text-green-600 dark:text-green-400' :'', 
-                    ['app', 'src', 'resources', 'system'].includes(name) ? 'text-blue-500 dark:text-blue-300' :'', 
+                    ['tests'].includes(name) ? 'text-green-600 dark:text-green-400' :'',
+                    ['app', 'src', 'resources', 'system'].includes(name) ? 'text-blue-500 dark:text-blue-300' :'',
                     ['bootstrap', 'public'].includes(name) ? 'text-stone-600 dark:text-stone-400' :'',
                     ['vendor', 'node_modules'].includes(name) ? 'text-orange-600 dark:text-orange-400' :'',
                     // Projects in an existing file root.
@@ -38,11 +38,11 @@
             </button>
             <button v-else class="flex gap-1 items-center dark:hover:bg-zinc-900/50 focus:bg-zinc-900/50  focus:ring-2 focus:ring-blue-800"
             :class="[
-                ['artisan', 'composer', 'composer.phar', 'dev', 'sail', 'tests', 'public'].includes(name) ? 'text-green-600 dark:text-green-400' :'', 
-                ['composer.json', 'composer.lock'].includes(name) ? 'text-blue-500 dark:text-blue-300' :'', 
+                ['artisan', 'composer', 'composer.phar', 'dev', 'sail', 'tests', 'public'].includes(name) ? 'text-green-600 dark:text-green-400' :'',
+                ['composer.json', 'composer.lock'].includes(name) ? 'text-blue-500 dark:text-blue-300' :'',
                 ['package.json', 'yarn.lock', 'package-lock.json',].includes(name) ? 'text-orange-600 dark:text-orange-400' :'',
-                !['artisan', 'composer', 'composer.phar', 'dev', 'sail', 'tests', 'public', 'composer.json', 'composer.lock', 'package.json', 'yarn.lock', 'package-lock.json',].includes(name) ? 'text-slate-700 dark:text-slate-100' :'',
-            ]"            
+                !['artisan', 'composer', 'composer.phar', 'dev', 'sail', 'tests', 'public', 'composer.json', 'composer.lock', 'package.json', 'yarn.lock', 'package-lock.json',].includes(name) ? 'text-stone-700 dark:text-stone-100' :'',
+            ]"
             @dblclick="openFile">
                 <div class="w-4 h-4 flex-none"></div>
 

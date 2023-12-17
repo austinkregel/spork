@@ -5,31 +5,31 @@
                 <Link href="/projects" class="underline">
                     Projects
                 </Link>
-                <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-stone-400" aria-hidden="true" />
                 {{ $page.props.project.name}}
             </div>
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-4">
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Last 30 days</h3>
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50">Last 30 days</h3>
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
                         <div v-for="item in $page.props.project_analytics" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
-                            <dt class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">{{ item.name }}</dt>
-                            <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">{{ item.stat }}</dd>
-                            <dd class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">Over {{ item.duration }}</dd>
+                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">{{ item.name }}</dt>
+                            <dd class="mt-1 text-3xl font-semibold tracking-tight text-stone-900 dark:text-zinc-50">{{ item.stat }}</dd>
+                            <dd class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">Over {{ item.duration }}</dd>
                         </div>
                     </dl>
                 </div>
 
                 <div class="border-t border-zinc-600"></div>
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50 ">Servers</h3>
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50 ">Servers</h3>
 
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
                         <div v-for="item in $page.props.project.servers" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
-                            <dt class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">{{ item.name }}</dt>
-                            <dd class="mt-1 font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">{{ item.name }}</dt>
+                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-zinc-50">
                                 <span class="text-3xl">{{ item.memory }}</span> MB
                                 <span>/ {{ item.vcpu }} core</span>
                                 <div class="my-2 text-monospace">{{ item.tags.map(tag => tag.name.en).join(', ') }}</div>
@@ -47,7 +47,7 @@
                         </div>
 
                     </dl>
-                    <div class="text-slate-300 text-sm font-semibold mt-2 flex justify-between">
+                    <div class="text-stone-300 text-sm font-semibold mt-2 flex justify-between">
                         <button @click="() => {attachOpen = !attachOpen; fetchServers({ page: 1, limit: 100})}">
                             Attach a server
                         </button>
@@ -58,10 +58,10 @@
                 </div>
                 <div class="border-t border-zinc-600"></div>
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Domains</h3>
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50">Domains</h3>
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
                         <div v-for="item in $page.props.project.domains" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
-                            <dd class="mt-1 font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-zinc-50">
 
                                 <div class="flex flex-wrap items-center justify-between border border-zinc-700" v-if="item.domain_analytics.length > 0">
                                     <div class="flex flex-col p-2" v-for="analytic in item.domain_analytics">
@@ -91,7 +91,7 @@
                                     </spork-button>
                                 </div>
                             </dd>
-                            <dt class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">{{ item.registered_at }}</dt>
+                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">{{ item.registered_at }}</dt>
 
                         </div>
                         <div v-if="$page.props.project.domains.length === 0" class="p-4 rounded bg-zinc-700 italic col-span-2">
@@ -99,7 +99,7 @@
                         </div>
                     </dl>
 
-                    <div class="text-slate-300 text-sm font-semibold mt-2 flex justify-between">
+                    <div class="text-stone-300 text-sm font-semibold mt-2 flex justify-between">
                         <button @click="() => {attachOpen = !attachOpen; fetchDomains({ page: 1, limit: 100})}">
                             Attach a domain
                         </button>
@@ -111,10 +111,10 @@
                 <div class="border-t border-zinc-600"></div>
 
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Credentials</h3>
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50">Credentials</h3>
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
                         <div v-for="item in $page.props.project.credentials" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
-                            <dd class="mt-1 font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-zinc-50">
                                 <div class="flex flex-wrap justify-between">
                                     <div class="text-2xl">
                                         {{ item.name }}
@@ -127,7 +127,7 @@
                                     </spork-button>
                                 </div>
                             </dd>
-                            <dt class="truncate text-sm font-medium text-gray-500 dark:text-zinc-300">{{ item.expires_at }}</dt>
+                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">{{ item.expires_at }}</dt>
 
                         </div>
                         <div v-if="!$page.props.project.credentials?.length" class="p-4 rounded bg-zinc-700 italic col-span-2">
@@ -135,7 +135,7 @@
                         </div>
                     </dl>
 
-                    <div class="text-slate-300 text-sm font-semibold mt-2 flex justify-between">
+                    <div class="text-stone-300 text-sm font-semibold mt-2 flex justify-between">
                         <button @click="() => {attachOpen = !attachOpen; fetchCredentials({ page: 1, limit: 100})}">
                             Attach a credential
                         </button>
@@ -146,15 +146,15 @@
                 </div>
                 <div class="border-t border-zinc-600"></div>
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-zinc-50">Pages</h3>
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50">Pages</h3>
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
                         <div v-for="item in $page.props.project.pages" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 p-4 shadow sm:p-6">
-                            <dt class="truncate flex flex-wrap items-center gap-1  font-medium text-gray-500 dark:text-zinc-300">
+                            <dt class="truncate flex flex-wrap items-center gap-1  font-medium text-stone-500 dark:text-zinc-300">
                                 <CheckCircleIcon class="w-5 h-5 text-green-500" v-if="item.is_active" />
                                 <ExclamationTriangleIcon class="w-5 h-5 text-yellow-500" v-else />
                                 {{ item.title }}
                             </dt>
-                            <dd class="mt-1 font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-zinc-50">
                                 <span class="text-3xl">{{item.uri}}</span>
                             </dd>
                             <div class="flex items-center flex-wrap justify-between">
@@ -164,7 +164,6 @@
                                         <ArrowLongRightIcon class="w-4 h-4 text-stone-100" />
                                         <!-- SSL  -->
                                         <LockClosedIcon class="w-4 h-4 text-green-500" />
-                                        undefined.services
                                     </div>
                                     <div v-else class="flex flex-wrap items-center gap-2 text-stone-300">
                                         <LockClosedIcon class="w-4 h-4 text-green-500" />
@@ -193,7 +192,7 @@
                             There are no pages on this project
                         </div>
                     </dl>
-                    <div class="text-slate-300 text-sm font-semibold mt-2 flex justify-between">
+                    <div class="text-stone-300 text-sm font-semibold mt-2 flex justify-between">
                         <div class="flex flex-wrap items-center gap-4">
                             <button @click="() => {attachOpen = !attachOpen; fetchPages({ page: 1, limit: 100})}">
                                 Attach a Page
@@ -237,7 +236,7 @@
                                     :value="item.id"
                                 />
                                 <span>
-                                    {{ item.name ?? item.title}} ({{item?.server_id ?? item?.credential?.name ?? item?.credential_id ?? item.slug }})
+                                    {{ item.name ?? item.title}} ({{item?.tags?.map(i => i.name?.en)?.join(', ') ?? item?.credential?.name ?? item?.credential_id ?? item.slug }})
                                 </span>
                             </label>
                         </div>

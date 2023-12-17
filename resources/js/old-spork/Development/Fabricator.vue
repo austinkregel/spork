@@ -1,8 +1,8 @@
 <template>
-    <div class="w-full h-full border border-gray-100 flex flex-wrap text-white">
+    <div class="w-full h-full border border-stone-100 flex flex-wrap text-white">
         <KeepAlive>
-            <div  class="w-full h-full border border-gray-100 flex flex-wrap text-white">
-                <div class="w-3/4 border border-gray-200">
+            <div  class="w-full h-full border border-stone-100 flex flex-wrap text-white">
+                <div class="w-3/4 border border-stone-200">
                     <draggable
                         v-model="contents"
                         group="components"
@@ -20,7 +20,7 @@
                         </template>
                     </draggable>
                 </div>
-                <div class="w-1/4 border border-gray-300">
+                <div class="w-1/4 border border-stone-300">
 
                     <draggable
                         :list="components"
@@ -31,7 +31,7 @@
 
                     >
                         <template #item="{ element }">
-                            <div class="border-t border-gray-400 dark:border-gray-500">
+                            <div class="border-t border-stone-400 dark:border-stone-500">
                                 <div class="flex flex-col my-4">
                                     <div class="font-bold">{{ element.name }}</div>
                                     <div>{{ element.description }}</div>

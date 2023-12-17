@@ -37,10 +37,10 @@
     <div class="w-full relative">
         <div class="w-full mx-auto row justify-content-center shadow-lg top-0">
             <div class="flex flex-wrap w-full">
-                <div class="bg-white dark:bg-gray-600 w-full mx-2">
-                    <input v-model="search.query" type="text" @keyup.enter="searchQuery" class="sticky placeholder-gray-300 w-full p-3 border-b border-gray-200 dark:border-gray-500 dark:bg-gray-500 text-grey-800 focus:outline-none" placeholder="Search for things...">
+                <div class="bg-white dark:bg-stone-600 w-full mx-2">
+                    <input v-model="search.query" type="text" @keyup.enter="searchQuery" class="sticky placeholder-stone-300 w-full p-3 border-b border-stone-200 dark:border-stone-500 dark:bg-stone-500 text-grey-800 focus:outline-none" placeholder="Search for things...">
                     <div class="flex flex-wrap">
-                        <div class="w-full border-t border-l-none lg:border-t-none border-gray-200 dark:border-slate-400 lg:flex-1">
+                        <div class="w-full border-t border-l-none lg:border-t-none border-stone-200 dark:border-stone-400 lg:flex-1">
                             <div class="font-bold p-3 w-full">Avoid Allergens...</div>
                             <div style="max-height: 150px;" class="overflow-auto flex flex-col">
                                 <label class="text-monospace text-sm inline-block pl-6 ml-1" v-for="allergy in allergies">
@@ -49,7 +49,7 @@
                             </div>
                         </div>
 
-                        <div class="w-full border-t border-l-none lg:border-t-none lg:border-l border-gray-200 dark:border-slate-400 lg:flex-1">
+                        <div class="w-full border-t border-l-none lg:border-t-none lg:border-l border-stone-200 dark:border-stone-400 lg:flex-1">
                             <div class="font-bold p-3 w-full">Has ingredients...</div>
                             <div style="max-height: 150px;" class="overflow-auto flex flex-col">
                                 <label class="text-monospace text-sm inline-block pl-6 ml-1" v-for="ingredient in containsIngredients">
@@ -58,7 +58,7 @@
                             </div>
                         </div>
 
-                        <div class="w-full border-t border-l-none lg:border-t-none lg:border-l border-gray-200 dark:border-slate-400 lg:flex-1">
+                        <div class="w-full border-t border-l-none lg:border-t-none lg:border-l border-stone-200 dark:border-stone-400 lg:flex-1">
                             <div class="font-bold p-3 w-full">Takes about...</div>
                             <div style="max-height: 150px;" class="overflow-auto flex flex-col">
                                 <label class="text-monospace text-sm inline-block pl-6 ml-1" v-for="time in prepTime">
@@ -67,7 +67,7 @@
                             </div>
                         </div>
 
-                        <div class="w-full border-t border-l-none lg:border-t-none lg:border-l border-gray-200 dark:border-slate-400 lg:flex-1 flex-col flex">
+                        <div class="w-full border-t border-l-none lg:border-t-none lg:border-l border-stone-200 dark:border-stone-400 lg:flex-1 flex-col flex">
                             <div class="font-bold p-3 w-full">Difficulty</div>
                             <div style="max-height: 150px;" class="overflow-auto flex flex-col pl-3">
                                 <label class="text-monospace text-sm inline-block">
@@ -98,7 +98,7 @@
             <recipe v-for="recipe in recipes.data" :recipe="recipe" :key="recipe.id"></recipe>
 
             <div class="w-full flex items-center justify-center">
-                <button class="load-more py-2 px-4 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold" @click="loadMore">Load More</button>
+                <button class="load-more py-2 px-4 rounded-lg bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-bold" @click="loadMore">Load More</button>
             </div>
         </div>
         <div class="w-full text-center relative" :style="'min-height:' + preservedHeight + 'px;'" v-else>

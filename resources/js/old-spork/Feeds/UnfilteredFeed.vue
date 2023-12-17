@@ -3,7 +3,7 @@
         <div class="container mx-auto">
             <div class="flex flex-wrap shadow w-full p-2">
                 <div class="flex flex-wrap shadow">
-                    <div class="text-4xl font-medium text-blue-900 dark:text-slate-200">
+                    <div class="text-4xl font-medium text-blue-900 dark:text-stone-200">
                         Your feed
                     </div>
 
@@ -18,11 +18,11 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="relative flex flex-1 max-w-2xl text-slate-700 dark:text-slate-300 items-center">
+                        <div class="relative flex flex-1 max-w-2xl text-stone-700 dark:text-stone-300 items-center">
                             <div>
                                 <button @click="filtersOpen= !filtersOpen"
                                         class="focus:outline-none flex flex-wrap items-center p-2 rounded-lg"
-                                        :class="{'bg-slate-300 dark:bg-slate-700': filtersOpen, 'bg-slate-100 dark:bg-slate-900': !filtersOpen}">
+                                        :class="{'bg-stone-300 dark:bg-stone-700': filtersOpen, 'bg-stone-100 dark:bg-stone-900': !filtersOpen}">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                          xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -36,15 +36,15 @@
                                 </button>
 
                                 <div v-if="filtersOpen"
-                                     class="absolute z-10 bg-white dark:bg-slate-700 shadow-lg top-0 right-0 mt-14 mr-4 border border-slate-200 dark:border-slate-500 rounded-lg"
+                                     class="absolute z-10 bg-white dark:bg-stone-700 shadow-lg top-0 right-0 mt-14 mr-4 border border-stone-200 dark:border-stone-500 rounded-lg"
                                      style="width: 250px;">
                                     <div
-                                        class="bg-slate-100 dark:bg-slate-800 uppercase py-2 px-2 font-bold text-slate-500 dark:text-slate-400 text-sm rounded-t-lg">
+                                        class="bg-stone-100 dark:bg-stone-800 uppercase py-2 px-2 font-bold text-stone-500 dark:text-stone-400 text-sm rounded-t-lg">
                                         filters
                                     </div>
                                     <div class="flex flex-wrap items-center p-2">
                                         <select v-model="itemsPerPage"
-                                                class="border border-slate-300 rounded-lg w-full p-1 dark:border-slate-600 dark:bg-slate-600">
+                                                class="border border-stone-300 rounded-lg w-full p-1 dark:border-stone-600 dark:bg-stone-600">
                                             <option value="15">15 items per page</option>
                                             <option value="30">30 items per page</option>
                                             <option value="100">100 items per page</option>

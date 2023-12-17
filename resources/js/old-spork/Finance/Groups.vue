@@ -3,13 +3,13 @@
         <div class="md:grid md:grid-cols-3 md:gap-6">
             <div class="md:col-span-1">
                 <div class="px-4 sm:px-0">
-                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-50">Groups</h3>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-300 dark:text-gray-200">
+                    <h3 class="text-lg font-medium leading-6 text-stone-900 dark:text-stone-50">Groups</h3>
+                    <p class="mt-1 text-sm text-stone-600 dark:text-stone-300 dark:text-stone-200">
                        Even transactions from the same vendors could vary over time, or between transactions, groups help you define how to classify transactions.
                     </p>
                 </div>
             </div>
-            <div class="md:mt-0 md:col-span-2 p-4 shadow rounded-lg bg-white dark:bg-gray-600">
+            <div class="md:mt-0 md:col-span-2 p-4 shadow rounded-lg bg-white dark:bg-stone-600">
                 <SporkLabel>Name</SporkLabel>
                 <SporkInput v-model="form.name" class="mb-2"/>
 
@@ -35,12 +35,12 @@
 
         <div class="md:grid md:grid-cols-3 md:gap-6">
             <div class="md:col-span-1"></div>
-            <div class="md:mt-0 md:col-span-2 p-4 shadow rounded-lg bg-white dark:bg-gray-600">
+            <div class="md:mt-0 md:col-span-2 p-4 shadow rounded-lg bg-white dark:bg-stone-600">
 
                 <div v-for="group in $store.getters.features?.financeGroup" :key="group.id+'group'" class="flex flex-wrap w-full items-center justify-between gap-4">
                     <div class="ml-3">
-                        <p class="text-sm font-medium text-gray-900 dark:text-slate-50">{{ group.name }}</p>
-                        <p class="text-sm text-gray-500 dark:text-slate-400">{{ (group.conditionals ?? []).map(param => param.parameter + ' ' + param.comparator + ' ' + param.value).join(', ') }}</p>
+                        <p class="text-sm font-medium text-stone-900 dark:text-stone-50">{{ group.name }}</p>
+                        <p class="text-sm text-stone-500 dark:text-stone-400">{{ (group.conditionals ?? []).map(param => param.parameter + ' ' + param.comparator + ' ' + param.value).join(', ') }}</p>
                     </div>
 
                     <button @click="() => $store.dispatch('deleteFeature', group)">

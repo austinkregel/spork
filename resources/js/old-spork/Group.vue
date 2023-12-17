@@ -1,9 +1,9 @@
 <template>
     <div @contextmenu="openContext">
         <div class="ml-3">
-            <p class="text-sm font-medium text-gray-900 dark:text-slate-50">{{ file.name }}</p>
-            <p class="text-sm text-gray-500 dark:text-slate-200">{{ file.path }}</p>
-            <div class="text-sm text-gray-500 dark:text-slate-200">
+            <p class="text-sm font-medium text-stone-900 dark:text-stone-50">{{ file.name }}</p>
+            <p class="text-sm text-stone-500 dark:text-stone-200">{{ file.path }}</p>
+            <div class="text-sm text-stone-500 dark:text-stone-200">
                 <div v-for="(season, index) in seasons" :key="season">
                     season: {{index}}
                     <div v-for="episode in season">
@@ -11,29 +11,29 @@
                     </div>
                 </div>
             </div>
-            <p class="text-sm text-gray-500 dark:text-slate-200">{{ files.length }} files</p>
+            <p class="text-sm text-stone-500 dark:text-stone-200">{{ files.length }} files</p>
         </div>
 
         <div  v-if="contextOpen">
-            <div @click="contextOpen = false" class="absolute inset-0 z-0 bg-gray-900/20 cusor-pointer"></div>
+            <div @click="contextOpen = false" class="absolute inset-0 z-0 bg-stone-900/20 cusor-pointer"></div>
 
-            <div class="absolute z-10 mt-2 w-56 overflow-hidden rounded-md shadow-lg bg-white dark:bg-slate-600 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
+            <div class="absolute z-10 mt-2 w-56 overflow-hidden rounded-md shadow-lg bg-white dark:bg-stone-600 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
                  :style="'top: '+menuPosition.y+'px; left: '+menuPosition.x+'px;'"
             >
                 <div class="flex flex-col" role="none">
                     <div class="flex flex-col">
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="$emit('rename', file)">rename</button>
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="$emit('regroup', file)">re-group</button>
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="$emit('rename-all-files', file)">rename all files</button>
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="$emit('remove-text-from-string', file)">remove text from string</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="$emit('rename', file)">rename</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="$emit('regroup', file)">re-group</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="$emit('rename-all-files', file)">rename all files</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="$emit('remove-text-from-string', file)">remove text from string</button>
 
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="">preview</button>
-                        <div v-if="selection" class="pt-3 pb-2 px-2 border-t border-b border-slate-500">Quick actions</div>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="">preview</button>
+                        <div v-if="selection" class="pt-3 pb-2 px-2 border-t border-b border-stone-500">Quick actions</div>
                         <button
                             v-if="selection"
                             v-for="option in menuOptions"
                             :key="option"
-                            class="hover:bg-slate-500 text-left px-4 py-2"
+                            class="hover:bg-stone-500 text-left px-4 py-2"
                             @click="() => { updateMappingFromSelection(option) }"
                         >
                             {{ option.name }}

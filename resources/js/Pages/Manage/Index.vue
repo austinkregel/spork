@@ -53,7 +53,11 @@ const possibleRelations = (data) => {
 </script>
 
 <template>
-  <Manage :title="title">
+  <Manage
+      :title="title"
+      sub-title="Manage"
+      home="/-/manage"
+  >
     <!-- We need to figure out a better way to get the crud actions. -->
     <crud-view
         v-if="singular"

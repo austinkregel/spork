@@ -2,12 +2,12 @@
     <div class="h-full border overflow-auto p-2 relative">
         <h2 class="text-2xl mb-4">Properties Panel</h2>
         <button class="absolute top-0 right-0 m-3" @click="$emit('clear')">
-            <XMarkIcon class="h-6 w-6 text-gray-500" />
+            <XMarkIcon class="h-6 w-6 text-stone-500" />
         </button>
         <div v-if="selectedComponent">
             <h3>{{ selectedComponent.type }}</h3>
             <div v-for="(value, propName) in selectedComponent.props" :key="propName">
-                <label :for="propName" class="block text-sm font-medium text-gray-700">
+                <label :for="propName" class="block text-sm font-medium text-stone-700">
                     {{ propName }}
                 </label>
                 <input
@@ -15,7 +15,7 @@
                     :type="['on', 'off', 'true', 'false', true, false].includes(selectedComponent.props[propName]) ? 'checkbox' : 'text'"
                     v-model="selectedComponent.props[propName]"
                     :value="true"
-                    class="mt-1 block py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    class="mt-1 block py-2 px-3 border border-stone-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 sm:text-sm"
                 />
             </div>
         </div>

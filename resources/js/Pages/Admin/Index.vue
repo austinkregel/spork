@@ -1,7 +1,7 @@
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-100 leading-tight">
+            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-100 leading-tight">
                 Administration
             </h2>
         </template>

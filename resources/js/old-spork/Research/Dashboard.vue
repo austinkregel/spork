@@ -1,10 +1,10 @@
 <template>
     <div class="flex flex-wrap gap-4 m-4">
         <feature-required feature="research" allow-more-than-one ></feature-required>
-        <div class="w-full font-medium text-gray-600 dark:text-gray-300 dark:text-gray-300 uppercase ml-3">Recent</div>
+        <div class="w-full font-medium text-stone-600 dark:text-stone-300 dark:text-stone-300 uppercase ml-3">Recent</div>
         <div
             v-for="(topic, i) in $store.getters.features?.research ?? []"
-            class="w-64 p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-600"
+            class="w-64 p-3 border border-stone-200 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-600"
             @contextmenu.prevent="(e) => openContextMenu(e, topic)"
             :key="'research-'+i"
             >
@@ -14,7 +14,7 @@
                 <div  class="font-medium truncate">{{ topic.name }}</div>
             </router-link>
             <pre class=" h-48 shadow-inset overflow-hidden text-xs border-t py-2 my-2">{{ topic.settings.body }}</pre>
-            <div class="text-gray-500 dark:text-gray-200 border-t mt-4 pt-2 flex items-center justify-between">
+            <div class="text-stone-500 dark:text-stone-200 border-t mt-4 pt-2 flex items-center justify-between">
                 <span>{{ date(topic.updated_at) }}</span>
 
                 <button @click="() => deleteFeature(topic)">
@@ -24,34 +24,34 @@
         </div>
 
         <div  v-if="openContext && openForTopic">
-            <div @click="openContext = false" class="absolute inset-0 z-0 bg-gray-900/20 cusor-pointer"></div>
+            <div @click="openContext = false" class="absolute inset-0 z-0 bg-stone-900/20 cusor-pointer"></div>
 
-            <div class="absolute z-10 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-slate-600 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
+            <div class="absolute z-10 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-stone-600 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
             :style="'top: '+contextY+'px; left: '+contextX+'px;'"
             >
                 <div class="py-1 text-sm flex flex-col" role="none">
-                    <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
-                    <router-link :to="'/research/'+openForTopic.id" class="flex items-center gap-2 text-gray-700 dark:text-gray-200 px-4 py-2" role="menuitem" tabindex="-1">
+                    <!-- Active: "bg-stone-100 text-stone-900", Not Active: "text-stone-700" -->
+                    <router-link :to="'/research/'+openForTopic.id" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
                         <ExternalLinkIcon class="w-4 h-4" />
                         Open
                     </router-link>
 
-                    <button @click="duplicateFeature" class="flex items-center gap-2 text-gray-700 dark:text-gray-200 px-4 py-2" role="menuitem" tabindex="-1">
+                    <button @click="duplicateFeature" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
                         <DocumentDuplicateIcon class="w-4 h-4" />
                         Duplicate
                     </button>
 
-                    <button @click="renameFeature" class="flex items-center gap-2 text-gray-700 dark:text-gray-200 px-4 py-2" role="menuitem" tabindex="-1">
+                    <button @click="renameFeature" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
                         <PencilIcon class="w-4 h-4" />
                         Rename
                     </button>
 
-                    <button @click="shareFeature" class="flex items-center gap-2 text-gray-700 dark:text-gray-200 px-4 py-2" role="menuitem" tabindex="-1">
+                    <button @click="shareFeature" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
                         <UserAddIcon class="w-4 h-4" />
                         Share
                     </button>
 
-                    <hr class="border-t border-gray-200 dark:border-gray-500" />
+                    <hr class="border-t border-stone-200 dark:border-stone-500" />
 
                     <button @click="deleteFeature" class="flex items-center gap-2 px-4 py-2 ">
                         <TrashIcon class="w-4 h-4 text-red-500" />

@@ -2,11 +2,11 @@
   <div class="p-4 sm:p-6 lg:p-8">
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
-        <h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-gray-50">{{ header }}</h1>
-        <p class="mt-2 text-sm text-gray-700 dark:text-gray-200">{{ description }}</p>
+        <h1 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">{{ header }}</h1>
+        <p class="mt-2 text-sm text-stone-700 dark:text-stone-200">{{ description }}</p>
       </div>
       <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-        <button type="button" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        <button type="button" class="block rounded-md bg-slate-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600">
           Add user
         </button>
       </div>
@@ -14,10 +14,10 @@
     <div class="mt-8 flow-root">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <table class="min-w-full divide-y divide-gray-300 dark:divide-gray-600 bg-white dark:bg-gray-700 rounded">
+          <table class="min-w-full divide-y divide-stone-300 dark:divide-stone-600 bg-white dark:bg-stone-700 rounded">
             <thead>
             <tr>
-              <th v-for="header in headers" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-50 sm:pl-3">
+              <th v-for="header in headers" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-stone-900 dark:text-stone-50 sm:pl-3">
                 {{  parseTheAccessor(header, null) }}
               </th>
               <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3">
@@ -25,16 +25,16 @@
               </th>
             </tr>
             </thead>
-            <tbody class="bg-white dark:bg-gray-900">
-            <tr v-for="person in items" :key="person" class="even:bg-gray-50 dark:even:bg-gray-800">
-              <td v-for="header in headers" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-50 sm:pl-3">{{ parseTheAccessor(header, person) }}</td>
+            <tbody class="bg-white dark:bg-stone-900">
+            <tr v-for="person in items" :key="person" class="even:bg-stone-50 dark:even:bg-stone-800">
+              <td v-for="header in headers" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-stone-900 dark:text-stone-50 sm:pl-3">{{ parseTheAccessor(header, person) }}</td>
               <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                <a href="#" class="text-indigo-600 dark:text-indigo-100 hover:text-indigo-900">Edit</a>
+                <a href="#" class="text-slate-600 dark:text-slate-100 hover:text-slate-900">Edit</a>
               </td>
             </tr>
 
             <tr v-if="items?.length === 0">
-              <td :colspan="headers.length + 1" class="text-center p-4 dark:text-gray-50">
+              <td :colspan="headers.length + 1" class="text-center p-4 dark:text-stone-50">
                 No data available
               </td>
             </tr>

@@ -3,8 +3,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import {computed} from 'vue'
 import {Link, usePage} from "@inertiajs/vue3";
 const page = usePage()
-const { description } = defineProps({
+const { description, home, subTitle } = defineProps({
   title: String,
+  subTitle: String,
+  home: String,
   description: Object,
 })
 const availablePages = computed(() => page.props.current_navigation?.children?.length > 0 ? page.props.current_navigation?.children : page.props.current_navigation?.parent?.children)
@@ -17,10 +19,10 @@ import DynamicIcon from "@/Components/DynamicIcon.vue";
         <div class="py-8 w-full grid grid-cols-3 lg:grid-cols-5">
             <div class="col-span-1 lg:col-span-1 sm:px-6 lg:px-8 flex flex-col gap-4">
               <Link
-                  href="/-/manage"
+                  :href="home"
                   class="text-white w-full text-2xl my-4 font-bold"
               >
-                Manage
+                {{ subTitle }}
               </Link>
                 <Link
                     v-for="page in availablePages"

@@ -1,6 +1,6 @@
 <template>
     <VueDraggableNext
-        class="canvas p-4 border border-slate-600"
+        class="canvas p-4 border border-stone-600"
         :list="components"
         :options="{ sort: true }"
         :group="{ name: 'canvas' }"

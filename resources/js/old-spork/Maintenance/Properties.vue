@@ -35,8 +35,8 @@
                         </div>
 
                         <div class="col-span-6 sm:col-span-3">
-                            <label for="country" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
-                            <select v-model="form.settings.country" id="country" name="country" autocomplete="country-name" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-500 dark:bg-gray-500 bg-white rounded-md shadow-sm focus:outline-none sm:text-sm">
+                            <label for="country" class="block text-sm font-medium text-stone-700 dark:text-stone-300">Country</label>
+                            <select v-model="form.settings.country" id="country" name="country" autocomplete="country-name" class="mt-1 block w-full py-2 px-3 border border-stone-300 dark:border-stone-500 dark:bg-stone-500 bg-white rounded-md shadow-sm focus:outline-none sm:text-sm">
                                 <option>United States</option>
                                 <option>Canada</option>
                                 <option>Mexico</option>
@@ -58,34 +58,34 @@
                             <spork-input v-model="form.settings.zip" type="text" name="zip" id="zip" />
                         </div>
 
-                        <div class="font-bold uppercase col-span-6 text-xs text-gray-600 dark:text-gray-300 dark:text-gray-50 tracking-wide">calendar integration</div>
+                        <div class="font-bold uppercase col-span-6 text-xs text-stone-600 dark:text-stone-300 dark:text-stone-50 tracking-wide">calendar integration</div>
                         <div class="col-span-6 flex items-center mx-4">
                             <div class="flex items-center h-5">
-                                <input v-model="form.settings.track_air_filter" id="track_air_filter" name="track_air_filter" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" />
+                                <input v-model="form.settings.track_air_filter" id="track_air_filter" name="track_air_filter" type="checkbox" class="focus:ring-slate-500 h-4 w-4 text-slate-600 border-stone-300 rounded" />
                             </div>
                             <div class="ml-3 text-sm">
                                 <label for="track_air_filter" class="font-medium">Track airfilter replacements?</label>
-                                <p class="text-gray-500 dark:text-gray-300">Get notified every six months from your move-in date, to replace your airfilter.</p>
+                                <p class="text-stone-500 dark:text-stone-300">Get notified every six months from your move-in date, to replace your airfilter.</p>
                             </div>
                         </div>
 
                         <div class="col-span-6 flex items-center mx-4">
                             <div class="flex items-center h-5">
-                                <input v-model="form.settings.track_water_filter" id="track_water_filter" name="track_water_filter" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" />
+                                <input v-model="form.settings.track_water_filter" id="track_water_filter" name="track_water_filter" type="checkbox" class="focus:ring-slate-500 h-4 w-4 text-slate-600 border-stone-300 rounded" />
                             </div>
                             <div class="ml-3 text-sm">
                                 <label for="track_water_filter" class="font-medium">Track water filter replacements?</label>
-                                <p class="text-gray-500 dark:text-gray-300">Get notified every three months from your move-in date, to replace your water filters.</p>
+                                <p class="text-stone-500 dark:text-stone-300">Get notified every three months from your move-in date, to replace your water filters.</p>
                             </div>
                         </div>
 
                         <div class="col-span-6 flex items-center mx-4">
                             <div class="flex items-center h-5">
-                                <input v-model="form.settings.is_primary_address" id="is_primary_address" name="is_primary_address" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" />
+                                <input v-model="form.settings.is_primary_address" id="is_primary_address" name="is_primary_address" type="checkbox" class="focus:ring-slate-500 h-4 w-4 text-slate-600 border-stone-300 rounded" />
                             </div>
                             <div class="ml-3 text-sm">
                                 <label for="is_primary_address" class="font-medium">Is it your primary address?</label>
-                                <p class="text-gray-500 dark:text-gray-300">This information is used in other features (finance, and shopping).</p>
+                                <p class="text-stone-500 dark:text-stone-300">This information is used in other features (finance, and shopping).</p>
                             </div>
                         </div>
                     </div>
@@ -137,8 +137,8 @@ export default {
             return this.form.errors[error];
         },
         dateFormat(property) {
-            return '<span class="text-gray-900">' + property.starts_at  + '  at </span>' +
-                '<span class="text-gray-800">' + dayjs(property.last_occurrence || property.remind_at).format('h:mma') + '</span>'
+            return '<span class="text-stone-900">' + property.starts_at  + '  at </span>' +
+                '<span class="text-stone-800">' + dayjs(property.last_occurrence || property.remind_at).format('h:mma') + '</span>'
         },
 
         async save(form) {

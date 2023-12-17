@@ -157,4 +157,9 @@ class Credential extends Model implements ModelQuery, Crud
             ->useLogName('credential')
             ->logOnlyDirty();
     }
+
+    public function servers()
+    {
+        return $this->hasMany(Server::class);
+    }
 }

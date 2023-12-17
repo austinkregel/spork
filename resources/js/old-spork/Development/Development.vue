@@ -1,22 +1,22 @@
 <template>
     <div class="flex flex-wrap h-screen font-mono text-base">
-        <div class="bg-slate-900 h-full border-l-2 border-black flex flex-col" :style="collapsed ? 'width: 55px;':'width: 300px;'">
+        <div class="bg-stone-900 h-full border-l-2 border-black flex flex-col" :style="collapsed ? 'width: 55px;':'width: 300px;'">
 
-            <div class="flex flex-col gap-1 mt-1 bg-slate-900 shadow">
+            <div class="flex flex-col gap-1 mt-1 bg-stone-900 shadow">
                 <div class="flex justify-between w-full px-4">
                     <router-link to="/dev" class="text-lg  ">Projects</router-link>
                 </div>
 
-                <div class="flex flex-col gap-2 max-h-32 overflow-y-scroll  scrollbar scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-slate-500">
+                <div class="flex flex-col gap-2 max-h-32 overflow-y-scroll  scrollbar scrollbar-thin scrollbar-thumb-stone-800 scrollbar-track-stone-500">
                     <!-- Project List -->
                     <div v-for="item in routes" :key="item.name" >
-                        <div class="mx-2 flex flex-col hover:border-l-2 " :class="$store.getters.openProject?.name === item.name ? 'border-l-2 border-stone-300 dark:border-stone-500 text-stone-800 dark:text-stone-200' : 'border-l border-slate-200 dark:border-slate-500'" >
+                        <div class="mx-2 flex flex-col hover:border-l-2 " :class="$store.getters.openProject?.name === item.name ? 'border-l-2 border-stone-300 dark:border-stone-500 text-stone-800 dark:text-stone-200' : 'border-l border-stone-200 dark:border-stone-500'" >
                             <div class="flex justify-between">
                                 <button class="flex flex-col" @click="$store.dispatch('openProject', item)">
                                     <span class="ml-2"
                                           :class="$store.getters.openProject?.name === item.name ? 'underline': '' "
                                     >{{ item.name }}</span>
-                                    <span class="ml-2 text-xs text-slate-400 dark:text-slate-400">{{ item?.settings?.path }}</span>
+                                    <span class="ml-2 text-xs text-stone-400 dark:text-stone-400">{{ item?.settings?.path }}</span>
                                 </button>
 
                                 <button @click="() => $store.dispatch('deleteFeature', item)">
@@ -29,10 +29,10 @@
             </div>
             <div id="tabs" class="flex w-full justify-between" :class="{ 'flex-wrap': !collapsed, 'flex-col': collapsed }">
                 <div class="flex" :class="{ 'flex-wrap': !collapsed, 'flex-col': collapsed }">
-                    <button @click="tab = 'files'" :class="[tab === 'files' ? 'bg-slate-700' : 'bg-slate-900']" class="py-2 px-3">
+                    <button @click="tab = 'files'" :class="[tab === 'files' ? 'bg-stone-700' : 'bg-stone-900']" class="py-2 px-3">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
                     </button>
-                    <button @click="tab = 'settings'" :class="[tab === 'settings' ? 'bg-slate-700' : 'bg-slate-900']" class="py-2 px-3">
+                    <button @click="tab = 'settings'" :class="[tab === 'settings' ? 'bg-stone-700' : 'bg-stone-900']" class="py-2 px-3">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </button>
                 </div>
@@ -41,7 +41,7 @@
                     <svg v-else class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
             </div>
-            <div v-if="!collapsed && ! $store.getters.loadingFiles" class="p-2 bg-slate-700 flex-grow max-h-screen overflow-y-scroll">
+            <div v-if="!collapsed && ! $store.getters.loadingFiles" class="p-2 bg-stone-700 flex-grow max-h-screen overflow-y-scroll">
                 <div v-if="tab === 'files'" id="tab-content">
                     <file-or-folder
                      v-for="file in $store.getters.files"
@@ -52,7 +52,7 @@
                     ></file-or-folder>
 
                     <div v-if="!$store.getters.openProject?.settings?.template" class="w-full flex flex-col justify-center items-center">
-                        <button class=" my-4 py-1 px-4 border-gray-400 border rounded hover:font-bold hover:tracking-wide">Open A Project</button>
+                        <button class=" my-4 py-1 px-4 border-stone-400 border rounded hover:font-bold hover:tracking-wide">Open A Project</button>
                         <feature-required class="mx-2" feature="development" :allow-more-than-one="true" :settings="{ template: { src: 'https://github.com/spork-app/template-plugin/archive/refs/heads/main.zip'}, use_git: true, path: '/var/www/html' }"/>
                     </div>
 
@@ -66,7 +66,7 @@
                         </label>
                     </div>
 
-                    <hr class="border-t dark:border-slate-500 border-slate-300">
+                    <hr class="border-t dark:border-stone-500 border-stone-300">
 
                     <div class="flex flex-col gap-2" v-if="$store.getters.openProject">
                         <div class="text-red-500 uppercase my-2 font-bold tracking-wide">Danger Zone</div>
@@ -99,9 +99,9 @@
         </div>
 
         <div  v-if="openContext && openForFile">
-            <div @click="openContext = false" class="absolute inset-0 z-0 bg-gray-900/20 cusor-pointer"></div>
+            <div @click="openContext = false" class="absolute inset-0 z-0 bg-stone-900/20 cusor-pointer"></div>
 
-            <div class="absolute z-10 mt-2 w-56 overflow-hidden rounded-md shadow-lg bg-white dark:bg-slate-600 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
+            <div class="absolute z-10 mt-2 w-56 overflow-hidden rounded-md shadow-lg bg-white dark:bg-stone-600 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
             :style="'top: '+contextY+'px; left: '+contextX+'px;'"
             >
                 <div class="flex flex-col" role="none">
@@ -113,9 +113,9 @@
                     </div>
 
                     <div class="flex flex-col">
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="createDirectory">New Directory</button>
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="createFile">New File</button>
-                        <button class="hover:bg-slate-500 text-left px-4 py-2" @click="destroy">Delete</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="createDirectory">New Directory</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="createFile">New File</button>
+                        <button class="hover:bg-stone-500 text-left px-4 py-2" @click="destroy">Delete</button>
                     </div>
                 </div>
             </div>

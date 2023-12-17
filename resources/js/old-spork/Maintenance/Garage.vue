@@ -48,7 +48,7 @@
                         <label class="block text-sm font-bold mb-2" for="property">
                             Vehicle year:
                         </label>
-                        <select v-model="form.settings.model_year" :class="{'border-red-500': form.hasErrors('model_year') }" class="appearance-none border border-gray-300 dark:border-gray-600 rounded w-full py-2 px-3 text-gray-700 dark:text-gray-100 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-500">
+                        <select v-model="form.settings.model_year" :class="{'border-red-500': form.hasErrors('model_year') }" class="appearance-none border border-stone-300 dark:border-stone-600 rounded w-full py-2 px-3 text-stone-700 dark:text-stone-100 leading-tight focus:outline-none focus:shadow-outline dark:bg-stone-500">
                             <option v-for="year in years" :key="'year'+year" :value="year">{{ year }}</option>
                         </select>
                         <div v-if="form.hasErrors('model_year')" class="w-full text-red-500 text-sm italic">
@@ -59,21 +59,21 @@
 
                     <div class="w-full flex items-center px-4">
                         <div class="flex items-center h-5">
-                            <input v-model="form.settings.track_oil_changes" id="track_oil_changes" name="track_oil_changes" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" />
+                            <input v-model="form.settings.track_oil_changes" id="track_oil_changes" name="track_oil_changes" type="checkbox" class="focus:ring-slate-500 h-4 w-4 text-slate-600 border-stone-300 rounded" />
                         </div>
                         <div class="ml-3 text-sm">
                             <label for="track_oil_changes" class="font-medium">Track oil changes?</label>
-                            <p class="text-gray-500 dark:text-gray-300">Get notified every few months to get an oil change. If configured with an OBD2 sensor, it will notify you every 8000 miles from the last reset..</p>
+                            <p class="text-stone-500 dark:text-stone-300">Get notified every few months to get an oil change. If configured with an OBD2 sensor, it will notify you every 8000 miles from the last reset..</p>
                         </div>
                     </div>
 
                     <div class="w-full  flex items-center px-4">
                         <div class="flex items-center h-5">
-                            <input v-model="form.settings.track_oem_maintenance" id="track_oem" name="track_oem" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" />
+                            <input v-model="form.settings.track_oem_maintenance" id="track_oem" name="track_oem" type="checkbox" class="focus:ring-slate-500 h-4 w-4 text-slate-600 border-stone-300 rounded" />
                         </div>
                         <div class="ml-3 text-sm">
                             <label for="track_oem" class="font-medium">Track OEM recommended maintenance?</label>
-                            <p class="text-gray-500 dark:text-gray-300">This will monitor OEM channels for part recalls, recommended maintenance schedules (timing belt changes, etc...)</p>
+                            <p class="text-stone-500 dark:text-stone-300">This will monitor OEM channels for part recalls, recommended maintenance schedules (timing belt changes, etc...)</p>
                         </div>
                     </div>
                 </div>
@@ -123,8 +123,8 @@ export default {
             return this.form.errors[error] ?? null;
         },
         dateFormat(vehicle) {
-            return '<span class="text-gray-900">' + vehicle.starts_at  + '  at </span>' +
-                '<span class="text-gray-800">' + dayjs(vehicle.last_occurrence || vehicle.remind_at).format('h:mma') + '</span>'
+            return '<span class="text-stone-900">' + vehicle.starts_at  + '  at </span>' +
+                '<span class="text-stone-800">' + dayjs(vehicle.last_occurrence || vehicle.remind_at).format('h:mma') + '</span>'
         },
         async save(form) {
             if (!form.id) {

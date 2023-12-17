@@ -134,7 +134,7 @@ const displayableRole = (role) => {
                                 v-for="(role, i) in availableRoles"
                                 :key="role.key"
                                 type="button"
-                                class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                                class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-slate-500 dark:focus:border-slate-600 focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-600"
                                 :class="{'border-t border-zinc-200 dark:border-zinc-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableRoles).length - 1}"
                                 @click="addTeamMemberForm.role = role.key"
                             >
@@ -284,7 +284,7 @@ const displayableRole = (role) => {
                             v-for="(role, i) in availableRoles"
                             :key="role.key"
                             type="button"
-                            class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                            class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-slate-500 dark:focus:border-slate-600 focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-600"
                             :class="{'border-t border-zinc-200 dark:border-zinc-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i !== Object.keys(availableRoles).length - 1}"
                             @click="updateRoleForm.role = role.key"
                         >

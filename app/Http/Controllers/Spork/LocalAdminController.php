@@ -33,12 +33,12 @@ class LocalAdminController extends Controller
         return response()->json((new DescribeTableService)->describe($this->getModel($request)));
     }
 
-protected function getModel(Request $request)
-{
-    $parts = $request->path();
-    $split = explode('/', $parts);
-    return cache()->get(end($split));
-}
+    protected function getModel(Request $request)
+    {
+        $parts = $request->path();
+        $split = explode('/', $parts);
+        return cache()->get(end($split));
+    }
 
     /**
      * @throws Exception

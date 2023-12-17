@@ -1,10 +1,10 @@
 <style scoped lang="css">
-.prose {
+.pslate {
     font-size: 0.875rem;
     line-height: 1.7142857;
 }
 @media (prefers-color-scheme: dark) {
-    .dark\:prose-invert > blockquote {
+    .dark\:pslate-invert > blockquote {
         border-color: #fff;
 
     }
@@ -15,9 +15,9 @@
 <div class="h-full" v-if="topic">
     <div class="flex w-full h-screen overflow-auto">
         <div class="w-1/2 flex flex-col items-center">
-            <div class="w-full flex flex-wrap justify-between items-center font-medium text-gray-700 px-4 py-2 border-r border-gray-200 dark:border-gray-800">
+            <div class="w-full flex flex-wrap justify-between items-center font-medium text-stone-700 px-4 py-2 border-r border-stone-200 dark:border-stone-800">
                 <div class="text-center">{{ topic.name }}</div>
-                <button @click.prevent="stack = !stack" class="underline dark:text-gray-200">
+                <button @click.prevent="stack = !stack" class="underline dark:text-stone-200">
                     {{ stack ? 'Full Preview': 'Edit'}}
                 </button>
             </div>
@@ -31,26 +31,26 @@
                     @keydown.ctrl="ctrlSSaving"
                     @paste.prevent="textareaPaste"
                     v-model="topic.settings.body"
-                    class="w-full dark:border-gray-500 bg-white dark:bg-gray-600 sync-scrolling border-l-0 pb-5"
+                    class="w-full dark:border-stone-500 bg-white dark:bg-stone-600 sync-scrolling border-l-0 pb-5"
                     ref="textarea"
                     style="height: calc((100vh - 40px)/2);"
                 >
                 </textarea>
 
                 <div class="bottom-0 w-32 text-center right-0 mr-2 -mt-6" :class="[showBold? 'font-bold': '']">
-                    <div class="bg-gray-900 rounded opacity-75 -mt-px">
+                    <div class="bg-stone-900 rounded opacity-75 -mt-px">
                         Resources [{{ topic?.settings?.links?.length }}]
                     </div>
                 </div>
             </div>
-            <div @mouseenter="(e) => active = e.target" @mouseleave="() => active = null" @scroll="scrollSync" class="flex-grow dark:border-gray-500 w-full border-r border-t border-gray-200 overflow-auto w-full flex mx-auto text-left sync-scrolling" ref="markdown">
-                <Markdown :html="true" :source="markdownWithLinks" class="w-full py-8 mx-auto prose dark:prose-invert"  style="height: calc((100vh - 40px)/2); "/>
+            <div @mouseenter="(e) => active = e.target" @mouseleave="() => active = null" @scroll="scrollSync" class="flex-grow dark:border-stone-500 w-full border-r border-t border-stone-200 overflow-auto w-full flex mx-auto text-left sync-scrolling" ref="markdown">
+                <Markdown :html="true" :source="markdownWithLinks" class="w-full py-8 mx-auto pslate dark:pslate-invert"  style="height: calc((100vh - 40px)/2); "/>
             </div>
         </div>
-        <div class="w-1/2 flex flex-col overflow-y-scroll bg-gray-50 dark:bg-gray-700 gap-2 " ref="research">
-            <input @keyup="searchDebounce(() => $store.dispatch('search', { search }), 250)" v-model="search" :placeholder="'Search: ' + topic.name" type="text" class="w-full px-4 py-2 bg-white dark:bg-gray-700 placeholder-gray-300 border-b border-t-0 border-l-0 border-r-0 border-gray-200 dark:border-gray-500">
+        <div class="w-1/2 flex flex-col overflow-y-scroll bg-stone-50 dark:bg-stone-700 gap-2 " ref="research">
+            <input @keyup="searchDebounce(() => $store.dispatch('search', { search }), 250)" v-model="search" :placeholder="'Search: ' + topic.name" type="text" class="w-full px-4 py-2 bg-white dark:bg-stone-700 placeholder-stone-300 border-b border-t-0 border-l-0 border-r-0 border-stone-200 dark:border-stone-500">
 
-            <div v-if="!$store.getters.researchLoading" v-for="(item, $i) in $store.getters.research.data" :key="'research'+$i" class="relative rounded-lg border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-600 px-4 py-2 mx-2 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+            <div v-if="!$store.getters.researchLoading" v-for="(item, $i) in $store.getters.research.data" :key="'research'+$i" class="relative rounded-lg border border-stone-300 dark:border-stone-500 bg-white dark:bg-stone-600 px-4 py-2 mx-2 shadow-sm flex items-center space-x-3 hover:border-stone-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-slate-500">
                 <div class="flex-shrink-0">
                     <img class="h-10 w-10 rounded-full mt-2" :src="item.image" alt="">
                 </div>
@@ -64,15 +64,15 @@
                             }
                             $store.dispatch('updateResearch', topic)
                         }"
-                        class="w-8 h-8 absolute bottom-0 right-0 z-10 border rounded-full flex items-center justify-center bg-white dark:bg-gray-500 dark:border-gray-400 dark:text-gray-200">
+                        class="w-8 h-8 absolute bottom-0 right-0 z-10 border rounded-full flex items-center justify-center bg-white dark:bg-stone-500 dark:border-stone-400 dark:text-stone-200">
                         <PlusIcon v-if="!topic.settings.links.includes(item.link)" class="w-3 h-3"></PlusIcon>
                         <CheckIcon v-else class="w-3 h-3"></CheckIcon>
                     </button>
 
                     <a :href="item.link" class="focus:outline-none" target="_blank">
                         <span class="absolute inset-0" aria-hidden="true"></span>
-                        <p class="text-sm font-medium text-gray-900 dark:text-gray-50" v-html="item.title"></p>
-                        <p class="text-sm text-gray-500 dark:text-gray-300" v-html="item.snippet"></p>
+                        <p class="text-sm font-medium text-stone-900 dark:text-stone-50" v-html="item.title"></p>
+                        <p class="text-sm text-stone-500 dark:text-stone-300" v-html="item.snippet"></p>
                         <a :href="item.link" class="text-sm text-green-500 dark:text-green-300" v-html="item.link"></a>
                     </a>
                 </div>
@@ -82,19 +82,19 @@
                 Loading...
             </div>
 
-            <div v-if="!$store.getters.research.total && !$store.getters.researchLoading" class="px-4 italic text-gray-600 dark:text-gray-300 dark:text-gray-300">
+            <div v-if="!$store.getters.research.total && !$store.getters.researchLoading" class="px-4 italic text-stone-600 dark:text-stone-300 dark:text-stone-300">
                 No search results
             </div>
 
             <div v-if="$store.getters.research?.data?.length > 0" class="flex w-full justify-between items-center mb-2 px-2">
                 <button
                     :disabled="!$store.getters.research.prev_page_url"
-                    :class="[' rounded p-2 border border-gray-200 dark:border-gray-500', !$store.getters.research.prev_page_url ? 'dark:bg-gray-500 dark:text-gray-100 bg-gray-100 text-gray-500 no-cursor opacity-75' : 'dark:bg-gray-600 dark:text-gray-50 bg-white text-gray-800 underline']"
+                    :class="[' rounded p-2 border border-stone-200 dark:border-stone-500', !$store.getters.research.prev_page_url ? 'dark:bg-stone-500 dark:text-stone-100 bg-stone-100 text-stone-500 no-cursor opacity-75' : 'dark:bg-stone-600 dark:text-stone-50 bg-white text-stone-800 underline']"
                     @click="$store.dispatch('search', { search, url: $store.getters.research.prev_page_url })"
                 >&laquo; Previous</button>
                 <button
                     :disabled="!$store.getters.research.next_page_url"
-                    :class="[' rounded p-2 border border-gray-200 dark:border-gray-500', !$store.getters.research.next_page_url ? 'dark:bg-gray-500 dark:text-gray-100 bg-gray-100 text-gray-500 no-cursor opacity-75' : 'dark:bg-gray-600 dark:text-gray-50 bg-white text-gray-800 underline']"
+                    :class="[' rounded p-2 border border-stone-200 dark:border-stone-500', !$store.getters.research.next_page_url ? 'dark:bg-stone-500 dark:text-stone-100 bg-stone-100 text-stone-500 no-cursor opacity-75' : 'dark:bg-stone-600 dark:text-stone-50 bg-white text-stone-800 underline']"
                     @click="$store.dispatch('search', { search, url: $store.getters.research.next_page_url })"
                 >Next &raquo;</button>
             </div>

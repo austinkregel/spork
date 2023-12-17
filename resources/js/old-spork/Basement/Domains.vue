@@ -49,10 +49,10 @@
             <template #no-data>No domains in your greenhouse</template>
         </crud-view>
         <modal :open="open" @close="() => open = false">
-            <div class="dark:text-gray-200">
+            <div class="dark:text-stone-200">
                 <div v-for="(values, index) in form">
                     <div>
-                        <label :for="index" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{index}}</label>
+                        <label :for="index" class="block text-sm font-medium text-stone-700 dark:text-stone-200">{{index}}</label>
                         <div class="relative mt-1 rounded-md shadow-sm">
                           <spork-input v-model="form[index]" type="text" :name="index" :id="index" :class="[]" aria-invalid="true" aria-describedby="email-error" />
                           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">

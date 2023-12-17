@@ -1,16 +1,16 @@
 <template>
     <div class="flex flex-wrap mt-4" v-if="shouldShow">
-        <div class="w-full py-2 px-4 text-2xl font-bold text-gray-800">Service Dashboard</div>
-        <div class="w-full pb-8 px-4 text-base font-base text-gray-500">Welcome Back, {{$store.getters.user.name}}!</div>
+        <div class="w-full py-2 px-4 text-2xl font-bold text-stone-800">Service Dashboard</div>
+        <div class="w-full pb-8 px-4 text-base font-base text-stone-500">Welcome Back, {{$store.getters.user.name}}!</div>
 
         <div class="grid grid-cols-3 w-full gap-4 mx-4">
             <div v-for="service in $store.getters.services" :key="service.fqdn" class="bg-white p-4 shadow rounded">
                 <div class="flex flex-col gap-2">
                     <div class="flex justify-between items-center">
                         <div class="font-bold">{{ service.name }}</div>
-                        <div class="text-gray-600 dark:text-gray-300 text-xs">{{ service.fqdn }}</div>
+                        <div class="text-stone-600 dark:text-stone-300 text-xs">{{ service.fqdn }}</div>
                     </div>
-                    <div class="text-gray-500 text-xs tracking-wide">{{ service.addresses.filter(addr => addr.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gm)).map(d => d+':'+service.port).join(', ') }}</div>
+                    <div class="text-stone-500 text-xs tracking-wide">{{ service.addresses.filter(addr => addr.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gm)).map(d => d+':'+service.port).join(', ') }}</div>
                 </div>
                 <div v-if="service.subtypes.concat(service.type).includes('http')">
                     <a :href="'http://'+service.fqdn+':'+service.port" target="_blank" class="text-blue-500 hover:text-blue-700">{{ service.fqdn }}</a>

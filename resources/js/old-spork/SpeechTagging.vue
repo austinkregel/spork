@@ -15,7 +15,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="selection" class="border-t border-gray-500 pt-4">
+            <div v-if="selection" class="border-t border-stone-500 pt-4">
                 <p>Selected text: {{ selection }}</p>
                 <p>Tag: <span v-for="word in selection.split(' ')">{{ word }}</span></p>
             </div>

@@ -21,11 +21,12 @@ class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
         $servers = (new ForgeDevelopmentService($this->credential))->findAllServers();
 
         foreach ($servers as $server) {
-            $localServer = Server::where('server_id', $server['id'])
+            $localServer = $this->credential->servers()
+                ->where('server_id', $server['id'])
                 ->first();
 
             if (empty($localServer)) {
-                Server::create([
+                $this->credential->servers()->create([
                     'server_id' => $server['id'],
                     'name' => $server['name'],
                     'vcpu' => 1,
@@ -35,9 +36,6 @@ class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
                     'os' => 'Ubuntu',
                     'internal_ip_address' => $server['private_ip_address'],
                 ]);
-                info('Noserver found for forge');
-
-                continue;
             }
 
             if ($localServer->isDirty() || ! $localServer->exists()) {

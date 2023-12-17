@@ -11,8 +11,8 @@
                     <nav class="flex-none px-4 sm:px-6 lg:px-0">
                         <ul role="list" class="flex gap-x-3 gap-y-1 whitespace-nowrap lg:flex-col">
                             <li v-for="item in secondaryNavigation" :key="item.name">
-                                <a :href="item.href" :class="[item.current ? 'bg-zinc-50 dark:bg-zinc-800 text-indigo-600 dark:text-indigo-300' : 'text-zinc-700 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-zinc-50 dark:hover:bg-zinc-900', 'group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold']">
-                                    <component :is="item.icon" :class="[item.current ? 'text-indigo-600' : 'text-zinc-400 group-hover:text-indigo-600', 'h-6 w-6 shrink-0']" aria-hidden="true" />
+                                <a :href="item.href" :class="[item.current ? 'bg-zinc-50 dark:bg-zinc-800 text-slate-600 dark:text-slate-300' : 'text-zinc-700 dark:text-zinc-300 hover:text-slate-600 dark:hover:text-slate-400 hover:bg-zinc-50 dark:hover:bg-zinc-900', 'group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold']">
+                                    <component :is="item.icon" :class="[item.current ? 'text-slate-600' : 'text-zinc-400 group-hover:text-slate-600', 'h-6 w-6 shrink-0']" aria-hidden="true" />
                                     {{ item.name }}
                                 </a>
                             </li>

@@ -64,12 +64,12 @@ onUnmounted(() => {
             :class="[gradientShading]"
         >
             <div
-                class="max-w-7xl relative my-8 w-full bg-slate-50 dark:bg-slate-900 rounded p-4 flex flex-wrap rounded-lg shadow-lg">
-                <WeatherHeader :now="now" :weather="weather" class=" sticky top-0 bg-slate-50 dark:bg-slate-900"/>
-                <div class="bg-gradient-to-r from-blue-400 to-indigo-400 h-px my-4 w-full"></div>
-                <div class="flex flex-wrap gap-6 w-full justify-center mt-4 divide-y divide-slate-300">
-                    <div v-for="article in articles.data" class=" flex flex-wrap overflow-hidden dark:text-slate-50 text-slate-900 pt-4">
-                        <div class="article-content max-w-4xl mx-auto border-b border-slate-900 text-wrap p-4 w-full" v-html="article.content"></div>
+                class="max-w-7xl relative my-8 w-full bg-stone-50 dark:bg-stone-900 rounded p-4 flex flex-wrap rounded-lg shadow-lg">
+                <WeatherHeader :now="now" :weather="weather" class=" sticky top-0 bg-stone-50 dark:bg-stone-900"/>
+                <div class="bg-gradient-to-r from-blue-400 to-slate-400 h-px my-4 w-full"></div>
+                <div class="flex flex-wrap gap-6 w-full justify-center mt-4 divide-y divide-stone-300">
+                    <div v-for="article in articles.data" class=" flex flex-wrap overflow-hidden dark:text-stone-50 text-stone-900 pt-4">
+                        <div class="article-content max-w-4xl mx-auto border-b border-stone-900 text-wrap p-4 w-full" v-html="article.content"></div>
                         <div class="flex justify-between w-full items-center max-w-4xl mx-auto">
                             <div class="flex flex-col px-4 py-2">
                                 <div class="text-lg">

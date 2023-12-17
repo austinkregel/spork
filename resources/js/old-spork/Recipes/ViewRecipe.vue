@@ -24,7 +24,7 @@
         </div>
         <TrackButton event="recipe.cooked" :context="recipe" text="I made this recipe"></TrackButton>
 
-        <div class="col-span-2 space-y-4"> 
+        <div class="col-span-2 space-y-4">
             <div v-if="recipe.allergens && recipe.allergens.length > 0">
                 <generic :items="recipe.allergens" :width="class_width(recipe.allergens)" class="shadow p-4 rounded bg-yellow-200 dark:bg-yellow-700">
                     <div class="text-2xl mb-4 font-bold items-center flex text-yellow-700 dark:text-white">
@@ -34,7 +34,7 @@
                 </generic>
             </div>
             <div v-if="recipe.utensils && recipe.utensils.length > 0">
-                <generic :items="recipe.utensils"  :width="class_width(recipe.utensils)" class="shadow p-4 rounded bg-white dark:bg-gray-600">
+                <generic :items="recipe.utensils"  :width="class_width(recipe.utensils)" class="shadow p-4 rounded bg-white dark:bg-stone-600">
                     <div class="text-2xl mb-4 font-bold">
                         Utensils
                     </div>
@@ -43,10 +43,10 @@
         </div>
         <ingredients :ingredients="recipe.ingredients" class="col-span-2"></ingredients>
 
-        <div class="grid grid-cols-2 space-x-4 col-span-4"> 
+        <div class="grid grid-cols-2 space-x-4 col-span-4">
             <div class="flex flex-wrap gap-4" v-for="(row, $i) in steps" :key="'recipe-step-'+$i">
                 <div v-for="(step, $index) in row" :key="'recipe'+$i">
-                    <div class="rounded overflow-hidden shadow-lg bg-white dark:bg-gray-600">
+                    <div class="rounded overflow-hidden shadow-lg bg-white dark:bg-stone-600">
                         <img class="w-full" v-if="step.images" :src="step.images" :alt="step.name">
                         <div class="px-6 py-4">
                             <div v-if="step.ingredients && step.ingredients.length > 0">
@@ -64,7 +64,7 @@
         </div>
 
         <div v-if="recipe.wines && recipe.wines.length > 0" class="mt-4">
-            <generic :items="recipe.wines" width="w-full" class="shadow p-4 mx-3 rounded bg-white dark:bg-gray-600">
+            <generic :items="recipe.wines" width="w-full" class="shadow p-4 mx-3 rounded bg-white dark:bg-stone-600">
                 <div class="text-2xl mb-4 font-bold">
                     Suggested Wines
                 </div>

@@ -3,7 +3,7 @@
 </style>
 
 <template>
-    <div class="bg-white dark:bg-gray-600 shadow p-4 rounded">
+    <div class="bg-white dark:bg-stone-600 shadow p-4 rounded">
         <div class="flex flex-wrap">
             <div v-for="ingredient in ingredients" class="w-full md:w-1/2">
                 <div class="flex flex-wrap items-center">

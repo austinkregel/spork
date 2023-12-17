@@ -9,11 +9,11 @@
             </div>
         </div>
         <div class="grid flex-grow" :class="gridWidth">
-            <div v-for="blankday in blankDaysAtTheStartOfTheMonth" class="bg-gray-300 dark:bg-gray-600" v-if="$store.getters.calendarOptions.type === 'month'">
-                <div class="h-full border border-gray-200 dark:border-gray-500 text-left p-1 text-sm">{{ blankday }}</div>
+            <div v-for="blankday in blankDaysAtTheStartOfTheMonth" class="bg-stone-300 dark:bg-stone-600" v-if="$store.getters.calendarOptions.type === 'month'">
+                <div class="h-full border border-stone-200 dark:border-stone-500 text-left p-1 text-sm">{{ blankday }}</div>
             </div>
             <div v-for="(date, dateIndex) in daysInTheMonth"  :key="dateIndex" class="h-full" >
-                <div class="h-full cursor-pointer border-t border-r flex flex-col border-gray-200 dark:border-gray-500">
+                <div class="h-full cursor-pointer border-t border-r flex flex-col border-stone-200 dark:border-stone-500">
                     <div class="h-full flex flex-col" >
                         <div class="flex items-center w-8 h-8 m-1 rounded-full justify-center" :class="{'bg-blue-500 dark:bg-blue-600 text-white': isToday(date) }">{{ date }}</div>
 
@@ -38,7 +38,7 @@
                         </div>
                         <div v-else class="flex flex-col flex-grow gap-1" v-if="$store.getters.events[eventIndex(date)]">
                             <!-- Timeslots -->
-                            <div class="px-2 border border-gray-200 dark:border-gray-600 flex items-center gap-1" v-for="event in $store.getters.events[eventIndex(date)]" :key="'event'+event.id" :style="'border-color:' + event.calendarEvent.color">
+                            <div class="px-2 border border-stone-200 dark:border-stone-600 flex items-center gap-1" v-for="event in $store.getters.events[eventIndex(date)]" :key="'event'+event.id" :style="'border-color:' + event.calendarEvent.color">
                                 <div class="flex text-xs">
                                     <span v-if="event.instanceDate.format('m') != '0'">{{ event.instanceDate.format('H:mma') }}</span>
                                     <span v-else>{{ event.instanceDate.format('Ha') }}</span>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
             </div>
-            <div class="flex-grow border-t border-r border-gray-100 dark:border-gray-500 bg-gray-300 dark:bg-gray-600" v-for="index in daysAfterTheMonth" v-if="$store.getters.calendarOptions.type === 'month'">
+            <div class="flex-grow border-t border-r border-stone-100 dark:border-stone-500 bg-stone-300 dark:bg-stone-600" v-for="index in daysAfterTheMonth" v-if="$store.getters.calendarOptions.type === 'month'">
                 <div class="p-2">{{ index }}</div>
             </div>
         </div>
@@ -114,11 +114,11 @@ export default {
             if (this.headers.length === 4) {
                 return 'grid-cols-4';
             }
-            
+
             if (this.headers.length === 5) {
                 return 'grid-cols-5';
             }
-            
+
             return 'grid-cols-1';
         }
     },

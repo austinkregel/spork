@@ -5,7 +5,7 @@
                 <Link href="/domains" class="underline" >
                     Domains
                 </Link>
-                <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-stone-400" aria-hidden="true" />
                 {{ domain.name }}
             </div>
         </template>

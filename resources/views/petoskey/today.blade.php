@@ -21,7 +21,7 @@
 </head>
 <body class="antialiased">
 <div
-    class="px-8 bg-gradient-to-r from-blue-700 to-indigo-600 relative flex items-top justify-center min-h-screen  sm:items-center sm:pt-0 flex-col">
+    class="px-8 bg-gradient-to-r from-blue-700 to-slate-600 relative flex items-top justify-center min-h-screen  sm:items-center sm:pt-0 flex-col">
 
 </div>
 </body>

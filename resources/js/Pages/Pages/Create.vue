@@ -28,7 +28,7 @@
         </div>
 
         <!-- Canvas Area -->
-        <div class="p-4 overflow-y-auto h-full dark:bg-slate-900"
+        <div class="p-4 overflow-y-auto h-full dark:bg-stone-900"
             :class="[selectedComponent ? 'col-span-2' : 'col-span-3']"
         >
             <h2 class="text-2xl mb-4 font-bold">Website Canvas</h2>
