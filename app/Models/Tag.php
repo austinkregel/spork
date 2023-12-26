@@ -16,7 +16,7 @@ use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Tag extends \Spatie\Tags\Tag implements ModelQuery, Crud
+class Tag extends \Spatie\Tags\Tag implements Crud, ModelQuery
 {
     use HasFactory;
 

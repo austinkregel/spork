@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Events\Models\ShortCode\ShortCodeCreated;
@@ -10,7 +12,6 @@ use App\Events\Models\ShortCode\ShortCodeUpdated;
 use App\Events\Models\ShortCode\ShortCodeUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class ShortCode extends Model
 {

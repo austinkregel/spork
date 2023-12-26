@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Messaging;
 
 use Illuminate\Console\Command;
@@ -29,7 +31,7 @@ class MatrixBeeperRequestTokenCode extends Command
 
         $response = $client->loginWithJwt($this->argument('code'));
 
-        $this->info("Login successful");
+        $this->info('Login successful');
         dd($response);
     }
 }

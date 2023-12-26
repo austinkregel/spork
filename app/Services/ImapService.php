@@ -1,43 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use function PHPUnit\Framework\returnValueMap;
-use function Symfony\Component\String\b;
 
 class ImapService
 {
     public function findAllMailboxes()
     {
-        return collect(imap_listmailbox($inbox = imap_open(
+        return collect(imap_list($inbox = imap_open(
             $this->buildMailboxString(),
             env('IMAP_USERNAME'),
-            env("IMAP_PASSWORD")
+            env('IMAP_PASSWORD')
         ), $this->buildMailboxString(), '*'))
             ->tap(fn () => imap_close($inbox));
     }
+
     public function findAllFromDate(string $mailbox, Carbon $date): Collection
     {
         return collect(imap_search($inbox = imap_open(
             sprintf('%s%s', $this->buildMailboxString(), $mailbox),
             env('IMAP_USERNAME'),
-            env("IMAP_PASSWORD")
+            env('IMAP_PASSWORD')
         ),
-            sprintf('SINCE "%s"', $date->format("Y-m-d"))
+            sprintf('SINCE "%s"', $date->format('Y-m-d'))
         ))
             ->map(function ($messageNumber) use ($inbox) {
-                $headers = Str::of($headerRaw = imap_fetchheader($inbox, $messageNumber, ))
+                $headers = Str::of($headerRaw = imap_fetchheader($inbox, $messageNumber))
                     ->explode("\r\n")
                     ->filter()
                     ->reduce(fn ($lines, $line) => array_merge(
                         $lines,
-                        [explode(": ", $line, 2)[0] => explode(": ", $line, 2)[1] ?? null]
+                        [explode(': ', $line, 2)[0] => explode(': ', $line, 2)[1] ?? null]
                     ), []);
 
                 $rfcHeaders = imap_rfc822_parse_headers($headerRaw);
@@ -92,10 +91,11 @@ class ImapService
             ->filter()
             ->reduce(fn ($lines, $line) => array_merge(
                 $lines,
-                [explode(": ", $line, 2)[0] => explode(": ", $line, 2)[1] ?? null]
+                [explode(': ', $line, 2)[0] => explode(': ', $line, 2)[1] ?? null]
             ), []);
 
         $rfcHeaders = imap_rfc822_parse_headers($message->headersRaw);
+
         return [
             'id' => $messageNumber,
             'to' => $this->extractEmailAndName($headers['To']),
@@ -127,9 +127,9 @@ class ImapService
             return $value;
         }
 
-        if (!str_contains($value, '<')) {
+        if (! str_contains($value, '<')) {
             return array_merge([
-                'email' => $value
+                'email' => $value,
             ]);
         }
 
@@ -138,21 +138,22 @@ class ImapService
         } else {
             preg_match_all('/(.*)(\s)(\<.*\>)/', $value, $matches);
         }
+
         return match (count($matches)) {
             3 => [
                 'email' => trim(Arr::first($matches[2])),
-                'original' => $value
+                'original' => $value,
             ],
             4 => empty(trim(Arr::first($matches[1]), "\"'")) ? [
                 // Address
-                'email' => trim(Arr::first($matches[3]), "<>"),
-                'original' => $value
+                'email' => trim(Arr::first($matches[3]), '<>'),
+                'original' => $value,
             ] : [
                 // Name
                 'name' => trim(Arr::first($matches[1]), "\"'"),
                 // Address
-                'email' => trim(Arr::first($matches[3]), "<>"),
-                'original' => $value
+                'email' => trim(Arr::first($matches[3]), '<>'),
+                'original' => $value,
             ],
         };
     }

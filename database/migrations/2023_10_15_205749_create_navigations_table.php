@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -70,13 +72,13 @@ return new class extends Migration
 
         $crudClasses = array_values(array_filter(
             $models->getClasses(),
-            fn($class) => in_array(\App\Models\Crud::class, class_implements($class))
+            fn ($class) => in_array(\App\Models\Crud::class, class_implements($class))
         ));
 
         foreach ($crudClasses as $index => $class) {
             \App\Models\Navigation::create([
                 'name' => \Illuminate\Support\Str::headline((new $class)->getTable()),
-                'href' => '/-/manage/'. \Illuminate\Support\Str::slug(
+                'href' => '/-/manage/'.\Illuminate\Support\Str::slug(
                     \Illuminate\Support\Str::headline((new $class)->getTable())
                 ),
                 'icon' => \Illuminate\Support\Str::studly(\Illuminate\Support\Str::headline(class_basename($class))).'Icon',
@@ -86,8 +88,8 @@ return new class extends Migration
                 'settings' => [
                     'title' => \Illuminate\Support\Str::headline(class_basename($class)),
                     'singular' => \Illuminate\Support\Str::studly(class_basename($class)),
-                    'api_url' => route(((new $class)->getTable()).'.store')
-                ]
+                    'api_url' => route(((new $class)->getTable()).'.store'),
+                ],
             ]);
         }
 

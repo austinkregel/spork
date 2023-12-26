@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use Illuminate\Support\Collection;
 
 class HttpService
 {
@@ -53,9 +53,10 @@ class HttpService
 
         return $this;
     }
+
     protected function request($action, $data = [])
     {
-        if (!in_array(strtolower($action), ['get', 'post', 'put', 'delete', 'patch'])) {
+        if (! in_array(strtolower($action), ['get', 'post', 'put', 'delete', 'patch'])) {
             throw new \Exception('Your desired action is not supported');
         }
 
@@ -65,7 +66,7 @@ class HttpService
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Accepts' => 'application/json',
-                ]
+                ],
             ];
         } else {
             $body = [
@@ -73,7 +74,7 @@ class HttpService
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Accepts' => 'application/json',
-                ]
+                ],
             ];
         }
 
@@ -87,12 +88,14 @@ class HttpService
 
         return $this->response = collect(json_decode($json));
     }
+
     public function get($path, $data = null)
     {
         $this->path = $path;
 
         return $this->request('get', $data);
     }
+
     public function post($path, $data = null)
     {
         $this->path = $path;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Condition;
 
 class DoesntEqualValueOperator extends AbstractLogicalOperator

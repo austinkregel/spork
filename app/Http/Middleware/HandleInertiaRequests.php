@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Models\Domain;
 use App\Models\Navigation;
 use App\Models\Thread;
 use Illuminate\Http\Request;
@@ -44,11 +43,11 @@ class HandleInertiaRequests extends Middleware
                 ->whereNull('parent_id')
                 ->orderBy('order')
                 ->get()
+                ->map(function (Navigation $item) {
+                    $item->current = $item->href === request()->getRequestUri() || ($item->children->isNotEmpty() && $item->children->filter(fn ($item) => $item->href === request()->getRequestUri())->count() > 0);
 
-            ->map(function (Navigation $item) {
-                $item->current = $item->href === request()->getRequestUri() || ($item->children->isNotEmpty() && $item->children->filter(fn ($item) => $item->href === request()->getRequestUri())->count() > 0);
-                return $item->toArray();
-            }),
+                    return $item->toArray();
+                }),
             'current_navigation' => Navigation::query()
                 ->with(['parent.children', 'children' => function ($query) {
                     $query->orderBy('order');
@@ -64,7 +63,7 @@ class HandleInertiaRequests extends Middleware
                     ['*'],
                     'page',
                     request('page')
-                )
+                ),
         ]);
     }
 }

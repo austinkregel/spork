@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Spork\Domains;
 
-use App\Actions\Spork\CustomAction;
 use App\Contracts\ActionInterface;
-use App\Contracts\Services\NamecheapServiceContract;
 
 class SyncNamecheapDnsAction implements ActionInterface
 {

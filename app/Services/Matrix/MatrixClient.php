@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Matrix;
@@ -10,25 +11,26 @@ class MatrixClient
     public function __construct(
         protected string $user,
         protected string $homeserver = 'beeper.com',
-    ) {}
+    ) {
+    }
 
     public function discover()
     {
-//        $types = Http::withHeaders([
-//                 'Accept' => 'application/json',
-//                 'Content-type' => 'application/json',
-//             ])->get('https://matrix.'.$this->homeserver.'/_matrix/client/r0/login')->json()
+        //        $types = Http::withHeaders([
+        //                 'Accept' => 'application/json',
+        //                 'Content-type' => 'application/json',
+        //             ])->get('https://matrix.'.$this->homeserver.'/_matrix/client/r0/login')->json()
         $rooms = Http::withHeaders([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer '.env('MATRIX_ACCESS_TOKEN'),
 
         ])->get('https://matrix.'.$this->homeserver.'/_matrix/client/v3/joined_rooms', [
-//            'type' => 'm.login.application_service',
-//            'identifier' => [
-//                "type" => "m.id.user",
-//                'user' => 'austinkregel',
-//
-//            ]
+            //            'type' => 'm.login.application_service',
+            //            'identifier' => [
+            //                "type" => "m.id.user",
+            //                'user' => 'austinkregel',
+            //
+            //            ]
         ])->json('joined_rooms');
 
         dd(array_reduce($rooms, function ($all, $room) {
@@ -42,7 +44,7 @@ class MatrixClient
             return array_merge(
                 $all,
                 [
-                    $room => $roomAliases
+                    $room => $roomAliases,
                 ],
             );
         }, []));
@@ -51,7 +53,7 @@ class MatrixClient
     public function requestCodeForBeeper(string $email): string
     {
         return cache()->remember(md5(json_encode([
-            'beeper','|',
+            'beeper', '|',
             $email,
         ])), now()->addMinutes(30), function () use ($email) {
             $request = Http::withHeaders([
@@ -65,17 +67,18 @@ class MatrixClient
                 'Authorization' => 'Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE',
             ])->post('https://api.beeper.com/user/login/email', [
                 'request' => $request,
-                'email' => $email
+                'email' => $email,
             ])->body();
 
             return $request;
         });
     }
+
     public function loginWithBeeperCode(string $email, string $code): array
     {
-        if (!cache()->has(md5(json_encode([
-            'beeper','|',
-            $email
+        if (! cache()->has(md5(json_encode([
+            'beeper', '|',
+            $email,
         ])))) {
             abort(404);
         }
@@ -85,17 +88,17 @@ class MatrixClient
             'Authorization' => 'Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE',
         ])->post('https://api.beeper.com/user/login/response', [
             'request' => cache()->get(md5(json_encode([
-                'beeper','|',
-                $email
+                'beeper', '|',
+                $email,
             ]))),
-            'response' => $code
+            'response' => $code,
         ])->json();
     }
 
     public function loginWithJwt(string $jwt): array
     {
         $login = Http::withHeaders([
-            'Accept' => 'application/json'
+            'Accept' => 'application/json',
         ])->post('https://matrix.'.$this->homeserver.'/_matrix/client/v3/login', [
             'type' => 'org.matrix.login.jwt',
             'token' => $jwt,

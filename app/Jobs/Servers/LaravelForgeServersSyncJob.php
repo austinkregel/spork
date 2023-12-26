@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Jobs\Servers;
 
-use App\Models\Server;
 use App\Services\Development\ForgeDevelopmentService;
 use App\Services\Factories\ServerServiceFactory;
 

@@ -69,14 +69,14 @@ Route::middleware([
                     'short_code' => $shortCode,
                 ]),
                 'is_enabled' => true,
-                'status' => 301
+                'status' => 301,
             ]);
         }
 
         return [
             'route' => str_replace('https://', 'http://', route('redirect', [
                 'code' => $code->short_code,
-            ]))
+            ])),
         ];
     })->name('setup-device');
 
@@ -97,7 +97,6 @@ Route::middleware([
     });
 
     Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
-
 
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
 
@@ -123,7 +122,11 @@ Route::middleware([
         ->name('project.detach');
 });
 
-Route::group(['prefix' => '-', ], function () {
+Route::group(['prefix' => '-', 'middleware' => [
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+]], function () {
     Route::get('/', function () {
         return Inertia::render('Dashboard', [
             'project_count' => \App\Models\Project::count(),
@@ -137,17 +140,46 @@ Route::group(['prefix' => '-', ], function () {
                 ->paginate(20),
         ]);
     });
+    Route::get('/logic', function () {
 
+        return Inertia::render('Logic/Index', [
+            'events' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalEvents(),
+            'listeners' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalListeners(),
+        ]);
+    });
+
+    Route::get('/tag-manager', function () {
+        return Inertia::render('Tags/Index', [
+            'tags' => \App\Models\Tag::with([
+                'conditions',
+                'articles',
+                'feeds',
+                'servers',
+                'transactions',
+                'projects',
+                'budgets',
+                'accounts',
+                'domains',
+                'people',
+            ])
+                ->paginate(
+                    request('limit'),
+                    ['*'],
+                    'page',
+                    request('page')
+                ),
+        ]);
+    });
     Route::get('/postal', function () {
         return Inertia::render('Postal/Index', [
             'threads' => \App\Models\Thread::query()
                 ->with([
                     'participants' => function ($query) {
                         $query->where('name', 'not like', '%bridge bot%');
-                    }
+                    },
                 ])
                 ->orderByDesc('origin_server_ts')
-                ->paginate(request('limit', 15), ['*'], 'page', 1)
+                ->paginate(request('limit', 15), ['*'], 'page', 1),
         ]);
     });
     Route::get('/projects', function () {
@@ -157,7 +189,7 @@ Route::group(['prefix' => '-', ], function () {
     Route::get('/inbox', function () {
         return Inertia::render('Postal/Inbox', [
             'threads' => (new \App\Services\ImapService)->findAllMailboxes(),
-            'messages' => (new \App\Services\ImapService)->findAllFromDate('INBOX', now()->subDay())
+            'messages' => (new \App\Services\ImapService)->findAllFromDate('INBOX', now()->subDay()),
         ]);
     });
     Route::get('/inbox/{number}', function ($messageNumber) {
@@ -173,7 +205,6 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
             $bodyWithTheImagesDisabledForPrivacy
             .'<script></script>';
 
-
         return $messageBodyWithOurScript;
     });
     Route::get('/postal/{thread}', function ($thread) {
@@ -182,7 +213,7 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
                 ->with([
                     'participants' => function ($query) {
                         $query->where('name', 'not like', '%bridge bot%');
-                    }
+                    },
                 ])
 
                 ->orderByDesc('origin_server_ts')
@@ -207,6 +238,7 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
                     'file_path' => base64_encode('/'.$file),
                     'is_directory' => false,
                     'type' => 'file',
+                    'last_modified' => \Carbon\Carbon::parse($filesystem->lastModified($file)),
                 ],
                 $filesystem->files()
             ),
@@ -216,6 +248,7 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
                     'file_path' => base64_encode('/'.$file),
                     'is_directory' => true,
                     'type' => 'folder',
+                    'last_modified' => \Carbon\Carbon::parse($filesystem->lastModified($file)),
                 ],
                 $filesystem->directories()
             ),
@@ -246,7 +279,7 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
             'singular' => Str::singular((new $model)->getTable()),
             'plural' => Str::title((new $model)->getTable()),
             'link' => '/'.(new $model)->getTable(),
-            'apiLink' => '/api/crud/'. (new $model)->getTable(),
+            'apiLink' => '/api/crud/'.(new $model)->getTable(),
             'data' => $data,
             'paginator' => $paginator,
         ]);
@@ -256,14 +289,12 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
         // They cannot be changed at run time, and might even require a restart of the servers.
         return Inertia::render('Settings/Index', [
             'title' => 'Settings',
-            'settings' => new class() {}
+            'settings' => new class()
+            {
+            },
         ]);
     });
-})->middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-]);
+});
 
 Route::middleware([config('jetstream.auth_session'), 'verified', App\Http\Middleware\OnlyHost::class])->group(function () {
     Route::get('/admin', Controllers\AdminController::class)->name('admin');
@@ -272,4 +303,8 @@ Route::middleware([config('jetstream.auth_session'), 'verified', App\Http\Middle
     Route::post('/api/uninstall', Controllers\UninstallNewProvider::class);
     Route::post('/api/enable', Controllers\EnableProviderController::class);
     Route::post('/api/disable', Controllers\DisableProviderController::class);
+
+    Route::post('/api/logic/add-listener-for-event', Controllers\Logic\AddListenerForEventController::class);
+    Route::post('/api/logic/remove-listener-for-event', Controllers\Logic\RemoveListenerForEventController::class);
+
 });

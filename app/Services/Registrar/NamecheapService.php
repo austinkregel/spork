@@ -113,20 +113,21 @@ class NamecheapService implements NamecheapServiceContract
     public function fetchPriceOfRenewal(string $domain): string
     {
         [$domainPart, $tld] = explode('.', $domain);
+
         return cache()->remember($key = 'tld-pricing-for-namecheap.'.$tld, now()->addHour(), function () use ($tld) {
-            $response = Http::get(static::NAMECHEAP_URL . '?' . http_build_query([
-                    // Auth
-                    'ApiUser' => $this->credential->settings['api_user'],
-                    'ApiKey' => $this->credential->access_token,
-                    'UserName' => $this->credential->settings['username'],
-                    'ClientIp' => $this->credential->settings['client_ip'],
-                    // command
-                    'Command' => 'namecheap.users.getPricing',
-                    // request deets
-                    'ProductType' => 'DOMAIN',
-                    'ActionName' => 'RENEW',
-                    'ProductName' => $tld,
-                ]));
+            $response = Http::get(static::NAMECHEAP_URL.'?'.http_build_query([
+                // Auth
+                'ApiUser' => $this->credential->settings['api_user'],
+                'ApiKey' => $this->credential->access_token,
+                'UserName' => $this->credential->settings['username'],
+                'ClientIp' => $this->credential->settings['client_ip'],
+                // command
+                'Command' => 'namecheap.users.getPricing',
+                // request deets
+                'ProductType' => 'DOMAIN',
+                'ActionName' => 'RENEW',
+                'ProductName' => $tld,
+            ]));
 
             $domainResponse = json_decode(json_encode(simplexml_load_string($xmlDebugResponse = $response->body())));
 
@@ -144,9 +145,6 @@ class NamecheapService implements NamecheapServiceContract
                 return $price?->{'@attributes'}?->Price ?? $price->Price ?? dd($price, $prices);
             }
 
-
-
-            return null;
         });
     }
 }

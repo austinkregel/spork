@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Domain extends Model implements ModelQuery, Crud
+class Domain extends Model implements Crud, ModelQuery
 {
     use HasFactory;
     use HasProjectResource;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Events\AbstractLogicalEvent;
@@ -8,7 +10,6 @@ use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Nette\PhpGenerator\Parameter;
-use Nette\PhpGenerator\Type;
 
 class CompileNewInstanceOfClass extends Command
 {
@@ -34,27 +35,27 @@ class CompileNewInstanceOfClass extends Command
         $sourceClass = $this->argument('sourceClass');
         $destinationClass = $this->argument('destination');
 
-        if (!str_contains($destinationClass, '\\')) {
+        if (! str_contains($destinationClass, '\\')) {
             $namespace = str_replace(class_basename($sourceClass), '', $sourceClass);
 
             $destinationClass = $namespace.$destinationClass;
         }
 
-        if (!str_starts_with($sourceClass, 'App\\')) {
-            throw new \Exception('Not setup for '. $sourceClass);
+        if (! str_starts_with($sourceClass, 'App\\')) {
+            throw new \Exception('Not setup for '.$sourceClass);
         }
 
         $newEvent = LaravelProgrammingStyle::for($sourceClass)
-            ->renameClass($filename = class_basename($destinationClass),  trim(str_replace(class_basename($destinationClass), '', $destinationClass), '\\'))
+            ->renameClass($filename = class_basename($destinationClass), trim(str_replace(class_basename($destinationClass), '', $destinationClass), '\\'))
             ->modifyMethod('__construct', '//', parameters: [
                 (new Parameter('model'))
-                ->setType(Model::class)
+                    ->setType(Model::class),
             ])
             ->import(AbstractLogicalEvent::class)
             ->import(Model::class)
             ->toFile(Code::RETURN_CONTENTS);
 
-        $newFileName =  str_replace('\\', '/', lcfirst($destinationClass)).'.php';
+        $newFileName = str_replace('\\', '/', lcfirst($destinationClass)).'.php';
 
         file_put_contents(base_path($newFileName), $newEvent);
     }

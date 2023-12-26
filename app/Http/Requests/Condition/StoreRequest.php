@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Condition;
 
 use App\Services\Condition\ContainsValueOperator;
@@ -50,14 +52,14 @@ class StoreRequest extends FormRequest
                     LessThanOperator::class,
                     LessThanOrEqualToOperator::class,
                     StartsWithOperator::class,
-                ])
+                ]),
             ],
             'parameter' => 'required',
             'value' => 'required',
             'conditionable_id' => '',
             'conditionable_type' => [
                 'required',
-                Rule::in([])
+                Rule::in([]),
             ],
         ];
     }

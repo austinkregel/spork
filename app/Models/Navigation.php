@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Events\Models\Navigation\NavigationCreated;
@@ -19,7 +21,7 @@ class Navigation extends Model implements Crud
 
     public $casts = [
         'authentication_required' => 'boolean',
-        'settings' => 'json'
+        'settings' => 'json',
     ];
 
     public $dispatchesEvents = [

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Models\User;
-use Filament\Tables\Table;
 use Miguilim\FilamentAutoPanel\AutoResource;
 
 class UserResource extends AutoResource

@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Person extends Model implements ModelQuery, Crud
+class Person extends Model implements Crud, ModelQuery
 {
     use HasFactory;
 

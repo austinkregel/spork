@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Development;
 
 use App\Contracts\ActionInterface;
@@ -17,7 +19,7 @@ class DescribeTableService
         $description = cache()->remember('description.'.get_class($model), now()->addHour(), fn () => DB::select('describe '.(new $model)->getTable()));
         $indexes = cache()->remember('indexes.'.get_class($model), now()->addHour(), fn () => DB::select('show indexes from '.(new $model)->getTable()));
         $fields = $mapField($description);
-        $sorts  = array_filter($description, function($query) {
+        $sorts = array_filter($description, function ($query) {
             if (str_contains($query->Type, 'int') && $query->Null == 'NO') {
                 return true;
             }
@@ -73,22 +75,21 @@ class DescribeTableService
             return false;
         });
 
-//        $actions = Code::instancesOf(ActionInterface::class)->getClasses();
-//
-//        dd(array_map(fn ($q) => new $q, $actions));
+        //        $actions = Code::instancesOf(ActionInterface::class)->getClasses();
+        //
+        //        dd(array_map(fn ($q) => new $q, $actions));
 
         return [
             'actions' => [],
             'query_actions' => ActionFilter::WHITELISTED_ACTIONS,
-            'fillable' => empty($model->getFillable()) ? ['name'] :$model->getFillable(),
+            'fillable' => empty($model->getFillable()) ? ['name'] : $model->getFillable(),
             'fields' => $fields,
             'filters' => array_map(fn ($query) => $query->Column_name, $indexes),
             'includes' => array_keys($relations),
             'sorts' => $mapField($sorts),
-            'required' => $mapField(array_filter($description, fn ($query) => $query->Null === "NO" && $query->Extra !== 'auto_increment')),
+            'required' => $mapField(array_filter($description, fn ($query) => $query->Null === 'NO' && $query->Extra !== 'auto_increment')),
         ];
     }
-
 
     public function describeTable(string $table): array
     {
@@ -96,7 +97,7 @@ class DescribeTableService
         $description = cache()->remember('description.'.$table, now()->addHour(), fn () => DB::select('describe '.$table));
         $indexes = cache()->remember('indexes.'.$table, now()->addHour(), fn () => DB::select('show indexes from '.$table));
         $fields = $mapField($description);
-        $sorts  = array_filter($description, function($query) {
+        $sorts = array_filter($description, function ($query) {
             if (str_contains($query->Type, 'int') && $query->Null == 'NO') {
                 return true;
             }
@@ -147,7 +148,7 @@ class DescribeTableService
             'filters' => array_map(fn ($query) => $query->Column_name, $indexes),
             'includes' => array_keys($relations),
             'sorts' => $mapField($sorts),
-            'required' => $mapField(array_filter($description, fn ($query) => $query->Null === "NO" && $query->Extra !== 'auto_increment')),
+            'required' => $mapField(array_filter($description, fn ($query) => $query->Null === 'NO' && $query->Extra !== 'auto_increment')),
         ];
     }
 }

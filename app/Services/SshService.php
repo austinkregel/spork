@@ -93,13 +93,12 @@ class SshService
     {
         $credential = Credential::query()->where(array_merge([
             'service' => Credential::TYPE_SSH,
-            'type' => Credential::TYPE_SSH
-        ], $user ? ['user_id' => $user->id]: []))->first();
+            'type' => Credential::TYPE_SSH,
+        ], $user ? ['user_id' => $user->id] : []))->first();
 
         if (empty($user) && empty($credential)) {
             abort(404, 'user does ot exist');
         }
-
 
         if (empty($credential)) {
             $randomName = Str::random(16);

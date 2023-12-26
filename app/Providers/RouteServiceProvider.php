@@ -63,7 +63,7 @@ class RouteServiceProvider extends ServiceProvider
             $model = Arr::first(array_values(array_filter(
                 Code::instancesOf(Model::class)
                     ->getClasses(),
-                function ($class)use ($value) {
+                function ($class) use ($value) {
                     try {
                         return (new $class)->getTable() === Str::slug($value, '_');
                     } catch (\Throwable $e) {
@@ -97,7 +97,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->domain(config('app.env') == 'production' ? 'deploy.kregel.host' : 'deploy.localhost')
                 ->group(base_path('routes/pages/deploy.php'));
 
-            Route::domain(env("LINK_SHORTENING_DOMAIN"))
+            Route::domain(env('LINK_SHORTENING_DOMAIN'))
                 ->group(base_path('routes/pages/link-shortening.php'));
         });
     }

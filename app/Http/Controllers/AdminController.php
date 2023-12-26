@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Providers\EventServiceProvider;
 use App\Services\Code;
 use App\Services\ImapService;
@@ -20,13 +21,13 @@ class AdminController extends Controller
         /** @var Collection $serviceWithOauthish */
         $serviceWithOauthish = collect(config('services'));
         $serviceWithOauthish = $serviceWithOauthish->filter(function ($service, $key) {
-            return !empty($service['client_id'])
-                && !empty($service['client_secret'])
-                && !empty($service['redirect']);
+            return ! empty($service['client_id'])
+                && ! empty($service['client_secret'])
+                && ! empty($service['redirect']);
         })->reduce(function ($result, $config, $service) use ($installedNotInstalled) {
 
             try {
-                $installedServiceThatMatchesInstalledDriver = array_values(array_filter($installedNotInstalled['installed'], fn($value) => in_array($service, $value['drivers'] ?? [])));
+                $installedServiceThatMatchesInstalledDriver = array_values(array_filter($installedNotInstalled['installed'], fn ($value) => in_array($service, $value['drivers'] ?? [])));
                 $driver = Arr::first($installedServiceThatMatchesInstalledDriver) ?? [];
                 foreach ($driver['drivers'] ?? [] as $eventListener => $driverName) {
                     $foundListener = Code::with(LaravelProgrammingStyle::class)
@@ -76,7 +77,7 @@ class AdminController extends Controller
 
         return Inertia::render('Admin/Emails', [
 
-            'mail' => ''
+            'mail' => '',
         ]);
     }
 }

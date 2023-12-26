@@ -1,17 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CredentialResource\Pages;
-use App\Filament\Resources\CredentialResource\RelationManagers;
 use App\Models\Credential;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CredentialResource extends Resource
 {
@@ -37,7 +36,7 @@ class CredentialResource extends Resource
                 Forms\Components\Select::make('service')->options([
                     'cloudflare',
                     'namecheap',
-                    'forge'
+                    'forge',
                 ]),
             ]);
     }
@@ -49,7 +48,7 @@ class CredentialResource extends Resource
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('service'),
-                Tables\Columns\TextColumn::make('enabled_on')
+                Tables\Columns\TextColumn::make('enabled_on'),
 
             ])
             ->filters([

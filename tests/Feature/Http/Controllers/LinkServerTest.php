@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Feature\Http\Controllers;
 
 use App\Models\Credential;
@@ -17,6 +19,7 @@ class LinkServerTest extends TestCase
 
         $request->assertStatus(422);
     }
+
     public function testCanCreateDevice()
     {
         /** @var User $user */
@@ -37,7 +40,7 @@ class LinkServerTest extends TestCase
 
         $request->assertStatus(201);
         $request->assertJson([
-           'ssh_key_public' => Credential::first()->getPublicKey(),
+            'ssh_key_public' => Credential::first()->getPublicKey(),
         ]);
     }
 

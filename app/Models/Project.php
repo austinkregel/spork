@@ -22,13 +22,14 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
-class Project extends Model implements ModelQuery, Crud
+class Project extends Model implements Crud, ModelQuery
 {
     use HasFactory;
     use HasTags;
     use LogsActivity;
 
     public $guarded = [];
+
     protected $casts = ['settings' => 'json'];
 
     public $dispatchesEvents = [
@@ -48,7 +49,7 @@ class Project extends Model implements ModelQuery, Crud
     public function domains(): MorphToMany
     {
         return $this->morphedByMany(
-            Domain::class,            'resource',
+            Domain::class, 'resource',
             'project_resources'
         );
     }

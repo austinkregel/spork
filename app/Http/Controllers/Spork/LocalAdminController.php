@@ -15,12 +15,10 @@ use App\Http\Requests\Dynamic\ViewRequest;
 use App\Services\ActionFilter;
 use App\Services\Development\DescribeTableService;
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter as Filter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -37,6 +35,7 @@ class LocalAdminController extends Controller
     {
         $parts = $request->path();
         $split = explode('/', $parts);
+
         return cache()->get(end($split));
     }
 
@@ -70,7 +69,7 @@ class LocalAdminController extends Controller
         $request->validate(array_reduce($description['required'], fn ($all, $field) => array_merge(
             $all,
             [$field => 'required']
-        ),[]));
+        ), []));
         /** @var ModelQuery $resource */
         $resource = new $model;
         $resource->fill($request->all());

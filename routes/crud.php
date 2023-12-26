@@ -9,21 +9,21 @@ if (! function_exists('developerRoute')) {
     {
         cache()->rememberForever($name, fn () => $model);
 
-        Route::prefix('crud')->group(function () use ($name){
-            Route::get($name, [\App\Http\Controllers\Spork\LocalAdminController::class, 'index'])->name($name . '.index');
+        Route::prefix('crud')->group(function () use ($name) {
+            Route::get($name, [\App\Http\Controllers\Spork\LocalAdminController::class, 'index'])->name($name.'.index');
 
-            Route::post($name.'', [\App\Http\Controllers\Spork\LocalAdminController::class, 'store'])->name($name . '.store');
-            Route::get($name.'/fields', [\App\Http\Controllers\Spork\LocalAdminController::class, 'fields'])->name($name . '.fields');
-            Route::get($name.'/{' . $name . '}', [\App\Http\Controllers\Spork\LocalAdminController::class, 'show'])->name($name . '.show');
+            Route::post($name.'', [\App\Http\Controllers\Spork\LocalAdminController::class, 'store'])->name($name.'.store');
+            Route::get($name.'/fields', [\App\Http\Controllers\Spork\LocalAdminController::class, 'fields'])->name($name.'.fields');
+            Route::get($name.'/{'.$name.'}', [\App\Http\Controllers\Spork\LocalAdminController::class, 'show'])->name($name.'.show');
             // Updating
-            Route::put($name.'/{' . $name . '}', [\App\Http\Controllers\Spork\LocalAdminController::class, 'update'])->name($name . '.update');
-            Route::patch($name.'/{' . $name . '}', [\App\Http\Controllers\Spork\LocalAdminController::class, 'update']);
+            Route::put($name.'/{'.$name.'}', [\App\Http\Controllers\Spork\LocalAdminController::class, 'update'])->name($name.'.update');
+            Route::patch($name.'/{'.$name.'}', [\App\Http\Controllers\Spork\LocalAdminController::class, 'update']);
             // Restoring
-            Route::post($name.'/{' . $name . '}/restore', [\App\Http\Controllers\Spork\LocalAdminController::class, 'restore'])->name($name . '.restore');
+            Route::post($name.'/{'.$name.'}/restore', [\App\Http\Controllers\Spork\LocalAdminController::class, 'restore'])->name($name.'.restore');
             // Soft-deleting
-            Route::delete($name.'/{' . $name . '}', [\App\Http\Controllers\Spork\LocalAdminController::class, 'destroy'])->name($name . '.destroy');
+            Route::delete($name.'/{'.$name.'}', [\App\Http\Controllers\Spork\LocalAdminController::class, 'destroy'])->name($name.'.destroy');
             // Force delete
-            Route::delete($name.'/{' . $name . '}/force', [\App\Http\Controllers\Spork\LocalAdminController::class, 'forceDestroy'])->name($name . '.forceDestroy');
+            Route::delete($name.'/{'.$name.'}/force', [\App\Http\Controllers\Spork\LocalAdminController::class, 'forceDestroy'])->name($name.'.forceDestroy');
         });
     }
 }

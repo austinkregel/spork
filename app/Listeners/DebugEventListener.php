@@ -10,8 +10,7 @@ class DebugEventListener implements LogicalListener
 {
     public function __construct(
         protected $union = null
-    )
-    {
+    ) {
         //
     }
 

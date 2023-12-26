@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Feature\Operations;
@@ -19,7 +20,7 @@ class ServerActionOperationTest extends TestCase
     {
         $this->systemUnderTest = ServerAction::factory()->create([
             'server_id' => Server::factory()->create([
-                'internal_ip_address' => '127.0.0.1'
+                'internal_ip_address' => '127.0.0.1',
             ])->id,
             'user_id' => User::factory(),
             'script_id' => Script::factory(),
@@ -68,8 +69,8 @@ wlS8EEGtrFx1hgHx1hlcxnIpZsE1W36WvA/oQHUafDp84Lg4cXtWxL7GVGl35B7eD0jZIO
 -----END OPENSSH PRIVATE KEY-----',
                     'pass_key' => encrypt(''),
                     'username' => 'root',
-                ]
-            ])->id
+                ],
+            ])->id,
         ]);
 
         $this->systemUnderTest->run();

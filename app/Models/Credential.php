@@ -17,28 +17,44 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Credential extends Model implements ModelQuery, Crud
+class Credential extends Model implements Crud, ModelQuery
 {
     use HasFactory;
     use HasProjectResource;
     use LogsActivity;
 
     public const DIGITAL_OCEAN = 'digital-ocean';
+
     public const CLOUDFLARE = 'cloudflare';
+
     public const NAMECHEAP = 'namecheap';
+
     public const OVH_CLOUD = 'ovhcloud';
+
     public const VULTR = 'vultr';
+
     public const LINODE = 'linode';
+
     public const GO_DADDY = 'godaddy';
+
     public const GOOGLE_DOMAINS = 'google-domains';
+
     public const AWS_ROUTE_53 = 'aws-route53';
+
     public const GITHUB_SOURCE = 'github';
+
     public const FORGE_DEVELOPMENT = 'forge';
+
     public const TYPE_SERVER = 'server';
+
     public const TYPE_DOMAIN = 'domain';
+
     public const TYPE_REGISTRAR = 'registrar';
+
     public const TYPE_DEVELOPMENT = 'development';
+
     public const TYPE_SOURCE = 'source';
+
     public const TYPE_SSH = 'ssh';
 
     public const ALL_DOMAIN_PROVIDERS = [

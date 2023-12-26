@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 Route::middleware(['web', 'auth:sanctum'])->get('/register-device', function () {
     $ssh = \App\Services\SshService::factory(
         request()->ip(),
@@ -9,10 +11,9 @@ Route::middleware(['web', 'auth:sanctum'])->get('/register-device', function () 
     return response()->view('basement-scripts.link-server', [
         'credential' => $ssh,
     ], 200, [
-        'Content-type' => 'text/text'
+        'Content-type' => 'text/text',
     ]);
 })->name('register-device');
-
 
 Route::post('register-device', function () {
     $data = request()->validate([
@@ -29,7 +30,7 @@ Route::post('register-device', function () {
         'distro' => 'string',
         'boot_disk' => 'string',
         'cost_in_cents' => 'integer',
-        'short_code' => 'required|exists:short_codes,short_code'
+        'short_code' => 'required|exists:short_codes,short_code',
     ]);
 
     $code = \App\Models\ShortCode::query()
@@ -49,7 +50,7 @@ Route::post('register-device', function () {
 
     $ssh->load('user');
 
-    $server->setAttribute('access_token', $ssh->user->createToken($server->name . ' Access Token', []));
+    $server->setAttribute('access_token', $ssh->user->createToken($server->name.' Access Token', []));
     $server->setAttribute('ssh_key_public', $ssh->getPublicKey());
 
     return $server;

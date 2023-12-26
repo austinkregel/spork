@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Actions\Spork;
 
 use App\Jobs\FetchDomainsForCredential;
@@ -12,7 +14,10 @@ use Illuminate\Http\Request;
 
 class SyncDataFromCredential extends CustomAction
 {
-    public function __construct($name = 'Sync Data From Credential', $url = '/api/basement/namecheap') {parent::__construct($name,$url);}
+    public function __construct($name = 'Sync Data From Credential', $url = '/api/basement/namecheap')
+    {
+        parent::__construct($name, $url);
+    }
 
     public function __invoke(Dispatcher $dispatcher, Request $request)
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Events\Models\Thread\ThreadCreated;
@@ -8,7 +10,6 @@ use App\Events\Models\Thread\ThreadDeleted;
 use App\Events\Models\Thread\ThreadDeleting;
 use App\Events\Models\Thread\ThreadUpdated;
 use App\Events\Models\Thread\ThreadUpdating;
-use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,7 @@ class Thread extends Model implements Crud
     use HasFactory;
 
     public $casts = ['settings' => 'json', 'origin_server_ts' => 'datetime'];
+
     public $appends = ['human_timestamp'];
 
     public $dispatchesEvents = [

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Models\Navigation;
-use Filament\Tables\Table;
 use Miguilim\FilamentAutoPanel\AutoResource;
 
 class NavigationResource extends AutoResource
@@ -31,7 +32,7 @@ class NavigationResource extends AutoResource
             //
         ];
     }
-    
+
     public static function getRelations(): array
     {
         return [

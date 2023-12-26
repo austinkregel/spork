@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Events\Pages;
 
-use App\Contracts\LogicalEvent;
 use App\Events\AbstractLogicalEvent;
 use App\Models\Page;
 use Illuminate\Broadcasting\InteractsWithSockets;
