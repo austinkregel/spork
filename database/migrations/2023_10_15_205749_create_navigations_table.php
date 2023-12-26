@@ -42,11 +42,19 @@ return new class extends Migration
             'order' => 5,
             'authentication_required' => true,
         ]);
+
         \App\Models\Navigation::create([
-            'name' => 'Files',
-            'icon' => 'FolderIcon',
-            'href' => '/-/file-manager',
-            'order' => 5,
+            'name' => 'Banking',
+            'icon' => 'WalletIcon',
+            'href' => '/-/',
+            'order' => 6,
+            'authentication_required' => true,
+        ]);
+        \App\Models\Navigation::create([
+            'name' => 'Tags',
+            'icon' => 'TagIcon',
+            'href' => '/-/',
+            'order' => 8,
             'authentication_required' => true,
         ]);
         /** @var \App\Models\Navigation $crudNav */

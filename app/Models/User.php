@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Events\Models\User\UserCreated;
+use App\Events\Models\User\UserCreating;
+use App\Events\Models\User\UserDeleted;
+use App\Events\Models\User\UserDeleting;
+use App\Events\Models\User\UserUpdated;
+use App\Events\Models\User\UserUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -26,6 +32,7 @@ class User extends Authenticatable implements ModelQuery
     use Notifiable;
     use TwoFactorAuthenticatable;
     use HasRoles;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -63,6 +70,15 @@ class User extends Authenticatable implements ModelQuery
      */
     protected $appends = [
         'profile_photo_url',
+    ];
+
+    public $dispatchesEvents = [
+        'created' => UserCreated::class,
+        'creating' => UserCreating::class,
+        'deleting' => UserDeleting::class,
+        'deleted' => UserDeleted::class,
+        'updating' => UserUpdating::class,
+        'updated' => UserUpdated::class,
     ];
 
     public function getActivitylogOptions(): LogOptions

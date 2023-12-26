@@ -35,6 +35,7 @@ const client = new MatrixClient(
 // We can request the list of devices, and verify their keys.
 //
 
+
 const sequelize = new Sequelize(
     process.env.DB_DATABASE,
     process.env.DB_USERNAME,

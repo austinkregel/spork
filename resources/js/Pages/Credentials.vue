@@ -1,13 +1,13 @@
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
                 Credentials
             </h2>
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="bg-white dark:bg-stone-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <!-- We need to figure out a better way to get the crud actions. -->
                     <crud-view
                         :form="form"
@@ -162,8 +162,8 @@ export default {
             return this.form.errors[error] ?? null;
         },
         dateFormat(contact) {
-            return '<span class="text-zinc-900">' + contact.starts_at  + '  at </span>' +
-                '<span class="text-zinc-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
+            return '<span class="text-stone-900">' + contact.starts_at  + '  at </span>' +
+                '<span class="text-stone-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
         },
         async save(form) {
             if (!form.id) {

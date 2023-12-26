@@ -10,7 +10,7 @@
 >
             <button
                 v-if="folder"
-                class="flex gap-1 items-center dark:hover:bg-zinc-900/50 focus:bg-zinc-900/50 focus:ring-2 focus:ring-blue-800 text-stone-700 dark:text-stone-200"
+                class="flex gap-1 items-center dark:hover:bg-stone-900/50 focus:bg-stone-900/50 focus:ring-2 focus:ring-blue-800 text-stone-700 dark:text-stone-200"
                 :class="[
                     ['tests'].includes(name) ? 'text-green-600 dark:text-green-400' :'',
                     ['app', 'src', 'resources', 'system'].includes(name) ? 'text-blue-500 dark:text-blue-300' :'',
@@ -36,7 +36,7 @@
 
                 <span class="tracking-tight">{{ name }}</span>
             </button>
-            <button v-else class="flex gap-1 items-center dark:hover:bg-zinc-900/50 focus:bg-zinc-900/50  focus:ring-2 focus:ring-blue-800"
+            <button v-else class="flex gap-1 items-center dark:hover:bg-stone-900/50 focus:bg-stone-900/50  focus:ring-2 focus:ring-blue-800"
             :class="[
                 ['artisan', 'composer', 'composer.phar', 'dev', 'sail', 'tests', 'public'].includes(name) ? 'text-green-600 dark:text-green-400' :'',
                 ['composer.json', 'composer.lock'].includes(name) ? 'text-blue-500 dark:text-blue-300' :'',

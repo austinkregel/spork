@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Events\Models\Article\ArticleCreated;
+use App\Events\Models\Article\ArticleCreating;
+use App\Events\Models\Article\ArticleDeleted;
+use App\Events\Models\Article\ArticleDeleting;
+use App\Events\Models\Article\ArticleUpdated;
+use App\Events\Models\Article\ArticleUpdating;
 use App\Services\News\Feeds\FeedItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +18,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Article extends Model implements Crud
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
+    use LogsActivity;
 
     public $fillable = [
         'uuid',
@@ -29,6 +36,15 @@ class Article extends Model implements Crud
 
     public $casts = [
         'last_modified' => 'datetime',
+    ];
+
+    public $dispatchesEvents = [
+        'created' => ArticleCreated::class,
+        'creating' => ArticleCreating::class,
+        'deleting' => ArticleDeleting::class,
+        'deleted' => ArticleDeleted::class,
+        'updating' => ArticleUpdating::class,
+        'updated' => ArticleUpdated::class,
     ];
 
     public static function fromFeedItem(ExternalRssFeed $feed, FeedItem $item): self

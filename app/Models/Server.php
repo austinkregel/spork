@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Events\Models\Server\ServerCreated;
+use App\Events\Models\Server\ServerCreating;
+use App\Events\Models\Server\ServerDeleted;
+use App\Events\Models\Server\ServerDeleting;
+use App\Events\Models\Server\ServerUpdated;
+use App\Events\Models\Server\ServerUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +21,9 @@ use Spatie\Tags\HasTags;
 
 class Server extends Model implements ModelQuery, Crud
 {
-    use HasFactory, HasTags, LogsActivity;
+    use HasFactory;
+    use HasTags;
+    use LogsActivity;
 
     public $fillable = [
         'server_id',
@@ -33,6 +41,15 @@ class Server extends Model implements ModelQuery, Crud
         'booted_at',
         'turned_off_at',
         'os',
+    ];
+
+    public $dispatchesEvents = [
+        'created' => ServerCreated::class,
+        'creating' => ServerCreating::class,
+        'deleting' => ServerDeleting::class,
+        'deleted' => ServerDeleted::class,
+        'updating' => ServerUpdating::class,
+        'updated' => ServerUpdated::class,
     ];
 
     public function credential(): BelongsTo

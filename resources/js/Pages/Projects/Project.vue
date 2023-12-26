@@ -1,7 +1,7 @@
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <div class=" flex items-center gap-2 font-semibold text-2xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <div class=" flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
                 <Link href="/projects" class="underline">
                     Projects
                 </Link>
@@ -12,24 +12,24 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-4">
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50">Last 30 days</h3>
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">Last 30 days</h3>
                     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
-                        <div v-for="item in $page.props.project_analytics" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
-                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">{{ item.name }}</dt>
-                            <dd class="mt-1 text-3xl font-semibold tracking-tight text-stone-900 dark:text-zinc-50">{{ item.stat }}</dd>
-                            <dd class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">Over {{ item.duration }}</dd>
+                        <div v-for="item in $page.props.project_analytics" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-stone-700 px-4 py-5 shadow sm:p-6">
+                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-stone-300">{{ item.name }}</dt>
+                            <dd class="mt-1 text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">{{ item.stat }}</dd>
+                            <dd class="truncate text-sm font-medium text-stone-500 dark:text-stone-300">Over {{ item.duration }}</dd>
                         </div>
                     </dl>
                 </div>
 
-                <div class="border-t border-zinc-600"></div>
+                <div class="border-t border-stone-600"></div>
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50 ">Servers</h3>
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50 ">Servers</h3>
 
-                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
-                        <div v-for="item in $page.props.project.servers" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
-                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">{{ item.name }}</dt>
-                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-zinc-50">
+                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-stone-50 text-stone-900">
+                        <div v-for="item in $page.props.project.servers" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-stone-700 px-4 py-5 shadow sm:p-6">
+                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-stone-300">{{ item.name }}</dt>
+                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-stone-50">
                                 <span class="text-3xl">{{ item.memory }}</span> MB
                                 <span>/ {{ item.vcpu }} core</span>
                                 <div class="my-2 text-monospace">{{ item.tags.map(tag => tag.name.en).join(', ') }}</div>
@@ -42,7 +42,7 @@
 
                         </div>
 
-                        <div v-if="$page.props.project.servers.length === 0" class="p-4 rounded bg-zinc-700 italic col-span-2">
+                        <div v-if="$page.props.project.servers.length === 0" class="p-4 rounded bg-stone-700 italic col-span-2">
                             There are no servers on this project
                         </div>
 
@@ -56,14 +56,14 @@
                         </Link>
                     </div>
                 </div>
-                <div class="border-t border-zinc-600"></div>
+                <div class="border-t border-stone-600"></div>
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50">Domains</h3>
-                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
-                        <div v-for="item in $page.props.project.domains" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
-                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-zinc-50">
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">Domains</h3>
+                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-stone-50 text-stone-900">
+                        <div v-for="item in $page.props.project.domains" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-stone-700 px-4 py-5 shadow sm:p-6">
+                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-stone-50">
 
-                                <div class="flex flex-wrap items-center justify-between border border-zinc-700" v-if="item.domain_analytics.length > 0">
+                                <div class="flex flex-wrap items-center justify-between border border-stone-700" v-if="item.domain_analytics.length > 0">
                                     <div class="flex flex-col p-2" v-for="analytic in item.domain_analytics">
                                         <div class="text-3xl">{{analytic.query_count}}</div>
                                         <div>Queries</div>
@@ -91,10 +91,10 @@
                                     </spork-button>
                                 </div>
                             </dd>
-                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">{{ item.registered_at }}</dt>
+                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-stone-300">{{ item.registered_at }}</dt>
 
                         </div>
-                        <div v-if="$page.props.project.domains.length === 0" class="p-4 rounded bg-zinc-700 italic col-span-2">
+                        <div v-if="$page.props.project.domains.length === 0" class="p-4 rounded bg-stone-700 italic col-span-2">
                             There are no domains on this project
                         </div>
                     </dl>
@@ -108,13 +108,13 @@
                         </Link>
                     </div>
                 </div>
-                <div class="border-t border-zinc-600"></div>
+                <div class="border-t border-stone-600"></div>
 
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50">Credentials</h3>
-                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
-                        <div v-for="item in $page.props.project.credentials" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 px-4 py-5 shadow sm:p-6">
-                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-zinc-50">
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">Credentials</h3>
+                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-stone-50 text-stone-900">
+                        <div v-for="item in $page.props.project.credentials" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-stone-700 px-4 py-5 shadow sm:p-6">
+                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-stone-50">
                                 <div class="flex flex-wrap justify-between">
                                     <div class="text-2xl">
                                         {{ item.name }}
@@ -127,10 +127,10 @@
                                     </spork-button>
                                 </div>
                             </dd>
-                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-zinc-300">{{ item.expires_at }}</dt>
+                            <dt class="truncate text-sm font-medium text-stone-500 dark:text-stone-300">{{ item.expires_at }}</dt>
 
                         </div>
-                        <div v-if="!$page.props.project.credentials?.length" class="p-4 rounded bg-zinc-700 italic col-span-2">
+                        <div v-if="!$page.props.project.credentials?.length" class="p-4 rounded bg-stone-700 italic col-span-2">
                             There are no credentials on this project
                         </div>
                     </dl>
@@ -144,17 +144,17 @@
                         </Link>
                     </div>
                 </div>
-                <div class="border-t border-zinc-600"></div>
+                <div class="border-t border-stone-600"></div>
                 <div class="mx-4">
-                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-zinc-50">Pages</h3>
-                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-zinc-50 text-zinc-900">
-                        <div v-for="item in $page.props.project.pages" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-zinc-700 p-4 shadow sm:p-6">
-                            <dt class="truncate flex flex-wrap items-center gap-1  font-medium text-stone-500 dark:text-zinc-300">
+                    <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">Pages</h3>
+                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-stone-50 text-stone-900">
+                        <div v-for="item in $page.props.project.pages" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-stone-700 p-4 shadow sm:p-6">
+                            <dt class="truncate flex flex-wrap items-center gap-1  font-medium text-stone-500 dark:text-stone-300">
                                 <CheckCircleIcon class="w-5 h-5 text-green-500" v-if="item.is_active" />
                                 <ExclamationTriangleIcon class="w-5 h-5 text-yellow-500" v-else />
                                 {{ item.title }}
                             </dt>
-                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-zinc-50">
+                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-stone-50">
                                 <span class="text-3xl">{{item.uri}}</span>
                             </dd>
                             <div class="flex items-center flex-wrap justify-between">
@@ -188,7 +188,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-if="$page.props.project.pages.length === 0" class="p-4 rounded bg-zinc-700 italic col-span-2">
+                        <div v-if="$page.props.project.pages.length === 0" class="p-4 rounded bg-stone-700 italic col-span-2">
                             There are no pages on this project
                         </div>
                     </dl>
@@ -210,15 +210,15 @@
             </div>
             <DialogModal :show="attachOpen" :closeable="true" @close="attachOpen = false" >
                 <template #title>
-                    <div class="dark:text-zinc-200 p-4">
+                    <div class="dark:text-stone-200 p-4">
                         Attach to project
                     </div>
                 </template>
                 <template #content>
-                    <div class="max-h-72 overflow-y-scroll dark:text-zinc-200 p-4 flex flex-col gap-2 border dark:border-zinc-600 rounded-lg">
+                    <div class="max-h-72 overflow-y-scroll dark:text-stone-200 p-4 flex flex-col gap-2 border dark:border-stone-600 rounded-lg">
                         <button @click="allSelected = !allSelected" class="cursor-pointer flex flex-wrap items-center gap-2">
                             <input
-                                class="dark:bg-zinc-700"
+                                class="dark:bg-stone-700"
                                 type="checkbox"
                                 v-model="allSelected"
                             />
@@ -230,7 +230,7 @@
                         <div v-for="item in attach">
                             <label class="cursor-pointer flex flex-wrap items-center gap-2">
                                 <input
-                                    class="dark:bg-zinc-700"
+                                    class="dark:bg-stone-700"
                                     type="checkbox"
                                     v-model="resources"
                                     :value="item.id"
@@ -243,7 +243,7 @@
                     </div>
                 </template>
                 <template #footer>
-                    <div class="dark:text-zinc-200 p-4 flex justify-between">
+                    <div class="dark:text-stone-200 p-4 flex justify-between">
                         <spork-button @click="attachOpen = !attachOpen" small secondary>
                             Close
                         </spork-button>
@@ -342,8 +342,8 @@ export default {
             return this.form.errors[error] ?? null;
         },
         dateFormat(contact) {
-            return '<span class="text-zinc-900">' + contact.starts_at  + '  at </span>' +
-                '<span class="text-zinc-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
+            return '<span class="text-stone-900">' + contact.starts_at  + '  at </span>' +
+                '<span class="text-stone-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
         },
         async save(form) {
             if (!form.id) {

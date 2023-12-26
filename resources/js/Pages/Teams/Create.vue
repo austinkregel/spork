@@ -6,7 +6,7 @@ import CreateTeamForm from '@/Pages/Teams/Partials/CreateTeamForm.vue';
 <template>
     <AppLayout title="Create Team">
         <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
                 Create Team
             </h2>
         </template>

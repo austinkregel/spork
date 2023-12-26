@@ -1,12 +1,12 @@
 <template>
     <div class="w-full">
         <div class="flex flex-wrap shadow rounded-lg gap-4">
-            <div v-if="title" class="text-4xl mb-4 font-medium text-stone-900 dark:text-zinc-200">
+            <div v-if="title" class="text-4xl mb-4 font-medium text-stone-900 dark:text-stone-200">
                 {{ title }}
             </div>
 
             <div class="w-full flex flex-wrap items-center justify-between">
-                <div class="relative flex flex-1 max-w-2xl text-zinc-700 dark:text-zinc-300 items-center">
+                <div class="relative flex flex-1 max-w-2xl text-stone-700 dark:text-stone-300 items-center">
                     <spork-input v-model="searchQuery" type="text" placeholder="Search..." class="pl-9" />
                     <div class="absolute top-0 left-0 right-0  z-0 ml-3 mt-2 pointer-events-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -24,31 +24,38 @@
                     </div>
                 </div>
             </div>
-            <div class="border-b border-zinc-700 dark:border-zinc-600 w-full"></div>
-            <div class="w-full dark:text-white bg-white dark:bg-zinc-700  rounded-lg flex flex-wrap items-center justify-between">
-                <div class="bg-zinc-600 dark:bg-zinc-800 relative border-b border-zinc-300 w-full p-4 flex flex-wrap justify-between items-center rounded-t-lg">
-                    <input @change="selectAll" type="checkbox">
-                    <button @click="filtersOpen= !filtersOpen" class="focus:outline-none flex flex-wrap items-center p-2 rounded-lg" :class="{'bg-zinc-300 dark:bg-zinc-700': filtersOpen, 'bg-zinc-100 dark:bg-zinc-900': !filtersOpen}">
+            <div class="border-b border-stone-700 dark:border-stone-600 w-full"></div>
+            <div class="w-full dark:text-white bg-white dark:bg-stone-700  rounded-lg flex flex-wrap items-center justify-between">
+                <div class="bg-stone-600 dark:bg-stone-800 relative border-b border-stone-300 w-full p-4 flex flex-wrap justify-between items-center rounded-t-lg">
+                    <div class="flex gap-4 items-center">
+                        <input @change="selectAll" type="checkbox">
+
+                        <span v-if="selectedItems.length > 0" class="text-sm text-stone-700 dark:text-stone-300">{{ selectedItems.length }} selected</span>
+                    </div>
+
+                    <button @click="filtersOpen= !filtersOpen" class="focus:outline-none flex flex-wrap items-center p-2 rounded-lg" :class="{'bg-stone-300 dark:bg-stone-700': filtersOpen, 'bg-stone-100 dark:bg-stone-900': !filtersOpen}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
 
-                    <div v-if="filtersOpen" class="absolute z-10 bg-white dark:bg-zinc-700 shadow-lg top-0 right-0 mt-14 mr-4 border border-zinc-200 dark:border-zinc-500 rounded-lg" style="width: 250px;">
-                        <div class="bg-zinc-100 dark:bg-zinc-800 uppercase py-2 px-2 font-bold text-zinc-500 dark:text-zinc-400 text-sm rounded-t-lg">
+                    <div v-if="filtersOpen" class="absolute z-10 bg-white dark:bg-stone-700 shadow-lg top-0 right-0 mt-14 mr-4 border border-stone-200 dark:border-stone-500 rounded-lg" style="width: 250px;">
+                        <div class="bg-stone-100 dark:bg-stone-800 uppercase py-2 px-2 font-bold text-stone-500 dark:text-stone-400 text-sm rounded-t-lg">
                             filters
                         </div>
                         <div class="flex flex-wrap items-center p-2">
-                            <select v-model="itemsPerPage" class="border border-zinc-300 rounded-lg w-full p-1 dark:border-zinc-600 dark:bg-zinc-600">
+                            <select @change="(e) => router.reload({
+                                search: {limit: 321}
+                            })" class="border border-stone-300 rounded-lg w-full p-1 dark:border-stone-600 dark:bg-stone-600">
                                 <option value="15">15 items per page</option>
                                 <option value="30">30 items per page</option>
                                 <option value="100">100 items per page</option>
                             </select>
                         </div>
-                        <div v-if="actions?.length > 0" class="uppercase py-2 px-2 font-bold text-zinc-500 text-sm">
+                        <div v-if="actions?.length > 0" class="uppercase py-2 px-2 font-bold text-stone-500 text-sm">
                             actions
                         </div>
                         <div class="flex flex-wrap items-center p-2 gap-2" v-if="actions?.length > 0">
-                            <select v-model="actionToRun" class="border border-zinc-300 rounded-lg flex-grow p-1 dark:border-zinc-600 dark:bg-zinc-600">
+                            <select v-model="actionToRun" class="border border-stone-300 rounded-lg flex-grow p-1 dark:border-stone-600 dark:bg-stone-600">
                                 <option v-for="action in actions" :key="action" :value="action">{{ action.name }} ({{ selectedItems.length }})</option>
                             </select>
 
@@ -85,31 +92,42 @@
 
             </div>
 
-            <div class="w-full dark:text-white flex justify-between flex-wrap bg-zinc-100 dark:bg-zinc-800 px-4 py-2">
-                <SporkButton :disabled="hasPreviousPage" :plain="true" :xlarge="true" :class="[!hasPreviousPage ? 'opacity-50 cursor-not-allowed': '']">Previous</SporkButton>
+            <div class="w-full dark:text-white flex justify-between flex-wrap bg-stone-100 dark:bg-stone-800 px-4 py-2">
+                <Link
+                        :disabled="!paginator?.prev_page_url"
+                        :href="paginator?.prev_page_url ?? '#'"
+                        :class="[!paginator?.prev_page_url ? 'opacity-50 cursor-not-allowed': 'cursor-pointer']"
+                        class="py-2 px-5 border border-stone-300 dark:border-stone-600 rounded-lg "
+                >
+                    Previous
+                </Link>
                 <div class="py-2">
-                    {{ (currentPage * itemsPerPage) - itemsPerPage }} total items, {{ currentPage  }} of {{ paginator?.total}}
+                    {{ data.length * currentPage }} items of {{ paginator?.total }} total items, {{ currentPage  }} of {{ paginator.last_page}}
                 </div>
-                <SporkButton @click="() => {
-                    getData(currentPage + 1);
-                    console.log(currentPage);
-                }" :disabled="hasNextPage" plain xlarge
 
-                             :class="[!hasNextPage ? 'opacity-50 cursor-not-allowed': 'cursor-pointer']"
-                >Next</SporkButton>
+                <Link
+                        :disabled="!paginator?.next_page_url"
+                        :href="paginator?.next_page_url ?? '#'"
+                        :class="[!paginator?.next_page_url ? 'opacity-50 cursor-not-allowed': 'cursor-pointer']"
+                        class="py-2 px-5 border border-stone-300 dark:border-stone-600 rounded-lg "
+                >
+                    Next
+                </Link>
             </div>
         </div>
     </div>
+
+
     <div v-if="createOpen" class="fixed z-0 inset-0 flex items-center outline-none w-screen h-screen overflow-y-scroll">
         <div class="relative z-10 w-full md:w-1/2 mx-auto max-h-screen overflow-y-auto p-4">
-            <div class="w-full rounded p-4 bg-white dark:bg-zinc-600 shadow-lg text-left dark:text-zinc-50 ">
+            <div class="w-full rounded p-4 bg-white dark:bg-stone-600 shadow-lg text-left dark:text-stone-50 ">
                 <div class="text-xl flex justify-between">
                     <slot name="modal-title">Create Modal</slot>
                     <button @click="createOpen = false" class="focus:outline-none">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
-                <div class="flex flex-col border-t border-zinc-200 mt-2 pt-4">
+                <div class="flex flex-col border-t border-stone-200 mt-2 pt-4">
                     <slot name="form"></slot>
                     <div class="mt-4 flex justify-end">
                         <SporkButton @click.prevent="async () => {
@@ -129,151 +147,148 @@
     </div>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup>
+import { ref, computed, onMounted } from 'vue';
 import { PlayIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import SporkInput from './SporkInput.vue';
 import SporkButton from './SporkButton.vue';
+import { router, Link } from '@inertiajs/vue3';
+const {
+  form,
+  title,
+  singular,
+  save,
+  destroy,
+  upload,
+  data,
+  paginator,
+  settings,
+  description,
+} = defineProps({
+  form: {
+    type: Object,
+    default: null,
+  },
+  title: {
+    type: String,
+    default: '',
+  },
+  singular: {
+    type: String,
+    default: 'singular',
+  },
 
-export default {
-    components: {
-        PlayIcon,
-        SporkInput,
-        SporkButton,
-        XMarkIcon
-    },
-    emits: ['index', 'destroy', 'save', 'execute'],
-    props: {
-        form: {
-            type: Object,
-            default: null,
-        },
-        title: {
-            type: String,
-            default: '',
-        },
-        singular: {
-            type: String,
-            default: 'singular',
-        },
+  // store
+  save: {
+    type: Function,
+    default: null,
+  },
+  destroy: {
+    type: Function,
+    default: null,
+  },
+  upload: {
+    type: Function,
+    default: null,
+  },
 
-        // store
-        save: {
-            type: Function,
-            default: null,
-        },
-        destroy: {
-            type: Function,
-            default: null,
-        },
-        upload: {
-            type: Function,
-            default: null,
-        },
+  // getters
+  data: {
+    type: Array,
+    default: () => [],
+  },
+  paginator: {
+    type: Object,
+    default: () => ({}),
+  },
+  settings: {
+    type: Object,
+    default: () => ({})
+  },
+  description: {
+    default :  () => ({
+      query_actions: [],
+      fillable: [],
+      fields: [],
+      required: [],
+      sorts: [],
+    })
+  }
+})
+const $emit = defineEmits([
+    'index', 'destroy', 'save', 'execute'
+])
 
-        // getters
-        data: {
-            type: Array,
-            default: () => [],
-        },
-        paginator: {
-            type: Object,
-            default: () => ({}),
-        },
-        settings: {
-            type: Object,
-            default: () => ({})
-        },
-        description: {
-            default :  () => ({
-              query_actions: [],
-              fillable: [],
-              fields: [],
-              required: [],
-              sorts: [],
-            })
-        }
-    },
-    setup() {
-        return {
-            createOpen: ref(false),
-            filtersOpen: ref(false),
-            selectedItems: ref([]),
-            itemsPerPage: ref(15),
-            actionToRun: ref(null),
-            searchQuery: ref(localStorage.getItem('searchQuery') ? localStorage.getItem('searchQuery') : ''),
-            debounceSearch: ref(null),
-            console,
-        }
-    },
-    watch: {
-        searchQuery(newVal, oldVal) {
-            if (this.debounceSearch !== null) {
-                clearTimeout(this.debounceSearch)
-            }
-            this.debounceSearch = setTimeout(() => {
-                localStorage.setItem('searchQuery', newVal);
-                this.$emit('index', {
-                    page: 1,
-                    limit: 15,
-                    filter: {
-                        q: newVal
-                    }
-                });
+const createOpen = ref(false);
+const filtersOpen = ref(false);
+const selectedItems = ref([]);
+const itemsPerPage = ref(15);
+const actionToRun = ref(null);
+const searchQuery = ref(localStorage.getItem('searchQuery') ? localStorage.getItem('searchQuery') : '');
+const debounceSearch = ref(null);
 
-            }, 400);
-        }
-    },
-    computed: {
-        actions() {
-            const key = this.title.toLowerCase().replace(' ', '-');
 
-            return []
-        },
-        hasPreviousPage() {
-            return this.paginator.prev_page_url !== null;
-        },
-        hasNextPage() {
-            return this.paginator.next_page_url !== null;
-        },
-        total() {
-            return this.paginator.total;
-        },
-        currentPage() {
-            return this.paginator.current_page;
-        },
-        lastPage() {
-            return Math.max(this.paginator.total / this.paginator.per_page, 1);
-        },
-    },
-    methods: {
-        hasErrors(error) {
-            if (!this.form.errors) {
-                return '';
-            }
+const actions = computed(() => {
+  return []
+});
 
-            return this.form.errors[error];
-        },
-        getData(page = 1, limit = 15) {
-            this.$emit('index', { page, limit, ...(this.searchQuery ? {
-                filter: {
-                    q: this.searchQuery
-                }
-            }: {}) });
-        },
-        selectAll(event) {
-            if (event.target.checked) {
-                this.selectedItems = this.data;
-            } else {
-                this.selectedItems = [];
-            }
-        },
-        clearSearch() {
-            this.searchQuery = '';
-        }
-    },
-    created() {
-        this.getData()
-    }
+const hasPreviousPage = computed(() => {
+  return paginator.prev_page_url !== null;
+});
+
+const hasNextPage = computed(() => {
+  return paginator.next_page_url !== null;
+});
+const total = computed(() => {
+  return paginator.total;
+})
+const currentPage = computed(() => {
+  return paginator.current_page;
+});
+const lastPage = computed(() => {
+  return Math.max(paginator.total / paginator.per_page, 1);
+});
+
+
+const hasErrors = (error) => {
+  if (!form.errors) {
+    return '';
+  }
+
+  return form.errors[error];
+};
+const selectAll = (event) => {
+  if (event.target.checked) {
+    selectedItems.value = data;
+  } else {
+    selectedItems.value = [];
+  }
 }
+const clearSearch = () => {
+  searchQuery.value = '';
+}
+
+onMounted(() => {
+    $emit('index', {
+        page: currentPage.value,
+        limit: itemsPerPage.value
+    })
+})
+
+// const searchQuery = (newVal, oldVal) => {
+//     if (debounceSearch !== null) {
+//         clearTimeout(this.debounceSearch)
+//     }
+//     debounceSearch.value = setTimeout(() => {
+//         localStorage.setItem('searchQuery', newVal);
+//         this.$emit('index', {
+//             page: 1,
+//             limit: 15,
+//             filter: {
+//                 q: newVal
+//             }
+//         });
+//
+//     }, 400);
+// }
 </script>

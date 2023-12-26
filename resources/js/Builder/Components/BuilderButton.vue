@@ -59,13 +59,13 @@ export default {
             }
 
             if (this.secondary) {
-                return 'border-zinc-100 hover:border-zinc-200 focus:ring-zinc-500'
+                return 'border-stone-100 hover:border-stone-200 focus:ring-stone-500'
             }
             if (this.danger) {
                 return 'border-transparent bg-red-100 hover:bg-red-200 focus:ring-red-500'
             }
 
-            return 'border-zinc-300 text-stone-700 focus:ring-stone-500'
+            return 'border-stone-300 text-stone-700 focus:ring-stone-500'
         },
         size() {
             if (this.small) {

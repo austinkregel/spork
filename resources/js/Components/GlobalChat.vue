@@ -1,6 +1,6 @@
 <template>
     <div class="fixed transition-all bottom-0 right-0 bg-blue-200 m-8 overflow-hidden z-0 shadow rounded dark:bg-stone-900 dark:text-white" :style="{ width, height }" :class="[open ? 'rounded' : 'rounded-full']">
-        <div class="py-2 px-4 bg-amber-200 dark:bg-stone-700 flex items-center justify-between" v-if="open">
+        <div class="py-2 px-4 bg-amber-200 dark:bg-stone-950 flex items-center justify-between" v-if="open">
             <div class="flex flex-wrap items-center justify-center gap-4">
                 <button @click="() => {active.chat = null; active.messages = []; title = 'Chat' }">
                     <ChevronLeftIcon  class="w-6 h-6 text-stone-100" />
@@ -15,8 +15,8 @@
             </div>
         </div>
 
-        <div v-else>
-            <button @click="open = !open">Open</button>
+        <div v-else class="flex items-center justify-center h-full bg-stone-950">
+            <button @click="open = !open"><ChatBubbleLeftRightIcon class="w-6 h-6 text-current" /></button>
         </div>
 
         <div class="overflow-hidden transition-all" :class="[active.chat != null ? 'h-full' : 'h-0']">
@@ -54,7 +54,6 @@
                     <button>Submit</button>
                 </div>
             </div>
-
         </div>
 
         <div class="bg-stone-800 h-full rounded-b divide-y divide-stone-400 dark:divide-stone-700 overflow-y-scroll">
@@ -63,9 +62,9 @@
                     <img class="h-8 w-8 flex-none rounded-full bg-stone-50 dark:bg-stone-600" :src="person.imageUrl" alt="" />
                     <div class="min-w-0 flex-auto">
                         <button  @click="() => { showChat = true; active.chat = person; title = 'Chatting with ' + person.name}" class="text-sm text-left font-semibold leading-1 text-stone-900 dark:text-stone-50 w-full text-wrap">
-                            {{ person.name }}
+                            {{ formatMatrixServer(person.name).name }}
                         </button>
-                        <p class="mt-1 truncate text-xs leading-1 text-stone-500 dark:text-stone-300">{{ person.email }}</p>
+                        <p class="truncate text-xs leading-1 text-stone-500 dark:text-stone-300">{{ formatMatrixServer(person.name).server }}</p>
                     </div>
                 </div>
                 <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
@@ -80,7 +79,8 @@
                         <p class="text-xs leading-1 text-stone-500 dark:text-stone-400">Online</p>
                     </div>
                 </div>
-            </div>{{page.props.conversations}}
+            </div>
+
         </div>
     </div>
 </template>
@@ -88,13 +88,22 @@
 <script setup>
 import { ref, computed } from 'vue';
 import {Head, Link, router, usePage} from '@inertiajs/vue3';
-import { XMarkIcon } from '@heroicons/vue/24/solid'
+import { XMarkIcon, ChatBubbleLeftRightIcon } from '@heroicons/vue/24/solid'
 import { ChevronLeftIcon  } from '@heroicons/vue/20/solid'
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 
 const open = ref(false);
 
 const page = usePage();
+
+const formatMatrixServer = (name) => {
+  const [username, server] = name.split(':')
+
+  return {
+    name: username,
+    server
+  };
+}
 const width = computed(() => {
   if (open.value) {
     return '325px'

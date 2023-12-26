@@ -67,11 +67,11 @@
                         </div>
                         <div class="col-span-6">
                             <label for="redirect" class="block text-sm font-medium">redirect</label>
-                            <input v-model="form.redirect" type="checkbox" class="ring-zinc-600 bg-zinc-700"/>
+                            <input v-model="form.redirect" type="checkbox" class="ring-stone-600 bg-stone-700"/>
                         </div>
                         <div class="col-span-6">
                             <label for="name" class="block text-sm font-medium">Is Active?</label>
-                            <input v-model="form.is_active" type="checkbox" class="ring-zinc-600 bg-zinc-700"/>
+                            <input v-model="form.is_active" type="checkbox" class="ring-stone-600 bg-stone-700"/>
                         </div>
                     </div>
                 </div>
@@ -122,8 +122,8 @@ export default {
             return this.form.errors[error] ?? null;
         },
         dateFormat(contact) {
-            return '<span class="text-zinc-900">' + contact.starts_at  + '  at </span>' +
-                '<span class="text-zinc-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
+            return '<span class="text-stone-900">' + contact.starts_at  + '  at </span>' +
+                '<span class="text-stone-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
         },
         async save(form) {
             if (!form.id) {

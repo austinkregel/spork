@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Events\Models\Project\ProjectCreated;
+use App\Events\Models\Project\ProjectCreating;
+use App\Events\Models\Project\ProjectDeleted;
+use App\Events\Models\Project\ProjectDeleting;
+use App\Events\Models\Project\ProjectUpdated;
+use App\Events\Models\Project\ProjectUpdating;
 use App\Services\SshKeyGeneratorService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,11 +24,21 @@ use Spatie\Tags\HasTags;
 
 class Project extends Model implements ModelQuery, Crud
 {
-    use HasFactory, HasTags, LogsActivity;
+    use HasFactory;
+    use HasTags;
+    use LogsActivity;
 
     public $guarded = [];
-
     protected $casts = ['settings' => 'json'];
+
+    public $dispatchesEvents = [
+        'created' => ProjectCreated::class,
+        'creating' => ProjectCreating::class,
+        'deleting' => ProjectDeleting::class,
+        'deleted' => ProjectDeleted::class,
+        'updating' => ProjectUpdating::class,
+        'updated' => ProjectUpdated::class,
+    ];
 
     public function scopeQ(Builder $query, string $string): void
     {

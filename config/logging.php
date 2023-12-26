@@ -56,7 +56,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single', 'flare'],
+            'channels' => ['single', 'flare', 'bugsnag'],
             'ignore_exceptions' => false,
         ],
 
@@ -130,6 +130,11 @@ return [
         ],
         'flare' => [
             'driver' => 'flare',
+        ],
+
+        // Create a bugsnag logging channel:
+        'bugsnag' => [
+            'driver' => 'bugsnag',
         ],
     ],
 

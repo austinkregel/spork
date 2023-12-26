@@ -1,18 +1,18 @@
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
                 Settings
             </h2>
         </template>
         <div class="">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex gap-5">
-                 <aside class="flex overflow-x-auto border-b border-zinc-900/5 dark:border-zinc-50/5 lg:block lg:w-64 lg:flex-none lg:border-0 my-12">
+                 <aside class="flex overflow-x-auto border-b border-stone-900/5 dark:border-stone-50/5 lg:block lg:w-64 lg:flex-none lg:border-0 my-12">
                     <nav class="flex-none px-4 sm:px-6 lg:px-0">
                         <ul role="list" class="flex gap-x-3 gap-y-1 whitespace-nowrap lg:flex-col">
                             <li v-for="item in secondaryNavigation" :key="item.name">
-                                <a :href="item.href" :class="[item.current ? 'bg-zinc-50 dark:bg-zinc-800 text-slate-600 dark:text-slate-300' : 'text-zinc-700 dark:text-zinc-300 hover:text-slate-600 dark:hover:text-slate-400 hover:bg-zinc-50 dark:hover:bg-zinc-900', 'group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold']">
-                                    <component :is="item.icon" :class="[item.current ? 'text-slate-600' : 'text-zinc-400 group-hover:text-slate-600', 'h-6 w-6 shrink-0']" aria-hidden="true" />
+                                <a :href="item.href" :class="[item.current ? 'bg-stone-50 dark:bg-stone-800 text-slate-600 dark:text-slate-300' : 'text-stone-700 dark:text-stone-300 hover:text-slate-600 dark:hover:text-slate-400 hover:bg-stone-50 dark:hover:bg-stone-900', 'group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold']">
+                                    <component :is="item.icon" :class="[item.current ? 'text-slate-600' : 'text-stone-400 group-hover:text-slate-600', 'h-6 w-6 shrink-0']" aria-hidden="true" />
                                     {{ item.name }}
                                 </a>
                             </li>

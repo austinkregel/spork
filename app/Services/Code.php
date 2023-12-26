@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Services\Programming\LaravelProgrammingStyle;
 use Composer\Autoload\ClassLoader;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Constant;
+use Nette\PhpGenerator\InterfaceType;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PhpNamespace;
@@ -37,14 +39,16 @@ class Code
 
         foreach ($files as $fileOrNamespace) {
             if (str_contains($fileOrNamespace, '.')) {
-                $file = $fileOrNamespace;
+                $file = realpath($fileOrNamespace);
             } else {
-                $file = $mappedValues[$fileOrNamespace];
+                $file = realpath($mappedValues[$fileOrNamespace]);
             }
 
             if (! isset($file)) {
                 throw new \DomainException('File '.$file.' not known to composer, if you believe this to be an error, please run composer dump');
             }
+
+
 
             $this->phpFiles[$file] = PhpFile::fromCode(file_get_contents($file));
         }
@@ -76,6 +80,15 @@ class Code
             $desiredParentClass,
             $classes
         );
+    }
+
+    public function getPrimaryClassType(): ?ClassType
+    {
+        /** @var PhpFile $first */
+        $first = Arr::first($this->phpFiles);
+
+        /** @var ClassType $classInstance */
+        return Arr::first($first->getClasses());
     }
 
     protected function isArray(Property|Constant $property)
@@ -160,56 +173,58 @@ class Code
 
     public static function instancesOf(string $desiredParentClass): static
     {
-        // Classes known to composer in array form
-        $traits = [];
-        $classes = [];
-        $interfaces = [];
+        return cache()->rememberForever('instanceOfCache.'.$desiredParentClass, function () use ($desiredParentClass) {
+            // Classes known to composer in array form
+            $traits = [];
+            $classes = [];
+            $interfaces = [];
 
-        foreach (static::composerMappedClasses() as $className => $filePath) {
-            $filePath = realpath($filePath);
-            if (stripos($className, 'reflection') !== false) {
-                // The class has reflection in the name, generally speaking, I'd like to avoid those...
-                continue;
-            }
-            if (stripos($className, 'abstract') !== false) {
-                // The class has reflection in the name, generally speaking, I'd like to avoid those...
-                continue;
-            }
-
-            $vendorParts = explode('/vendor/', $filePath);
-
-            if (str_contains($filePath, 'vendor/')) {
-                $possibleVendor = explode('/', $vendorParts[1], 2)[0];
-
-                if (! empty(config('spork.code.settings.blacklist')) && in_array($possibleVendor, config('spork.code.settings.blacklist'))) {
+            foreach (static::composerMappedClasses() as $className => $filePath) {
+                $filePath = realpath($filePath);
+                if (stripos($className, 'reflection') !== false) {
+                    // The class has reflection in the name, generally speaking, I'd like to avoid those...
+                    continue;
+                }
+                if (stripos($className, 'abstract') !== false) {
+                    // The class has reflection in the name, generally speaking, I'd like to avoid those...
                     continue;
                 }
 
-                if (! empty(config('spork.code.settings.whitelist')) && ! in_array($possibleVendor, config('spork.code.settings.whitelist'))) {
-                    continue;
+                $vendorParts = explode('/vendor/', $filePath);
+
+                if (str_contains($filePath, 'vendor/')) {
+                    $possibleVendor = explode('/', $vendorParts[1], 2)[0];
+
+                    if (!empty(config('spork.code.settings.blacklist')) && in_array($possibleVendor, config('spork.code.settings.blacklist'))) {
+                        continue;
+                    }
+
+                    if (!empty(config('spork.code.settings.whitelist')) && !in_array($possibleVendor, config('spork.code.settings.whitelist'))) {
+                        continue;
+                    }
+                }
+
+                try {
+                    if (interface_exists($className)) {
+                        $interfaces[] = $className;
+                    } elseif (class_exists($className)) {
+                        $classes[] = $className;
+                    } elseif (trait_exists($className)) {
+                        $traits[] = $className;
+                    }
+                } catch (\Throwable|\Error|\ErrorException|ErrorException|\ReflectionException|\Whoops\Exception\ErrorException|\Symfony\Component\ErrorHandler\Error\FatalError|FatalError $e) {
+                    // Missing classes based on my experience so far.
                 }
             }
 
-            try {
-                if (interface_exists($className)) {
-                    $interfaces[] = $className;
-                } elseif (class_exists($className)) {
-                    $classes[] = $className;
-                } elseif (trait_exists($className)) {
-                    $traits[] = $className;
-                }
-            } catch (\Throwable|\Error|\ErrorException|ErrorException|\ReflectionException|\Whoops\Exception\ErrorException|\Symfony\Component\ErrorHandler\Error\FatalError|FatalError $e) {
-                // Missing classes based on my experience so far.
-            }
-        }
+            $possibleInstances = match (true) {
+                interface_exists($desiredParentClass) => array_values(array_filter(array_merge($interfaces, $classes), fn($declaredClass) => isset(class_implements($declaredClass)[$desiredParentClass]))),
+                class_exists($desiredParentClass) => array_values(array_filter($classes, fn($declaredClass) => is_subclass_of($declaredClass, $desiredParentClass))),
+                trait_exists($desiredParentClass) => array_values(array_filter(array_merge($traits, $classes), fn($declaredClass) => in_array($desiredParentClass, trait_uses_recursive($declaredClass)))),
+            };
 
-        $possibleInstances = match (true) {
-            interface_exists($desiredParentClass) => array_values(array_filter(array_merge($interfaces, $classes), fn ($declaredClass) => isset(class_implements($declaredClass)[$desiredParentClass]))),
-            class_exists($desiredParentClass) => array_values(array_filter($classes, fn ($declaredClass) => is_subclass_of($declaredClass, $desiredParentClass))),
-            trait_exists($desiredParentClass) => array_values(array_filter(array_merge($traits, $classes), fn ($declaredClass) => in_array($desiredParentClass, trait_uses_recursive($declaredClass)))),
-        };
-
-        return new static($possibleInstances);
+            return new static($possibleInstances);
+        });
     }
 
     public function import(string|array $fqns): static
@@ -231,7 +246,7 @@ class Code
                         // Not imported, but the import already exists, so we need to alias it.
                         // idk how I want to handle this yet, so I'ma just leave this for future me...
 
-                        dd($uses, $possibleImport, $import);
+                        continue;
                     }
 
                     $traitBaseName = class_basename($import);
@@ -370,6 +385,23 @@ class Code
         return $this;
     }
 
+    public function addProperty(string $name, mixed $value = [])
+    {
+        /** @var PhpFile $file */
+        foreach ($this->phpFiles as $file) {
+            /** @var PhpNamespace $namespaceObject */
+            foreach ($file->getNamespaces() as $namespace => $namespaceObject) {
+                // Add code at the namespace level like use statements, declare(strict_types=1);
+                /** @var \Nette\PhpGenerator\ClassType $class */
+                foreach ($file->getClasses() as $class) {
+                    $class->addProperty($name, $value);
+                }
+            }
+        }
+
+        return $this;
+    }
+
     public function extends(string|array $fqns): static
     {
         $imports = is_array($fqns) ? $fqns : func_get_args();
@@ -432,7 +464,7 @@ class Code
                 fn (array $result, PhpNamespace $namespace) =>
                 array_merge(
                     $result,
-                    array_values(array_map(fn (ClassType $type) => $namespace->getName().'\\'.$type->getName(), $namespace->getClasses())),
+                    array_values(array_map(fn (ClassType | InterfaceType $type) => $namespace->getName().'\\'.$type->getName(), $namespace->getClasses())),
                 ),
                 $allClasses
             );
@@ -539,7 +571,6 @@ class Code
                     ]);
                 }
 
-
                 throw new SyntaxErrorException('There were syntax errors found in the generated file, this shouldn\'t happen. ' . $output);
             }
 
@@ -553,5 +584,15 @@ class Code
     {
         call_user_func($closure, $field);
         return false;
+    }
+
+    public function saveAs(string $fileName)
+    {
+        $file = basename($fileName);
+        $directory = str_replace($file, '', $fileName);
+
+        (new Filesystem)->makeDirectory(base_path($directory), 0755, true, true);
+
+        file_put_contents(base_path($fileName), $this->toFile());
     }
 }

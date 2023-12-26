@@ -1,13 +1,13 @@
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
               {{ plural }}
             </h2>
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="bg-white dark:bg-stone-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <crud-view
                         :form="form"
                         :singular="singular"

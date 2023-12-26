@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Events\Models\Credential\CredentialCreated;
+use App\Events\Models\Credential\CredentialCreating;
+use App\Events\Models\Credential\CredentialDeleted;
+use App\Events\Models\Credential\CredentialDeleting;
+use App\Events\Models\Credential\CredentialUpdated;
+use App\Events\Models\Credential\CredentialUpdating;
 use App\Models\Traits\HasProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,42 +19,26 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Credential extends Model implements ModelQuery, Crud
 {
-    use HasFactory, HasProjectResource, LogsActivity;
-
-    public $guarded = [];
+    use HasFactory;
+    use HasProjectResource;
+    use LogsActivity;
 
     public const DIGITAL_OCEAN = 'digital-ocean';
-
     public const CLOUDFLARE = 'cloudflare';
-
     public const NAMECHEAP = 'namecheap';
-
     public const OVH_CLOUD = 'ovhcloud';
-
     public const VULTR = 'vultr';
-
     public const LINODE = 'linode';
-
     public const GO_DADDY = 'godaddy';
-
     public const GOOGLE_DOMAINS = 'google-domains';
-
     public const AWS_ROUTE_53 = 'aws-route53';
-
     public const GITHUB_SOURCE = 'github';
-
     public const FORGE_DEVELOPMENT = 'forge';
-
     public const TYPE_SERVER = 'server';
-
     public const TYPE_DOMAIN = 'domain';
-
     public const TYPE_REGISTRAR = 'registrar';
-
     public const TYPE_DEVELOPMENT = 'development';
-
     public const TYPE_SOURCE = 'source';
-
     public const TYPE_SSH = 'ssh';
 
     public const ALL_DOMAIN_PROVIDERS = [
@@ -86,6 +76,8 @@ class Credential extends Model implements ModelQuery, Crud
         self::GITHUB_SOURCE,
     ];
 
+    public $guarded = [];
+
     public $hidden = [
         'api_key',
         'access_token',
@@ -106,6 +98,15 @@ class Credential extends Model implements ModelQuery, Crud
         'refresh_token',
         'settings',
         'enabled_on',
+    ];
+
+    public $dispatchesEvents = [
+        'created' => CredentialCreated::class,
+        'creating' => CredentialCreating::class,
+        'deleting' => CredentialDeleting::class,
+        'deleted' => CredentialDeleted::class,
+        'updating' => CredentialUpdating::class,
+        'updated' => CredentialUpdated::class,
     ];
 
     public static function booted()

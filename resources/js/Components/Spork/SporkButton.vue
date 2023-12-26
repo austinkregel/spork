@@ -4,6 +4,7 @@
     type="button"
     class="inline-flex items-center border shadow-sm font-medium rounded-md focus:outline-none"
     :class="[colors, size]"
+    @click="e => $emit('click', e)"
   >
     <component :is="icon" class="-ml-0.5 mr-2 h-4 w-4" aria-hidden="true"></component>
     <slot></slot>
@@ -12,6 +13,7 @@
 
 <script>
 export default {
+  emits: ['click'],
     props: {
         icon: {
             default: undefined
@@ -56,13 +58,13 @@ export default {
             }
 
             if (this.secondary) {
-                return 'border-zinc-100 dark:border-zinc-500 dark:text-zinc-50 hover:border-zinc-200 focus:ring-zinc-500'
+                return 'border-stone-100 dark:border-stone-500 dark:text-stone-50 hover:border-stone-200 focus:ring-stone-500'
             }
             if (this.danger) {
                 return 'border-transparent bg-red-100 hover:bg-red-200 focus:ring-red-500'
             }
 
-            return 'border-zinc-300 text-zinc-700 dark:border-zinc-600 dark:text-zinc-200 focus:ring-stone-500'
+            return 'border-stone-300 text-stone-700 dark:border-stone-600 dark:text-stone-200 focus:ring-stone-500'
         },
         size() {
             if (this.small) {

@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Events\Models\Domain\DomainCreated;
+use App\Events\Models\Domain\DomainCreating;
+use App\Events\Models\Domain\DomainDeleted;
+use App\Events\Models\Domain\DomainDeleting;
+use App\Events\Models\Domain\DomainUpdated;
+use App\Events\Models\Domain\DomainUpdating;
 use App\Models\Traits\HasProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +21,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Domain extends Model implements ModelQuery, Crud
 {
-    use HasFactory,  HasProjectResource, LogsActivity;
+    use HasFactory;
+    use HasProjectResource;
+    use LogsActivity;
 
     public $fillable = [
         'name',
@@ -23,6 +31,15 @@ class Domain extends Model implements ModelQuery, Crud
         'cloudflare_id',
         'domain_id',
         'registered_at',
+    ];
+
+    public $dispatchesEvents = [
+        'created' => DomainCreated::class,
+        'creating' => DomainCreating::class,
+        'deleting' => DomainDeleting::class,
+        'deleted' => DomainDeleted::class,
+        'updating' => DomainUpdating::class,
+        'updated' => DomainUpdated::class,
     ];
 
     public function records(): HasMany

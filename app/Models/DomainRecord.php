@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Events\Models\DomainRecord\DomainRecordCreated;
+use App\Events\Models\DomainRecord\DomainRecordCreating;
+use App\Events\Models\DomainRecord\DomainRecordDeleted;
+use App\Events\Models\DomainRecord\DomainRecordDeleting;
+use App\Events\Models\DomainRecord\DomainRecordUpdated;
+use App\Events\Models\DomainRecord\DomainRecordUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
@@ -12,7 +18,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class DomainRecord extends Model implements ModelQuery
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
+    use LogsActivity;
 
     protected $fillable = [
         'name',
@@ -23,6 +30,15 @@ class DomainRecord extends Model implements ModelQuery
         'tags',
         'value',
         'timeout',
+    ];
+
+    public $dispatchesEvents = [
+        'created' => DomainRecordCreated::class,
+        'creating' => DomainRecordCreating::class,
+        'deleting' => DomainRecordDeleting::class,
+        'deleted' => DomainRecordDeleted::class,
+        'updating' => DomainRecordUpdating::class,
+        'updated' => DomainRecordUpdated::class,
     ];
 
     public function domain()

@@ -26,7 +26,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
             <AuthenticationCardLogo />
         </template>
 
-        <div class="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+        <div class="mb-4 text-sm text-stone-600 dark:text-stone-400">
             Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
         </div>
 
@@ -43,7 +43,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
                 <div>
                     <Link
                         :href="route('profile.show')"
-                        class="underline text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-zinc-800"
+                        class="underline text-sm text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-stone-800"
                     >
                         Edit Profile</Link>
 
@@ -51,7 +51,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
                         :href="route('logout')"
                         method="post"
                         as="button"
-                        class="underline text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-zinc-800 ml-2"
+                        class="underline text-sm text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-stone-800 ml-2"
                     >
                         Log Out
                     </Link>

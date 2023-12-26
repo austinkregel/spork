@@ -3,10 +3,17 @@
         <!-- component -->
         <main class="flex flex-wrap w-full h-full overflow-hidden justify text-white" style="max-height: calc(100vh - 65px);">
           <div class="relative flex flex-col rounded divide-stone-600 divide-y w-1/2 xl:w-1/4 overflow-y-scroll" style="max-height: calc(100vh - 65px);">
+            <div class="w-full flex flex-wrap gap-4">
+              <Link v-if="openMail" href="/-/inbox">
+                <ArrowUturnLeftIcon class="w-5 h-5" />
+              </Link>
+              <Link href="/-/inbox">
+                <ArrowUturnLeftIcon class="w-5 h-5" />
+              </Link>
+            </div>
             <div v-if="loading" class="position-sticky sticky sticky-top top-0 left-0 px-4 py-2 bg-rose-900 w-full z-50">
               Loading
             </div>
-
             <button
                 @click="() => changeIframe(item)" v-for="item in page.props.messages"
                 :key="item"
@@ -20,11 +27,12 @@
                 </div>
                 <div class="w-full text-left text-sm">{{ item.subject }}</div>
                  <div class="flex gap-2 items-center">
-                      <FireIcon v-if="item.spam > 1" class="w-5 h-5" />
-                      <ArrowUturnLeftIcon v-if="item.answered" class="w-5 h-5"/>
-                      <TrashIcon v-if="item.deleted" class="w-5 h-5"/>
-                      <PencilSquareIcon v-if="item.draft" class="w-5 h-5"/>
-                      <EyeSlashIcon v-if="!item.seen" class="w-5 h-5"/>
+                     <EyeSlashIcon v-if="!item.seen" class="w-5 h-5"/>
+                     <EyeIcon v-if="item.seen" class="w-5 h-5 text-stone-400 dark:text-stone-500"/>
+                     <FireIcon v-if="item.spam > 1" class="w-5 h-5" />
+                     <ArrowUturnLeftIcon v-if="item.answered" class="w-5 h-5"/>
+                     <TrashIcon v-if="item.deleted" class="w-5 h-5"/>
+                     <PencilSquareIcon v-if="item.draft" class="w-5 h-5"/>
                </div>
             </button>
           </div>
@@ -89,6 +97,7 @@ import {
     ArrowUturnLeftIcon,
     TrashIcon,
     PencilSquareIcon,
+    EyeIcon,
 } from '@heroicons/vue/24/outline';
 
 import AppLayout from '@/Layouts/AppLayout.vue';

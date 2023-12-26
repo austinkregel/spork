@@ -17,7 +17,7 @@ defineProps({
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
                 Dashboard
             </h2>
         </template>
@@ -29,7 +29,7 @@ defineProps({
                 <MetricCard title="Servers" :value="server_count" />
                 <MetricCard title="Domains" :value="domain_count" />
                 <MetricCard title="Credentials" :value="credential_count" />
-                <div class="col-span-5 border-t border-zinc-700"> </div>
+                <div class="col-span-5 border-t border-stone-700"> </div>
                 <div class="col-span-5 text-white">
                     <div v-for="log in activity_logs.data">
                         {{ log.log_name}}

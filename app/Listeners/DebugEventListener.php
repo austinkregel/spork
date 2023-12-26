@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
-class DebugEventListener
+use App\Contracts\LogicalListener;
+
+class DebugEventListener implements LogicalListener
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
+    public function __construct(
+        protected $union = null
+    )
     {
         //
     }
 
-    /**
-     * Handle the event.
-     */
     public function handle(object $event): void
     {
         info('Event fired: '.get_class($event), [

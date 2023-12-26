@@ -36,8 +36,8 @@ const createTeam = () => {
                     <img class="object-cover w-12 h-12 rounded-full" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
 
                     <div class="ml-4 leading-tight">
-                        <div class="text-zinc-900 dark:text-white">{{ $page.props.auth.user.name }}</div>
-                        <div class="text-sm text-zinc-700 dark:text-zinc-300">
+                        <div class="text-stone-900 dark:text-white">{{ $page.props.auth.user.name }}</div>
+                        <div class="text-sm text-stone-700 dark:text-stone-300">
                             {{ $page.props.auth.user.email }}
                         </div>
                     </div>
