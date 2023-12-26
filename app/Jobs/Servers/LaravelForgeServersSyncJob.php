@@ -25,7 +25,7 @@ class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
                 ->first();
 
             if (empty($localServer)) {
-                $this->credential->servers()->create([
+                $localServer = $this->credential->servers()->create([
                     'server_id' => $server['id'],
                     'name' => $server['name'],
                     'vcpu' => 1,
