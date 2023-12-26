@@ -114,5 +114,5 @@ return [
 
     'password_timeout' => 10800,
 
-    'admin_emails' => explode(',', env('SPORK_ADMIN_EMAILS','')),
+    'admin_emails' => explode(',', env('SPORK_ADMIN_EMAILS', '')),
 ];

@@ -34,6 +34,9 @@ $ ./sail up -d
    - [ ] List budget usage -- if applicable.
  - [ ] Domain Purchasing and Renewals
 
+
+ - Single Chat interface
+ - Email interface
 # Domain Feature Details
 This presently uses Cloudflare DNS. 
 

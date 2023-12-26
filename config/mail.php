@@ -134,5 +134,5 @@ return [
             'username' => env('IMAP_USERNAME'),
             'password' => env('IMAP_PASSWORD'),
         ],
-    ]
+    ],
 ];

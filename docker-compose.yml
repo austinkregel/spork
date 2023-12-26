@@ -1,6 +1,5 @@
 version: '3'
 services:
-
     laravel.test:
         build:
             context: ./docker/8.2
@@ -120,17 +119,16 @@ services:
         depends_on:
             - redis
             - mariadb
-    matrix-bot:
-        build:
-            context: ./docker/matrix-bot
-            dockerfile: Dockerfile
-        volumes:
-            - '.:/var/www/html'
-        networks:
-            - sail
-        depends_on:
-            - mariadb
-
+#    matrix-bot:
+#        build:
+#            context: ./docker/matrix-bot
+#            dockerfile: Dockerfile
+#        volumes:
+#            - '.:/var/www/html'
+#        networks:
+#            - sail
+#        depends_on:
+#            - mariadb
     laravel.websocket:
         image: austinkregel/reforged-websocket:latest
         build:
@@ -161,6 +159,7 @@ services:
         ports:
             - 1143:143
             - 1025:25
+
 networks:
     sail:
         driver: bridge
