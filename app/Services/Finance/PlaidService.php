@@ -43,7 +43,7 @@ class PlaidService implements PlaidServiceContract
                 'public_key' => config('services.plaid.public_key'),
                 'client_id' => config('services.plaid.client_id'),
                 'secret' => config('services.plaid.secret_key'),
-                'country_codes' => ['us']
+                'country_codes' => ['us'],
             ])
             ->post('/institutions/get_by_id', [
                 'institution_id' => $bankId,

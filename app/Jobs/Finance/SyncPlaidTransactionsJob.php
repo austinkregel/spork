@@ -1,25 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Finance;
 
-use App\Events\Models\Transaction\TransactionUpdated;
-use App\Models\Finance\Account;
-use App\Models\Finance\Transaction;
 use App\Contracts\Services\PlaidServiceContract;
 use App\Models\Credential;
+use App\Models\Finance\Account;
+use App\Models\Finance\Transaction;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class SyncPlaidTransactionsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     private $accessToken;
+
     private $startDate;
+
     private $endDate;
+
     protected $shouldSendAlerts;
 
     public function __construct(Credential $access, Carbon $startDate, Carbon $endDate, ?bool $shouldSendAlerts = true)
@@ -50,7 +55,7 @@ class SyncPlaidTransactionsJob implements ShouldQueue
                 'type' => $account->subtype ?? $account->type,
             ]);
 
-            if (!$localAccount->wasRecentlyCreated) {
+            if (! $localAccount->wasRecentlyCreated) {
                 $localAccount->update($data);
             }
         }
@@ -64,6 +69,7 @@ class SyncPlaidTransactionsJob implements ShouldQueue
                 /**
                  * Due to how Plaid handles pending transactions, we need to delete the transaction with a pending transaction id,
                  * and then create a new transaction
+                 *
                  * @see https://plaid.com/docs/transactions/transactions-data/#reconciling-transactions
                  */
                 if ($transaction->pending_transaction_id) {

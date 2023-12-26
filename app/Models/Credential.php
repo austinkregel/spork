@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Actions\Spork\SyncDataFromCredential;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Credential\CredentialCreated;
 use App\Events\Models\Credential\CredentialCreating;
@@ -17,7 +18,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
-use App\Actions\Spork\SyncDataFromCredential;
 
 class Credential extends Model implements Crud, ModelQuery
 {
@@ -56,6 +56,7 @@ class Credential extends Model implements Crud, ModelQuery
     public const TYPE_DEVELOPMENT = 'development';
 
     public const TYPE_SOURCE = 'source';
+
     public const TYPE_FINANCE = 'finance';
 
     public const TYPE_SSH = 'ssh';
@@ -189,6 +190,6 @@ class Credential extends Model implements Crud, ModelQuery
 
     public function accounts()
     {
-    return $this->hasMany(Account::class);
+        return $this->hasMany(Account::class);
     }
 }

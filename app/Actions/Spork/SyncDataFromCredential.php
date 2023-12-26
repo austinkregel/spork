@@ -24,7 +24,7 @@ class SyncDataFromCredential extends CustomAction
     {
         $credentials = Credential::whereIn('id', $request->get('id'))->get();
 
-        foreach($credentials as $credential) {
+        foreach ($credentials as $credential) {
             $dispatcher->dispatch(match ($credential->type) {
                 Credential::TYPE_REGISTRAR => new FetchRegistrarForCredential($credential),
                 Credential::TYPE_DOMAIN => new FetchDomainsForCredential($credential),

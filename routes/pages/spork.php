@@ -260,12 +260,13 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
     });
     Route::get('/banking', function () {
         $accounts = request()->user()->accounts()->with('credential')->get();
+
         return Inertia::render('Finance/Index', [
             'title' => 'Banking ',
             'accounts' => $accounts,
             'transactions' => \App\Models\Finance\Transaction::whereIn('account_id', $accounts->pluck('id'))
                 ->orderByDesc('date')
-            ->get()
+                ->get(),
         ]);
     });
     Route::get('/manage/{link}', function ($model) {

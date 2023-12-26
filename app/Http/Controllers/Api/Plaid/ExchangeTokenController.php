@@ -1,22 +1,22 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Plaid;
 
 use App\Contracts\Services\PlaidServiceContract;
+use App\Http\Controllers\Controller;
 use App\Models\Credential;
 use App\Models\User;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class ExchangeTokenController extends Controller
 {
-
     public function __invoke(Request $request)
     {
         $this->validate($request, [
             'institution' => 'required',
-            'public_token' => 'required'
+            'public_token' => 'required',
         ]);
 
         $service = app(PlaidServiceContract::class);
@@ -38,7 +38,6 @@ class ExchangeTokenController extends Controller
             'api_key' => $exchangedToken['access_token'],
             'access_token' => $exchangedToken['access_token'],
         ]);
-
 
         return $token;
     }
