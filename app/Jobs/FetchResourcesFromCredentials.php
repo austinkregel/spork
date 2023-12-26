@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Jobs\Finance\SyncPlaidTransactionsJob;
 use App\Jobs\Servers\LaravelForgeServersSyncJob;
 use App\Models\Credential;
 use Illuminate\Bus\Batchable;
@@ -47,6 +48,7 @@ class FetchResourcesFromCredentials implements ShouldQueue
                 Credential::TYPE_DOMAIN => new FetchDomainsForCredential($credential),
                 Credential::TYPE_SERVER => new FetchServersForCredential($credential),
                 Credential::TYPE_DEVELOPMENT, 'forge' => new LaravelForgeServersSyncJob($credential),
+                Credential::TYPE_FINANCE => new SyncPlaidTransactionsJob($credential, now()->subWeek(), now(), false),
             });
         }
     }

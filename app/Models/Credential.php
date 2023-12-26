@@ -11,11 +11,13 @@ use App\Events\Models\Credential\CredentialDeleted;
 use App\Events\Models\Credential\CredentialDeleting;
 use App\Events\Models\Credential\CredentialUpdated;
 use App\Events\Models\Credential\CredentialUpdating;
+use App\Models\Finance\Account;
 use App\Models\Traits\HasProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Actions\Spork\SyncDataFromCredential;
 
 class Credential extends Model implements Crud, ModelQuery
 {
@@ -54,6 +56,7 @@ class Credential extends Model implements Crud, ModelQuery
     public const TYPE_DEVELOPMENT = 'development';
 
     public const TYPE_SOURCE = 'source';
+    public const TYPE_FINANCE = 'finance';
 
     public const TYPE_SSH = 'ssh';
 
@@ -125,6 +128,10 @@ class Credential extends Model implements Crud, ModelQuery
         'updated' => CredentialUpdated::class,
     ];
 
+    public $actions = [
+        SyncDataFromCredential::class,
+    ];
+
     public static function booted()
     {
         parent::booted();
@@ -178,5 +185,10 @@ class Credential extends Model implements Crud, ModelQuery
     public function servers()
     {
         return $this->hasMany(Server::class);
+    }
+
+    public function accounts()
+    {
+    return $this->hasMany(Account::class);
     }
 }

@@ -27,7 +27,9 @@
             </thead>
             <tbody class="bg-white dark:bg-stone-900">
             <tr v-for="person in items" :key="person" class="even:bg-stone-50 dark:even:bg-stone-800">
-              <td v-for="header in headers" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-stone-900 dark:text-stone-50 sm:pl-3">{{ parseTheAccessor(header, person) }}</td>
+              <td v-for="header in headers" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-stone-900 dark:text-stone-50 sm:pl-3">
+              {{ parseTheAccessor(header, person) }}
+              </td>
               <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                 <a href="#" class="text-slate-600 dark:text-slate-100 hover:text-slate-900">Edit</a>
               </td>
@@ -47,6 +49,7 @@
 </template>
 
 <script setup>
+import dayjs from 'dayjs';
 defineProps({
   headers: Array,
   items: Array,
@@ -60,7 +63,7 @@ const parseTheAccessor = (header, value) => {
           return header.accessor(value)
       } catch (e) {
           console.error('Unable to execute the header accessor from header:', header, e);
-          return 'an error occurred.';
+          return 'an error occurred, check console for logs';
       }
   }
 

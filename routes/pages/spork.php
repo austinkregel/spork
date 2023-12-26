@@ -88,13 +88,10 @@ Route::middleware([
     Route::post('/api/mail/forward', Controllers\Api\Mail\ForwardMessageController::class);
     Route::post('/api/mail/destroy', Controllers\Api\Mail\DestroyMailController::class);
 
+    Route::post('/api/plaid/create-link-token', Controllers\Api\Plaid\CreateLinkTokenController::class);
+    Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
+
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
-
-    Route::get('finance/settings', function () {
-        return Inertia::render('Finance/Settings', [
-
-        ]);
-    });
 
     Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
 
@@ -259,6 +256,16 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
     Route::get('/manage', function () {
         return Inertia::render('Manage/Index', [
             'title' => 'Manage ',
+        ]);
+    });
+    Route::get('/banking', function () {
+        $accounts = request()->user()->accounts()->with('credential')->get();
+        return Inertia::render('Finance/Index', [
+            'title' => 'Banking ',
+            'accounts' => $accounts,
+            'transactions' => \App\Models\Finance\Transaction::whereIn('account_id', $accounts->pluck('id'))
+                ->orderByDesc('date')
+            ->get()
         ]);
     });
     Route::get('/manage/{link}', function ($model) {

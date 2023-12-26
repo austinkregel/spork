@@ -80,7 +80,7 @@ class DescribeTableService
         //        dd(array_map(fn ($q) => new $q, $actions));
 
         return [
-            'actions' => [],
+            'actions' => array_map(fn ($class) => (array) (new $class), $model->actions ?? []),
             'query_actions' => ActionFilter::WHITELISTED_ACTIONS,
             'fillable' => empty($model->getFillable()) ? ['name'] : $model->getFillable(),
             'fields' => $fields,

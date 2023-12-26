@@ -41,8 +41,8 @@ class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
                 $localServer->save();
             }
 
-            $localServer->attachTag($server['type']);
-            $localServer->attachTag($server['php_version']);
+            $localServer->attachTag($server['type'], 'server');
+            $localServer->attachTag($server['php_version'], 'server');
         }
     }
 }

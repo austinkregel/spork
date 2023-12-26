@@ -11,6 +11,7 @@ use App\Events\Models\User\UserDeleted;
 use App\Events\Models\User\UserDeleting;
 use App\Events\Models\User\UserUpdated;
 use App\Events\Models\User\UserUpdating;
+use App\Models\Finance\Account;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -92,5 +93,15 @@ class User extends Authenticatable implements ModelQuery
     public function codes()
     {
         return $this->hasMany(ShortCode::class);
+    }
+
+    public function credentials()
+    {
+        return $this->hasMany(Credential::class);
+    }
+
+    public function accounts()
+    {
+        return $this->hasManyThrough(Account::class, Credential::class);
     }
 }

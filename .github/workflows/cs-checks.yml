@@ -15,4 +15,4 @@ jobs:
         uses: aglipanci/laravel-pint-action@0.1.0
         with:
           preset: laravel
- 
+

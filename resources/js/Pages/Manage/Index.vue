@@ -34,7 +34,9 @@ const fetch = async (options) => {
     paginator.value = pagination_;
 }
 const onDelete = () => {}
-const onExecute = () => {}
+const onExecute = ({ selectedItems, actionToRun }) => {
+    console.log('execute', { selectedItems, actionToRun })
+}
 const onSave = () => {}
 
 const possibleDescriptionForData = (data) => {

@@ -33,12 +33,26 @@
                         <span v-if="selectedItems.length > 0" class="text-sm text-stone-700 dark:text-stone-300">{{ selectedItems.length }} selected</span>
                     </div>
 
-                    <button @click="filtersOpen= !filtersOpen" class="focus:outline-none flex flex-wrap items-center p-2 rounded-lg" :class="{'bg-stone-300 dark:bg-stone-700': filtersOpen, 'bg-stone-100 dark:bg-stone-900': !filtersOpen}">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
 
-                    <div v-if="filtersOpen" class="absolute z-10 bg-white dark:bg-stone-700 shadow-lg top-0 right-0 mt-14 mr-4 border border-stone-200 dark:border-stone-500 rounded-lg" style="width: 250px;">
+                    <div class="flex items-center gap-4">
+                        <div class="flex flex-wrap items-center gap-2" v-if="description?.actions?.length > 0">
+                            <select v-model="actionToRun" class="border border-stone-300 rounded-lg flex-grow py-1 dark:border-stone-900 dark:bg-stone-900">
+                                <option v-for="action in description?.actions ??[]" :key="action" :value="action">{{ action.name }} ({{ selectedItems.length }})</option>
+                            </select>
+
+                            <button type="button" @click.prevent="() => {
+                                $emit('execute', { selectedItems, actionToRun })
+                                selectedItems = [];
+                            }">
+                                <play-icon class="w-6 h-6 stroke-current" />
+                            </button>
+                        </div>
+                        <button @click="filtersOpen= !filtersOpen" class="focus:outline-none flex flex-wrap items-center p-2 rounded-lg" :class="{'bg-stone-300 dark:bg-stone-700': filtersOpen, 'bg-stone-100 dark:bg-stone-900': !filtersOpen}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <div v-if="filtersOpen" class="absolute z-10 bg-white dark:bg-stone-700 shadow-lg top-0 right-0 mt-14 mr-4 border border-stone-200 dark:border-stone-500 rounded-lg" style="width: 250px;">
                         <div class="bg-stone-100 dark:bg-stone-800 uppercase py-2 px-2 font-bold text-stone-500 dark:text-stone-400 text-sm rounded-t-lg">
                             filters
                         </div>
@@ -51,24 +65,11 @@
                                 <option value="100">100 items per page</option>
                             </select>
                         </div>
-                        <div v-if="actions?.length > 0" class="uppercase py-2 px-2 font-bold text-stone-500 text-sm">
-                            actions
-                        </div>
-                        <div class="flex flex-wrap items-center p-2 gap-2" v-if="actions?.length > 0">
-                            <select v-model="actionToRun" class="border border-stone-300 rounded-lg flex-grow p-1 dark:border-stone-600 dark:bg-stone-600">
-                                <option v-for="action in actions" :key="action" :value="action">{{ action.name }} ({{ selectedItems.length }})</option>
-                            </select>
-
-                            <button type="button" @click.prevent="() => {
-                                $emit('execute', { selectedItems, actionToRun })
-                                selectedItems = [];
-                            }">
-                                <play-icon class="w-6 h-6 stroke-current" />
-                            </button>
-                        </div>
                     </div>
-                </div>
+                    </div>
 
+                </div>
+{{description}}
                 <div v-if="data.length > 0" class="w-full dark:text-white flex flex-wrap rounded-b ">
                     <div v-for="(datum, $i) in data" :key="'crud-view'+$i" class="w-full py-4 px-2 flex flex-wrap items-center border-b">
                         <div class="w-6 mx-2">
@@ -145,6 +146,7 @@
         </div>
         <div @click="createOpen = false" v-if="createOpen" class="fixed z-0 cursor-pointer inset-0 flex items-center outline-none" style="background: rgba(0,0,0,0.4);"></div>
     </div>
+
 </template>
 
 <script setup>
@@ -207,6 +209,7 @@ const {
   },
   description: {
     default :  () => ({
+        actions: [],
       query_actions: [],
       fillable: [],
       fields: [],
@@ -227,10 +230,6 @@ const actionToRun = ref(null);
 const searchQuery = ref(localStorage.getItem('searchQuery') ? localStorage.getItem('searchQuery') : '');
 const debounceSearch = ref(null);
 
-
-const actions = computed(() => {
-  return []
-});
 
 const hasPreviousPage = computed(() => {
   return paginator.prev_page_url !== null;
