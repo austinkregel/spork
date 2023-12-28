@@ -265,8 +265,9 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
             'title' => 'Banking ',
             'accounts' => $accounts,
             'transactions' => \App\Models\Finance\Transaction::whereIn('account_id', $accounts->pluck('id'))
+                ->with('tags')
                 ->orderByDesc('date')
-                ->get(),
+                ->paginate(),
         ]);
     });
     Route::get('/manage/{link}', function ($model) {
