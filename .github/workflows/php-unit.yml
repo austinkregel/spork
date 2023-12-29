@@ -27,7 +27,7 @@ jobs:
       - name: Run tests
         run: |
           cp .env.ci .env
-          export $(cat .env | xargs)
           touch database/database.sqlite
           php artisan key:generate
+          export $(cat .env | xargs)
           php vendor/bin/phpunit
