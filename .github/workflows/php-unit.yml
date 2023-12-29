@@ -27,6 +27,7 @@ jobs:
       - name: Run tests
         run: |
           cp .env.ci .env
+          source .env
           touch database/database.sqlite
           php artisan key:generate
           php vendor/bin/phpunit
