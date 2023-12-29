@@ -8,7 +8,7 @@ if [ ! -f vendor/bin/sail ]; then
         --pull=always \
         -v "$(pwd)":/opt \
         -w /opt \
-        laravelsail/php82-composer:latest \
+        austinkregel/base:latest \
         bash -c "composer install"
 fi
 
