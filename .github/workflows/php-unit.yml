@@ -10,24 +10,20 @@ jobs:
           fetch-depth: 0 # important!
       - name: setup php
         run: |
-          sudo apt update
-          sudo apt install -y software-properties-common
-          sudo add-apt-repository ppa:ondrej/php -y
-          sudo apt install -y php8.2-{common,cli,gd,curl,mysql,mbstring,bcmath,intl,zip,imap,ssh2,dom,xml,simplexml}
-          curl -s https://getcomposer.org/installer | php
-          sudo mv composer.phar /usr/local/bin/composer
+          docker-compose up -d
           git submodule init
           git submodule update --remote --merge
       - name: Install dependencies
         run: |
-          sudo systemctl start mysql.service
-          mysql -uroot -h127.0.0.1 -proot -e 'CREATE DATABASE IF NOT EXISTS testing;'
-          sudo apt update && sudo apt install -y php-mysql
-          composer install --prefer-dist --no-progress --no-suggest
+          sudo apt update
+          vendor/bin/sail composer install
       - name: Run tests
         run: |
           cp .env.ci .env
           touch database/database.sqlite
-          php artisan key:generate
+          vendor/bin/sail art key:generate
           export $(cat .env | xargs)
-          php vendor/bin/phpunit
+          vendor/bin/sail test
+      - name: tear down containers
+        run: |
+          docker-compose down
