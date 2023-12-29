@@ -17,6 +17,14 @@ class Condition extends Model implements Crud
 {
     use HasFactory;
 
+    public $fillable = [
+        'parameter',
+        'comparator',
+        'value',
+        'conditionable_type',
+        'conditionable_id'
+    ];
+
     public $dispatchesEvents = [
         'created' => ConditionCreated::class,
         'creating' => ConditionCreating::class,

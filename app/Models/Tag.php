@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Contracts\Conditionable;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Tag\TagCreated;
 use App\Events\Models\Tag\TagCreating;
@@ -14,11 +15,13 @@ use App\Events\Models\Tag\TagUpdating;
 use App\Models\Finance\Account;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
+use App\Models\Traits\HasConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Tag extends \Spatie\Tags\Tag implements Crud, ModelQuery
+class Tag extends \Spatie\Tags\Tag implements Crud, ModelQuery, Conditionable
 {
-    use HasFactory;
+    // Tags with conditions will essentially only be applied if the conditions pass.
+    use HasFactory, HasConditions;
 
     public $guarded = [];
 
@@ -39,11 +42,6 @@ class Tag extends \Spatie\Tags\Tag implements Crud, ModelQuery
     public function feeds()
     {
         return $this->morphedByMany(ExternalRssFeed::class, 'taggable');
-    }
-
-    public function conditions()
-    {
-        return $this->morphedByMany(Condition::class, 'taggable');
     }
 
     public function servers()

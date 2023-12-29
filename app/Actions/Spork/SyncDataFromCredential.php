@@ -15,14 +15,14 @@ use Illuminate\Http\Request;
 
 class SyncDataFromCredential extends CustomAction
 {
-    public function __construct($name = 'Sync Data From Credential', $url = '/api/basement/namecheap')
+    public function __construct($name = 'Sync Data From Credential', $slug = 'sync-data-from-credential')
     {
-        parent::__construct($name, $url, models: Credential::class);
+        parent::__construct($name, $slug, models: Credential::class);
     }
 
     public function __invoke(Dispatcher $dispatcher, Request $request)
     {
-        $credentials = Credential::whereIn('id', $request->get('id'))->get();
+        $credentials = Credential::where('user_id', $request->user()->id)->whereIn('id', $request->get('items'))->get();
 
         foreach ($credentials as $credential) {
             $dispatcher->dispatch(match ($credential->type) {

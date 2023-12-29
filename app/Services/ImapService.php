@@ -41,7 +41,7 @@ class ImapService
 
                 $rfcHeaders = imap_rfc822_parse_headers($headerRaw);
                 $body = null;
-                $overview = Arr::first(imap_fetch_overview($inbox, $messageNumber));
+                $overview = Arr::first(imap_fetch_overview($inbox, (string) $messageNumber));
 
                 try {
                     Carbon::parse($headers['X-Pm-Date']);
@@ -84,7 +84,7 @@ class ImapService
             false // Attachment filename mode (optional; false = random filename; true = original filename)
         );
 
-        $message = $mailbox->getMail($messageNumber, false);
+        $message = $mailbox->getMail((int) $messageNumber, false);
 
         $headers = Str::of($message->headersRaw)
             ->explode("\r\n")
@@ -144,9 +144,9 @@ class ImapService
                 'email' => trim(Arr::first($matches[2])),
                 'original' => $value,
             ],
-            4 => empty(trim(Arr::first($matches[1]), "\"'")) ? [
+            4 => empty(trim((string) Arr::first($matches[1]), "\"'")) ? [
                 // Address
-                'email' => trim(Arr::first($matches[3]), '<>'),
+                'email' => trim((string) Arr::first($matches[3]), '<>'),
                 'original' => $value,
             ] : [
                 // Name

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Actions\Spork\CustomAction;
 use App\Services\Code;
+use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
@@ -75,6 +77,7 @@ class RouteServiceProvider extends ServiceProvider
 
             return $model;
         });
+
         $this->routes(function () {
             if (file_exists(base_path('routes/generate-pages.php'))) {
                 include_once base_path('routes/generate-pages.php');

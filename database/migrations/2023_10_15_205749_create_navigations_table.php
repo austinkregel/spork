@@ -108,6 +108,28 @@ return new class extends Migration
             'authentication_required' => true,
         ]);
 
+        $logic = \App\Models\Navigation::create([
+            'name' => 'Logic',
+            'icon' => 'VariableIcon',
+            'href' => '/-/logic',
+            'order' => 7,
+            'authentication_required' => true,
+        ]);
+
+        $logic->conditions()->create([
+            'parameter' => 'config:app.env',
+            'comparator' => 'IN',
+            'value' => 'dev,local',
+        ]);
+
+        \App\Models\Navigation::create([
+            'name' => 'Banking',
+            'icon' => 'WalletIcon',
+            'href' => '/-/banking',
+            'order' => 6,
+            'authentication_required' => true,
+        ]);
+
         \App\Models\Navigation::create([
             'name' => 'Login',
             'href' => '/login',

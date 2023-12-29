@@ -15,7 +15,7 @@ abstract class CustomAction
 {
     public function __construct(
         public string $name = 'Set Namecheap DNS',
-        public string $url = '/api/basement/namecheap',
+        public string $slug = 'custom-action',
         public ?string $models = null,
     ) {
     }

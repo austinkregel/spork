@@ -28,23 +28,23 @@
             <div class="w-full dark:text-white bg-white dark:bg-stone-700  rounded-lg flex flex-wrap items-center justify-between">
                 <div class="bg-stone-600 dark:bg-stone-800 relative border-b border-stone-300 w-full p-4 flex flex-wrap justify-between items-center rounded-t-lg">
                     <div class="flex gap-4 items-center">
-                        <input @change="selectAll" type="checkbox">
+                        <input @change="selectAll" :checked="data.length > 0 && selectedItems.length === data.length" type="checkbox">
 
                         <span v-if="selectedItems.length > 0" class="text-sm text-stone-700 dark:text-stone-300">{{ selectedItems.length }} selected</span>
                     </div>
 
-
                     <div class="flex items-center gap-4">
-                        <div class="flex flex-wrap items-center gap-2" v-if="description?.actions?.length > 0">
-                            <select v-model="actionToRun" class="border border-stone-300 rounded-lg flex-grow py-1 dark:border-stone-900 dark:bg-stone-900">
+                        <div class="flex flex-wrap items-center dark:bg-stone-900 dark:text-slate-100 rounded" v-if="description?.actions?.length > 0 && selectedItems.length > 0">
+                            <select v-model="actionToRun" class="border border-stone-300 rounded-lg flex-grow py-1 dark:border-stone-900 dark:bg-stone-900 dark:text-slate-100">
                                 <option v-for="action in description?.actions ??[]" :key="action" :value="action">{{ action.name }} ({{ selectedItems.length }})</option>
                             </select>
 
                             <button type="button" @click.prevent="() => {
-                                $emit('execute', { selectedItems, actionToRun })
-                                selectedItems = [];
+                              executing = true;
+                                $emit('execute', { selectedItems, actionToRun, next: () => { selectedItems = []; executing = false;} })
                             }">
-                                <play-icon class="w-6 h-6 stroke-current" />
+                              <PlayIcon v-if="!executing" class="w-6 h-6 stroke-current mr-2 text-green-400" />
+                              <ArrowPathIcon v-else class="w-6 h-6 stroke-current mr-2 text-blue-400" />
                             </button>
                         </div>
                         <button @click="filtersOpen= !filtersOpen" class="focus:outline-none flex flex-wrap items-center p-2 rounded-lg" :class="{'bg-stone-300 dark:bg-stone-700': filtersOpen, 'bg-stone-100 dark:bg-stone-900': !filtersOpen}">
@@ -69,7 +69,7 @@
                     </div>
 
                 </div>
-{{description}}
+
                 <div v-if="data.length > 0" class="w-full dark:text-white flex flex-wrap rounded-b ">
                     <div v-for="(datum, $i) in data" :key="'crud-view'+$i" class="w-full py-4 px-2 flex flex-wrap items-center border-b">
                         <div class="w-6 mx-2">
@@ -151,7 +151,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { PlayIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { PlayIcon, XMarkIcon, ArrowPathIcon } from "@heroicons/vue/24/outline";
 import SporkInput from './SporkInput.vue';
 import SporkButton from './SporkButton.vue';
 import { router, Link } from '@inertiajs/vue3';
@@ -229,6 +229,7 @@ const itemsPerPage = ref(15);
 const actionToRun = ref(null);
 const searchQuery = ref(localStorage.getItem('searchQuery') ? localStorage.getItem('searchQuery') : '');
 const debounceSearch = ref(null);
+const executing = ref(false);
 
 
 const hasPreviousPage = computed(() => {

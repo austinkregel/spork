@@ -595,4 +595,13 @@ class Code
 
         file_put_contents(base_path($fileName), $this->toFile());
     }
+
+    public function constructorProperty(string $name)
+    {
+        return array_map(function (PhpFile $file) use ($name) {
+            return array_map(function (ClassType $class) use ($name) {
+                return (string) $class->getMethod('__construct')?->getParameter($name)?->getDefaultValue();
+            }, $file->getClasses());
+        }, $this->phpFiles);
+    }
 }

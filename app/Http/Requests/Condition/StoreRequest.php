@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Condition;
 
+use App\Contracts\Conditionable;
 use App\Services\Condition\ContainsValueOperator;
 use App\Services\Condition\ContainsValueStrictOperator;
 use App\Services\Condition\DoesntContainValueOperator;
@@ -16,6 +17,7 @@ use App\Services\Condition\GreaterThanOrEqualToOperator;
 use App\Services\Condition\LessThanOperator;
 use App\Services\Condition\LessThanOrEqualToOperator;
 use App\Services\Condition\StartsWithOperator;
+use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -59,7 +61,7 @@ class StoreRequest extends FormRequest
             'conditionable_id' => '',
             'conditionable_type' => [
                 'required',
-                Rule::in([]),
+                Rule::in(LaravelProgrammingStyle::instancesOf(Conditionable::class)->getClasses()),
             ],
         ];
     }

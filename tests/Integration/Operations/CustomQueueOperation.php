@@ -2,7 +2,7 @@
 
 namespace Tests\Integration\Operations;
 
-use App\Operations\Operations\Operation;
+use App\Operations\Operation;
 
 class CustomQueueOperation extends Operation
 {

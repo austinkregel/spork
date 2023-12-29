@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Navigation;
 use App\Models\Thread;
+use App\Services\ConditionService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -38,24 +39,8 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            'navigation' => Navigation::query()
-                ->where('authentication_required', auth()->check())
-                ->whereNull('parent_id')
-                ->orderBy('order')
-                ->get()
-                ->map(function (Navigation $item) {
-                    $item->current = $item->href === request()->getRequestUri() || ($item->children->isNotEmpty() && $item->children->filter(fn ($item) => $item->href === request()->getRequestUri())->count() > 0);
-
-                    return $item->toArray();
-                }),
-            'current_navigation' => Navigation::query()
-                ->with(['parent.children', 'children' => function ($query) {
-                    $query->orderBy('order');
-                }])
-                ->where('authentication_required', auth()->check())
-                ->where('href', '/'.request()->path())
-                ->orderBy('order')
-                ->first(),
+            'navigation' => $navigation = (new ConditionService)->navigation(),
+            'current_navigation' => $navigation->where('current', true)->first(),
             'conversations' => Thread::query()
                 ->orderByDesc('origin_server_ts')
                 ->paginate(

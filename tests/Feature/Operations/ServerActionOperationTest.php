@@ -16,6 +16,8 @@ class ServerActionOperationTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $systemUnderTest;
+
     public function testRunMethodCallAndErrorHandling()
     {
         $this->systemUnderTest = ServerAction::factory()->create([

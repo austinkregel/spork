@@ -34,8 +34,12 @@ const fetch = async (options) => {
     paginator.value = pagination_;
 }
 const onDelete = () => {}
-const onExecute = ({ selectedItems, actionToRun }) => {
-    console.log('execute', { selectedItems, actionToRun })
+const onExecute = async ({ selectedItems, actionToRun, next }) => {
+  await axios.post('/api/actions/'+actionToRun.slug, {
+    items: selectedItems.map(item => item.id)
+  });
+
+  next()
 }
 const onSave = () => {}
 

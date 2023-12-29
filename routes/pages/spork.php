@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Actions\Spork\CustomAction;
 use App\Contracts\ModelQuery;
 use App\Http\Controllers;
 use App\Services\Development\DescribeTableService;
+use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +37,15 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+    $instances = LaravelProgrammingStyle::instancesOf(CustomAction::class);
+
+    foreach ($instances->constructorProperty('slug') as $file => $classAndSlug) {
+        foreach ($classAndSlug as $class => $slugWithQuote) {
+            Route::post('/api/actions/'.trim($slugWithQuote, '\''), $class);
+        }
+    }
+
+
     Route::get('/api/files/{basepath}', function ($path) {
         $decoded = base64_decode($path);
 
@@ -135,13 +146,6 @@ Route::group(['prefix' => '-', 'middleware' => [
                 ->with('causer')
                 ->orderBy('created_at', 'desc')
                 ->paginate(20),
-        ]);
-    });
-    Route::get('/logic', function () {
-
-        return Inertia::render('Logic/Index', [
-            'events' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalEvents(),
-            'listeners' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalListeners(),
         ]);
     });
 
@@ -305,14 +309,25 @@ e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
     });
 });
 
-Route::middleware([config('jetstream.auth_session'), 'verified', App\Http\Middleware\OnlyHost::class])->group(function () {
-    Route::get('/admin', Controllers\AdminController::class)->name('admin');
-    Route::get('/admin/email', [Controllers\AdminController::class, 'email'])->name('admin');
+Route::middleware([
+    'web',
+    config('jetstream.auth_session'),
+    'verified',
+    App\Http\Middleware\OnlyHost::class,
+    \App\Http\Middleware\OnlyInDevelopment::class,
+])->group(function () {
     Route::post('/api/install', Controllers\InstallNewProvider::class);
     Route::post('/api/uninstall', Controllers\UninstallNewProvider::class);
     Route::post('/api/enable', Controllers\EnableProviderController::class);
     Route::post('/api/disable', Controllers\DisableProviderController::class);
 
+
+    Route::get('/-/logic', function () {
+        return Inertia::render('Logic/Index', [
+            'events' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalEvents(),
+            'listeners' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalListeners(),
+        ]);
+    });
     Route::post('/api/logic/add-listener-for-event', Controllers\Logic\AddListenerForEventController::class);
     Route::post('/api/logic/remove-listener-for-event', Controllers\Logic\RemoveListenerForEventController::class);
 
