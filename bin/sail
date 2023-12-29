@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+export WWWUSER=${WWWUSER:-$UID}
+export WWWGROUP=${WWWGROUP:-$(id -g)}
+
+if [ ! -f vendor/bin/sail ]; then
+    docker run --rm \
+        --pull=always \
+        -v "$(pwd)":/opt \
+        -w /opt \
+        laravelsail/php82-composer:latest \
+        bash -c "composer install"
+fi
+
+vendor/bin/sail "$@"
