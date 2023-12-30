@@ -27,7 +27,6 @@ jobs:
         run: |
           ./bin/sail art key:generate
           export $(cat .env | xargs)
-          echo "Chmodding storage" && chmod 777 storage -Rf
           ./bin/sail exec mariadb /docker-entrypoint-initdb.d/10-create-testing-database.sh
           ./bin/sail test
       - name: tear down containers
