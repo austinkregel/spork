@@ -23,9 +23,13 @@ services:
         networks:
             - sail
         depends_on:
-            - mariadb
-            - redis
-            - meilisearch
+            mariadb:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            meilisearch:
+                condition: service_healthy
+
     mariadb:
         container_name: mariadb
         image: 'mariadb:10'
@@ -98,8 +102,10 @@ services:
         networks:
             - sail
         depends_on:
-            - redis
-            - mariadb
+            mariadb:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
     laravel.cron:
         image: austinkregel/reforged-cron:latest
         build:
@@ -117,8 +123,10 @@ services:
         networks:
             - sail
         depends_on:
-            - redis
-            - mariadb
+            mariadb:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
 #    matrix-bot:
 #        build:
 #            context: ./docker/matrix-bot
@@ -148,8 +156,10 @@ services:
         networks:
             - sail
         depends_on:
-            - redis
-            - mariadb
+            mariadb:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
     proton-bridge:
         image: shenxn/protonmail-bridge:latest
         volumes:
