@@ -15,9 +15,9 @@ use App\Models\Traits\HasConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Navigation extends Model implements Crud, Conditionable
+class Navigation extends Model implements Conditionable, Crud
 {
-    use HasFactory, HasConditions;
+    use HasConditions, HasFactory;
 
     public $guarded = [];
 
@@ -27,7 +27,7 @@ class Navigation extends Model implements Crud, Conditionable
     ];
 
     public $hidden = [
-        'id', 'created_at', 'updated_at'
+        'id', 'created_at', 'updated_at',
     ];
 
     public $dispatchesEvents = [

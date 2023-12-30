@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Operations;
 
-use Carbon\Carbon;
 use App\Exceptions\OperationCanceledException;
 use App\Exceptions\OperationStoppedException;
 use App\Jobs\OperationJob;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

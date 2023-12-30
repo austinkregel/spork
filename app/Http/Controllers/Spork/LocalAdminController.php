@@ -13,16 +13,13 @@ use App\Http\Requests\Dynamic\IndexRequest;
 use App\Http\Requests\Dynamic\RestoreRequest;
 use App\Http\Requests\Dynamic\UpdateRequest;
 use App\Http\Requests\Dynamic\ViewRequest;
-use App\Models\Crud;
 use App\Services\ActionFilter;
-use App\Services\Code;
 use App\Services\Development\DescribeTableService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Arr;
 use Spatie\QueryBuilder\AllowedFilter as Filter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -51,6 +48,7 @@ class LocalAdminController extends Controller
         'transactions' => App\Models\Finance\Transaction::class,
         'users' => App\Models\User::class,
     ];
+
     public function fields(IndexRequest $request)
     {
         return response()->json((new DescribeTableService)->describe($this->getModel($request)));
@@ -59,7 +57,7 @@ class LocalAdminController extends Controller
     protected function getModel(Request $request)
     {
         $parts = $request->path();
-        $split = array_filter(explode('/', $parts), fn ($part) => !is_numeric($part));
+        $split = array_filter(explode('/', $parts), fn ($part) => ! is_numeric($part));
 
         $tableFromUrl = end($split);
 
@@ -105,13 +103,13 @@ class LocalAdminController extends Controller
         return $resource->refresh();
     }
 
-    public function show(ViewRequest $request, $model, $abstractEloquentModel = null)
+    public function show(ViewRequest $request, $abstractEloquentModel = null)
     {
-        $query = QueryBuilder::for($model = $this->getModel($request));
+        $query = QueryBuilder::for($this->getModel($request));
 
         return $query->find($abstractEloquentModel) ?? response([
             'message' => 'No resource found by that id.',
-        ], 404);
+        ], 414);
     }
 
     public function update(UpdateRequest $request, $abstractEloquentModel = null)

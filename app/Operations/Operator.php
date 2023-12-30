@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Operations;
 
-use Carbon\Carbon;
 use App\Jobs\OperationJob;
-use App\Operations\Operation;
+use Carbon\Carbon;
 
 final class Operator
 {

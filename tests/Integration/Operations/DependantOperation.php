@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Integration\Operations;
 
-use Illuminate\Log\Logger;
 use App\Operations\Operation;
+use Illuminate\Log\Logger;
 
 class DependantOperation extends Operation
 {

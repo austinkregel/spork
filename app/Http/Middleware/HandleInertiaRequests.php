@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Models\Navigation;
 use App\Models\Thread;
 use App\Services\ConditionService;
 use Illuminate\Http\Request;

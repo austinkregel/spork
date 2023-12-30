@@ -190,6 +190,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'Operator' => App\Operations\Operator::class,
     ])->toArray(),
 
 ];

@@ -13,32 +13,36 @@ class CrudControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $user = null;
+    protected ?App\Models\User $user = null;
 
     public function actingAsUser()
     {
-        return $this->actingAs($this->user = App\Models\User::factory()->create());
+        return $this->actingAs($this->user = App\Models\User::factory()->withPersonalTeam()->create());
     }
 
     public function testBasicTestWithoutBypassSuccess()
     {
+        $this->actingAsUser();
         Project::factory()->create([
             'name' => 'github@austinkregel.com',
+            'team_id' => $this->user->currentTeam->id,
         ]);
-        $response = $this->actingAsUser()->get('http://spork.localhost/api/crud/projects');
+        $response = $this->get('http://spork.localhost/api/crud/projects');
 
         $response->assertStatus(200);
     }
 
     public function testCreateTestWithoutBypassSuccess()
     {
+        $this->actingAsUser();
         Project::factory()->create([
             'name' => 'github@austinkregel.com',
+            'team_id' => $this->user->currentTeam->id,
         ]);
         $response = $this
-            ->actingAsUser()
             ->post('http://spork.localhost/api/crud/projects', [
                 'name' => 'Austin',
+                'team_id' => $this->user->currentTeam->id,
             ]);
 
         $response->assertStatus(201);
@@ -46,11 +50,12 @@ class CrudControllerTest extends TestCase
 
     public function testUpdateTestWithoutBypassSuccess()
     {
+        $this->actingAsUser();
         $project = Project::factory()->create([
             'name' => 'github@austinkregel.com',
         ]);
 
-        $response = $this->actingAsUser()
+        $response = $this
             ->put('http://spork.localhost/api/crud/projects/'.$project->id, [
                 'name' => 'Austin Kregel',
             ]);
@@ -62,11 +67,12 @@ class CrudControllerTest extends TestCase
 
     public function testUpdatePatchTestWithoutBypassSuccess()
     {
+        $this->actingAsUser();
         $project = Project::factory()->create([
             'name' => 'github@austinkregel.com',
         ]);
 
-        $response = $this->actingAsUser()
+        $response = $this
             ->patch('http://spork.localhost/api/crud/projects/'.$project->id, [
                 'name' => 'Austin Kregel',
             ]);
@@ -78,12 +84,13 @@ class CrudControllerTest extends TestCase
 
     public function testDeleteTestWithoutBypassSuccess()
     {
+        $this->actingAsUser();
         $project = Project::factory()->create([
             'name' => 'github@austinkregel.com',
         ]);
         $project2 = Project::factory()->create();
 
-        $response = $this->actingAsUser()
+        $response = $this
             ->delete('http://spork.localhost/api/crud/projects/'.$project2->id);
 
         $response->assertStatus(204);
@@ -93,11 +100,18 @@ class CrudControllerTest extends TestCase
 
     public function testShowTestWithoutBypassSuccess()
     {
+        $this->actingAsUser();
         $project = Project::factory()->create([
             'name' => 'github@austinkregel.com',
+            'team_id' => $this->user->currentTeam->id,
         ]);
 
-        $response = $this->actingAsUser()
+        $this->user->permissions()->create([
+            'name' => 'view_project',
+            'guard_name' => 'verified',
+        ]);
+
+        $response = $this
             ->get('http://spork.localhost/api/crud/projects/'.$project->id);
 
         $response->assertStatus(200);

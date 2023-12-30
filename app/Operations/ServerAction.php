@@ -9,7 +9,6 @@ use App\Models\Server;
 use App\Models\Spork\Script;
 use App\Models\User;
 use App\Services\SshService;
-use App\Operations\Operation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ServerAction extends Operation

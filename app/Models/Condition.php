@@ -22,7 +22,7 @@ class Condition extends Model implements Crud
         'comparator',
         'value',
         'conditionable_type',
-        'conditionable_id'
+        'conditionable_id',
     ];
 
     public $dispatchesEvents = [

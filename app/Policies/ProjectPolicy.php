@@ -25,7 +25,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return $user->can('view_project');
+        return $user->can('view_project', $project);
     }
 
     /**
@@ -41,7 +41,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return $user->can('update_project');
+        return $user->can('update_project', $project);
     }
 
     /**
@@ -49,7 +49,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return $user->can('delete_project');
+        return $user->can('delete_project', $project);
     }
 
     /**
@@ -65,7 +65,7 @@ class ProjectPolicy
      */
     public function forceDelete(User $user, Project $project): bool
     {
-        return $user->can('force_delete_project');
+        return $user->can('force_delete_project', $project);
     }
 
     /**
@@ -81,7 +81,7 @@ class ProjectPolicy
      */
     public function restore(User $user, Project $project): bool
     {
-        return $user->can('restore_project');
+        return $user->can('restore_project', $project);
     }
 
     /**
@@ -97,7 +97,7 @@ class ProjectPolicy
      */
     public function replicate(User $user, Project $project): bool
     {
-        return $user->can('replicate_project');
+        return $user->can('replicate_project', $project);
     }
 
     /**

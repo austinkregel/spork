@@ -20,8 +20,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(UpdateAllFeeds::class)->hourly();
         $schedule->job(FetchResourcesFromCredentials::class)->everyOddHour();
         $schedule->job(FetchCloudflareAnalytics::class)->everyFourHours();
-
-        //        $schedule->command('operations:queue')->everyFiveMinutes();
+        $schedule->command('operations:queue')->everyFiveMinutes();
     }
 
     /**

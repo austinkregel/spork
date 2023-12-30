@@ -45,7 +45,6 @@ Route::middleware([
         }
     }
 
-
     Route::get('/api/files/{basepath}', function ($path) {
         $decoded = base64_decode($path);
 
@@ -320,7 +319,6 @@ Route::middleware([
     Route::post('/api/uninstall', Controllers\UninstallNewProvider::class);
     Route::post('/api/enable', Controllers\EnableProviderController::class);
     Route::post('/api/disable', Controllers\DisableProviderController::class);
-
 
     Route::get('/-/logic', function () {
         return Inertia::render('Logic/Index', [

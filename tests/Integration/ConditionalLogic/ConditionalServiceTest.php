@@ -1,9 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Integration\ConditionalLogic;
 
-use App\Models\Navigation;
 use App\Models\User;
 use App\Services\ConditionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,7 +21,6 @@ class ConditionalServiceTest extends TestCase
 
         $this->assertCount(1, $navigation);
 
-
         $items = $navigation->toArray();
 
         $this->assertCount(1, $items);
@@ -31,6 +30,7 @@ class ConditionalServiceTest extends TestCase
         $this->assertSame('Login', $login['name']);
         $this->assertSame('/login', $login['href']);
     }
+
     public function testWeShowDashboardRoutesWhenLoggedIn()
     {
         $service = new ConditionService();
@@ -54,6 +54,7 @@ class ConditionalServiceTest extends TestCase
             8 => 'Settings',
         ], array_map(fn ($item) => $item['name'], $items));
     }
+
     public function testWeShowLogicRouteWhenLoggedInAndLocal()
     {
         config(['app.env' => 'local']);
@@ -79,6 +80,4 @@ class ConditionalServiceTest extends TestCase
             8 => 'Settings',
         ], array_map(fn ($item) => $item['name'], $items));
     }
-
-
 }

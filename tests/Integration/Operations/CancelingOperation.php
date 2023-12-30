@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Integration\Operations;
 
-use App\Operations\Operation;
 use App\Exceptions\OperationCanceledException;
+use App\Operations\Operation;
 
 class CancelingOperation extends Operation
 {

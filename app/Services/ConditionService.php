@@ -1,9 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Contracts\Conditionable;
 use App\Models\Condition;
 use App\Models\Navigation;
 use App\Services\Condition\ContainsValueOperator;
@@ -12,14 +12,12 @@ use App\Services\Condition\DoesntContainValueOperator;
 use App\Services\Condition\DoesntEqualValueOperator;
 use App\Services\Condition\EndsWithOperator;
 use App\Services\Condition\EqualsValueOperator;
-use App\Services\Condition\FilterIn;
 use App\Services\Condition\GreaterThanOperator;
 use App\Services\Condition\GreaterThanOrEqualToOperator;
 use App\Services\Condition\HasRoleOperator;
 use App\Services\Condition\LessThanOperator;
 use App\Services\Condition\LessThanOrEqualToOperator;
 use App\Services\Condition\StartsWithOperator;
-use Illuminate\Support\Collection;
 
 class ConditionService
 {
@@ -57,11 +55,10 @@ class ConditionService
             ->orderBy('order')
             ->get()
             ->map(function (Navigation $item) {
-                $item->current = $item->href === request()->getRequestUri() || ($item->children->isNotEmpty() && $item->children->filter(fn($item) => $item->href === request()->getRequestUri())->count() > 0);
+                $item->current = $item->href === request()->getRequestUri() || ($item->children->isNotEmpty() && $item->children->filter(fn ($item) => $item->href === request()->getRequestUri())->count() > 0);
 
                 return $item;
             });
-
 
         return $navItems->filter(function (Navigation $item) {
             if ($item->conditions->count() === 0) {
@@ -69,11 +66,12 @@ class ConditionService
             }
 
             return $item->conditions->filter(function (Condition $condition) {
-                    $comparator = static::AVAILABLE_CONDITIONS[$condition->comparator];
-                    /** @var ContainsValueOperator $instance */
-                    $instance = new $comparator;
-                    return $instance->compute($this->processParameter($condition->parameter), $condition->value);
-                })->count() === $item->conditions->count();
+                $comparator = static::AVAILABLE_CONDITIONS[$condition->comparator];
+                /** @var ContainsValueOperator $instance */
+                $instance = new $comparator;
+
+                return $instance->compute($this->processParameter($condition->parameter), $condition->value);
+            })->count() === $item->conditions->count();
         });
     }
 
@@ -96,7 +94,7 @@ class ConditionService
 
     protected function matchCustomPrimaryKeyFunctions(string $key, ?string $parameter)
     {
-        return match($key) {
+        return match ($key) {
             'config' => fn ($field) => config($field),
             default => dd($key, $parameter),
         };

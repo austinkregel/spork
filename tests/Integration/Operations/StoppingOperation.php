@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Integration\Operations;
 
-use App\Operations\Operation;
 use App\Exceptions\OperationStoppedException;
+use App\Operations\Operation;
 
 class StoppingOperation extends Operation
 {

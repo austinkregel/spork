@@ -18,10 +18,10 @@ use App\Models\Finance\Transaction;
 use App\Models\Traits\HasConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Tag extends \Spatie\Tags\Tag implements Crud, ModelQuery, Conditionable
+class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
 {
     // Tags with conditions will essentially only be applied if the conditions pass.
-    use HasFactory, HasConditions;
+    use HasConditions, HasFactory;
 
     public $guarded = [];
 
