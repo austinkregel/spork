@@ -19,6 +19,9 @@ jobs:
           ./bin/sail up -d
       - name: Run tests
         run: |
+          touch storage/logs/laravel.log
+          touch storage/logs/crontab.log
+          touch storage/logs/horizon.log
           touch database/database.sqlite
           ./bin/sail art key:generate
           export $(cat .env | xargs)
