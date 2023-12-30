@@ -21,12 +21,13 @@ jobs:
           touch database/database.sqlite
           npm install
           cp .env.ci .env
-          ./bin/sail up -d
+          ./bin/sail up
           npm run build
       - name: Run tests
         run: |
           ./bin/sail art key:generate
           export $(cat .env | xargs)
+          ./bin/sail exec -it mariadb /docker-entrypoint-initdb.d/10-create-testing-database.sh
           ./bin/sail test
       - name: tear down containers
         run: |
