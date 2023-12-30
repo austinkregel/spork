@@ -20,9 +20,9 @@ jobs:
           touch storage/logs/horizon.log
           touch database/database.sqlite
           npm install
-          npm run build
           cp .env.ci .env
           ./bin/sail up -d
+          npm run build
       - name: Run tests
         run: |
           ./bin/sail art key:generate
