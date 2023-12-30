@@ -16,8 +16,16 @@ class DescribeTableService
     public function describe(Model $model): array
     {
         $mapField = fn ($everything) => array_values(array_map(fn ($query) => $query->Field, $everything));
-        $description = cache()->remember('description.'.get_class($model), now()->addHour(), fn () => DB::select('describe '.(new $model)->getTable()));
-        $indexes = cache()->remember('indexes.'.get_class($model), now()->addHour(), fn () => DB::select('show indexes from '.(new $model)->getTable()));
+        $description = cache()->remember(
+            'description.'.get_class($model),
+            now()->addHour(),
+            fn () => DB::select('describe '.(new $model)->getTable())
+        );
+        $indexes = cache()->remember(
+            'indexes.'.get_class($model),
+            now()->addHour(),
+            fn () => DB::select('show indexes from '.(new $model)->getTable())
+        );
         $fields = $mapField($description);
         $sorts = array_filter($description, function ($query) {
             if (str_contains($query->Type, 'int') && $query->Null == 'NO') {
