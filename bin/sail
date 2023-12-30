@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -ex
 
 export WWWUSER=${WWWUSER:-$UID}
 export WWWGROUP=${WWWGROUP:-$(id -g)}
