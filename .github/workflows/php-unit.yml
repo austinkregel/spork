@@ -21,7 +21,7 @@ jobs:
           touch database/database.sqlite
           npm install
           cp .env.ci .env
-          ./bin/sail up
+          ./bin/sail up -d
           npm run build
       - name: Run tests
         run: |
