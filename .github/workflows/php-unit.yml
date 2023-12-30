@@ -1,4 +1,4 @@
-name: Checks
+name: PHP Unit
 on: [ pull_request ]
 jobs:
   phpunit:
@@ -15,14 +15,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          cp .env.ci .env
-          ./bin/sail up -d
-      - name: Run tests
-        run: |
           touch storage/logs/laravel.log
           touch storage/logs/crontab.log
           touch storage/logs/horizon.log
           touch database/database.sqlite
+          cp .env.ci .env
+          ./bin/sail up -d
+      - name: Run tests
+        run: |
           ./bin/sail art key:generate
           export $(cat .env | xargs)
           ./bin/sail test
