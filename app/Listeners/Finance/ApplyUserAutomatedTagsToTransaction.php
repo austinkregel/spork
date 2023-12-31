@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Listeners\Finance;
 
@@ -37,6 +38,14 @@ class ApplyUserAutomatedTagsToTransaction
         $account = $transaction->account;
         $user = $account->credential->user;
 
+        if (empty($user)) {
+            $this->logger->warning('No user found for account', [
+                'account' => $account->id,
+                'transaction' => $transaction->id,
+                'credential' => $account->credential?->id
+            ]);
+            return;
+        }
 
         $tags = $user->tags()->with('conditions')->where('type', 'automatic')->get();
 
