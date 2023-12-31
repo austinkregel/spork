@@ -22,6 +22,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Tags\HasTags;
 
 class User extends Authenticatable implements ModelQuery
 {
@@ -33,6 +34,7 @@ class User extends Authenticatable implements ModelQuery
     use LogsActivity;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use HasTags;
 
     /**
      * The attributes that are mass assignable.

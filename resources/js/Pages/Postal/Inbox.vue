@@ -19,7 +19,7 @@
                 :key="item"
                 @contextmenu.prevent="(e) => openContextMenu(e, item)"
                 class="flex flex-col w-full px-4 py-2"
-                :class="item.seen ? 'bg-stone-50 dark:bg-stone-900' : 'bg-stone-200 dark:bg-stone-700'"
+                :class="[openMail && (item.id === openMail.id) ? 'bg-stone-400 dark:bg-zinc-950' : (item.seen ? 'bg-stone-50 dark:bg-stone-900' : 'bg-stone-200 dark:bg-stone-700')]"
             >
                 <div class="flex w-full justify-between text-left relative max-w-full overflow-hidden">
                     <div class="">{{ item.from.name ?? item.from.email }}</div>
@@ -80,6 +80,7 @@
                   <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => forward()">Forward</button>
                   <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => apply_tag()">Apply Tag</button>
                   <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => delete_mail()">Delete</button>
+                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => open_in_new_tab()">Open in a new tab</button>
                 </div>
               </div>
             </div>
@@ -129,6 +130,12 @@ const closeContextMenu = () => {
   openForMail.value = null;
   openContext.value = false;
 }
+
+const open_in_new_tab = () => {
+    window.open(window.location.href+"/"+ openForMail.value.id, '_blank').focus();
+
+    closeContextMenu();
+};
 
 const openContextMenu = (event, item) => {
   openForMail.value = item;

@@ -162,8 +162,9 @@ Route::group(['prefix' => '-', 'middleware' => [
                 'domains',
                 'people',
             ])
+            ->orderBy('type')
                 ->paginate(
-                    request('limit'),
+                    request('limit', 30),
                     ['*'],
                     'page',
                     request('page')
@@ -198,14 +199,9 @@ Route::group(['prefix' => '-', 'middleware' => [
 
         $bodyWithTheImagesDisabledForPrivacy = str_replace(' src=', ' data-src=', $messageBody);
 
-        $messageBodyWithOurScript =
-            '<div style="width:100%; align-items: center; display: flex; justify-content: center;"><button onclick="document.querySelectorAll(\'[data-src]\').forEach(e => {
-e.setAttribute(\'src\', e.getAttribute(\'data-src\'))
-})">Load images</button></div>'.
-            $bodyWithTheImagesDisabledForPrivacy
-            .'<script></script>';
-
-        return $messageBodyWithOurScript;
+        return view('emails.'.$message['view'], [
+            'body' => $bodyWithTheImagesDisabledForPrivacy,
+        ]);
     });
     Route::get('/postal/{thread}', function ($thread) {
         return Inertia::render('Postal/Thread', [

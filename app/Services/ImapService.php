@@ -96,6 +96,8 @@ class ImapService
 
         $rfcHeaders = imap_rfc822_parse_headers($message->headersRaw);
 
+        $body = base64_encode(empty($message->textHtml) ? $message->textPlain : $message->textHtml);
+
         return [
             'id' => $messageNumber,
             'to' => $this->extractEmailAndName($headers['To']),
@@ -112,7 +114,8 @@ class ImapService
             'answered' => $message->isAnswered ?? false,
             'recent' => $message->isRecent ?? false,
             'draft' => $message->isDraft ?? false,
-            'body' => base64_encode($message->textHtml),
+            'body' => $body,
+            'view' => empty($message->textHtml) ? 'render-plain-inbox' : 'render-rich-inbox',
         ];
     }
 

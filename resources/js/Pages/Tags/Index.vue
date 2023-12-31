@@ -28,7 +28,9 @@ const { data, ...pagination } = tags;
       <div class="gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mx-4">
         <div v-for="tag in data" class="flex flex-col border border-slate-600 rounded-lg py-2">
           <div class="flex flex-wrap gap-4 items-center my-2 mx-6">
-            <TagIcon class="w-8 h-8 text-stone-50" />
+            <WalletIcon class="w-8 h-8 text-blue-400" v-if="tag.type === 'finance'"/>
+            <ServerIcon class="w-8 h-8 text-amber-200" v-else-if="tag.type === 'server'"/>
+            <TagIcon class="w-8 h-8 text-green-400" v-else />
             <span class="text-2xl">{{ tag.name?.en }}</span>
           </div>
           <div class="flex gap-4 my-2 mx-6">

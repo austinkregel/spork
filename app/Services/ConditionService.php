@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Contracts\Conditionable;
 use App\Models\Condition;
 use App\Models\Navigation;
 use App\Services\Condition\ContainsValueOperator;
@@ -23,24 +24,24 @@ class ConditionService
 {
     public const AVAILABLE_CONDITIONS = [
         // strings, numbers, arrays, etc..
-        'NOT_EQUAL' => DoesntEqualValueOperator::class,
-        'EQUALS' => EqualsValueOperator::class,
+        Condition::COMPARATOR_NOT_EQUAL => DoesntEqualValueOperator::class,
+        Condition::COMPARATOR_EQUALS => EqualsValueOperator::class,
 
         // *strings* or arrays,
-        'IN' => ContainsValueOperator::class,
-        'CONTAINS' => ContainsValueOperator::class,
-        'CONTAINS_STRICT' => ContainsValueStrictOperator::class,
-        'DOESNT_CONTAIN' => DoesntContainValueOperator::class,
+        Condition::COMPARATOR_IN => ContainsValueOperator::class,
+        Condition::COMPARATOR_LIKE => ContainsValueOperator::class,
+        Condition::COMPARATOR_LIKE_STRICT => ContainsValueStrictOperator::class,
+        Condition::COMPARATOR_NOT_LIKE => DoesntContainValueOperator::class,
 
         // Numbers
-        'GREATER_THAN' => GreaterThanOperator::class,
-        'GREATER_THAN_OR_EQUAL' => GreaterThanOrEqualToOperator::class,
-        'LESS_THAN' => LessThanOperator::class,
-        'LESS_THAN_OR_EQUAL' => LessThanOrEqualToOperator::class,
+        Condition::COMPARATOR_GREATER_THAN => GreaterThanOperator::class,
+        Condition::COMPARATOR_GREATER_THAN_EQUAL => GreaterThanOrEqualToOperator::class,
+        Condition::COMPARATOR_LESS_THAN => LessThanOperator::class,
+        Condition::COMPARATOR_LESS_THAN_EQUAL => LessThanOrEqualToOperator::class,
 
         // Strings
-        'STARTS_WITH' => StartsWithOperator::class,
-        'ENDS_WITH' => EndsWithOperator::class,
+        Condition::COMPARATOR_STARTS_WITH => StartsWithOperator::class,
+        Condition::COMPARATOR_ENDS_WITH => EndsWithOperator::class,
 
         'HAS_ROLE' => HasRoleOperator::class,
     ];
@@ -61,18 +62,23 @@ class ConditionService
             });
 
         return $navItems->filter(function (Navigation $item) {
-            if ($item->conditions->count() === 0) {
-                return true;
-            }
-
-            return $item->conditions->filter(function (Condition $condition) {
-                $comparator = static::AVAILABLE_CONDITIONS[$condition->comparator];
-                /** @var ContainsValueOperator $instance */
-                $instance = new $comparator;
-
-                return $instance->compute($this->processParameter($condition->parameter), $condition->value);
-            })->count() === $item->conditions->count();
+            return $this->process($item);
         });
+    }
+
+    public function process(Conditionable $item)
+    {
+        if ($item->conditions->count() === 0) {
+            return true;
+        }
+
+        return $item->conditions->filter(function (Condition $condition) {
+            $comparator = static::AVAILABLE_CONDITIONS[$condition->comparator];
+            /** @var ContainsValueOperator $instance */
+            $instance = new $comparator;
+
+            return $instance->compute($this->processParameter($condition->parameter), $condition->value);
+        })->count() === $item->conditions->count();
     }
 
     protected function processParameter(string $parameter)

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->json('slug');
             $table->string('type')->nullable();
             $table->integer('order_column')->nullable();
+            $table->boolean('must_all_conditions_pass')->default(true);
 
             $table->timestamps();
         });
