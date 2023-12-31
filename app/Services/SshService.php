@@ -8,6 +8,7 @@ use App\Models\Credential;
 use App\Models\Spork\Script;
 use App\Models\User;
 use Exception;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
 class SshService
@@ -102,6 +103,8 @@ class SshService
 
         if (empty($credential)) {
             $randomName = Str::random(16);
+
+            (new Filesystem)->makeDirectory(storage_path('app/keys'), 0755, true, true);
 
             $generatorService = new SshKeyGeneratorService(
                 privateKeyFile: $privateKeyFile = storage_path('app/keys/'.$randomName.'.key'),
