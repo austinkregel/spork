@@ -258,12 +258,14 @@ Route::group(['prefix' => '-', 'middleware' => [
         ]);
     });
     Route::get('/banking', function () {
-        $accounts = request()->user()->accounts()->with('credential')->get();
+        $accounts = request()->user()
+            ->accounts()
+            ->with('credential')->get();
 
         return Inertia::render('Finance/Index', [
             'title' => 'Banking ',
             'accounts' => $accounts,
-            'transactions' => \App\Models\Finance\Transaction::whereIn('account_id', $accounts->pluck('id'))
+            'transactions' => \App\Models\Finance\Transaction::whereIn('account_id', $accounts->pluck('account_id'))
                 ->with('tags')
                 ->orderByDesc('date')
                 ->paginate(),
