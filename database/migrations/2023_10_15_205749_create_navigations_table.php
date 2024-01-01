@@ -48,14 +48,14 @@ return new class extends Migration
         \App\Models\Navigation::create([
             'name' => 'Banking',
             'icon' => 'WalletIcon',
-            'href' => '/-/',
+            'href' => '/-/banking',
             'order' => 6,
             'authentication_required' => true,
         ]);
         \App\Models\Navigation::create([
             'name' => 'Tags',
             'icon' => 'TagIcon',
-            'href' => '/-/',
+            'href' => '/-/tag-manager',
             'order' => 8,
             'authentication_required' => true,
         ]);

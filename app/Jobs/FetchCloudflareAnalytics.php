@@ -15,11 +15,15 @@ class FetchCloudflareAnalytics implements ShouldQueue
 
     public function handle()
     {
-        $service = new \App\Services\Domain\CloudflareDomainService(Credential::find(4));
-        $domains = \App\Models\Domain::whereNotNull('cloudflare_id')->get();
+        $services = Credential::where('service', 'cloudflare')->get();
 
-        foreach ($domains as $domain) {
-            $service->getAnalytics($domain, now()->subDay()->startOfDay(), now()->endOfDay());
+        foreach ($services as $service) {
+            $service = new \App\Services\Domain\CloudflareDomainService($service);
+            $domains = \App\Models\Domain::whereNotNull('cloudflare_id')->get();
+
+            foreach ($domains as $domain) {
+                $service->getAnalytics($domain, now()->subDay()->startOfDay(), now()->endOfDay());
+            }
         }
     }
 }

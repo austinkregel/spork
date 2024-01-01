@@ -34,7 +34,7 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
     public function sync(): void
     {
         $page = 1;
-        $registrarService = (new RegistrarServiceFactory)->make(Credential::find(2));
+        $registrarService = (new RegistrarServiceFactory)->make($this->credential);
 
         do {
             $domains = $this->service->getDomains(100, $page++);
