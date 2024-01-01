@@ -69,19 +69,19 @@ const maxWidthClass = computed(() => {
                     leave-to-class="opacity-0"
                 >
                     <div v-show="show" class="fixed inset-0 transform transition-all" @click="close">
-                        <div class="absolute inset-0 bg-zinc-500 dark:bg-zinc-900 opacity-75" />
+                        <div class="absolute inset-0 bg-stone-500 dark:bg-stone-900 opacity-75" />
                     </div>
                 </transition>
 
                 <transition
                     enter-active-class="ease-out duration-300"
-                    enter-from-class="opacity-0 tranzinc-y-4 sm:tranzinc-y-0 sm:scale-95"
-                    enter-to-class="opacity-100 tranzinc-y-0 sm:scale-100"
+                    enter-from-class="opacity-0 transtone-y-4 sm:transtone-y-0 sm:scale-95"
+                    enter-to-class="opacity-100 transtone-y-0 sm:scale-100"
                     leave-active-class="ease-in duration-200"
-                    leave-from-class="opacity-100 tranzinc-y-0 sm:scale-100"
-                    leave-to-class="opacity-0 tranzinc-y-4 sm:tranzinc-y-0 sm:scale-95"
+                    leave-from-class="opacity-100 transtone-y-0 sm:scale-100"
+                    leave-to-class="opacity-0 transtone-y-4 sm:transtone-y-0 sm:scale-95"
                 >
-                    <div v-show="show" class="mb-6 bg-white dark:bg-zinc-800 rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto" :class="maxWidthClass">
+                    <div v-show="show" class="mb-6 bg-white dark:bg-stone-800 rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto" :class="maxWidthClass">
                         <slot v-if="show" />
                     </div>
                 </transition>

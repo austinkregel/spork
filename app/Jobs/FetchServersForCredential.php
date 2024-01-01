@@ -17,7 +17,7 @@ use Illuminate\Queue\SerializesModels;
 
 class FetchServersForCredential implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
@@ -26,7 +26,7 @@ class FetchServersForCredential implements ShouldQueue
      */
     public function __construct(
         public Credential $credential,
-        public ?User $user
+        public ?User $user = null,
     ) {
         $this->user = $user ?? auth()->user();
     }

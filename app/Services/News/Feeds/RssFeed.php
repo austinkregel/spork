@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\News\Feeds;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class RssFeed extends AbstractFeed
 {
@@ -26,7 +27,7 @@ class RssFeed extends AbstractFeed
     public function getPhoto(): ?string
     {
         if (isset($this->element->channel->image) && isset($this->element->channel->image->url)) {
-            return $this->element->channel->image->url;
+            return (string) $this->element->channel->image->url;
         }
 
         return null;
@@ -34,23 +35,19 @@ class RssFeed extends AbstractFeed
 
     public function getName(): string
     {
-        return $this->element->channel->title;
+        return (string) $this->element->channel->title;
     }
 
     public function getData(): array
     {
         return array_map(function ($post) {
             $feedItem = new FeedItem();
-            $feedItem->id = $post->guid;
+            $feedItem->id = (string) ($post->guid ?? Str::uuid());
             $feedItem->setTitle($post->title);
             $feedItem->setPublishedAt($post->pubDate);
             $feedItem->setUrl($post);
-            $feedItem->content = $post->description ?? null;
-            $feedItem->authorName = $post->source ?? null;
-
-            if (empty($feedItem->getTitle())) {
-                dd($feedItem, $post);
-            }
+            $feedItem->content = (string) $post->description ?? null;
+            $feedItem->authorName = (string) $post->source ?? null;
 
             return $feedItem;
         }, ((array) $this->element->channel)['item']);

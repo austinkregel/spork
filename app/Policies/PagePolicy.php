@@ -6,15 +6,18 @@ namespace App\Policies;
 
 use App\Models\Page;
 use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PagePolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->can('view_any_page');
     }
 
     /**
@@ -22,7 +25,7 @@ class PagePolicy
      */
     public function view(User $user, Page $page): bool
     {
-        //
+        return $user->can('view_page');
     }
 
     /**
@@ -30,7 +33,7 @@ class PagePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->can('create_page');
     }
 
     /**
@@ -38,7 +41,7 @@ class PagePolicy
      */
     public function update(User $user, Page $page): bool
     {
-        //
+        return $user->can('update_page');
     }
 
     /**
@@ -46,22 +49,62 @@ class PagePolicy
      */
     public function delete(User $user, Page $page): bool
     {
-        //
+        return $user->can('delete_page');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can bulk delete.
      */
-    public function restore(User $user, Page $page): bool
+    public function deleteAny(User $user): bool
     {
-        //
+        return $user->can('delete_any_page');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can permanently delete.
      */
     public function forceDelete(User $user, Page $page): bool
     {
-        //
+        return $user->can('force_delete_page');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_page');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, Page $page): bool
+    {
+        return $user->can('restore_page');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_page');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, Page $page): bool
+    {
+        return $user->can('replicate_page');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_page');
     }
 }

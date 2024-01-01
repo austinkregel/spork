@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Registrar;
 
-use App\Contracts\Services\NamecheapDomainServiceContract;
+use App\Contracts\Services\NamecheapServiceContract;
 use App\Models\Credential;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Http;
 
-class NamecheapService implements NamecheapDomainServiceContract
+class NamecheapService implements NamecheapServiceContract
 {
     public const NAMECHEAP_URL = 'https://api.namecheap.com/xml.response';
 
@@ -79,7 +79,6 @@ class NamecheapService implements NamecheapDomainServiceContract
         if (isset($domainResponse->Errors->Error)) {
             throw new \Exception($domainResponse->Errors->Error);
         }
-
         try {
             return $domainResponse->CommandResponse->DomainDNSGetListResult->Nameserver;
         } catch (\Throwable $e) {
@@ -114,38 +113,38 @@ class NamecheapService implements NamecheapDomainServiceContract
     public function fetchPriceOfRenewal(string $domain): string
     {
         [$domainPart, $tld] = explode('.', $domain);
-        if (cache()->has($key = 'tld-pricing-for-namecheap.'.$tld)) {
-            return cache()->get($key, '');
-        }
 
-        $response = Http::get(static::NAMECHEAP_URL.'?'.http_build_query([
-            // Auth
-            'ApiUser' => $this->credential->settings['api_user'],
-            'ApiKey' => $this->credential->access_token,
-            'UserName' => $this->credential->settings['username'],
-            'ClientIp' => $this->credential->settings['client_ip'],
-            // command
-            'Command' => 'namecheap.users.getPricing',
-            // request deets
-            'ProductType' => 'DOMAIN',
-            'ActionName' => 'RENEW',
-            'ProductName' => $tld,
-        ]));
+        return cache()->remember($key = 'tld-pricing-for-namecheap.'.$tld, now()->addHour(), function () use ($tld) {
+            $response = Http::get(static::NAMECHEAP_URL.'?'.http_build_query([
+                // Auth
+                'ApiUser' => $this->credential->settings['api_user'],
+                'ApiKey' => $this->credential->access_token,
+                'UserName' => $this->credential->settings['username'],
+                'ClientIp' => $this->credential->settings['client_ip'],
+                // command
+                'Command' => 'namecheap.users.getPricing',
+                // request deets
+                'ProductType' => 'DOMAIN',
+                'ActionName' => 'RENEW',
+                'ProductName' => $tld,
+            ]));
 
-        $domainResponse = json_decode(json_encode(simplexml_load_string($xmlDebugResponse = $response->body())));
+            $domainResponse = json_decode(json_encode(simplexml_load_string($xmlDebugResponse = $response->body())));
 
-        if (isset($domainResponse->Errors->Error)) {
-            throw new \Exception($domainResponse->Errors->Error);
-        }
+            if (isset($domainResponse->Errors->Error)) {
+                throw new \Exception($domainResponse->Errors->Error);
+            }
 
-        $prices = $domainResponse?->CommandResponse?->UserGetPricingResult?->ProductType?->ProductCategory?->Product?->Price ?? [];
+            $prices = $domainResponse?->CommandResponse?->UserGetPricingResult?->ProductType?->ProductCategory?->Product?->Price ?? [];
 
-        if (empty($prices)) {
-            return '';
-        }
+            if (empty($prices)) {
+                return '';
+            }
 
-        foreach ($prices as $price) {
-            return cache()->remember($key, now()->addHour(), fn () => $price?->{'@attributes'}?->Price ?? $price->Price ?? dd($price, $prices));
-        }
+            foreach ($prices as $price) {
+                return $price?->{'@attributes'}?->Price ?? $price->Price ?? dd($price, $prices);
+            }
+
+        });
     }
 }

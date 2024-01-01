@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Events\Domains;
 
+use App\Events\AbstractLogicalEvent;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NameServerRecordVerified
+class NameServerRecordVerified extends AbstractLogicalEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 

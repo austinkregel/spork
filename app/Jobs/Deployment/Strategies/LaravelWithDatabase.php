@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs\Deployment\Strategies;
 
 use App\Models\Credential;
+use App\Services\Development\ForgeDevelopmentService;
 use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -51,7 +52,13 @@ class LaravelWithDatabase implements ShouldQueue
             'project_type' => 'php',
             'directory' => '/public',
         ]);
+        $forgeCredential = $this->project->credentialFor(Credential::FORGE_DEVELOPMENT);
 
+        $laravelForgeService = new ForgeDevelopmentService($forgeCredential);
+
+        $laravelForgeService->createRedirectIfNotExists($this->domain,
+            $this->server,
+            $this->redirectTo);
         $client->createRedirectRule($this->server, $site->id, [
             'from' => '/',
             'to' => $this->redirectTo,

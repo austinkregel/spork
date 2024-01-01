@@ -5,16 +5,42 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Events\Models\Domain\DomainCreated;
+use App\Events\Models\Domain\DomainCreating;
+use App\Events\Models\Domain\DomainDeleted;
+use App\Events\Models\Domain\DomainDeleting;
+use App\Events\Models\Domain\DomainUpdated;
+use App\Events\Models\Domain\DomainUpdating;
+use App\Models\Traits\HasProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class Domain extends Model implements ModelQuery
+class Domain extends Model implements Crud, ModelQuery
 {
     use HasFactory;
+    use HasProjectResource;
+    use LogsActivity;
 
-    public $guarded = [];
+    public $fillable = [
+        'name',
+        'verification_key',
+        'cloudflare_id',
+        'domain_id',
+        'registered_at',
+    ];
+
+    public $dispatchesEvents = [
+        'created' => DomainCreated::class,
+        'creating' => DomainCreating::class,
+        'deleting' => DomainDeleting::class,
+        'deleted' => DomainDeleted::class,
+        'updating' => DomainUpdating::class,
+        'updated' => DomainUpdated::class,
+    ];
 
     public function records(): HasMany
     {
@@ -26,12 +52,16 @@ class Domain extends Model implements ModelQuery
         return $this->hasMany(DomainAnalytics::class);
     }
 
-    public function projects(): MorphToMany
+    public function credential(): BelongsTo
     {
-        return $this->morphToMany(
-            Project::class,
-            'resource',
-            'project_resources'
-        );
+        return $this->belongsTo(Credential::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'domain_id', 'registered_at'])
+            ->useLogName('domain')
+            ->logOnlyDirty();
     }
 }

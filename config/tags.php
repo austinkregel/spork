@@ -13,7 +13,7 @@ return [
     /*
      * The fully qualified class name of the tag model.
      */
-    'tag_model' => Spatie\Tags\Tag::class,
+    'tag_model' => App\Models\Tag::class,
 
     /*
      * The name of the table associated with the taggable morph relation.
@@ -21,5 +21,10 @@ return [
     'taggable' => [
         'table_name' => 'taggables',
         'morph_name' => 'taggable',
+
+        /*
+         * The fully qualified class name of the pivot model.
+         */
+        'class_name' => Illuminate\Database\Eloquent\Relations\MorphPivot::class,
     ],
 ];

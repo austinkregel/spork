@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\Thread;
+use App\Services\ConditionService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -36,7 +38,16 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            //
+            'navigation' => $navigation = (new ConditionService)->navigation(),
+            'current_navigation' => $navigation->where('current', true)->first(),
+            'conversations' => Thread::query()
+                ->orderByDesc('origin_server_ts')
+                ->paginate(
+                    request('limit'),
+                    ['*'],
+                    'page',
+                    request('page')
+                ),
         ]);
     }
 }

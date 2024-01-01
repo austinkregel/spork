@@ -135,4 +135,9 @@ class DigitalOceanService implements DigitalOceanServiceContract
     {
         // TODO: Implement updateDomainNs() method.
     }
+
+    public function createDomain(string $domain): array
+    {
+        // TODO: Implement createDomain() method.
+    }
 }

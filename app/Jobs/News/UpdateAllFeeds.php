@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\News;
 
-use App\Events\BatchFinishedRunningEvent;
-use App\Models\FeatureList;
+use App\Models\ExternalRssFeed;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,17 +18,11 @@ class UpdateAllFeeds implements ShouldQueue
 
     public function handle()
     {
-        $jobs = FeatureList::query()
-            ->where('feature', 'rss')
+        $jobs = ExternalRssFeed::query()
+            ->select('id')
             ->get()
-            ->map(fn ($feed) => new UpdateFeed($feed));
+            ->map(fn (ExternalRssFeed $feed) => new \App\Jobs\News\UpdateFeed($feed));
 
-        Bus::batch($jobs)
-            ->allowFailures()
-            ->name('Update All Feeds')
-            ->finally(function () {
-                broadcast(new BatchFinishedRunningEvent(...func_get_args()));
-            })
-            ->dispatch();
+        Bus::batch($jobs)->allowFailures()->name('Update All Feeds')->dispatch();
     }
 }

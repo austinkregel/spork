@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Jobs\Servers;
 
-use App\Models\Server;
+use App\Services\Development\ForgeDevelopmentService;
 use App\Services\Factories\ServerServiceFactory;
-use App\Services\LaravelForgeService;
 
 class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
 {
@@ -18,14 +17,15 @@ class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
     public function sync(): void
     {
         // this means all servers need to respond with the keys.
-        $servers = (new LaravelForgeService($this->credential))->getServers();
+        $servers = (new ForgeDevelopmentService($this->credential))->findAllServers();
 
         foreach ($servers as $server) {
-            $localServer = Server::where('server_id', $server['id'])
+            $localServer = $this->credential->servers()
+                ->where('server_id', $server['id'])
                 ->first();
 
             if (empty($localServer)) {
-                Server::create([
+                $localServer = $this->credential->servers()->create([
                     'server_id' => $server['id'],
                     'name' => $server['name'],
                     'vcpu' => 1,
@@ -35,17 +35,14 @@ class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
                     'os' => 'Ubuntu',
                     'internal_ip_address' => $server['private_ip_address'],
                 ]);
-                info('Noserver found for forge');
-
-                continue;
             }
 
             if ($localServer->isDirty() || ! $localServer->exists()) {
                 $localServer->save();
             }
 
-            $localServer->attachTag($server['type']);
-            $localServer->attachTag($server['php_version']);
+            $localServer->attachTag($server['type'], 'server');
+            $localServer->attachTag($server['php_version'], 'server');
         }
     }
 }

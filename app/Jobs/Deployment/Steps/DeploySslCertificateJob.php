@@ -6,15 +6,25 @@ namespace App\Jobs\Deployment\Steps;
 
 use App\Models\Credential;
 use App\Models\Domain;
+use App\Models\Project;
 use App\Models\Server;
 use App\Services\Development\ForgeDevelopmentService;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Laravel\Forge\Resources\Site;
 
-class DeploySslCertificateJob
+class DeploySslCertificateJob implements ShouldQueue
 {
+    use Batchable, DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
+
     public function __construct(
         public Server $server,
         public Domain $domain,
-        public Credential $credential
+        public Project $project
     ) {
     }
 
@@ -22,15 +32,26 @@ class DeploySslCertificateJob
     {
         // Configure the domain for the server
         //  DNS, Setup SSL, Verify
-
         // Register the domain to forge.
-        $service = new ForgeDevelopmentService($this->credential);
+        $forgeCredential = $this->project->credentialFor(Credential::FORGE_DEVELOPMENT);
+        $service = new ForgeDevelopmentService($forgeCredential);
+        $domainAliases = $this->project->domains->filter(fn (Domain $domain) => $domain->id !== $this->domain->id)->values();
 
-        $site = $service->createDomainIfNotExists($this->domain, $this->server);
+        /** @var Site $site */
+        $site = $service->createDomainIfNotExists($this->domain, $domainAliases, $this->server);
 
-        $service->setupSslCertificate($this->domain, $this->server, $site);
+        if ($this->aRecordForOurServerDoesntAlreadyExist($this->domain, $this->server, (array) $site)) {
+            // If we dont have all our servers pointing at the server in question fetching an SSL cert will fail
+            return;
+        }
 
-        $service->setupSsl($this->domain, $this->server);
-        dd(dns_get_record($this->domain->name, DNS_A));
+        $service->setupSslCertificate($this->domain, $domainAliases, $this->server, (array) $site);
+    }
+
+    protected function aRecordForOurServerDoesntAlreadyExist(Domain $domain, Server $server, array $site): bool
+    {
+        $aRecordValues = array_map(fn (array $record) => $record['ip'], dns_get_record($domain->name, DNS_A));
+
+        return ! in_array($server->ip_address, $aRecordValues);
     }
 }

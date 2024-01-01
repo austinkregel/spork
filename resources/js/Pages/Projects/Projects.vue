@@ -1,13 +1,15 @@
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
-                Projects
-            </h2>
+          <div class=" flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
+            <Link href="/projects" class="underline">
+              Projects
+            </Link>
+          </div>
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="bg-white dark:bg-stone-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <!-- We need to figure out a better way to get the crud actions. -->
                     <crud-view
                         :form="form"
@@ -15,6 +17,8 @@
                         @destroy="onDelete"
                         @index="({ page, limit, ...args }) => fetch({ page, limit, ...args })"
                         @execute="onExecute"
+                        @save="save"
+                        :save="save"
                         :data="data"
                         :paginator="pagination"
                     >
@@ -40,7 +44,7 @@
                                 </div>
                             </div>
                         </template>
-                        <template #no-data>No projects</template>
+                      <template #no-data><div class="p-4">No projects</div></template>
 
                         <template #form>
                             <div>
@@ -51,8 +55,8 @@
                                     </div>
 
                                     <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">Type</label>
-                                        <spork-input v-model="form.settings.type" type="text" name="name" id="name" />
+                                        <label for="username" class="block text-sm font-medium">Project Username</label>
+                                        <spork-input v-model="form.settings.username" type="text" name="username" id="username" />
                                     </div>
 
                                 </div>
@@ -73,8 +77,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
+import {ChevronRightIcon} from "@heroicons/vue/24/solid/index.js";
 export default {
     components: {
+      ChevronRightIcon,
         CrudView,
         AppLayout,
         SporkInput,
@@ -85,7 +91,9 @@ export default {
             createOpen: ref(false),
             form: ref(({
                 name: '',
-                settings: {},
+                settings: {
+
+                },
             })),
             data: ref([]),
             pagination: ref({}),
@@ -106,12 +114,12 @@ export default {
             return this.form.errors[error] ?? null;
         },
         dateFormat(contact) {
-            return '<span class="text-zinc-900">' + contact.starts_at  + '  at </span>' +
-                '<span class="text-zinc-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
+            return '<span class="text-stone-900">' + contact.starts_at  + '  at </span>' +
+                '<span class="text-stone-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
         },
         async save(form) {
             if (!form.id) {
-                await axios.post('/api/projects', {
+                await axios.post('/api/crud/projects', {
                     ...form,
                     team_id: this.$page.props.auth.user.current_team.id,
                 });
@@ -122,7 +130,7 @@ export default {
             }
         },
         async onDelete(data) {
-            await axios.delete('/api/projects/' + data.id);
+            await axios.delete('/api/crud/projects/' + data.id);
             await this.fetch({
                 page: 1, limit: 15,
             })
@@ -141,8 +149,12 @@ export default {
             }
         },
         async fetch({ page, limit, ...args }) {
+
+          console.log({
+            page, limit, args
+          })
             const { data: { data, ...pagination} } = await axios.get(buildUrl(
-                '/api/projects', {
+                '/api/crud/projects', {
                     page, limit,
                     ...args,
                     include: ['domains', 'servers']

@@ -11,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 
 class FetchCloudflareAnalytics implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue;
+    use InteractsWithQueue, Queueable;
 
     public function handle()
     {
@@ -19,7 +19,7 @@ class FetchCloudflareAnalytics implements ShouldQueue
         $domains = \App\Models\Domain::whereNotNull('cloudflare_id')->get();
 
         foreach ($domains as $domain) {
-            $service->getAnalytics($domain, now()->subDay()->startOfDay(), now()->subDay()->endOfDay());
+            $service->getAnalytics($domain, now()->subDay()->startOfDay(), now()->endOfDay());
         }
     }
 }

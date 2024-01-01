@@ -1,13 +1,13 @@
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
                 Domains
             </h2>
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="bg-white dark:bg-stone-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <!-- We need to figure out a better way to get the crud actions. -->
                     <crud-view
                         :form="form"
@@ -15,8 +15,6 @@
                         @destroy="onDelete"
                         @index="({ page, limit, ...args}) => fetch({ page, limit, ...args })"
                         @execute="onExecute"
-                        @save="save"
-                        :save="save"
                         :data="data"
                         :paginator="pagination"
                     >
@@ -28,11 +26,13 @@
                         <template v-slot:data="{ data }">
                             <div class="flex flex-col">
                                 <div class="text-lg text-left">
-                                    {{ data.name }}
+                                    <Link :href="'/domains/'+ data.id" class="underline">
+                                        {{ data.name }}
+                                    </Link>
                                 </div>
                                 <div class="flex flex-wrap gap-2">
                                     <div class="text-xs dark:text-stone-300">
-                                        {{ data }}
+                                        Expires At: {{ data.expires_at.split(' ')[0] }}
                                     </div>
                                 </div>
                             </div>
@@ -70,21 +70,25 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
+
 export default {
     components: {
+        Link,
         CrudView,
         AppLayout,
         SporkInput
     },
-    setup() {
+    props: ['domains'],
+    setup(props) {
+        let { data, ...pagination } = props.domains;
         return {
             createOpen: ref(false),
             form: ref(({
                 name: '',
                 settings: {},
             })),
-            data: ref([]),
-            pagination: ref({}),
+            data: ref(data ?? []),
+            pagination: ref(pagination ?? {}),
 
         }
     },
@@ -102,18 +106,18 @@ export default {
             return this.form.errors[error] ?? null;
         },
         dateFormat(contact) {
-            return '<span class="text-zinc-900">' + contact.starts_at  + '  at </span>' +
-                '<span class="text-zinc-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
+            return '<span class="text-stone-900">' + contact.starts_at  + '  at </span>' +
+                '<span class="text-stone-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
         },
         async save(form) {
             if (!form.id) {
-                await axios.post('/api/domains', form);
+                await axios.post('/api/crud/domains', form);
             } else {
                 console.log('No edit method defined')
             }
         },
         async onDelete(data) {
-            await axios.delete('/api/domains/' + form.id);
+            await axios.delete('/api/crud/domains/' + form.id);
         },
         async onExecute({ actionToRun, selectedItems}) {
             try {
@@ -130,10 +134,10 @@ export default {
         },
         async fetch({ page, limit, ...args }) {
             const { data: { data, ...pagination} } = await axios.get(buildUrl(
-                '/api/domains', {
+                '/api/crud/domains', {
                     page, limit,
                     ...args,
-                    include: []
+                    include: [],
                 }
             ));
 

@@ -2,7 +2,7 @@
 @import "../../../../node_modules/vue-select/dist/vue-select.css";
 
 .tribute-container {
-    @apply bg-white dark:bg-zinc-900 rounded shadow text-xs overflow-hidden;
+    @apply bg-white dark:bg-stone-900 rounded shadow text-xs overflow-hidden;
 }
 .tribute-container ul, .tribute-container li {
     list-style: none;
@@ -19,24 +19,24 @@
     @apply bg-stone-200 dark:bg-stone-600 px-2;
 }
 .vs__dropdown-menu, .vs__selected {
-    @apply dark:bg-zinc-700 dark:text-zinc-50;
+    @apply dark:bg-stone-700 dark:text-stone-50;
 }
 
 .vjs-tree-node.is-highlight, .vjs-tree-node:hover {
-    @apply dark:bg-zinc-600 !important;
+    @apply dark:bg-stone-600 !important;
 }
 
 .vs__dropdown-toggle {
-    @apply dark:bg-zinc-600;
+    @apply dark:bg-stone-600;
 }
 </style>
 
 <template>
     <div>
-        <div class="flex flex-wrap border border-zinc-500 dark:border-zinc-700 dark:text-zinc-50 rounded h-full" style="min-height: 400px;">
+        <div class="flex flex-wrap border border-stone-500 dark:border-stone-700 dark:text-stone-50 rounded h-full" style="min-height: 400px;">
             <form class="w-1/3 h-auto border-r" @submit.prevent="submitForm">
                 <div class="mx-2">
-                    <div class="text-sm uppercase text-zinc-600 dark:text-zinc-200 py-2 px-1 flex justify-between">
+                    <div class="text-sm uppercase text-stone-600 dark:text-stone-200 py-2 px-1 flex justify-between">
                         <span>Object to query</span>
                         <span>
                             <button type="button" @click.prevent="clearForm"
@@ -54,7 +54,7 @@
                 </div>
 
                 <div v-if="model" class="mx-2">
-                    <div class="text-sm uppercase text-zinc-600 dark:text-zinc-300 py-2 px-1">Select fields</div>
+                    <div class="text-sm uppercase text-stone-600 dark:text-stone-300 py-2 px-1">Select fields</div>
                     <multiselect
                         v-model="fields"
                         placeholder="Fields to query..."
@@ -70,7 +70,7 @@
                 </div>
 
                 <div v-if="model" class="mx-2">
-                    <div class="text-sm uppercase text-zinc-600 dark:text-zinc-300 py-2 px-1">Relations to include</div>
+                    <div class="text-sm uppercase text-stone-600 dark:text-stone-300 py-2 px-1">Relations to include</div>
                     <multiselect
                         v-model="includes"
                         placeholder="Relationships..."
@@ -85,7 +85,7 @@
                 </div>
 
                 <div v-if="model" class="flex flex-wrap mx-2 relative text-xs" id="autocomplete-container">
-                    <div class="w-full text-sm uppercase text-zinc-600 dark:text-zinc-300 py-2 px-1">Filter data</div>
+                    <div class="w-full text-sm uppercase text-stone-600 dark:text-stone-300 py-2 px-1">Filter data</div>
 
                     <div class="flex flex-wrap w-full" v-for="(filter, $i) in filters">
                         <multiselect
@@ -104,7 +104,7 @@
                     </div>
 
                     <div class="flex justify-end w-full">
-                        <button type="button" @click.prevent="addFilter" class="flex items-center border border-stone-500 dark:border-stone-600 text-stone-500 mt-2 bg-stone-50 dark:bg-zinc-700 dark:text-zinc-50 rounded px-2 py-1 focus:outline-none hover:bg-stone-200 hover:text-stone-600 hover:border-stone-600" style="font-size: 1.2em;">
+                        <button type="button" @click.prevent="addFilter" class="flex items-center border border-stone-500 dark:border-stone-600 text-stone-500 mt-2 bg-stone-50 dark:bg-stone-700 dark:text-stone-50 rounded px-2 py-1 focus:outline-none hover:bg-stone-200 hover:text-stone-600 hover:border-stone-600" style="font-size: 1.2em;">
                             <svg class="w-4" data-600reader-inline-stroke="" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -115,7 +115,7 @@
                 </div>
 
                 <div v-if="model" class="mx-2">
-                    <div class="text-sm uppercase text-zinc-600 py-2 px-1">Action</div>
+                    <div class="text-sm uppercase text-stone-600 py-2 px-1">Action</div>
                     <multiselect
                         v-model="action"
                         placeholder="get, paginate, or first..."
@@ -128,19 +128,19 @@
                 </div>
 
                 <div v-if="model" class="flex justify-between mr-2">
-                    <select name="page" class="border border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 bg-white p-0 m-2 flex-grow" v-if="response.data" v-model="page">
+                    <select name="page" class="border border-stone-200 dark:border-stone-700 dark:bg-stone-800 bg-white p-0 m-2 flex-grow" v-if="response.data" v-model="page">
                         <option v-for="i in range(1, response.last_page || 1)" :value="i">Page {{ i }}</option>
                     </select>
                     <span v-else></span>
 
-                    <ActionButton type="submit" :action="getData" icon="save-disk" classes="text-stone-900 dark:text-stone-50" button-classes="border rounded px-4 py-2 text-black bg-white dark:bg-zinc-600 dark:border-zinc-600 dark:text-white  my-2">
+                    <ActionButton type="submit" :action="getData" icon="save-disk" classes="text-stone-900 dark:text-stone-50" button-classes="border rounded px-4 py-2 text-black bg-white dark:bg-stone-600 dark:border-stone-600 dark:text-white  my-2">
                         Execute
                     </ActionButton>
                 </div>
             </form>
-            <div class="w-2/3 bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200">
+            <div class="w-2/3 bg-stone-200 dark:bg-stone-800 dark:text-stone-200">
                 <div>
-                    <input type="text" v-model="url" class="w-full py-2 px-1 text-zinc-600 dark:text-zinc-200 dark:bg-zinc-600">
+                    <input type="text" v-model="url" class="w-full py-2 px-1 text-stone-600 dark:text-stone-200 dark:bg-stone-600">
                 </div>
                 <vue-json-pretty
                     :data="response || {message: 'No model found'}"

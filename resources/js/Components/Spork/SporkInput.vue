@@ -1,10 +1,18 @@
 <template>
     <input
-        class="py-2 px-4 border focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-zinc-300 dark:border-zinc-700 dark:bg-zinc-700 dark:placeholder-zinc-300 rounded-md"
+        v-if="type !== 'textarea'"
+        class="py-1 px-2 border focus:ring-slate-500 focus:border-slate-500 block w-full shadow-sm sm:text-sm border-stone-300 dark:border-stone-700 dark:bg-stone-700 dark:placeholder-stone-300 rounded-md"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
         ref="input"
         :type="type"
+    />
+    <textarea
+        v-else
+        class="py-1 px-2 border focus:ring-slate-500 focus:border-slate-500 block w-full shadow-sm text-xs border-stone-300 dark:border-stone-700 dark:bg-stone-700 dark:placeholder-stone-300 rounded-md"
+        :value="modelValue"
+        @input="$emit('update:modelValue', $event.target.value)"
+        ref="input"
     />
 
 </template>

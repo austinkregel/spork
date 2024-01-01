@@ -17,7 +17,7 @@ use Illuminate\Queue\SerializesModels;
 
 class FetchDomainsForCredential implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
@@ -26,7 +26,7 @@ class FetchDomainsForCredential implements ShouldQueue
      */
     public function __construct(
         public Credential $credential,
-        public ?User $user
+        public ?User $user = null
     ) {
         $this->user = $user ?? auth()->user();
     }
@@ -38,7 +38,7 @@ class FetchDomainsForCredential implements ShouldQueue
      */
     public function handle(Dispatcher $dispatcher)
     {
-        if ($this->batch()->cancelled()) {
+        if ($this->batch()?->cancelled()) {
             return;
         }
         if ($this->credential->type !== Credential::TYPE_DOMAIN) {

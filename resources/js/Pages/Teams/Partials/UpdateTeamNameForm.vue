@@ -13,7 +13,7 @@ const props = defineProps({
 });
 
 const form = useForm({
-    name: props.team.name,
+    name: props.team?.name ?? '',
 });
 
 const updateTeamName = () => {
@@ -43,8 +43,8 @@ const updateTeamName = () => {
                     <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.name">
 
                     <div class="ml-4 leading-tight">
-                        <div class="text-zinc-900 dark:text-white">{{ team.owner.name }}</div>
-                        <div class="text-zinc-700 dark:text-zinc-300 text-sm">
+                        <div class="text-stone-900 dark:text-white">{{ team.owner.name }}</div>
+                        <div class="text-stone-700 dark:text-stone-300 text-sm">
                             {{ team.owner.email }}
                         </div>
                     </div>

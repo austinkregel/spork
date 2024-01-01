@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Events\Domains;
 
+use App\Events\AbstractLogicalEvent;
 use App\Models\Credential;
 use App\Models\Domain;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -11,7 +12,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DomainCreated
+class DomainCreated extends AbstractLogicalEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 

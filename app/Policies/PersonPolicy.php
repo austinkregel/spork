@@ -6,15 +6,18 @@ namespace App\Policies;
 
 use App\Models\Person;
 use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PersonPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->can('view_any_person');
     }
 
     /**
@@ -22,7 +25,7 @@ class PersonPolicy
      */
     public function view(User $user, Person $person): bool
     {
-        //
+        return $user->can('view_person');
     }
 
     /**
@@ -30,7 +33,7 @@ class PersonPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->can('create_person');
     }
 
     /**
@@ -38,7 +41,7 @@ class PersonPolicy
      */
     public function update(User $user, Person $person): bool
     {
-        //
+        return $user->can('update_person');
     }
 
     /**
@@ -46,22 +49,62 @@ class PersonPolicy
      */
     public function delete(User $user, Person $person): bool
     {
-        //
+        return $user->can('delete_person');
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determine whether the user can bulk delete.
      */
-    public function restore(User $user, Person $person): bool
+    public function deleteAny(User $user): bool
     {
-        //
+        return $user->can('delete_any_person');
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determine whether the user can permanently delete.
      */
     public function forceDelete(User $user, Person $person): bool
     {
-        //
+        return $user->can('force_delete_person');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->can('force_delete_any_person');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, Person $person): bool
+    {
+        return $user->can('restore_person');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->can('restore_any_person');
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, Person $person): bool
+    {
+        return $user->can('replicate_person');
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('reorder_person');
     }
 }

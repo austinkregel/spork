@@ -25,12 +25,16 @@ class AtomFeed extends AbstractFeed
 
     public function getPhoto(): ?string
     {
-        return $this->element->icon ?? null;
+        if (! isset($this->element->icon)) {
+            return null;
+        }
+
+        return (string) $this->element->icon;
     }
 
     public function getName(): string
     {
-        return $this->element->title;
+        return (string) $this->element?->title;
     }
 
     public function getData(): array
@@ -59,7 +63,8 @@ class AtomFeed extends AbstractFeed
 
             $feedItem = new FeedItem();
             $feedItem->id = $post['id'];
-            $feedItem->title = $post['title'];
+            $feedItem->title = $post['title'] ?? null;
+            $feedItem->content = $post['content'] ?? null;
             $feedItem->published_at = $post['published'] ?? $post['updated'];
 
             if (isset($post['link']) && is_string($post['link'])) {

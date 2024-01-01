@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\Jobs\News;
 
 use App\Models\Article;
-use App\Models\FeatureList;
+use App\Models\ExternalRssFeed;
 use App\Services\News\Feeds\AbstractFeed;
 use App\Services\News\Feeds\FeedItem;
-use App\Services\News\RssFeedService;
-use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,75 +19,57 @@ class UpdateFeed implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected FeatureList $feed;
+    protected ExternalRssFeed $feed;
 
-    public function __construct(FeatureList $feed)
+    public function __construct(ExternalRssFeed $feed)
     {
         $this->feed = $feed;
     }
 
-    public function handle(RssFeedService $service)
+    public function handle(\App\Services\News\RssFeedService $service)
     {
+        if ($this->batch() && $this->batch()->cancelled()) {
+            return;
+        }
+
         /** @var AbstractFeed $rssFeed */
-        $rssFeed = $service->fetchRssFeed($this->feed->settings['url'] ?? 'https://fake.tools');
+        $rssFeed = $service->fetchRssFeed($this->feed->url);
 
-        if (empty($rssFeed)) {
-            dd($rssFeed, $this->feed);
-        }
         /** @var FeedItem $feedItem */
-        try {
-            info("Fetching feed from {$this->feed->settings['url']}");
-            foreach ($rssFeed->getData() as $feedItem) {
-                if (
-                    $this->feed->articles()
-                        ->where('external_guid', $feedItem->getUuidIfExists())
-                        ->exists()
-                ) {
-                    break;
-                }
-
-                if (str_contains($feedItem->title, '#shorts')) {
-                    $item = Article::firstWhere('external_guid', $feedItem->getExternalId());
-
-                    if (! empty($item)) {
-                        $item->delete();
-                    }
-
-                    continue;
-                }
-
-                Article::fromFeedItem($this->feed, $feedItem);
+        foreach ($rssFeed->getData() as $feedItem) {
+            // If we already have the item's GUID, we must already have this item so we should stop,
+            // as any items afterwards are probably already in our system as well.
+            if ($this->feed->articles()->where('external_guid', $feedItem->getUuidIfExists())->exists()) {
+                break;
             }
-        } catch (\Throwable $e) {
-            info($e->getMessage(), ['error' => $e, 'feed' => $rssFeed]);
-            dd($e);
+
+            // As a second check, if the item is older than the newest item we already have, we
+            // probably don't want to add it since it is most likely already in our database.
+            // This should hopefully never actually be catching anything as the GUID should cover
+            // everything, but just in case a feed doesn't provide GUIDs or something this is a
+            // decent back-up protection against duplicate articles.
+            // Sub one minute just in case the time parsing doesn't quite match up.
+            $mostRecentPost = $mostRecentPost ?? $this->feed->articles()->first();
+
+            if (! empty($mostRecentPost) && $feedItem->getPublishedAt()->lessThanOrEqualTo($mostRecentPost->created_at->subMinute())) {
+                break;
+            }
+
+            Article::fromFeedItem($this->feed, $feedItem);
         }
 
-//        $this->feed->name = $rssFeed->getName();
+        $this->feed->name = $rssFeed->getName();
 
         if (! empty($rssFeed->getPhoto())) {
-            $this->feed->settings = array_merge(['profile_photo_path' => $rssFeed->getPhoto()], $this->feed->settings);
+            $this->feed->profile_photo_path = $rssFeed->getPhoto();
         }
 
         if (! empty($rssFeed->getLastModified())) {
-            $this->feed->settings = array_merge(['last_modified' => $rssFeed->getLastModified()], $this->feed->settings);
+            //            $this->feed->last_modified = $rssFeed->getLastModified();
         }
 
         if (! empty($rssFeed->getEtag())) {
-            $this->feed->settings = array_merge(['etag' => $rssFeed->getEtag()], $this->feed->settings);
-        }
-
-        $lastArticle = $this->feed->articles()
-            ->select('last_modified')
-            ->orderByDesc('last_modified')
-            ->limit(1)
-            ->pluck('last_modified')
-            ->first();
-
-        if (! empty($lastArticle)) {
-            $lastArticle = Carbon::parse($lastArticle);
-            $this->feed->settings = array_merge(['last_published_at' => $lastArticle], $this->feed->settings);
-            $this->feed->updated_at = $lastArticle;
+            //            $this->feed->etag = $rssFeed->getEtag();
         }
 
         if ($this->feed->isDirty()) {

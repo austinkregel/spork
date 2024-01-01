@@ -1,0 +1,4 @@
+!.gitignore
+bot.json
+db/
+node_modules/

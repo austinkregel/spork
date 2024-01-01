@@ -6,17 +6,25 @@ namespace App\Jobs\Deployment\Steps;
 
 use App\Models\Credential;
 use App\Models\Domain;
+use App\Models\Project;
 use App\Models\Server;
 use App\Services\Development\ForgeDevelopmentService;
-use Illuminate\Support\Collection;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Laravel\Forge\Resources\Site;
 
-class SetupLoadBalancerJob
+class SetupLoadBalancerJob implements ShouldQueue
 {
+    use Batchable, DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
+
     public function __construct(
         public Server $server,
         public Domain $domain,
-        public Collection $domains,
-        public Credential $credential
+        public Project $project
     ) {
     }
 
@@ -24,11 +32,17 @@ class SetupLoadBalancerJob
     {
         // Configure the domain for the server
         // Register the domain to forge.
-        $service = new ForgeDevelopmentService($this->credential);
-        $domains = collect([]);
+        $forgeCredential = $this->project->credentialFor(Credential::FORGE_DEVELOPMENT);
 
-        $site = $service->createDomainIfNotExists($this->domain, $domains, $this->server);
+        $service = new ForgeDevelopmentService($forgeCredential);
 
-        $service->setupSslCertificate($this->domain, $domains, $this->server, $site);
+        /** @var Site $site */
+        $site = $service->createDomainIfNotExists(
+            $this->domain,
+            $this->project->domains->filter(fn (Domain $domain) => $domain->id !== $this->domain->id)->values(),
+            $this->server
+        );
+
+        $service->updateLoadBalancer($this->domain, $this->project, (array) $site);
     }
 }

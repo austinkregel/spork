@@ -5,6 +5,13 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Events\Models\User\UserCreated;
+use App\Events\Models\User\UserCreating;
+use App\Events\Models\User\UserDeleted;
+use App\Events\Models\User\UserDeleting;
+use App\Events\Models\User\UserUpdated;
+use App\Events\Models\User\UserUpdating;
+use App\Models\Finance\Account;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,15 +19,22 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Permission\Traits\HasRoles;
+use Spatie\Tags\HasTags;
 
 class User extends Authenticatable implements ModelQuery
 {
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
+    use HasRoles;
     use HasTeams;
+    use LogsActivity;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use HasTags;
 
     /**
      * The attributes that are mass assignable.
@@ -60,4 +74,36 @@ class User extends Authenticatable implements ModelQuery
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public $dispatchesEvents = [
+        'created' => UserCreated::class,
+        'creating' => UserCreating::class,
+        'deleting' => UserDeleting::class,
+        'deleted' => UserDeleted::class,
+        'updating' => UserUpdating::class,
+        'updated' => UserUpdated::class,
+    ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email'])
+            ->useLogName('user')
+            ->logOnlyDirty();
+    }
+
+    public function codes()
+    {
+        return $this->hasMany(ShortCode::class);
+    }
+
+    public function credentials()
+    {
+        return $this->hasMany(Credential::class);
+    }
+
+    public function accounts()
+    {
+        return $this->hasManyThrough(Account::class, Credential::class);
+    }
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Jobs\Registrar;
 
-use App\Events\Domains\DomainCreated;
-use App\Models\Credential;
 use App\Models\Domain;
 use Illuminate\Support\Str;
 
@@ -37,7 +35,7 @@ class NamecheapSyncJob extends AbstractSyncRegistrarResourceJob
                 }
 
                 foreach ($data as $key => $value) {
-                    if ($localDomain->$key !== $value) {
+                    if ($value !== $localDomain->$key) {
                         // Only set the new value if its different
                         $localDomain->$key = $value;
                     }
@@ -45,9 +43,6 @@ class NamecheapSyncJob extends AbstractSyncRegistrarResourceJob
 
                 if ($localDomain->isDirty() || ! $localDomain->exists()) {
                     $localDomain->save();
-                    if ($localDomain->wasRecentlyCreated) {
-                        event(new DomainCreated($localDomain, $this->credential, Credential::find(4)));
-                    }
                 }
             }
         } while ($domains->hasMorePages());

@@ -107,7 +107,7 @@ const displayableRole = (role) => {
 
                 <template #form>
                     <div class="col-span-6">
-                        <div class="max-w-xl text-sm text-zinc-600 dark:text-zinc-400">
+                        <div class="max-w-xl text-sm text-stone-600 dark:text-stone-400">
                             Please provide the email address of the person you would like to add to this team.
                         </div>
                     </div>
@@ -129,19 +129,19 @@ const displayableRole = (role) => {
                         <InputLabel for="roles" value="Role" />
                         <InputError :message="addTeamMemberForm.errors.role" class="mt-2" />
 
-                        <div class="relative z-0 mt-1 border border-zinc-200 dark:border-zinc-700 rounded-lg cursor-pointer">
+                        <div class="relative z-0 mt-1 border border-stone-200 dark:border-stone-700 rounded-lg cursor-pointer">
                             <button
                                 v-for="(role, i) in availableRoles"
                                 :key="role.key"
                                 type="button"
-                                class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                                :class="{'border-t border-zinc-200 dark:border-zinc-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableRoles).length - 1}"
+                                class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-slate-500 dark:focus:border-slate-600 focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-600"
+                                :class="{'border-t border-stone-200 dark:border-stone-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableRoles).length - 1}"
                                 @click="addTeamMemberForm.role = role.key"
                             >
                                 <div :class="{'opacity-50': addTeamMemberForm.role && addTeamMemberForm.role != role.key}">
                                     <!-- Role Name -->
                                     <div class="flex items-center">
-                                        <div class="text-sm text-zinc-600 dark:text-zinc-400" :class="{'font-semibold': addTeamMemberForm.role == role.key}">
+                                        <div class="text-sm text-stone-600 dark:text-stone-400" :class="{'font-semibold': addTeamMemberForm.role == role.key}">
                                             {{ role.name }}
                                         </div>
 
@@ -151,7 +151,7 @@ const displayableRole = (role) => {
                                     </div>
 
                                     <!-- Role Description -->
-                                    <div class="mt-2 text-xs text-zinc-600 dark:text-zinc-400 text-left">
+                                    <div class="mt-2 text-xs text-stone-600 dark:text-stone-400 text-left">
                                         {{ role.description }}
                                     </div>
                                 </div>
@@ -189,7 +189,7 @@ const displayableRole = (role) => {
                 <template #content>
                     <div class="space-y-6">
                         <div v-for="invitation in team.team_invitations" :key="invitation.id" class="flex items-center justify-between">
-                            <div class="text-zinc-600 dark:text-zinc-400">
+                            <div class="text-stone-600 dark:text-stone-400">
                                 {{ invitation.email }}
                             </div>
 
@@ -237,13 +237,13 @@ const displayableRole = (role) => {
                                 <!-- Manage Team Member Role -->
                                 <button
                                     v-if="userPermissions.canUpdateTeamMembers && availableRoles.length"
-                                    class="ml-2 text-sm text-zinc-400 underline"
+                                    class="ml-2 text-sm text-stone-400 underline"
                                     @click="manageRole(user)"
                                 >
                                     {{ displayableRole(user.membership.role) }}
                                 </button>
 
-                                <div v-else-if="availableRoles.length" class="ml-2 text-sm text-zinc-400">
+                                <div v-else-if="availableRoles.length" class="ml-2 text-sm text-stone-400">
                                     {{ displayableRole(user.membership.role) }}
                                 </div>
 
@@ -279,19 +279,19 @@ const displayableRole = (role) => {
 
             <template #content>
                 <div v-if="managingRoleFor">
-                    <div class="relative z-0 mt-1 border border-zinc-200 dark:border-zinc-700 rounded-lg cursor-pointer">
+                    <div class="relative z-0 mt-1 border border-stone-200 dark:border-stone-700 rounded-lg cursor-pointer">
                         <button
                             v-for="(role, i) in availableRoles"
                             :key="role.key"
                             type="button"
-                            class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                            :class="{'border-t border-zinc-200 dark:border-zinc-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i !== Object.keys(availableRoles).length - 1}"
+                            class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-slate-500 dark:focus:border-slate-600 focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-600"
+                            :class="{'border-t border-stone-200 dark:border-stone-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i !== Object.keys(availableRoles).length - 1}"
                             @click="updateRoleForm.role = role.key"
                         >
                             <div :class="{'opacity-50': updateRoleForm.role && updateRoleForm.role !== role.key}">
                                 <!-- Role Name -->
                                 <div class="flex items-center">
-                                    <div class="text-sm text-zinc-600 dark:text-zinc-400" :class="{'font-semibold': updateRoleForm.role === role.key}">
+                                    <div class="text-sm text-stone-600 dark:text-stone-400" :class="{'font-semibold': updateRoleForm.role === role.key}">
                                         {{ role.name }}
                                     </div>
 
@@ -301,7 +301,7 @@ const displayableRole = (role) => {
                                 </div>
 
                                 <!-- Role Description -->
-                                <div class="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
+                                <div class="mt-2 text-xs text-stone-600 dark:text-stone-400">
                                     {{ role.description }}
                                 </div>
                             </div>

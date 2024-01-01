@@ -28,7 +28,7 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
-        <div class="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+        <div class="mb-4 text-sm text-stone-600 dark:text-stone-400">
             Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
         </div>
 

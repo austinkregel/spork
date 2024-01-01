@@ -19,13 +19,13 @@ const menu = ref([]);
 <template>
     <AppLayout title="Dashboard">
         <template #header>
-            <h2 class="font-semibold text-xl text-zinc-800 dark:text-zinc-200 leading-tight">
+            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
                 Menu Manager
             </h2>
         </template>
         <div class="py-12 h-full">
             <div
-                class="relative sm:flex dark:text-white sm:justify-center sm:items-center h-full bg-dots-darker bg-center bg-zinc-100 dark:bg-dots-lighter dark:bg-zinc-900 selection:bg-red-500 selection:text-white">
+                class="relative sm:flex dark:text-white sm:justify-center sm:items-center h-full bg-dots-darker bg-center bg-stone-100 dark:bg-dots-lighter dark:bg-stone-900 selection:bg-red-500 selection:text-white">
                 <div class="w-full bg-stone-800 rounded-lg">
 
                     <draggable

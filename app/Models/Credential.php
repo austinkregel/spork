@@ -4,15 +4,26 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Actions\Spork\SyncDataFromCredential;
 use App\Contracts\ModelQuery;
+use App\Events\Models\Credential\CredentialCreated;
+use App\Events\Models\Credential\CredentialCreating;
+use App\Events\Models\Credential\CredentialDeleted;
+use App\Events\Models\Credential\CredentialDeleting;
+use App\Events\Models\Credential\CredentialUpdated;
+use App\Events\Models\Credential\CredentialUpdating;
+use App\Models\Finance\Account;
+use App\Models\Traits\HasProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class Credential extends Model implements ModelQuery
+class Credential extends Model implements Crud, ModelQuery
 {
     use HasFactory;
-
-    public $guarded = [];
+    use HasProjectResource;
+    use LogsActivity;
 
     public const DIGITAL_OCEAN = 'digital-ocean';
 
@@ -45,6 +56,10 @@ class Credential extends Model implements ModelQuery
     public const TYPE_DEVELOPMENT = 'development';
 
     public const TYPE_SOURCE = 'source';
+
+    public const TYPE_FINANCE = 'finance';
+
+    public const TYPE_SSH = 'ssh';
 
     public const ALL_DOMAIN_PROVIDERS = [
         self::DIGITAL_OCEAN,
@@ -81,6 +96,8 @@ class Credential extends Model implements ModelQuery
         self::GITHUB_SOURCE,
     ];
 
+    public $guarded = [];
+
     public $hidden = [
         'api_key',
         'access_token',
@@ -90,4 +107,81 @@ class Credential extends Model implements ModelQuery
     public $casts = [
         'settings' => 'json',
     ];
+
+    public $fillable = [
+        'name',
+        'type',
+        'service',
+        'api_key',
+        'secret_key',
+        'access_token',
+        'refresh_token',
+        'settings',
+        'enabled_on',
+    ];
+
+    public $dispatchesEvents = [
+        'created' => CredentialCreated::class,
+        'creating' => CredentialCreating::class,
+        'deleting' => CredentialDeleting::class,
+        'deleted' => CredentialDeleted::class,
+        'updating' => CredentialUpdating::class,
+        'updated' => CredentialUpdated::class,
+    ];
+
+    public $actions = [
+        SyncDataFromCredential::class,
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function getPublicKey(): string
+    {
+        $publicKeyFile = $this->settings['pub_key_file'];
+
+        if (! file_exists($publicKeyFile)) {
+            file_put_contents($publicKeyFile, $this->settings['pub_key'] ?? '');
+            chmod($publicKeyFile, 0600);
+        }
+
+        return $publicKeyFile;
+    }
+
+    public function getPrivateKey(): string
+    {
+        $privateKeyFile = $this->settings['private_key_file'];
+
+        if (! file_exists($privateKeyFile)) {
+            file_put_contents($privateKeyFile, $this->settings['private_key'] ?? '');
+            chmod($privateKeyFile, 0600);
+        }
+
+        return $privateKeyFile;
+    }
+
+    public function getPasskey(): string
+    {
+        return decrypt($this->settings['pass_key'] ?? '');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'type', 'service', 'enabled_on'])
+            ->useLogName('credential')
+            ->logOnlyDirty();
+    }
+
+    public function servers()
+    {
+        return $this->hasMany(Server::class);
+    }
+
+    public function accounts()
+    {
+        return $this->hasMany(Account::class);
+    }
 }
