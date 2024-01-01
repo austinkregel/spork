@@ -36,13 +36,16 @@ class ApplyUserAutomatedTagsToTransaction
         $transaction = $event->model;
         /** @var Account $account */
         $account = $transaction->account;
-        $user = $account->credential->user;
+        $credential = $account->credential;
+
+        $user = $credential->user;
+
 
         if (empty($user)) {
             $this->logger->warning('No user found for account', [
                 'account' => $account->id,
                 'transaction' => $transaction->id,
-                'credential' => $account->credential?->id
+                'credential' => $account->credential?->user_id
             ]);
             return;
         }
@@ -65,6 +68,7 @@ class ApplyUserAutomatedTagsToTransaction
                     $conditionsMet = true;
                 }
             }
+
             if ($conditionsMet) {
                 $transaction->tags()->attach($tag);
             }

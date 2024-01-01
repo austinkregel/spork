@@ -31,7 +31,7 @@ class LinkServerTest extends TestCase
             'status' => 301,
         ]);
 
-        $request = $this->actingAs($user)->postJson(route('create-device'), [
+        $request = $this->postJson(route('create-device'), [
             'name' => 'aqua-depths',
             'threads' => 1,
             'memory' => 512,
@@ -81,7 +81,8 @@ class LinkServerTest extends TestCase
 
         $otherRequest->assertRedirect($routeUsedToLinkDevice);
 
-        $attemptToCreateDevice = $this->postJson($routeUsedToLinkDevice, [
+        $attemptToCreateDevice = $this->actingAs($user)
+            ->postJson($routeUsedToLinkDevice, [
             'name' => 'twelve-foot-ninja',
             'memory' => 512,
             'threads' => 1,

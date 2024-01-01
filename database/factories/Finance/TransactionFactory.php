@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories\Finance;
 
+use App\Models\Finance\Account;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -22,7 +23,7 @@ class TransactionFactory extends Factory
         return [
             'name' => $this->faker->name,
             'amount' => $this->faker->numberBetween(2, 100),
-            'account_id' => Str::random(32),
+            'account_id' => fn () => Account::factory()->create()->account_id,
             'date' => $this->faker->date(),
             'pending' => $this->faker->boolean,
             'category_id' => $this->faker->numberBetween(2, 1000),

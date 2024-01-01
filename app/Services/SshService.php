@@ -90,12 +90,12 @@ class SshService
     /**
      * @throws Exception
      */
-    public static function factory(string $host, User $user = null): Credential
+    public static function factory(string $host, User $user): Credential
     {
-        $credential = Credential::query()->where(array_merge([
+        $credential = $user->credentials()->where(array_merge([
             'service' => Credential::TYPE_SSH,
             'type' => Credential::TYPE_SSH,
-        ], $user ? ['user_id' => $user->id] : []))->first();
+        ]))->first();
 
         if (empty($user) && empty($credential)) {
             abort(404, 'user does ot exist');
@@ -112,11 +112,10 @@ class SshService
                 passKey: $passKey = ''// Str::random(16),
             );
 
-            return Credential::create([
+            return $user->credentials()->create([
                 'service' => Credential::TYPE_SSH,
                 'type' => Credential::TYPE_SSH,
                 'name' => $host.' ssh',
-                'user_id' => $user->id,
                 'settings' => [
                     'pub_key' => $generatorService->getPublicKey(),
                     'pub_key_file' => $publicKeyFile,

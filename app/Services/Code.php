@@ -181,6 +181,11 @@ class Code
 
             foreach (static::composerMappedClasses() as $className => $filePath) {
                 $filePath = realpath($filePath);
+
+                if ($filePath === false) {
+                    continue;
+                }
+
                 if (stripos($className, 'reflection') !== false) {
                     // The class has reflection in the name, generally speaking, I'd like to avoid those...
                     continue;

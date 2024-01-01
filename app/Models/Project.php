@@ -113,7 +113,7 @@ class Project extends Model implements Crud, ModelQuery
                     'service' => Credential::TYPE_SSH,
                     'type' => Credential::TYPE_SSH,
                     'name' => 'Forge',
-                    'user_id' => 1,
+                    'user_id' => auth()->id(),
                     'settings' => [
                         'pub_key' => $generatorService->getPublicKey(),
                         'pub_key_file' => $publicKeyFile,

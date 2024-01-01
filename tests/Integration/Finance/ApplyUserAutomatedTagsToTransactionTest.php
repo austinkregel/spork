@@ -20,7 +20,19 @@ class ApplyUserAutomatedTagsToTransactionTest extends TestCase
     use RefreshDatabase;
     public function testWeCanApplyATagFromAUserBasedOnCreatedTransactions()
     {
-        $user = User::factory()->createQuietly();
+        User::factory()->createQuietly([
+            'id'=> 1,
+            'name' => 'Fake User'
+        ]);
+        $user = User::factory()->createQuietly([
+            'name' => 'Test user',
+            'id'=> 458924,
+        ]);
+        User::factory()->createQuietly([
+            'id'=> 2,
+            'name' => 'Fake User 2'
+        ]);
+
         /** @var Tag $tag */
         $tag = $user->tags()->create([
             'name' => 'Test Tag',
@@ -32,37 +44,49 @@ class ApplyUserAutomatedTagsToTransactionTest extends TestCase
             'comparator' => 'LIKE',
             'value' => 'Bar',
         ]);
-
-        $credential = Credential::factory()->create([
+        Credential::factory()->create([
             'user_id' => $user->id,
         ]);
 
-        $account = Account::factory()->create([
+        $credential = Credential::factory()->create([
+            'user_id' => $user->id,
+            'type' => 'finance',
+        ]);
+        Credential::factory()->create([
+            'user_id' => $user->id,
+        ]);
+        Account::factory()->create([
             'credential_id' => $credential->id,
         ]);
-
+        $account = Account::factory()->create([
+            'credential_id' => $credential->id,
+            'account_id' => 'my_account_id',
+        ]);
+        Account::factory()->create([
+            'credential_id' => $credential->id,
+        ]);
+        Transaction::factory()->createQuietly([
+            'account_id' => 'my_account_id',
+            'name' => 'Doo do a dollup'
+        ]);
         $transaction = Transaction::factory()->createQuietly([
-            'account_id' => $account->account_id,
+            'account_id' => 'my_account_id',
             'name' => 'Duffys Bar and Grille'
         ]);
-
-        $transaction->load('tags');
-        $user->load('tags');
-
-        $this->assertEmpty($transaction->tags);
-        $this->assertNotEmpty($user->tags);
+        Transaction::factory()->createQuietly([
+            'account_id' => 'my_account_id',
+            'name' => 'Daisys Flowers'
+        ]);
 
         $logger = mock(LoggerInterface::class);
         $listener = new ApplyUserAutomatedTagsToTransaction($logger);
 
-        $listener->handle(new TransactionCreated($transaction));
-        $transaction->refresh();
-        $transaction->load('tags');
-        $user->load('tags');
-        $transaction->refresh();
-        $user->refresh();
 
-        $this->assertNotEmpty($transaction->tags->toArray());
+        $listener->handle(new TransactionCreated($transaction));
+        $transaction->load('tags');
+        $transaction->refresh();
+
         $this->assertNotEmpty($user->tags->toArray());
+        $this->assertNotEmpty($transaction->tags->toArray());
     }
 }

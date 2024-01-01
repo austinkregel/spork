@@ -133,14 +133,6 @@ class Credential extends Model implements Crud, ModelQuery
         SyncDataFromCredential::class,
     ];
 
-    public static function booted()
-    {
-        parent::booted();
-        static::creating(function ($credential) {
-            $credential->user_id = auth()->id() ?? 1;
-        });
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
