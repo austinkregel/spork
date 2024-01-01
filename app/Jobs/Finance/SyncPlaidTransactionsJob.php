@@ -42,7 +42,6 @@ class SyncPlaidTransactionsJob implements ShouldQueue
         $accounts = $transactionsResponse->get('accounts');
 
         foreach ($accounts as $account) {
-
             /** @var Account $localAccount */
             $localAccount = $this->accessToken->accounts()->firstOrCreate([
                 'account_id' => $account->account_id,
