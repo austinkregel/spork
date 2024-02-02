@@ -29,7 +29,9 @@ class TransactionFactory extends Factory
             'category_id' => $this->faker->numberBetween(2, 1000),
             'transaction_id' => Str::random(32),
             'transaction_type' => 'depository',
-            'pending_transaction_id' => null,
+            'personal_finance_category' => 'GENERAL_MERCHANDISE',
+            'personal_finance_category_detailed' => 'GENERAL_MERCHANDISE_SUPERSTORES',
+            "personal_finance_icon" => "https://plaid-category-icons.plaid.com/PFC_GENERAL_MERCHANDISE.png",            'seller_icon' => '',
             'data' => '[]',
         ];
     }

@@ -189,8 +189,11 @@ Route::group(['prefix' => '-', 'middleware' => [
     });
     Route::get('/inbox', function () {
         return Inertia::render('Postal/Inbox', [
-            'threads' => (new \App\Services\ImapService)->findAllMailboxes(),
-            'messages' => (new \App\Services\ImapService)->findAllFromDate('INBOX', now()->subDay()),
+            'messages' => \App\Models\Message::query()
+                ->with('from', 'to')
+                ->where('type', 'email')
+                ->orderByDesc('originated_at')
+                ->paginate(),
         ]);
     });
     Route::get('/inbox/{number}', function ($messageNumber) {

@@ -15,64 +15,65 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'subscriptions',
             'type' => 'automatic',
+            'must_all_conditions_pass' => false,
             'conditions' => [
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'hulu',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'disney',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'HBO',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'twitch',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'github',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'plex',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'protonmail',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'youtube',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'Subscription',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'Discord',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'netflix',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'WASABI TECHNOLOGIES',
                 ],
@@ -82,6 +83,7 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'games',
             'type' => 'automatic',
+            'must_all_conditions_pass' => false,
             'conditions' => [
                 [
                     'parameter' => 'transaction.name',
@@ -109,7 +111,7 @@ class CreateDefaultAutomatedTags
                     'value' => 'gamestop',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'Video Games',
                 ],
@@ -123,6 +125,7 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'bills',
             'type' => 'automatic',
+            'must_all_conditions_pass' => false,
             'conditions' => [
                 [
                     'parameter' => 'tag.name',
@@ -131,22 +134,22 @@ class CreateDefaultAutomatedTags
                     'value' => 'utilities',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'Loans and Mortgages',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_EQUALS,
                     'value' => 'Billpay',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_EQUALS,
                     'value' => 'USAA P&C INT AUTOPAY',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_EQUALS,
                     'value' => 'Car Dealers and Leasing',
                 ],
@@ -155,29 +158,30 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'utilities',
             'type' => 'automatic',
+            'must_all_conditions_pass' => false,
             'conditions' => [
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_EQUALS,
                     'value' => 'Cable',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_EQUALS,
                     'value' => 'Telecommunication Services',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_EQUALS,
                     'value' => 'Utilities',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_EQUALS,
                     'value' => 'Sanitary and Waste Management',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_EQUALS,
                     // This is for people who get their power/water from the city (like those in petoskey)
                     'value' => 'Government Departments and Agencies',
@@ -187,14 +191,15 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'fast food/restaurants',
             'type' => 'automatic',
+            'must_all_conditions_pass' => false,
             'conditions' => [
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'Restaurants',
                 ],
                 [
-                    'parameter' => 'category.name',
+                    'parameter' => 'transaction.category.name',
                     'comparator' => Condition::COMPARATOR_EQUALS,
                     'value' => 'Fast Food',
                 ],
@@ -203,9 +208,10 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'fees',
             'type' => 'automatic',
+            'must_all_conditions_pass' => true,
             'conditions' => [
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'fee',
                 ],
@@ -214,9 +220,10 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'via Privacy.com',
             'type' => 'automatic',
+            'must_all_conditions_pass' => true,
             'conditions' => [
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_STARTS_WITH,
                     'value' => 'PWP*',
                 ],
@@ -225,9 +232,10 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'transfer',
             'type' => 'automatic',
+            'must_all_conditions_pass' => true,
             'conditions' => [
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'transfer',
                 ],
@@ -236,19 +244,20 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'credit/income',
             'type' => 'automatic',
+            'must_all_conditions_pass' => true,
             'conditions' => [
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_NOT_LIKE,
                     'value' => 'transfer',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_NOT_LIKE,
                     'value' => 'fee',
                 ],
                 [
-                    'parameter' => 'amount',
+                    'parameter' => 'transaction.amount',
                     'comparator' => Condition::COMPARATOR_LESS_THAN,
                     'value' => 0,
                 ],
@@ -257,19 +266,20 @@ class CreateDefaultAutomatedTags
         [
             'name' => 'debit/expense',
             'type' => 'automatic',
+            'must_all_conditions_pass' => true,
             'conditions' => [
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_NOT_LIKE,
                     'value' => 'transfer',
                 ],
                 [
-                    'parameter' => 'name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_NOT_LIKE,
                     'value' => 'fee',
                 ],
                 [
-                    'parameter' => 'amount',
+                    'parameter' => 'transaction.amount',
                     'comparator' => Condition::COMPARATOR_GREATER_THAN,
                     'value' => 0,
                 ],

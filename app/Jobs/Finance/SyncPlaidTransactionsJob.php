@@ -14,32 +14,21 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Psr\Log\LoggerInterface;
 
 class SyncPlaidTransactionsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $accessToken;
-
-    private $startDate;
-
-    private $endDate;
-
-    protected $shouldSendAlerts;
-
-    public function __construct(Credential $access, Carbon $startDate, Carbon $endDate, ?bool $shouldSendAlerts = true)
-    {
-        $this->accessToken = $access;
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
-        $this->shouldSendAlerts = $shouldSendAlerts;
+    public function __construct(
+        protected Credential $accessToken,
+        protected ?bool $shouldSendAlerts = true
+    ) {
     }
 
     public function handle(PlaidServiceContract $plaid): void
     {
-        $transactionsResponse = $plaid->getTransactions($this->accessToken->api_key, $this->startDate, $this->endDate);
-
-        $accounts = $transactionsResponse->get('accounts');
+        $accounts = $plaid->getAccounts($this->accessToken->api_key)['accounts'];
 
         foreach ($accounts as $account) {
             /** @var Account $localAccount */
@@ -59,78 +48,95 @@ class SyncPlaidTransactionsJob implements ShouldQueue
             }
         }
 
-        $transactions = $transactionsResponse->get('transactions');
+        do {
+            $transactionsResponse = $plaid->syncTransactions($this->accessToken->api_key, $this->accessToken->settings['cursor'] ?? null);
 
-        foreach ($transactions as $transaction) {
-            $localTransactions = Transaction::where(function ($query) use ($transaction): void {
-                $query->where('transaction_id', $transaction->transaction_id);
-
-                /**
-                 * Due to how Plaid handles pending transactions, we need to delete the transaction with a pending transaction id,
-                 * and then create a new transaction
-                 *
-                 * @see https://plaid.com/docs/transactions/transactions-data/#reconciling-transactions
-                 */
-                if ($transaction->pending_transaction_id) {
-                    $query->orWhere('transaction_id', $transaction->pending_transaction_id);
-                }
-            })->get();
-
-            $localTransactions->map(function ($localTransaction) use ($transaction): void {
-                if ($transaction->pending_transaction_id === $localTransaction->transaction_id) {
-                    $localTransaction->delete();
-                    $localTransaction = null;
-                }
-
-                if (empty($localTransaction)) {
-                    $localTransaction = $this->createLocalTransaction($transaction);
-                } else {
-                    $localTransaction->update([
-                        'account_id' => $transaction->account_id,
-                        'amount' => $transaction->amount,
-                        'category_id' => $transaction->category_id,
-                        'date' => Carbon::parse($transaction->date),
-                        'name' => $transaction->name,
-                        'pending' => $transaction->pending,
-                        'transaction_id' => $transaction->transaction_id,
-                        'transaction_type' => $transaction->transaction_type,
-                        'pending_transaction_id' => $transaction->pending_transaction_id,
-                    ]);
-                }
-
-                $this->syncTransactions($transaction, $localTransaction);
-            });
-
-            if ($localTransactions->isEmpty()) {
-                $this->createLocalTransaction($transaction);
+            foreach ($transactionsResponse['added'] as $transaction) {
+                $this->updateLocalTransaction($transaction);
             }
-        }
+
+            foreach ($transactionsResponse['modified'] as $transaction) {
+                $this->updateLocalTransaction($transaction);
+            }
+
+            foreach ($transactionsResponse['removed'] as $transaction) {
+                Transaction::query()->firstWhere('transaction_id', $transaction->transaction_id)?->delete();
+            }
+            $this->accessToken->settings = array_merge($this->accessToken->settings, [
+                'cursor' => $transactionsResponse['next_cursor'],
+            ]);
+            $this->accessToken->save();
+
+        } while ($transactionsResponse['has_more'] ?? false);
     }
 
-    protected function syncTransactions($transaction, Transaction $localTransaction): void
+    protected function syncTags($transaction, Transaction $localTransaction): void
     {
-        $categoriesToSync = [];
         $categories = $transaction->category ?? [];
 
         $localTransaction->attachTags($categories, 'finance');
+
+        $counterParties = $transaction->countyparties ?? [];
+
+        foreach ($counterParties as $party) {
+            $localTransaction->attachTag($party->name, $party->type);
+        }
     }
 
     protected function createLocalTransaction($transaction)
     {
-        $localTransaction = Transaction::firstOrCreate([
-            'transaction_id' => $transaction->transaction_id,
-        ], [
+        $localTransaction = Transaction::create([
             'account_id' => $transaction->account_id,
             'amount' => $transaction->amount,
             'category_id' => $transaction->category_id,
-            'date' => Carbon::parse($transaction->date),
+            'date' => Carbon::parse($transaction->authorized_date ?? $transaction->date),
             'name' => $transaction->name,
             'pending' => $transaction->pending,
             'transaction_id' => $transaction->transaction_id,
-            'transaction_type' => $transaction->transaction_type,
-            'pending_transaction_id' => $transaction->pending_transaction_id,
-        ]);
+            'transaction_type' => $transaction->payment_channel,
 
+            'personal_finance_category' => $transaction->personal_finance_category?->primary,
+            'personal_finance_category_detailed' => $transaction->personal_finance_category?->detailed,
+            'personal_finance_icon' => $transaction->personal_finance_category_icon_url,
+
+            'seller_icon' => $transaction->logo_url,
+
+            'data' => $transaction,
+        ]);
+        $this->syncTags($transaction, $localTransaction);
         return $localTransaction;
+    }
+
+    protected function updateLocalTransaction($transaction)
+    {
+        $localTransaction = Transaction::query()->firstWhere('transaction_id', $transaction->transaction_id);
+
+        if (empty($localTransaction)) {
+            $localTransaction = Transaction::query()->firstWhere('transaction_id', $transaction->pending_transaction_id);
+        }
+
+        if (empty($localTransaction)) {
+            $localTransaction = $this->createLocalTransaction($transaction);
+        }
+
+        $localTransaction->update([
+            'account_id' => $transaction->account_id,
+            'amount' => $transaction->amount,
+            'category_id' => $transaction->category_id,
+            'date' => Carbon::parse($transaction->authorized_date ?? $transaction->date),
+            'name' => $transaction->name,
+            'pending' => $transaction->pending,
+            'transaction_id' => $transaction->transaction_id,
+            'transaction_type' => $transaction->payment_channel,
+
+            'personal_finance_category' => $transaction->personal_finance_category?->primary,
+            'personal_finance_category_detailed' => $transaction->personal_finance_category?->detailed,
+            'personal_finance_icon' => $transaction->personal_finance_category_icon_url,
+
+            'seller_icon' => $transaction->logo_url,
+
+            'data' => $transaction,
+        ]);
+        $this->syncTags($transaction, $localTransaction);
     }
 }

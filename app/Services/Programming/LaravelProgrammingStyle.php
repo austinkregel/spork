@@ -34,7 +34,7 @@ class LaravelProgrammingStyle extends Code
             // When $eventName is found, on the following line insert $listener with a trailing comma.
 
             $lineWithEvent = null;
-            $content = explode("\n", $literal);
+            $content = explode("\n", (string) $literal);
 
             if (count($content) <= 2) {
                 throw new \DomainException('This EventServiceProvider needs to have at least 3 lines for the $listen');

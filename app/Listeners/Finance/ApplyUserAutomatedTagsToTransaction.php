@@ -62,7 +62,10 @@ class ApplyUserAutomatedTagsToTransaction
                 /** @var AbstractLogicalOperator $operatorInstance */
                 $operatorInstance = new $operator;
 
-                $value = Arr::get(compact('transaction'), $condition->parameter);
+                $value = Arr::get([
+                    'transaction' => $transaction,
+
+                ], $condition->parameter);
 
                 if ($operatorInstance->compute($condition->value, $value)) {
                     $conditionsMet = true;

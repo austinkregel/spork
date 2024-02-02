@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\ConditionalLogic;
+namespace Tests\Integration\ConditionalLogic;
 
 use App\Models\User;
 use App\Services\ConditionService;
@@ -80,4 +80,6 @@ class ConditionalServiceTest extends TestCase
             8 => 'Settings',
         ], array_map(fn ($item) => $item['name'], $items));
     }
+
+
 }

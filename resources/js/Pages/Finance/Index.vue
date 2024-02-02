@@ -29,7 +29,7 @@ const transactionHeaders = [
     },
     {
         name: 'Date',
-        accessor: (value) => value?.date ? dayjs(value.date) : null
+        accessor: (value) => value?.date ? dayjs(value.date).format("MMM DD, YYYY") : null
     },
     {
         name : 'Tags',

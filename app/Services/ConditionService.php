@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Contracts\Conditionable;
 use App\Models\Condition;
 use App\Models\Navigation;
+use App\Models\Tag;
 use App\Services\Condition\ContainsValueOperator;
 use App\Services\Condition\ContainsValueStrictOperator;
 use App\Services\Condition\DoesntContainValueOperator;
@@ -50,7 +51,7 @@ class ConditionService
     {
         // So we want to filter out any nav items
         $navItems = Navigation::query()
-            ->with('conditions')
+            ->with('conditions', 'children')
             ->where('authentication_required', auth()->check())
             ->whereNull('parent_id')
             ->orderBy('order')
@@ -72,17 +73,30 @@ class ConditionService
             return true;
         }
 
-        return $item->conditions->filter(function (Condition $condition) {
+        $returnedValue = true;
+        /** @var Tag $condition */
+        foreach ($item->conditions as $condition) {
             $comparator = static::AVAILABLE_CONDITIONS[$condition->comparator];
             /** @var ContainsValueOperator $instance */
             $instance = new $comparator;
 
-            return $instance->compute($this->processParameter($condition->parameter), $condition->value);
-        })->count() === $item->conditions->count();
+            $passesCondition = $instance->compute($this->processParameter($condition->parameter), $condition->value);
+
+            if ($passesCondition && !$item->must_all_conditions_pass) {
+                return true;
+            }
+
+            if (!$passesCondition) {
+                $returnedValue = false;
+            }
+        }
+
+        return $returnedValue;
     }
 
     protected function processParameter(string $parameter)
     {
+        // This might be some thing like config:app.env to return a config value
         if (str_contains($parameter, ':')) {
             [$primaryKey, $field] = explode(':', $parameter);
 

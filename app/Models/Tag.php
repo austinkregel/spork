@@ -18,6 +18,9 @@ use App\Models\Finance\Transaction;
 use App\Models\Traits\HasConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+* @property bool $must_all_conditions_pass
+ */
 class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
 {
     // Tags with conditions will essentially only be applied if the conditions pass.

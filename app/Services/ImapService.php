@@ -18,7 +18,13 @@ class ImapService
             env('IMAP_USERNAME'),
             env('IMAP_PASSWORD')
         ), $this->buildMailboxString(), '*'))
-            ->tap(fn () => imap_close($inbox));
+            ->tap(fn () => imap_close($inbox))
+            ->map(fn ($mailbox) => Str::of($mailbox)
+                ->replace('{proton-bridge:143/imap/notls}', '')
+                ->toString()
+            )
+            ->filter(fn ($mailbox) => !str_starts_with($mailbox, 'Labels'))
+            ->values();
     }
 
     public function findAllFromDate(string $mailbox, Carbon $date): Collection
@@ -47,6 +53,11 @@ class ImapService
                     Carbon::parse($headers['X-Pm-Date']);
                 } catch (\Throwable $e) {
                     dd($headers);
+                }
+
+                if (empty($headers['To'])) {
+                    // ew
+                    $headers['To'] = $headers['Delivered-To'];
                 }
 
                 return [
@@ -97,6 +108,11 @@ class ImapService
         $rfcHeaders = imap_rfc822_parse_headers($message->headersRaw);
 
         $body = base64_encode(empty($message->textHtml) ? $message->textPlain : $message->textHtml);
+
+        if (empty($headers['To'])) {
+            // ew
+            $headers['To'] = $headers['Delivered-To'];
+        }
 
         return [
             'id' => $messageNumber,
