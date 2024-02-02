@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Integration\Listeners;
 
-use App\Models\Condition;
 use App\Events\Models\Transaction\TransactionCreated;
 use App\Listeners\Finance\ApplyUserAutomatedTagsToTransaction;
+use App\Models\Condition;
 use App\Models\Finance\Transaction;
 use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,7 +22,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         parent::setUp();
         $this->mockLogger = mock(LoggerInterface::class);
     }
-    
+
     public function testHandleSuccess(): void
     {
         /** @var Transaction $transaction */

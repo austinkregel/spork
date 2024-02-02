@@ -23,7 +23,7 @@ class ImapService
                 ->replace('{proton-bridge:143/imap/notls}', '')
                 ->toString()
             )
-            ->filter(fn ($mailbox) => !str_starts_with($mailbox, 'Labels'))
+            ->filter(fn ($mailbox) => ! str_starts_with($mailbox, 'Labels'))
             ->values();
     }
 

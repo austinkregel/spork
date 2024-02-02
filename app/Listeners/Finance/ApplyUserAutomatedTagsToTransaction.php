@@ -1,16 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Listeners\Finance;
 
 use App\Events\Models\Transaction\TransactionCreated;
 use App\Models\Finance\Account;
-use App\Models\Finance\Transaction;
-use App\Models\User;
 use App\Services\Condition\AbstractLogicalOperator;
 use App\Services\ConditionService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
 
@@ -21,8 +18,7 @@ class ApplyUserAutomatedTagsToTransaction
      */
     public function __construct(
         protected LoggerInterface $logger
-    )
-    {
+    ) {
         //
     }
 
@@ -40,13 +36,13 @@ class ApplyUserAutomatedTagsToTransaction
 
         $user = $credential->user;
 
-
         if (empty($user)) {
             $this->logger->warning('No user found for account', [
                 'account' => $account->id,
                 'transaction' => $transaction->id,
-                'credential' => $account->credential?->user_id
+                'credential' => $account->credential?->user_id,
             ]);
+
             return;
         }
 

@@ -82,11 +82,11 @@ class ConditionService
 
             $passesCondition = $instance->compute($this->processParameter($condition->parameter), $condition->value);
 
-            if ($passesCondition && !$item->must_all_conditions_pass) {
+            if ($passesCondition && ! $item->must_all_conditions_pass) {
                 return true;
             }
 
-            if (!$passesCondition) {
+            if (! $passesCondition) {
                 $returnedValue = false;
             }
         }

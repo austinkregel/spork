@@ -31,7 +31,7 @@ class TransactionFactory extends Factory
             'transaction_type' => 'depository',
             'personal_finance_category' => 'GENERAL_MERCHANDISE',
             'personal_finance_category_detailed' => 'GENERAL_MERCHANDISE_SUPERSTORES',
-            "personal_finance_icon" => "https://plaid-category-icons.plaid.com/PFC_GENERAL_MERCHANDISE.png",            'seller_icon' => '',
+            'personal_finance_icon' => 'https://plaid-category-icons.plaid.com/PFC_GENERAL_MERCHANDISE.png',            'seller_icon' => '',
             'data' => '[]',
         ];
     }

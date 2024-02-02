@@ -40,6 +40,7 @@
         "spatie/laravel-ignition": "^2.2",
         "spatie/laravel-query-builder": "^5.2",
         "spatie/laravel-tags": "^4.4",
+        "staudenmeir/eloquent-json-relations": "^1.1",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {

@@ -14,7 +14,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Psr\Log\LoggerInterface;
 
 class SyncPlaidTransactionsJob implements ShouldQueue
 {
@@ -104,6 +103,7 @@ class SyncPlaidTransactionsJob implements ShouldQueue
             'data' => $transaction,
         ]);
         $this->syncTags($transaction, $localTransaction);
+
         return $localTransaction;
     }
 

@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Weather;
 
 use App\Contracts\Services\GeocodingServiceContract;
 use App\Contracts\Services\WeatherServiceContract;
-use App\Forecast;
 
 class WeatherGovApiService implements WeatherServiceContract
 {
@@ -13,10 +13,10 @@ class WeatherGovApiService implements WeatherServiceContract
         protected GeocodingServiceContract $geocodingService
     ) {
     }
+
     public function query(string $address): array
     {
         $latLang = $this->geocodingService->geocode($address);
-
 
     }
 }

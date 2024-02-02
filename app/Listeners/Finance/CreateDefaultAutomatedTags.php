@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners\Finance;
 
 use App\Events\Models\User\UserCreated;
 use App\Models\Condition;
 use App\Models\Tag;
 use App\Models\User;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class CreateDefaultAutomatedTags
 {

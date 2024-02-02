@@ -80,6 +80,4 @@ class ConditionalServiceTest extends TestCase
             8 => 'Settings',
         ], array_map(fn ($item) => $item['name'], $items));
     }
-
-
 }

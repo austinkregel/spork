@@ -19,7 +19,7 @@ use App\Models\Traits\HasConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
-* @property bool $must_all_conditions_pass
+ * @property bool $must_all_conditions_pass
  */
 class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
 {

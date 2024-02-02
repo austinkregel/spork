@@ -30,11 +30,11 @@ class User extends Authenticatable implements ModelQuery
     use HasFactory;
     use HasProfilePhoto;
     use HasRoles;
+    use HasTags;
     use HasTeams;
     use LogsActivity;
     use Notifiable;
     use TwoFactorAuthenticatable;
-    use HasTags;
 
     /**
      * The attributes that are mass assignable.

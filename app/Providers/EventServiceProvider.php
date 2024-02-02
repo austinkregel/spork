@@ -55,7 +55,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         Events\Models\Transaction\TransactionCreated::class => [
             Listeners\Finance\ApplyUserAutomatedTagsToTransaction::class,
-        ]
+        ],
     ];
 
     /**

@@ -162,7 +162,7 @@ Route::group(['prefix' => '-', 'middleware' => [
                 'domains',
                 'people',
             ])
-            ->orderBy('type')
+                ->orderBy('type')
                 ->paginate(
                     request('limit', 30),
                     ['*'],

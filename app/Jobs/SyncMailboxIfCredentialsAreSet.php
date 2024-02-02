@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Models\Message;
@@ -7,8 +9,6 @@ use App\Models\Person;
 use App\Services\ImapService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Console\OutputStyle;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -21,8 +21,7 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
     public function __construct(
         protected ?Person $me = null,
         protected ?Carbon $since = null,
-    )
-    {
+    ) {
         $this->me = Person::first();
         $this->since = now()->subDay();
     }
@@ -32,19 +31,19 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
         // The goal of this job is to use the imap service if we have credentials
         $imapHost = env('IMAP_HOST');
         $imapUser = env('IMAP_USERNAME');
-        if (!isset($imapUser) || !isset($imapHost)) {
+        if (! isset($imapUser) || ! isset($imapHost)) {
             // imap not set
             return;
         }
 
         $imapService = new ImapService();
 
-        info("Imap service seems to have credentials, trying to access inbox");
+        info('Imap service seems to have credentials, trying to access inbox');
         $start = now();
         $messages = $imapService->findAllFromDate('INBOX', $this->since);
         $end = now();
 
-        info('Found '. count($messages). ' messages in '. $start->diffInSeconds($end). ' seconds');
+        info('Found '.count($messages).' messages in '.$start->diffInSeconds($end).' seconds');
 
         foreach ($messages as $i => $message) {
             $trackedMessage = Message::query()->firstWhere([
@@ -56,8 +55,8 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
                 $body = $imapService->findMessage($message['id']);
                 $trackedMessage = Message::create([
                     'from_person' => $this->getPersonFromEmail($message),
-                    'from_email' => (empty($message['from']['email'])? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
-                    'to_email' => (empty($message['to']['email'])? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
+                    'from_email' => (empty($message['from']['email']) ? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
+                    'to_email' => (empty($message['to']['email']) ? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
                     'type' => 'email',
                     'event_id' => $message['id'],
                     'originated_at' => $message['date'],
@@ -76,14 +75,14 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
                     'is_decrypted' => true,
                     'message' => $body['body'],
                     'html_message' => $body['view'],
-                    'from_email' => (empty($message['from']['email'])? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
-                    'to_email' => (empty($message['to']['email'])? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
+                    'from_email' => (empty($message['from']['email']) ? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
+                    'to_email' => (empty($message['to']['email']) ? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
                     'subject' => $body['subject'],
                     'seen' => $body['seen'],
                     'spam' => $body['spam'],
                     'answered' => $body['answered'],
                 ])->map(function ($value, $key) use ($trackedMessage) {
-                    if ($trackedMessage->$key !== $value) {
+                    if ($value !== $trackedMessage->$key) {
                         $trackedMessage->$key = $value;
                     }
                 });
@@ -95,7 +94,7 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
                     'html_message',
                     'seen',
                     'spam',
-                    'answered'
+                    'answered',
                 ])) {
                     $this->getPersonToEmail($message);
                     $this->getPersonFromEmail($message);
@@ -103,7 +102,7 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
                 }
             }
 
-            info('Processed ' . $i.'/'.count($messages));
+            info('Processed '.$i.'/'.count($messages));
         }
     }
 
@@ -114,7 +113,8 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
 
         if (empty($fromEmail)) {
             dd('no email found, where should we get an email', $message);
-            return null;
+
+            return;
         }
 
         $person = Person::whereJsonContains('emails', $fromEmail)
@@ -126,30 +126,32 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
         if (empty($person)) {
             $person = Person::create([
                 'name' => $fromName,
-                'emails' => [$fromEmail]
+                'emails' => [$fromEmail],
             ]);
         }
-        $emails = array_values(array_unique(array_filter(array_merge($person->emails, [$message['from']['email']]), fn ($val) => !empty($val))));
+        $emails = array_values(array_unique(array_filter(array_merge($person->emails, [$message['from']['email']]), fn ($val) => ! empty($val))));
 
-        if (!empty(array_diff($person->emails, $emails)) || !empty(array_diff($emails, $person->emails))) {
+        if (! empty(array_diff($person->emails, $emails)) || ! empty(array_diff($emails, $person->emails))) {
             $person->update(compact('emails'));
         }
 
         return $person->id;
     }
+
     protected function getPersonToEmail(array $message)
     {
         $fromName = $message['to']['name'] ?? $message['addressed-to']['name'] ?? $message['to']['email'];
-        $fromEmail = (empty($message['to']['email'])? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null;
+        $fromEmail = (empty($message['to']['email']) ? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null;
 
         if (empty($fromEmail)) {
             dd('no email found, where should we get an email', $message);
-            return null;
+
+            return;
         }
 
-        $emails = array_values(array_unique(array_filter(array_merge($this->me->emails, [$fromEmail]), fn ($val) => !empty($val))));
+        $emails = array_values(array_unique(array_filter(array_merge($this->me->emails, [$fromEmail]), fn ($val) => ! empty($val))));
 
-        if (!empty(array_diff($this->me->emails, $emails)) || !empty(array_diff($emails, $this->me->emails))) {
+        if (! empty(array_diff($this->me->emails, $emails)) || ! empty(array_diff($emails, $this->me->emails))) {
             $this->me->update(compact('emails'));
         }
 

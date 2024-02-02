@@ -8,7 +8,6 @@ use App\Contracts\LogicalEvent;
 use App\Contracts\LogicalListener;
 use App\Services\Code;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Nette\InvalidArgumentException;
 use Nette\PhpGenerator\Dumper;
 use Nette\PhpGenerator\Literal;
@@ -379,13 +378,13 @@ class LaravelProgrammingStyle extends Code
             $actualListeners = [];
             /** @var \Closure $listener */
             foreach (\Illuminate\Support\Facades\Event::getListeners($instanceOfLogicalEvent) as $listener) {
-              // Laravel puts all listeners inside of a closure.
-              $listenerInformation = (new \Laravel\SerializableClosure\Support\ReflectionClosure($listener))->getUseVariables();
-              if (empty($listenerInformation['listener'])) {
-                  continue;
-              }
+                // Laravel puts all listeners inside of a closure.
+                $listenerInformation = (new \Laravel\SerializableClosure\Support\ReflectionClosure($listener))->getUseVariables();
+                if (empty($listenerInformation['listener'])) {
+                    continue;
+                }
 
-              array_push($actualListeners, $listenerInformation['listener']);
+                array_push($actualListeners, $listenerInformation['listener']);
             }
 
             $logicalEventReflection = new \ReflectionClass($instanceOfLogicalEvent);
@@ -394,11 +393,11 @@ class LaravelProgrammingStyle extends Code
             $traits = $logicalEventReflection->getTraits();
 
             $methodsProvidedByTraits = array_reduce(
-              $traits,
-              fn ($methods, \ReflectionClass $trait) => array_merge(
-                  $methods, array_map(fn (\ReflectionMethod $m) => $m->getName(), $trait->getMethods())
-              ),
-              []
+                $traits,
+                fn ($methods, \ReflectionClass $trait) => array_merge(
+                    $methods, array_map(fn (\ReflectionMethod $m) => $m->getName(), $trait->getMethods())
+                ),
+                []
             );
 
             $methodNamesOnClass = array_map(fn (\ReflectionMethod $method) => $method->getName(), $logicalEventReflection->getMethods());
@@ -408,34 +407,34 @@ class LaravelProgrammingStyle extends Code
             $netteCodeInstance = static::for($instanceOfLogicalEvent)->getPrimaryClassType();
 
             return array_merge($allClasses, [
-              $instanceOfLogicalEvent => [
-                  'listeners' => $actualListeners,
-                  'constructor' => array_map(function (\ReflectionParameter $param) use ($code) {
-                      return [
-                          $param->getName() => $code->recurseGetUnionType($param->getType()),
-                      ];
-                  }, $constructorParametersThatAreModels),
-                  'event' => $instanceOfLogicalEvent,
-                  'name' => class_basename($instanceOfLogicalEvent),
-                  'methods' => array_reduce($methodsActuallyDefinedOnOurLogicalEvent, function ($allMethods, $method) use ($netteCodeInstance) {
-                      try {
-                          $methodInstance = $netteCodeInstance->getMethod($method);
-                      } catch (InvalidArgumentException $e) {
-                          return $allMethods;
-                      }
+                $instanceOfLogicalEvent => [
+                    'listeners' => $actualListeners,
+                    'constructor' => array_map(function (\ReflectionParameter $param) use ($code) {
+                        return [
+                            $param->getName() => $code->recurseGetUnionType($param->getType()),
+                        ];
+                    }, $constructorParametersThatAreModels),
+                    'event' => $instanceOfLogicalEvent,
+                    'name' => class_basename($instanceOfLogicalEvent),
+                    'methods' => array_reduce($methodsActuallyDefinedOnOurLogicalEvent, function ($allMethods, $method) use ($netteCodeInstance) {
+                        try {
+                            $methodInstance = $netteCodeInstance->getMethod($method);
+                        } catch (InvalidArgumentException $e) {
+                            return $allMethods;
+                        }
 
-                      return array_merge($allMethods, [
-                          $method => [
-                              'parameters' => array_map(function (PromotedParameter $param) {
-                                  return trim($param->getType(), '\\');
-                              }, $methodInstance->getParameters()),
-                              'body' => $methodInstance->getBody(),
-                          ],
-                      ]);
-                  }, []),
-              ],
+                        return array_merge($allMethods, [
+                            $method => [
+                                'parameters' => array_map(function (PromotedParameter $param) {
+                                    return trim($param->getType(), '\\');
+                                }, $methodInstance->getParameters()),
+                                'body' => $methodInstance->getBody(),
+                            ],
+                        ]);
+                    }, []),
+                ],
             ]);
-            }, []));
+        }, []));
 
         return collect($allEventsReducedWithContext)
             ->sortByDesc(fn ($e) => count($e['listeners']))

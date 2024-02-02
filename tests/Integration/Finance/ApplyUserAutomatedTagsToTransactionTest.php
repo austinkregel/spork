@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Integration\Finance;
 
 use App\Events\Models\Transaction\TransactionCreated;
-use App\Events\Models\User\UserCreated;
 use App\Listeners\Finance\ApplyUserAutomatedTagsToTransaction;
 use App\Models\Credential;
 use App\Models\Finance\Account;
@@ -18,19 +18,20 @@ use Tests\TestCase;
 class ApplyUserAutomatedTagsToTransactionTest extends TestCase
 {
     use RefreshDatabase;
+
     public function testWeCanApplyATagFromAUserBasedOnCreatedTransactions()
     {
         User::factory()->createQuietly([
-            'id'=> 1,
-            'name' => 'Fake User'
+            'id' => 1,
+            'name' => 'Fake User',
         ]);
         $user = User::factory()->createQuietly([
             'name' => 'Test user',
-            'id'=> 458924,
+            'id' => 458924,
         ]);
         User::factory()->createQuietly([
-            'id'=> 2,
-            'name' => 'Fake User 2'
+            'id' => 2,
+            'name' => 'Fake User 2',
         ]);
 
         /** @var Tag $tag */
@@ -67,20 +68,19 @@ class ApplyUserAutomatedTagsToTransactionTest extends TestCase
         ]);
         Transaction::factory()->createQuietly([
             'account_id' => 'my_account_id',
-            'name' => 'Doo do a dollup'
+            'name' => 'Doo do a dollup',
         ]);
         $transaction = Transaction::factory()->createQuietly([
             'account_id' => 'my_account_id',
-            'name' => 'Duffys Bar and Grille'
+            'name' => 'Duffys Bar and Grille',
         ]);
         Transaction::factory()->createQuietly([
             'account_id' => 'my_account_id',
-            'name' => 'Daisys Flowers'
+            'name' => 'Daisys Flowers',
         ]);
 
         $logger = mock(LoggerInterface::class);
         $listener = new ApplyUserAutomatedTagsToTransaction($logger);
-
 
         $listener->handle(new TransactionCreated($transaction));
         $transaction->load('tags');

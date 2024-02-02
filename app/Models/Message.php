@@ -45,6 +45,7 @@ class Message extends Model
         'originated_at' => 'timestamp',
         'settings' => 'json',
     ];
+
     public $appends = ['is_user'];
 
     public $dispatchesEvents = [
