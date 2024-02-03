@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Contracts\Repositories\CredentialRepositoryContract;
+use App\Contracts\Services\ImapServiceContract;
+use App\Models\Credential;
 use App\Models\Message;
 use App\Models\Person;
 use App\Services\ImapService;
+use App\Services\Messaging\ImapCredentialService;
+use App\Services\Messaging\ImapFactoryService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,84 +31,86 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
         $this->since = now()->subDay();
     }
 
-    public function handle(): void
+    public function handle(CredentialRepositoryContract $credentialRepository, ImapFactoryService $imapFactory): void
     {
-        // The goal of this job is to use the imap service if we have credentials
-        $imapHost = env('IMAP_HOST');
-        $imapUser = env('IMAP_USERNAME');
-        if (! isset($imapUser) || ! isset($imapHost)) {
-            // imap not set
-            return;
-        }
+        $limit = 10;
+        $page = 1;
 
-        $imapService = new ImapService();
+        do {
+            $credentials = $credentialRepository->findAllOfType(Credential::TYPE_EMAIL, $limit, $page++);
 
-        info('Imap service seems to have credentials, trying to access inbox');
-        $start = now();
-        $messages = $imapService->findAllFromDate('INBOX', $this->since);
-        $end = now();
+            foreach ($credentials->items() as $credential) {
+                $imapService = $imapFactory->make($credential);
 
-        info('Found '.count($messages).' messages in '.$start->diffInSeconds($end).' seconds');
+                info('Imap service seems to have credentials, trying to access inbox');
+                $start = now();
+                $messages = $imapService->findAllFromDate('INBOX', $this->since);
+                $end = now();
 
-        foreach ($messages as $i => $message) {
-            $trackedMessage = Message::query()->firstWhere([
-                'type' => 'email',
-                'event_id' => $message['id'],
-            ]);
+                info('Found '.count($messages).' messages in '.$start->diffInSeconds($end).' seconds');
 
-            if (empty($trackedMessage)) {
-                $body = $imapService->findMessage($message['id']);
-                $trackedMessage = Message::create([
-                    'from_person' => $this->getPersonFromEmail($message),
-                    'from_email' => (empty($message['from']['email']) ? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
-                    'to_email' => (empty($message['to']['email']) ? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
-                    'type' => 'email',
-                    'event_id' => $message['id'],
-                    'originated_at' => $message['date'],
-                    'subject' => $body['subject'],
-                    'is_decrypted' => true,
-                    'message' => $body['body'],
-                    'html_message' => $body['view'],
-                    'seen' => $body['seen'],
-                    'spam' => $body['spam'],
-                    'answered' => $body['answered'],
-                ]);
-            } else {
-                $body = $imapService->findMessage($message['id']);
-                collect([
-                    'originated_at' => $message['date'],
-                    'is_decrypted' => true,
-                    'message' => $body['body'],
-                    'html_message' => $body['view'],
-                    'from_email' => (empty($message['from']['email']) ? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
-                    'to_email' => (empty($message['to']['email']) ? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
-                    'subject' => $body['subject'],
-                    'seen' => $body['seen'],
-                    'spam' => $body['spam'],
-                    'answered' => $body['answered'],
-                ])->map(function ($value, $key) use ($trackedMessage) {
-                    if ($value !== $trackedMessage->$key) {
-                        $trackedMessage->$key = $value;
+                foreach ($messages as $i => $message) {
+                    $trackedMessage = Message::query()->firstWhere([
+                        'type' => 'email',
+                        'event_id' => $message['id'],
+                    ]);
+
+                    if (empty($trackedMessage)) {
+                        $body = $imapService->findMessage((string) $message['id']);
+                        $trackedMessage = Message::create([
+                            'from_person' => $this->getPersonFromEmail($message),
+                            'from_email' => (empty($message['from']['email']) ? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
+                            'to_email' => (empty($message['to']['email']) ? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
+                            'type' => 'email',
+                            'event_id' => $message['id'],
+                            'originated_at' => $message['date'],
+                            'subject' => $body['subject'],
+                            'is_decrypted' => true,
+                            'message' => $body['body'],
+                            'html_message' => $body['view'],
+                            'seen' => $body['seen'],
+                            'spam' => $body['spam'],
+                            'answered' => $body['answered'],
+                        ]);
+                    } else {
+                        $body = $imapService->findMessage((string) $message['id']);
+                        collect([
+                            'originated_at' => $message['date'],
+                            'is_decrypted' => true,
+                            'message' => $body['body'],
+                            'html_message' => $body['view'],
+                            'from_email' => (empty($message['from']['email']) ? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
+                            'to_email' => (empty($message['to']['email']) ? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
+                            'subject' => $body['subject'],
+                            'seen' => $body['seen'],
+                            'spam' => $body['spam'],
+                            'answered' => $body['answered'],
+                        ])->map(function ($value, $key) use ($trackedMessage) {
+                            if ($value !== $trackedMessage->$key) {
+                                $trackedMessage->$key = $value;
+                            }
+                        });
+
+                        if ($trackedMessage->isDirty([
+                            'originated_at',
+                            'is_decrypted',
+                            'message',
+                            'html_message',
+                            'seen',
+                            'spam',
+                            'answered',
+                        ])) {
+                            $this->getPersonToEmail($message);
+                            $this->getPersonFromEmail($message);
+                            $trackedMessage->save();
+                        }
                     }
-                });
 
-                if ($trackedMessage->isDirty([
-                    'originated_at',
-                    'is_decrypted',
-                    'message',
-                    'html_message',
-                    'seen',
-                    'spam',
-                    'answered',
-                ])) {
-                    $this->getPersonToEmail($message);
-                    $this->getPersonFromEmail($message);
-                    $trackedMessage->save();
+                    info('Processed '.$i.'/'.count($messages));
                 }
             }
+        } while ($credentials->hasMorePages());
 
-            info('Processed '.$i.'/'.count($messages));
-        }
     }
 
     protected function getPersonFromEmail(array $message)

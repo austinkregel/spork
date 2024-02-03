@@ -8,6 +8,7 @@ use App\Jobs\FetchCloudflareAnalytics;
 use App\Jobs\FetchResourcesFromCredentials;
 use App\Jobs\Finance\SyncPlaidTransactionsJob;
 use App\Jobs\News\UpdateAllFeeds;
+use App\Jobs\SyncMailboxIfCredentialsAreSet;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -20,7 +21,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(UpdateAllFeeds::class)->hourly();
         $schedule->job(SyncPlaidTransactionsJob::class)->everyOddHour(1);
-        $schedule->job(SyncMailboxIfCredentialsAreSet::class)->everyFiveMinutes();
+        $schedule->job(SyncMailboxIfCredentialsAreSet::class)->everyFifteenMinutes();
         $schedule->job(FetchResourcesFromCredentials::class)->everyOddHour();
         $schedule->job(FetchCloudflareAnalytics::class)->everyFourHours();
         $schedule->command('operations:queue')->everyFiveMinutes();

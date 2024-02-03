@@ -20,8 +20,7 @@ class SyncPlaidTransactionsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        protected Credential $accessToken,
-        protected ?bool $shouldSendAlerts = true
+        protected Credential $accessToken
     ) {
     }
 

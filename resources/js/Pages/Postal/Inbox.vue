@@ -22,7 +22,7 @@
                 :class="[openMail && (item.id === openMail.id) ? 'bg-stone-400 dark:bg-zinc-950' : (item.seen ? 'bg-stone-50 dark:bg-stone-900' : 'bg-stone-200 dark:bg-stone-700')]"
             >
                 <div class="flex w-full justify-between text-left relative max-w-full overflow-hidden">
-                    <div class="text-xs text-red-100">{{ item.from.map(k => k.name).join(', ') }} </div>
+                    <div class="text-xs text-red-100">{{ item?.from?.map(k => k.name)?.join(', ') }} </div>
                     <div class="text-sm">{{ item.human_date }}</div>
                 </div>
                 <div class="w-full text-left text-sm">{{ item.subject }}</div>
@@ -42,7 +42,7 @@
                 <div class="text-2xl max-w-full">{{ openMail.subject }}</div>
                 <div class="flex flex-wrap justify-between w-full pr-4 overflow-hidden">
                     <div class="flex flex-col text-sm gap-0.5">
-                      <div class="truncate max-w-full overflow-ellipsis">From: {{ openMail.from.map(k => k.name).join(', ') }} <span class="bg-black/30 p-1 rounded-lg">{{ openMail.from_email }}</span></div>
+                      <div class="truncate max-w-full overflow-ellipsis">From: {{ openMail?.from?.map(k => k.name)?.join(', ') }} <span class="bg-black/30 p-1 rounded-lg">{{ openMail.from_email }}</span></div>
                       <div class="truncate max-w-full overflow-ellipsis">To: {{ openMail?.to.map(k => k.name).join(', ') }} <span class="bg-black/30 p-1 rounded-lg">{{ openMail.to_email }}</span></div>
                       <div class="truncate max-w-full overflow-ellipsis" v-if="openMail?.['reply-to']">Reply-To: {{ openMail['reply-to'].name }} {{ openMail['reply-to'].email }}</div>
                     </div>

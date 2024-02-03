@@ -8,10 +8,11 @@ use App\Events\Models\Transaction\TransactionCreated;
 use App\Models\Finance\Account;
 use App\Services\Condition\AbstractLogicalOperator;
 use App\Services\ConditionService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
 
-class ApplyUserAutomatedTagsToTransaction
+class ApplyUserAutomatedTagsToTransaction implements ShouldQueue
 {
     /**
      * Create the event listener.

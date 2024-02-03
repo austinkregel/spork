@@ -1,29 +1,36 @@
 <?php
-
 declare(strict_types=1);
 
-namespace App\Services;
+namespace App\Services\Messaging;
 
 use App\Contracts\Services\ImapServiceContract;
+use App\Models\Credential;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class ImapService implements ImapServiceContract
+class ImapCredentialService implements ImapServiceContract
 {
+    public function __construct(
+        protected Credential $credential
+    ) {
+    }
+
     public function findAllMailboxes(): Collection
     {
         return collect(imap_list($inbox = imap_open(
             $this->buildMailboxString(),
-            env('IMAP_USERNAME'),
-            env('IMAP_PASSWORD')
+            $this->credential->settings['username'],
+            $this->credential->settings['password']
         ), $this->buildMailboxString(), '*'))
             ->tap(fn () => imap_close($inbox))
             ->map(fn ($mailbox) => Str::of($mailbox)
-                ->replace('{proton-bridge:143/imap/notls}', '')
+                // Remove the mailbox string
+                ->replace($this->buildMailboxString(), '')
                 ->toString()
             )
+            // Don't return mailboxes explicitly marked as labels.... GOOGLE...
             ->filter(fn ($mailbox) => ! str_starts_with($mailbox, 'Labels'))
             ->values();
     }
@@ -32,8 +39,8 @@ class ImapService implements ImapServiceContract
     {
         return collect(imap_search($inbox = imap_open(
             sprintf('%s%s', $this->buildMailboxString(), $mailbox),
-            env('IMAP_USERNAME'),
-            env('IMAP_PASSWORD')
+            $this->credential->settings['username'],
+            $this->credential->settings['password'],
         ),
             sprintf('SINCE "%s"', $date->format('Y-m-d'))
         ))
@@ -61,6 +68,7 @@ class ImapService implements ImapServiceContract
                     $headers['To'] = $headers['Delivered-To'];
                 }
 
+                // Many of these headers are probably specific to me using proton mail... It may not work for everyone...
                 return [
                     'id' => imap_uid($inbox, $messageNumber),
                     'to' => $this->extractEmailAndName($headers['To']),
@@ -88,8 +96,8 @@ class ImapService implements ImapServiceContract
     {
         $mailbox = new \PhpImap\Mailbox(
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
-            env('IMAP_USERNAME'), // Username for the before configured mailbox
-            env('IMAP_PASSWORD'), // Password for the before configured username
+            $this->credential->settings['username'],
+            $this->credential->settings['password'],
             storage_path(), // Directory, where attachments will be saved (optional)
             'UTF-8', // Server encoding (optional)
             true, // Trim leading/ending whitespaces of IMAP path (optional)
@@ -138,7 +146,12 @@ class ImapService implements ImapServiceContract
 
     protected function buildMailboxString()
     {
-        return sprintf('{'.env('IMAP_HOST').':'.env('IMAP_PORT').'/imap/'.env('IMAP_ENCRYPTION', 'notls').'}');
+        return sprintf(
+            '{%s:%s/imap/%s}',
+            $this->credential->settings['host'],
+            $this->credential->settings['port'],
+            $this->credential->settings['encryption'],
+        );
     }
 
     protected function extractEmailAndName(?string $value, $headers = [])
@@ -182,8 +195,8 @@ class ImapService implements ImapServiceContract
     {
         $mailbox = new \PhpImap\Mailbox(
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
-            env('IMAP_USERNAME'), // Username for the before configured mailbox
-            env('IMAP_PASSWORD'), // Password for the before configured username
+            $this->credential->settings['username'],
+            $this->credential->settings['password'],
             storage_path(), // Directory, where attachments will be saved (optional)
             'UTF-8', // Server encoding (optional)
             true, // Trim leading/ending whitespaces of IMAP path (optional)
@@ -197,8 +210,8 @@ class ImapService implements ImapServiceContract
     {
         $mailbox = new \PhpImap\Mailbox(
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
-            env('IMAP_USERNAME'), // Username for the before configured mailbox
-            env('IMAP_PASSWORD'), // Password for the before configured username
+            $this->credential->settings['username'],
+            $this->credential->settings['password'],
             storage_path(), // Directory, where attachments will be saved (optional)
             'UTF-8', // Server encoding (optional)
             true, // Trim leading/ending whitespaces of IMAP path (optional)
