@@ -34,10 +34,6 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
 
     public function handle(ImapFactoryService $imapFactory): void
     {
-        $limit = 10;
-        $page = 1;
-
-
         $imapService = $imapFactory->make($this->credential);
 
         info('Imap service seems to have credentials, trying to access inbox');
