@@ -14,6 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class FetchResourcesFromCredentials implements ShouldQueue
 {
@@ -49,6 +50,8 @@ class FetchResourcesFromCredentials implements ShouldQueue
                 Credential::TYPE_SERVER => new FetchServersForCredential($credential),
                 Credential::TYPE_DEVELOPMENT, 'forge' => new LaravelForgeServersSyncJob($credential),
                 Credential::TYPE_FINANCE => new SyncPlaidTransactionsJob($credential, now()->subWeek(), now(), false),
+                Crtdential::TYPE_EMAIL => new
+                default => Log::error(sprintf('Found unsupported credential type for FetchResourcesFromCredentialsJob: %s', $credential->type), []),
             });
         }
     }
