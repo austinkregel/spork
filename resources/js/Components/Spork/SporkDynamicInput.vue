@@ -1,7 +1,7 @@
 <template>
     <div class="w-full flex flex-col">
         <input
-            :value="modelValue"
+            :value="modelValue.name"
             @input="$emit('update:modelValue', {
                 ...modelValue,
                 name: $event.target.value
@@ -15,9 +15,8 @@
         >
             <input
                 class="py-2 px-3 block shadow-sm sm:text-sm dark:bg-stone-600 dark:placeholder-stone-300 rounded-b-md"
-
                 :class="[type !== 'checkbox' ? 'w-full': 'bg-stone-50 border-stone-50 dark:border-stone-600 border p-1']"
-                :value="modelValue"
+                :value="modelValue.value"
                 @input="$emit('update:modelValue', {
                     ...modelValue,
                     value: $event.target.value

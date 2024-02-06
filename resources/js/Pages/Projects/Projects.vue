@@ -30,7 +30,7 @@
                         <template v-slot:data="{ data }">
                             <div class="flex flex-col">
                                 <div class="text-lg text-left">
-                                    <Link :href="'/projects/' + data.id" class="underline">
+                                    <Link :href="'/-/projects/' + data.id" class="underline">
                                         {{ data.name }}
                                     </Link>
                                 </div>

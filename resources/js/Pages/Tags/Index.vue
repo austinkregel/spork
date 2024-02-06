@@ -14,6 +14,7 @@ import {
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import SporkSelect from "@/Components/Spork/SporkSelect.vue";
+import DynamicIcon from "@/Components/DynamicIcon.vue";
 const page = usePage();
 
 const { tags } = defineProps({
@@ -199,26 +200,29 @@ const deleteCondition= () => {}
           <div class="flex gap-4 my-2 mx-6">
             <div class="flex gap-2">
               <ServerIcon class="w-6 h-6" />
-              {{ tag.servers.length }}
+              {{ tag.servers_count }}
             </div>
             <div class="flex gap-2">
               <LinkIcon class="w-6 h-6" />
-              {{ tag.domains.length }}
+              {{ tag.domains_count }}
             </div>
             <div class="flex gap-2">
               <UserIcon class="w-6 h-6" />
-              {{ tag.people.length }}
+              {{ tag.people_count }}
             </div>
             <div class="flex gap-2">
               <WalletIcon class="w-6 h-6" />
-              {{ tag.budgets.length }}
+              {{ tag.transactions_count }}
             </div>
-            <div>{{ tag.type }}</div>
+            <div class="flex gap-2">
+              <DynamicIcon icon-name="EmailIcon" class="w-6 h-6" />
+              {{ tag.messages_count }}
+            </div>
           </div>
-          <div>
+          <div class="mx-4">
             <div class="text-xs tracking-tight">
               <div v-for="condition in tag.conditions" :key="condition.id">
-                <span class="tracking-wide" :title="'transaction.' + condition.parameter" v-text="'transaction.' + condition.parameter"></span>
+                <span class="tracking-wide" :title=" condition.parameter" v-text="condition.parameter"></span>
                 {{ condition.comparator }} {{ condition.value }}
               </div>
             </div>

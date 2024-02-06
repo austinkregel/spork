@@ -9,6 +9,7 @@ import SporkInput from "@/Components/Spork/SporkInput.vue";
 import CrudView from "@/Components/Spork/CrudView.vue";
 import { buildUrl } from '@kbco/query-builder';
 import Manage from "@/Layouts/Manage.vue";
+import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 const page = usePage()
 const { title, data, description, paginator, link, apiLink, body } = defineProps({
   data: Array,
@@ -20,7 +21,10 @@ const { title, data, description, paginator, link, apiLink, body } = defineProps
   body: String,
   apiLink: String,
 })
-const form = ref({});
+const form = ref(description.fillable.map(value => ({
+  value: '',
+  name: value,
+})));
 
 const fetch = async (options) => {
   const response = await axios.get(buildUrl(apiLink, {
@@ -101,8 +105,13 @@ const possibleRelations = (data) => {
 
       <template #form>
         <div>
-          <div class="grid grid-cols-6 gap-4 mt-2">
-              {{ form }}
+          <pre>{{ description }}</pre>
+          <div class="grid grid-cols-1 gap-4 mt-2" v-for="(field, i) in form">
+              <SporkDynamicInput
+                  v-model="form[i]"
+                  :type="description.types[field.name].type ?? 'text'"
+              />
+            {{ description.types[field.name]}}
           </div>
         </div>
       </template>

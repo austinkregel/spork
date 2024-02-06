@@ -42,14 +42,8 @@
 
                         <template #form>
                             <div>
-                                <div class="flex flex-wrap">
-                                    <div class="w-full" v-for="(_, key) in form" :key="key+'-input'">
-                                        <div class="w-full"  v-if="description.fillable.includes(key)">
-                                          <label for="name" class="block text-sm font-medium">{{ key }}</label>
-                                          <spork-input v-model="form[key]" type="text" name="name" id="name" />
-                                        </div>
-                                    </div>
-                                </div>
+                              form {{ form }}
+                              <pre>{{ { description } }}</pre>
                             </div>
                         </template>
 
