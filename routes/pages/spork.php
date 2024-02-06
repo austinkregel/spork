@@ -5,10 +5,12 @@ declare(strict_types=1);
 use App\Actions\Spork\CustomAction;
 use App\Contracts\ModelQuery;
 use App\Http\Controllers;
+use App\Models\Person;
 use App\Services\Development\DescribeTableService;
 use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Symfony\Component\Finder\SplFileInfo;
@@ -101,10 +103,6 @@ Route::middleware([
     Route::post('/api/plaid/create-link-token', Controllers\Api\Plaid\CreateLinkTokenController::class);
     Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
 
-    Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
-
-    Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
-
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
 
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
@@ -134,23 +132,44 @@ Route::group(['prefix' => '-', 'middleware' => [
     config('jetstream.auth_session'),
     'verified',
 ]], function () {
-    Route::get('/', function () {
+    Route::get('/dashboard', function () {
+        $person = Person::whereJsonContains('emails', auth()->user()->email)
+            // for now, this is fine, my email base does support this idea, but I know if someone/
+            // wanted to be malicious they could take advantage of this.
+            ->first();
+
         return Inertia::render('Dashboard', [
             'project_count' => \App\Models\Project::count(),
             'server_count' => \App\Models\Server::count(),
             'domain_count' => \App\Models\Domain::count(),
             'credential_count' => \App\Models\Credential::count(),
             'user_count' => \App\Models\User::count(),
-            'activity_logs' => \Spatie\Activitylog\Models\Activity::query()
-                ->with('causer')
-                ->orderBy('created_at', 'desc')
-                ->paginate(20),
+            // Unread Messages
+            // Tasks due today
+            // Domains that expire this month, or in the last 7 days
+            // Weather at my primary address
+            'weather' => Arr::first(app(\App\Contracts\Services\WeatherServiceContract::class)->query(
+                $person->primary_address,
+            )),
+            'unread_messages' => request()->user()
+                ->messages()
+                ->count(),
+            'tasks_today' => \App\Models\Task::query()
+                ->where(function ($query) {
+                    $query->whereDate('start_date', now())
+                        ->orWhereDate('end_date', now());
+                })->count(),
+
+            'messages' => request()->user()
+                ->messages()
+                ->paginate(15, ['*'], 'messages_page'),
+
         ]);
     });
 
     Route::get('/tag-manager', function () {
         return Inertia::render('Tags/Index', [
-            'tags' => \App\Models\Tag::with([
+            'tags' => \App\Models\Tag::withCount([
                 'conditions',
                 'articles',
                 'feeds',
@@ -161,7 +180,9 @@ Route::group(['prefix' => '-', 'middleware' => [
                 'accounts',
                 'domains',
                 'people',
+                'messages' => function ($q) { $q->where('seen', false); },
             ])
+                ->with(['conditions'])
                 ->orderBy('type')
                 ->paginate(
                     request('limit', 30),
@@ -187,6 +208,16 @@ Route::group(['prefix' => '-', 'middleware' => [
         return Inertia::render('Projects/Projects', [
         ]);
     });
+    Route::get('/research', function () {
+        return Inertia::render('Research/Dashboard', [
+            'research' => \App\Models\Research::all(),
+        ]);
+    });
+    Route::get('/research/{research}', function (\App\Models\Research $research) {
+        return Inertia::render('Research/Topic', [
+            'topic' => $research,
+        ]);
+    });
     Route::get('/inbox', function () {
         return Inertia::render('Postal/Inbox', [
             'messages' => \App\Models\Message::query()
@@ -196,8 +227,10 @@ Route::group(['prefix' => '-', 'middleware' => [
                 ->paginate(),
         ]);
     });
-    Route::get('/inbox/{number}', function ($messageNumber) {
-        $message = (new \App\Services\ImapService)->findMessage($messageNumber, true);
+    Route::get('/inbox/{message}', function (\App\Models\Message $message) {
+        abort_if($message->type !== 'email', 404);
+
+        $message = (new \App\Services\ImapService)->findMessage($message->event_id, true);
         $messageBody = base64_decode($message['body']);
 
         $bodyWithTheImagesDisabledForPrivacy = str_replace(' src=', ' data-src=', $messageBody);
@@ -255,9 +288,14 @@ Route::group(['prefix' => '-', 'middleware' => [
         ]);
     });
 
+    Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
+
     Route::get('/manage', function () {
         return Inertia::render('Manage/Index', [
-            'title' => 'Manage ',
+            'title' => 'Dynamic CRUD',
+            'description' => [
+                'fillable' => []
+            ],
         ]);
     });
     Route::get('/banking', function () {
