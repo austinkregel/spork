@@ -9,6 +9,7 @@ use App\Models\Credential;
 use App\Models\Finance\Account;
 use App\Models\Finance\Transaction;
 use Carbon\Carbon;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -17,7 +18,7 @@ use Illuminate\Queue\SerializesModels;
 
 class SyncPlaidTransactionsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, Batchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         protected Credential $accessToken
@@ -26,6 +27,10 @@ class SyncPlaidTransactionsJob implements ShouldQueue
 
     public function handle(PlaidServiceContract $plaid): void
     {
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
+
         $accounts = $plaid->getAccounts($this->accessToken->api_key)['accounts'];
 
         foreach ($accounts as $account) {

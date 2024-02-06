@@ -38,12 +38,16 @@ class FetchServersForCredential implements ShouldQueue
      */
     public function handle(Dispatcher $dispatcher)
     {
+
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
         if ($this->credential->type !== Credential::TYPE_SERVER) {
             return;
         }
 
-        $dispatcher->dispatchSync(match ($this->credential->service) {
+        $this->batch()->add([match ($this->credential->service) {
             Credential::DIGITAL_OCEAN => new DigitalOceanSyncJob($this->credential, $this->user),
-        });
+        }]);
     }
 }

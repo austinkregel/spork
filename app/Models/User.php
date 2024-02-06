@@ -12,6 +12,7 @@ use App\Events\Models\User\UserDeleting;
 use App\Events\Models\User\UserUpdated;
 use App\Events\Models\User\UserUpdating;
 use App\Models\Finance\Account;
+use App\Models\Traits\HasProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -34,6 +35,7 @@ class User extends Authenticatable implements ModelQuery
     use HasTeams;
     use LogsActivity;
     use Notifiable;
+    use HasProjectResource;
     use TwoFactorAuthenticatable;
 
     /**
@@ -105,5 +107,9 @@ class User extends Authenticatable implements ModelQuery
     public function accounts()
     {
         return $this->hasManyThrough(Account::class, Credential::class);
+    }
+    public function messages()
+    {
+        return $this->hasManyThrough(Message::class, Credential::class)->orderByDesc('originated_at');
     }
 }

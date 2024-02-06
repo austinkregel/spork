@@ -6,6 +6,8 @@ namespace App\Listeners\Finance;
 
 use App\Events\Models\Transaction\TransactionCreated;
 use App\Models\Finance\Account;
+use App\Models\Finance\Transaction;
+use App\Models\Tag;
 use App\Services\Condition\AbstractLogicalOperator;
 use App\Services\ConditionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,10 +19,8 @@ class ApplyUserAutomatedTagsToTransaction implements ShouldQueue
     /**
      * Create the event listener.
      */
-    public function __construct(
-        protected LoggerInterface $logger
-    ) {
-        //
+    public function __construct()
+    {
     }
 
     /**
@@ -30,6 +30,8 @@ class ApplyUserAutomatedTagsToTransaction implements ShouldQueue
     {
         $event->model->load('account.credential.user');
         $event->model->refresh();
+
+        /** @var Transaction $transaction */
         $transaction = $event->model;
         /** @var Account $account */
         $account = $transaction->account;
@@ -38,38 +40,20 @@ class ApplyUserAutomatedTagsToTransaction implements ShouldQueue
         $user = $credential->user;
 
         if (empty($user)) {
-            $this->logger->warning('No user found for account', [
-                'account' => $account->id,
-                'transaction' => $transaction->id,
-                'credential' => $account->credential?->user_id,
-            ]);
-
             return;
         }
 
         $tags = $user->tags()->with('conditions')->where('type', 'automatic')->get();
 
-        foreach ($tags as $tag) {
-            $conditions = $tag->conditions;
-            $conditionsMet = false;
-            foreach ($conditions as $condition) {
-                /** @var AbstractLogicalOperator $operator */
-                $operator = ConditionService::AVAILABLE_CONDITIONS[$condition->comparator];
+        $conditionService = new ConditionService();
 
-                /** @var AbstractLogicalOperator $operatorInstance */
-                $operatorInstance = new $operator;
+        $tagsToApply = $tags->filter(fn (Tag $tag) => $conditionService->process($tag, [
+            'transaction' => $transaction,
+            'account' => $account,
+        ]));
 
-                $value = Arr::get([
-                    'transaction' => $transaction,
-
-                ], $condition->parameter);
-
-                if ($operatorInstance->compute($condition->value, $value)) {
-                    $conditionsMet = true;
-                }
-            }
-
-            if ($conditionsMet) {
+        foreach ($tagsToApply as $tag) {
+            if (!$transaction->tags()->where('id', $tag->id)->exists()) {
                 $transaction->tags()->attach($tag);
             }
         }

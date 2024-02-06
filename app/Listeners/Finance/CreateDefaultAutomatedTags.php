@@ -58,17 +58,17 @@ class CreateDefaultAutomatedTags
                     'value' => 'youtube',
                 ],
                 [
-                    'parameter' => 'transaction.category.name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'Subscription',
                 ],
                 [
-                    'parameter' => 'transaction.category.name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'Discord',
                 ],
                 [
-                    'parameter' => 'transaction.category.name',
+                    'parameter' => 'transaction.name',
                     'comparator' => Condition::COMPARATOR_LIKE,
                     'value' => 'netflix',
                 ],
@@ -258,7 +258,7 @@ class CreateDefaultAutomatedTags
                 ],
                 [
                     'parameter' => 'transaction.amount',
-                    'comparator' => Condition::COMPARATOR_LESS_THAN,
+                    'comparator' => Condition::COMPARATOR_GREATER_THAN,
                     'value' => 0,
                 ],
             ],
@@ -280,7 +280,7 @@ class CreateDefaultAutomatedTags
                 ],
                 [
                     'parameter' => 'transaction.amount',
-                    'comparator' => Condition::COMPARATOR_GREATER_THAN,
+                    'comparator' => Condition::COMPARATOR_LESS_THAN,
                     'value' => 0,
                 ],
             ],

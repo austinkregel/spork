@@ -8,7 +8,7 @@ use App\Models\User;
 
 class HasRoleOperator extends AbstractLogicalOperator
 {
-    public function compute(User $user, string $role): bool
+    public function compute(mixed $user, mixed $role): bool
     {
         return $user->hasRole($role);
     }

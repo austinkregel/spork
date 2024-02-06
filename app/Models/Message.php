@@ -12,15 +12,17 @@ use App\Events\Models\Message\MessageUpdated;
 use App\Events\Models\Message\MessageUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Tags\HasTags;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 /** @mixin \Eloquent */
 class Message extends Model
 {
-    use HasFactory, HasJsonRelationships;
+    use HasFactory, HasJsonRelationships, HasTags;
 
     public $fillable = [
         'from_person',
+        'to_person',
         'to_email',
         'from_email',
         'thread_id',

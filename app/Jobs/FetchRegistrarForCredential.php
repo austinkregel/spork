@@ -39,15 +39,18 @@ class FetchRegistrarForCredential implements ShouldQueue
      */
     public function handle(Dispatcher $dispatcher)
     {
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
         if ($this->credential->type !== Credential::TYPE_REGISTRAR) {
             info('Credential is not of registrar type.');
 
             return;
         }
 
-        $dispatcher->dispatchSync(match ($this->credential->service) {
+        $this->batch()->add([match ($this->credential->service) {
             Credential::NAMECHEAP => new NamecheapSyncJob($this->credential, $this->user),
             Credential::CLOUDFLARE => new CloudflareSyncJob($this->credential, $this->user),
-        });
+        }]);
     }
 }

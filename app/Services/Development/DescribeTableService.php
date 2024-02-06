@@ -7,7 +7,9 @@ namespace App\Services\Development;
 use App\Contracts\ActionInterface;
 use App\Services\ActionFilter;
 use App\Services\Code;
+use Doctrine\DBAL\Connection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -65,7 +67,20 @@ class DescribeTableService
                 ]);
         }, []);
 
-        $methodsThatReturnAClass = array_filter($returnTypes, fn (\ReflectionNamedType $type) => class_exists($type->getName()));
+        $methodsThatReturnAClass = array_filter($returnTypes, function (\ReflectionNamedType | \ReflectionUnionType $type) use ($model) {
+            if ($type instanceof \ReflectionUnionType) {
+                $allTypes = $type->getTypes();
+
+                /** @var \ReflectionNamedType $t */
+                foreach ($allTypes as $t) {
+                    if (!class_exists($t->getName())) {
+                        return false;
+                    }
+                }
+            }
+
+            return class_exists($type->getName());
+        });
         $relations = array_filter($methodsThatReturnAClass, function ($type) {
             $c = new \ReflectionClass($type->getName());
 
@@ -82,6 +97,7 @@ class DescribeTableService
 
             return false;
         });
+        $fillable = empty($model->getFillable()) ? ['name'] : $model->getFillable();
 
         //        $actions = Code::instancesOf(ActionInterface::class)->getClasses();
         //
@@ -90,11 +106,40 @@ class DescribeTableService
         return [
             'actions' => array_map(fn ($class) => (array) (new $class), $model->actions ?? []),
             'query_actions' => ActionFilter::WHITELISTED_ACTIONS,
-            'fillable' => empty($model->getFillable()) ? ['name'] : $model->getFillable(),
+            'fillable' => $fillable,
             'fields' => $fields,
             'filters' => array_map(fn ($query) => $query->Column_name, $indexes),
             'includes' => array_keys($relations),
             'sorts' => $mapField($sorts),
+            'types' => array_reduce($description, function ($allFields, $field) use ($model) {
+                $simpleType = explode('(', $field->Type, 2);
+
+                if (count($simpleType) > 1) {
+                    $possibleLimit = explode(')', $simpleType[1], 2);
+                }
+
+                return array_merge(
+                    $allFields,
+                    [
+                        $field->Field => array_merge([
+                            'type' => match ($simpleType[0]) {
+                                'bigint' => 'number',
+                                'varchar' => 'text',
+                                'longtext' => 'textarea',
+                                'datetime', 'timestamp' => 'datetime',
+
+                                default => $simpleType[0]
+                            }
+                        ], $field->Default ? [
+                            'value' => $field->Default,
+                        ] : [],
+                            isset($possibleLimit) ? [
+                                'max-length' => $possibleLimit[0]
+                            ]: [],
+                        )
+                    ]
+                );
+            }, []),
             'required' => $mapField(array_filter($description, fn ($query) => $query->Null === 'NO' && $query->Extra !== 'auto_increment')),
         ];
     }

@@ -20,9 +20,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->job(UpdateAllFeeds::class)->hourly();
-        $schedule->job(SyncPlaidTransactionsJob::class)->everyOddHour(1);
-        $schedule->job(SyncMailboxIfCredentialsAreSet::class)->everyFifteenMinutes();
-        $schedule->job(FetchResourcesFromCredentials::class)->everyOddHour();
+        $schedule->job(FetchResourcesFromCredentials::class)->hourly();
         $schedule->job(FetchCloudflareAnalytics::class)->everyFourHours();
         $schedule->command('operations:queue')->everyFiveMinutes();
     }

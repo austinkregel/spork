@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Actions\Fortify\CreateNewUser;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -28,16 +29,14 @@ class MakeUser extends Command
      */
     public function handle()
     {
-        $user = User::create([
+        $action = new CreateNewUser();
+
+        $action->create([
             'name' => $this->ask('What is your name?'),
             'email' => $this->ask('What is your email address?'),
-            'password' => bcrypt($this->ask('What password would you like to use?')),
-        ]);
-
-        $user->ownedTeams()->create([
-            'name' => config('app.name'),
-            'personal_team' => true,
-            'settings' => [],
+            'password' => $password = $this->ask('What password would you like to use?'),
+            'password_confirmation' => $password,
+            'terms' => true,
         ]);
     }
 }

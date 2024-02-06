@@ -7,9 +7,14 @@ namespace Tests\Integration\Listeners;
 use App\Events\Models\Transaction\TransactionCreated;
 use App\Listeners\Finance\ApplyUserAutomatedTagsToTransaction;
 use App\Models\Condition;
+use App\Models\Credential;
+use App\Models\Finance\Account;
 use App\Models\Finance\Transaction;
 use App\Models\Tag;
+use App\Models\User;
+use App\Services\ConditionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
@@ -17,21 +22,29 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->mockLogger = mock(LoggerInterface::class);
-    }
-
     public function testHandleSuccess(): void
     {
+        $user = User::factory()->createQuietly();
+        $credential = Credential::factory()->create([
+            'name' => 'Bank Name',
+            'type' => 'finance',
+            'user_id' => $user->id,
+        ]);
+
+        $account = Account::factory()->create([
+            'credential_id' => $credential->id,
+        ]);
+
         /** @var Transaction $transaction */
-        $transaction = Transaction::factory()->create();
-        $tag = Tag::factory()->create([
+        $transaction = Transaction::factory()->create([
+            'account_id' => $account->account_id,
+        ]);
+        $tag  = $user->tags()->create([
             'type' => 'automatic',
             'name' => 'bill',
         ]);
-        $handler = new ApplyUserAutomatedTagsToTransaction($this->mockLogger);
+
+        $handler = new ApplyUserAutomatedTagsToTransaction();
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
@@ -42,46 +55,73 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
 
     public function testHandleSuccessNotApplyBecauseTransactionIsFilteredOut(): void
     {
+        $user = User::factory()->createQuietly();
+        $credential = Credential::factory()->create([
+            'name' => 'Bank Name',
+            'type' => 'finance',
+            'user_id' => $user->id,
+        ]);
+
+        $account = Account::factory()->create([
+            'credential_id' => $credential->id,
+        ]);
+
         /** @var Transaction $transaction */
-        $transaction = Transaction::factory()->create();
+        $transaction = Transaction::factory()->create([
+            'account_id' => $account->account_id,
+        ]);
         /** @var Tag $tag */
-        $tag = Tag::factory()->create([
+        $tag = $user->tags()->create([
             'type' => 'automatic',
             'name' => 'bill',
         ]);
         $tag->conditions()->create([
             'parameter' => 'transaction.name',
             'comparator' => Condition::COMPARATOR_NOT_EQUAL,
-            'value' => $transaction->name,
+            'value' => $transaction->name
         ]);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction($this->mockLogger);
+        $handler = new ApplyUserAutomatedTagsToTransaction();
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
         $tags = $transaction->tags()->get();
-        $this->assertCount(1, $tags);
-        $this->assertSame($tag->id, $tags->first()->id);
+        $this->assertCount(0, $tags);
     }
 
     public function testHandleSuccessNotApplyBecauseTransactionIsNotGettingDoubleTagged(): void
     {
+        $user = User::factory()->createQuietly();
+        $credential = Credential::factory()->create([
+            'name' => 'Bank Name',
+            'type' => 'finance',
+            'user_id' => $user->id,
+        ]);
+
+        $account = Account::factory()->create([
+            'credential_id' => $credential->id,
+        ]);
+
         /** @var Transaction $transaction */
-        $transaction = Transaction::factory()->create();
+        $transaction = Transaction::factory()->create([
+            'account_id' => $account->account_id,
+        ]);
         /** @var Tag $tag */
-        $tag = Tag::factory()->create([
+        $tag  = $user->tags()->create([
             'type' => 'automatic',
             'name' => 'bill',
         ]);
         $tag->conditions()->create([
             'parameter' => 'transaction.name',
-            'comparator' => Condition::COMPARATOR_NOT_EQUAL,
-            'value' => $transaction->name,
+            'comparator' => Condition::COMPARATOR_EQUALS,
+            'value' => $transaction->name
         ]);
 
         $transaction->tags()->attach($tag->id);
+        $tags = $transaction->tags()->get();
+        $this->assertCount(1, $tags);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction($this->mockLogger);
+        $handler = new ApplyUserAutomatedTagsToTransaction();
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
@@ -92,22 +132,35 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
 
     public function testHandleSuccessLastAttachTag(): void
     {
+        $user = User::factory()->createQuietly();
+        $credential = Credential::factory()->create([
+            'name' => 'Bank Name',
+            'type' => 'finance',
+            'user_id' => $user->id,
+        ]);
+
+        $account = Account::factory()->create([
+            'credential_id' => $credential->id,
+        ]);
+
         /** @var Transaction $transaction */
-        $transaction = Transaction::factory()->create();
+        $transaction = Transaction::factory()->create([
+            'account_id' => $account->account_id,
+        ]);
         /** @var Tag $tag */
-        $tag = Tag::factory()->create([
+        $tag  = $user->tags()->create([
             'type' => 'automatic',
             'name' => 'bill',
         ]);
         $tag->conditions()->create([
             'parameter' => 'transaction.name',
             'comparator' => Condition::COMPARATOR_EQUALS,
-            'value' => $transaction->name,
+            'value' => $transaction->name
         ]);
 
         $transaction->tags()->attach($tag->id);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction($this->mockLogger);
+        $handler = new ApplyUserAutomatedTagsToTransaction();
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
@@ -118,26 +171,39 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
 
     public function testHandleSuccessAttachTagWithRelationInConditional(): void
     {
-        $category = \App\Models\Finance\Category::factory()->create();
+        $user = User::factory()->createQuietly();
+        $credential = Credential::factory()->create([
+            'name' => 'Bank Name',
+            'type' => 'finance',
+            'user_id' => $user->id,
+        ]);
+
+        $account = Account::factory()->create([
+            'name' => 'Business Account #3810',
+            'credential_id' => $credential->id,
+        ]);
+
         /** @var Transaction $transaction */
         $transaction = Transaction::factory()->create([
-            'category_id' => $category->category_id,
+            'account_id' => $account->account_id,
         ]);
         /** @var Tag $tag */
-        $tag = Tag::factory()->create([
+        $tag = $user->tags()->create([
             'type' => 'automatic',
-            'name' => 'bill',
+            'name' => 'business',
         ]);
+        $this->assertCount(1, $user->tags()->get());
+
         $tag->conditions()->create([
-            'parameter' => 'category.name',
-            'comparator' => Condition::COMPARATOR_EQUALS,
-            'value' => $category->name,
+            'parameter' => 'account.name',
+            'comparator' => Condition::COMPARATOR_LIKE,
+            'value' => 'Business'
         ]);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction($this->mockLogger);
+        $handler = new ApplyUserAutomatedTagsToTransaction();
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
-
+        $this->assertCount(1, $user->tags()->get());
         $tags = $transaction->tags()->get();
         $this->assertCount(1, $tags);
         $this->assertSame($tag->id, $tags->first()->id);
@@ -145,113 +211,71 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
 
     public function testHandleSuccessAttachTagWhereAmountGreaterThan(): void
     {
+        $user = User::factory()->create();
+        $credential = Credential::factory()->create([
+            'name' => 'Bank Name',
+            'type' => 'finance',
+            'user_id' => $user->id,
+        ]);
+
+        $account = Account::factory()->create([
+            'credential_id' => $credential->id,
+        ]);
+
         /** @var Transaction $transaction */
         $transaction = Transaction::factory()->create([
+            'account_id' => $account->account_id,
             'name' => 'Netflix',
-            'amount' => 9.99,
-        ]);
-        /** @var Tag $tag */
-        $tag = Tag::factory()->create([
-            'type' => 'automatic',
-            'name' => 'debits/withdrawals',
-        ]);
-        $tag->conditions()->create([
-            'parameter' => 'amount',
-            'comparator' => Condition::COMPARATOR_GREATER_THAN,
-            'value' => '0',
-        ]);
-        $tag->conditions()->create([
-            'parameter' => 'name',
-            'comparator' => Condition::COMPARATOR_NOT_LIKE,
-            'value' => 'fee',
-        ]);
-        $tag->conditions()->create([
-            'parameter' => 'name',
-            'comparator' => Condition::COMPARATOR_NOT_LIKE,
-            'value' => 'transfer',
+            'amount' => 9.99
         ]);
 
-        /** @var Tag $tag */
-        $tag2 = Tag::factory()->create([
-            'type' => 'automatic',
-            'name' => 'credits/income',
-        ]);
-        $tag2->conditions()->create([
-            'parameter' => 'amount',
-            'comparator' => Condition::COMPARATOR_LESS_THAN,
-            'value' => '0',
-        ]);
-        $tag2->conditions()->create([
-            'parameter' => 'name',
-            'comparator' => Condition::COMPARATOR_NOT_LIKE,
-            'value' => 'fee',
-        ]);
-        $tag2->conditions()->create([
-            'parameter' => 'name',
-            'comparator' => Condition::COMPARATOR_NOT_LIKE,
-            'value' => 'transfer',
-        ]);
-
-        $handler = new ApplyUserAutomatedTagsToTransaction($this->mockLogger);
+        $handler = new ApplyUserAutomatedTagsToTransaction();
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
         $tags = $transaction->tags()->get();
-        $this->assertCount(1, $tags);
-        $this->assertSame($tag->id, $tags->first()->id);
+        $this->assertCount(2, $tags);
+        $this->assertSame('subscriptions', $tags->first()->name);
+        $this->assertSame('debit/expense', $tags->last()->name);
     }
 
     public function testHandleSuccessAttachTagWithAllConditionsPassSetToFalse(): void
     {
+        $user = User::factory()->createQuietly();
+        $credential = Credential::factory()->create([
+            'name' => 'Bank Name',
+            'type' => 'finance',
+            'user_id' => $user->id,
+        ]);
+
+        $account = Account::factory()->create([
+            'credential_id' => $credential->id,
+        ]);
+
         /** @var Transaction $transaction */
         $transaction = Transaction::factory()->create([
+            'account_id' => $account->account_id,
             'name' => 'Netflix',
-            'amount' => 9.99,
+            'amount' => 9.99
         ]);
-        /** @var Tag $tag */
-        $tag = Tag::factory()->create([
+
+        $tag  = $user->tags()->create([
             'type' => 'automatic',
-            'name' => 'debits/withdrawals',
+            'name' => 'subscription',
             'must_all_conditions_pass' => false,
         ]);
         $tag->conditions()->create([
-            'parameter' => 'amount',
+            'parameter' => 'transaction.amount',
             'comparator' => Condition::COMPARATOR_GREATER_THAN,
-            'value' => '0',
+            'value' => '0'
         ]);
         $tag->conditions()->create([
-            'parameter' => 'name',
-            'comparator' => Condition::COMPARATOR_NOT_LIKE,
-            'value' => 'fee',
-        ]);
-        $tag->conditions()->create([
-            'parameter' => 'name',
-            'comparator' => Condition::COMPARATOR_NOT_LIKE,
-            'value' => 'transfer',
+            'parameter' => 'transaction.name',
+            'comparator' => Condition::COMPARATOR_LIKE,
+            'value' => 'Netflix'
         ]);
 
-        /** @var Tag $tag */
-        $tag2 = Tag::factory()->create([
-            'type' => 'automatic',
-            'name' => 'credits/income',
-        ]);
-        $tag2->conditions()->create([
-            'parameter' => 'amount',
-            'comparator' => Condition::COMPARATOR_LESS_THAN,
-            'value' => '0',
-        ]);
-        $tag2->conditions()->create([
-            'parameter' => 'name',
-            'comparator' => Condition::COMPARATOR_NOT_LIKE,
-            'value' => 'fee',
-        ]);
-        $tag2->conditions()->create([
-            'parameter' => 'name',
-            'comparator' => Condition::COMPARATOR_NOT_LIKE,
-            'value' => 'transfer',
-        ]);
-
-        $handler = new ApplyUserAutomatedTagsToTransaction($this->mockLogger);
+        $handler = new ApplyUserAutomatedTagsToTransaction();
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 

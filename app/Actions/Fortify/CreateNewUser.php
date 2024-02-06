@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Fortify;
 
+use App\Models\Person;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +38,7 @@ class CreateNewUser implements CreatesNewUsers
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
                 $this->createTeam($user);
+                $this->createPersonalRecord($user);
             });
         });
     }
@@ -51,5 +53,14 @@ class CreateNewUser implements CreatesNewUsers
             'name' => explode(' ', $user->name, 2)[0]."'s Team",
             'personal_team' => true,
         ]));
+    }
+
+    protected function createPersonalRecord(User $user)
+    {
+        Person::create([
+            'name' => $user->name,
+            'emails' => [$user->email],
+            'names' => [$user->name]
+        ]);
     }
 }
