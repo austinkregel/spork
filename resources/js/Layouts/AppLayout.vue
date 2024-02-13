@@ -44,6 +44,9 @@ const userNavigation = [
     { name: 'Sign out', href: '#' },
 ]
 
+const notificationCount = computed(() => {
+  return (page.props.unread_email_count ?? 0) + page.props.notifications.length
+});
 const sidebarOpen = ref(false)
 const showingNavigationDropdown = ref(false);
 const $settings = computed(() => page.props)
@@ -82,7 +85,7 @@ const logout = () => {
         <Head :title="title" />
         <Banner />
         <TransitionRoot as="template" :show="sidebarOpen">
-            <Dialog as="div" class="relative z-50 lg:hidden" @close="sidebarOpen = false">
+            <Dialog as="div" class="relative z-0 lg:hidden" @close="sidebarOpen = false">
                 <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100" leave-to="opacity-0">
                     <div class="fixed inset-0 bg-stone-900/80" />
                 </TransitionChild>
@@ -120,11 +123,11 @@ const logout = () => {
         </TransitionRoot>
 
         <!-- Static sidebar for desktop -->
-        <div class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-20 lg:bg-stone-950 lg:pb-4 relative">
+        <div class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-10 lg:block lg:w-20 lg:bg-stone-950 lg:pb-4 relative">
             <Link href="/-" class="flex h-16 shrink-0 items-center flex flex-col justify-center">
                 <CpuChipIcon class="h-8 w-8 text-slate-500" />
             </Link>
-            <div class="text-white absolute left-16 z-10 mr-8 -mt-4 bg-stone-700 rounded-full w-6 h-6">
+            <div class="text-white absolute left-16 z-0 mr-8 -mt-4 bg-stone-700 rounded-full w-6 h-6">
                 <ChevronDownIcon class="w-6 h-6 text-white -rotate-90" />
             </div>
 
@@ -139,7 +142,7 @@ const logout = () => {
         </div>
 
         <div class="lg:pl-20 min-h-screen">
-            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-stone-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+            <div class="sticky top-0 z-0 flex h-16 shrink-0 items-center gap-x-4 border-b border-stone-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
                 <button type="button" class="-m-2.5 p-2.5 text-stone-700 lg:hidden" @click="sidebarOpen = true">
                     <span class="sr-only">Open sidebar</span>
                     <Bars3Icon class="h-6 w-6" aria-hidden="true" />
@@ -158,7 +161,9 @@ const logout = () => {
                         <button @click="" class="-m-2.5 p-2.5 text-stone-400 hover:text-stone-500 relative">
                             <span class="sr-only">View notifications</span>
                             <BellIcon class="h-6 w-6" aria-hidden="true" />
-                            <span class="bg-red-500 absolute top-0 right-0 rounded-full text-sm text-white py-0.5 px-1">1</span>
+                            <span class="bg-red-500 absolute top-0 right-0 rounded-full text-sm text-white py-0.5 px-1">
+                              {{ notificationCount }}
+                            </span>
                         </button>
 
                         <!-- Separator -->
@@ -175,7 +180,7 @@ const logout = () => {
                                 </span>
                             </MenuButton>
                             <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                                <MenuItems class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white dark:bg-stone-800 py-2 shadow-lg ring-1 ring-stone-900/5 focus:outline-none">
+                                <MenuItems class="absolute right-0 z-0 mt-2.5 w-32 origin-top-right rounded-md bg-white dark:bg-stone-800 py-2 shadow-lg ring-1 ring-stone-900/5 focus:outline-none">
                                     <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
                                         <Link :href="item.href" :class="[active ? 'bg-stone-50 dark:bg-stone-700' : '', 'block px-3 py-1 text-sm leading-6 dark:text-stone-50 text-stone-900']">{{ item.name }}</Link>
                                     </MenuItem>

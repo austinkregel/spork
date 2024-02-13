@@ -25,7 +25,7 @@
                             </div>
                         </template>
                         <template v-slot:data="{ data }">
-                            <div class="flex flex-col">
+                            <div class="flex flex-col">j
                                 <div class="text-lg text-left">
                                     <Link :href="'/'+link+'/'+ data.id" class="underline">
                                         {{ data.name }}
@@ -42,7 +42,6 @@
 
                         <template #form>
                             <div>
-                              form {{ form }}
                               <pre>{{ { description } }}</pre>
                             </div>
                         </template>

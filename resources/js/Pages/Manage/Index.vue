@@ -21,10 +21,22 @@ const { title, data, description, paginator, link, apiLink, body } = defineProps
   body: String,
   apiLink: String,
 })
-const form = ref(description.fillable.map(value => ({
-  value: '',
-  name: value,
-})));
+
+const FillableArrayToDynamicForm = function (fillable) {
+  return fillable.map(value => ({
+    value: '',
+    name: value,
+  }));
+}
+
+const DynamicFormToFillableArray = function (model) {
+  return Object.keys(model).map(key => ({
+    value: typeof (model[key] ?? '') === 'object' ? JSON.stringify(model[key]?? '') : (model[key] ?? ''),
+    name: key,
+  }));
+}
+
+const form = ref(FillableArrayToDynamicForm(description.fillable));
 
 const fetch = async (options) => {
   const response = await axios.get(buildUrl(apiLink, {
@@ -49,7 +61,7 @@ const onSave = () => {}
 
 const possibleDescriptionForData = (data) => {
   const fieldsToUse = description?.fields?.filter(field => ![
-    'id', 'name', 'user_id', 'created_at', 'updated_at', 'icon', 'href', 'order',
+    'id', 'name', 'user_id', 'created_at', 'updated_at', 'icon', 'href', 'order', 'value,'
   ]?.includes(field) && !field.endsWith('_id') && typeof data[field] !== 'boolean')
       .filter(field => data[field]);
 
@@ -60,6 +72,7 @@ const possibleRelations = (data) => {
 
   return fieldsToUse;
 }
+const log = console.log;
 </script>
 
 <template>
@@ -84,34 +97,47 @@ const possibleRelations = (data) => {
     >
       <template #modal-title>
         <div>
-          Create a Server
+          Upsert {{ singular }}
         </div>
       </template>
-      <template v-slot:data="{ data }">
-        <div class="flex flex-col">
-          <div class="text-lg text-left">
-            {{ data.name }}
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <div class="text-xs dark:text-stone-300">
-              {{ possibleDescriptionForData(data) }}
+      <template v-slot:data="{ data, openModal }">
+        <div class="w-full grid grid-cols-6 ">
+          <div class="col-span-5">
+            <div class="flex flex-col">
+              <div class="text-lg text-left">
+                {{ data.name }}
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <div class="text-xs dark:text-stone-300">
+                  {{ data }}
+                </div>
+              </div>
             </div>
           </div>
+          <div class="col-span-1 flex items-center justify-end px-4">
+            <button @click="(e) => { form = (DynamicFormToFillableArray(data)); openModal(); }">
+              <DynamicIcon icon-name="PencilIcon" class="h-5 w-5 fill-current text-green-400" />
+            </button>
+          </div>
         </div>
+
+
       </template>
       <template #no-data>
-        <div class="w-full p-4 italic text-center">No project data</div>
+        <div class="w-full p-4 italic text-center">No {{ singular }} data</div>
       </template>
 
-      <template #form>
+      <template #form v-slot="{ openModal }">
         <div>
-          <pre>{{ description }}</pre>
+
           <div class="grid grid-cols-1 gap-4 mt-2" v-for="(field, i) in form">
               <SporkDynamicInput
+                  :key="i+'.form-value'"
                   v-model="form[i]"
                   :type="description.types[field.name].type ?? 'text'"
+                  :disabled-input="!description.fillable.includes(field.name)"
+                  :editable-label="false"
               />
-            {{ description.types[field.name]}}
           </div>
         </div>
       </template>

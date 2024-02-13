@@ -205,9 +205,29 @@ Route::group(['prefix' => '-', 'middleware' => [
         ]);
     });
     Route::get('/projects', function () {
-        return Inertia::render('Projects/Projects', [
-        ]);
-    });
+        $model = \App\Models\Project::class;
+
+        $description = (new DescribeTableService)->describe(new $model);
+
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
+        $paginator = $model::query()
+            ->paginate(request('limit', 15), ['*'], 'page', request('page', 1));
+
+        $data = $paginator->items();
+        $paginator = $paginator->toArray();
+
+        unset($paginator['data']);
+
+        return Inertia::render('Manage/Index', [
+            'title' => 'CRUD '.Str::ucfirst(str_replace('_', ' ', Str::ascii((new $model)->getTable(), 'en'))),
+            'description' => $description,
+            'singular' => Str::singular((new $model)->getTable()),
+            'plural' => Str::title((new $model)->getTable()),
+            'link' => '/'.(new $model)->getTable(),
+            'apiLink' => '/api/crud/'.(new $model)->getTable(),
+            'data' => $data,
+            'paginator' => $paginator,
+        ]);    });
     Route::get('/research', function () {
         return Inertia::render('Research/Dashboard', [
             'research' => \App\Models\Research::all(),

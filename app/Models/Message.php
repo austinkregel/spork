@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Tags\HasTags;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
+/**
+ * @property-read Credential $credential
+ */
 /** @mixin \Eloquent */
 class Message extends Model
 {
@@ -62,6 +65,11 @@ class Message extends Model
     public function getIsUserAttribute()
     {
         return auth()->id() === $this->from_person;
+    }
+
+    public function credential()
+    {
+        return $this->belongsTo(Credential::class);
     }
 
     public function fromPerson()

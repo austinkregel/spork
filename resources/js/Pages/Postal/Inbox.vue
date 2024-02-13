@@ -3,14 +3,6 @@
         <!-- component -->
         <main class="flex flex-wrap w-full h-full overflow-hidden justify text-white" style="max-height: calc(100vh - 65px);">
           <div class="relative flex flex-col rounded divide-stone-600 divide-y w-1/2 xl:w-1/4 overflow-y-scroll" style="max-height: calc(100vh - 65px);">
-            <div class="w-full flex flex-wrap gap-4">
-              <Link v-if="openMail" href="/-/inbox">
-                <ArrowUturnLeftIcon class="w-5 h-5" />
-              </Link>
-              <Link href="/-/inbox">
-                <ArrowUturnLeftIcon class="w-5 h-5" />
-              </Link>
-            </div>
             <div v-if="loading" class="position-sticky sticky sticky-top top-0 left-0 px-4 py-2 bg-rose-900 w-full z-50">
               Loading
             </div>
@@ -27,17 +19,38 @@
                 </div>
                 <div class="w-full text-left text-sm">{{ item.subject }}</div>
                 <div class="w-full text-left text-xs text-stone-400  tracking-wide">{{item.from_email}}</div>
-                 <div class="flex gap-2 items-center">
-                     <EyeSlashIcon v-if="!item.seen" class="w-5 h-5"/>
-                     <EyeIcon v-if="item.seen" class="w-5 h-5 text-stone-400 dark:text-stone-500"/>
-                     <FireIcon v-if="item.spam > 1" class="w-5 h-5" />
-                     <ArrowUturnLeftIcon v-if="item.answered" class="w-5 h-5"/>
-                     <TrashIcon v-if="item.deleted" class="w-5 h-5"/>
-                     <PencilSquareIcon v-if="item.draft" class="w-5 h-5"/>
-               </div>
+              <div class="flex justify-between">
+
+                <div class="flex gap-2 items-center">
+                  <EyeSlashIcon v-if="!item.seen" class="w-5 h-5"/>
+                  <EyeIcon v-if="item.seen" class="w-5 h-5 text-stone-400 dark:text-stone-500"/>
+                  <FireIcon v-if="item.spam > 1" class="w-5 h-5" />
+                  <ArrowUturnLeftIcon v-if="item.answered" class="w-5 h-5"/>
+                  <TrashIcon v-if="item.deleted" class="w-5 h-5"/>
+                  <PencilSquareIcon v-if="item.draft" class="w-5 h-5"/>
+                </div>
+
+                <div>{{ formatDate(item.originated_at * 1000) }}</div>
+              </div>
             </button>
+
+            <div class="flex flex-wrap w-full justify-between">
+              <Link :href="page.props.messages.prev_page_url" :class="[page.props.messages.prev_page_url ? 'text-stone-900 dark:text-stone-50' : 'dark:text-stone-400 text-stone-500 cursor-not-allowed']">
+                Previous
+              </Link>
+              <Link
+                  v-if="page.props.messages.next_page_url"
+                  :href="page.props.messages.next_page_url"
+                  :class="[page.props.messages.next_page_url ? 'text-stone-900 dark:text-stone-50' : 'dark:text-stone-400 text-stone-500']">
+                Next
+              </Link>
+            </div>
           </div>
-          <div class="w-1/2 xl:w-3/4 overflow-y-scroll border-l border-stone-600" v-if="openMail">
+          <div class="w-1/2 xl:w-3/4 border-l border-stone-600 relative z-0" v-if="openMail">
+            <Link v-if="openMail" href="/-/inbox" class="absolute left-0 bg-stone-500 dark:text-gray-50 p-1 rounded-full -ml-4 z-50 shadow-lg mt-4">
+              <ArrowUturnLeftIcon class="w-5 h-5" />
+            </Link>
+
             <div class="p-4 border-b-4 border-blue-400" :class="spamTarget">
                 <div class="text-2xl max-w-full">{{ openMail.subject }}</div>
                 <div class="flex flex-wrap justify-between w-full pr-4 overflow-hidden">
@@ -106,8 +119,11 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
+import dayjs from 'dayjs';
 
 const page = usePage();
+
+const formatDate = (date) =>  dayjs(date).format('YYYY-MM-DD HH:mm:ss')
 
 const base64decode = (dir) => atob(dir);
 const styleForContext = ref('')
@@ -172,7 +188,7 @@ const spamTarget = computed(() => {
 const triggerMailLoading = async () => {
   closeContextMenu();
   router.reload({
-    only: ['messages']
+    only: ['messages', 'unread_email_count']
   })
   loading.value = false;
 }
@@ -225,6 +241,5 @@ const delete_mail = async () => {
   loading.value = true;
   closeContextMenu();
   await triggerMailLoading();
-
 }
 </script>

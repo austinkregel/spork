@@ -28,7 +28,7 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
         protected Credential $credential,
         protected ?Carbon $since = null,
     ) {
-        $this->since = now()->subDay();
+        $this->since = now()->subMonth();
     }
 
     public function handle(ImapFactoryService $imapFactory): void
