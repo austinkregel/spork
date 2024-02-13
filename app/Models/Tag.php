@@ -87,6 +87,7 @@ class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
     {
         return $this->morphedByMany(Person::class, 'taggable');
     }
+
     public function messages()
     {
         return $this->morphedByMany(Message::class, 'taggable');

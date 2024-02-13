@@ -21,7 +21,7 @@ class MessageCreated extends AbstractLogicalEvent implements ShouldBroadcast
         $this->model->load('credential');
 
         return [
-            new PrivateChannel('App.Models.User.'.$this->model->credential->user_id,)
+            new PrivateChannel('App.Models.User.'.$this->model->credential->user_id),
         ];
     }
 }

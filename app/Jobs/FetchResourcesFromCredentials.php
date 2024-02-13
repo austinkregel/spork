@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Jobs\Finance\SyncPlaidTransactionsJob;
-use App\Jobs\Servers\LaravelForgeServersSyncJob;
 use App\Models\Credential;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Bus\QueueingDispatcher;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class FetchResourcesFromCredentials implements ShouldQueue
 {
@@ -41,8 +37,7 @@ class FetchResourcesFromCredentials implements ShouldQueue
         $credentials = Credential::all();
 
         $jobs = $credentials->groupBy('user_id')
-            ->map(fn (Collection $group) =>
-                $group->map(fn ($credential) => new FetchResourcesFromCredential($credential))->toArray()
+            ->map(fn (Collection $group) => $group->map(fn ($credential) => new FetchResourcesFromCredential($credential))->toArray()
             )->toArray();
 
         $dispatcher->batch($jobs)

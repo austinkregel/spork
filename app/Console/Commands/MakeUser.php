@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Actions\Fortify\CreateNewUser;
-use App\Models\User;
 use Illuminate\Console\Command;
 
 class MakeUser extends Command

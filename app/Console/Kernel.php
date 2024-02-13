@@ -6,9 +6,7 @@ namespace App\Console;
 
 use App\Jobs\FetchCloudflareAnalytics;
 use App\Jobs\FetchResourcesFromCredentials;
-use App\Jobs\Finance\SyncPlaidTransactionsJob;
 use App\Jobs\News\UpdateAllFeeds;
-use App\Jobs\SyncMailboxIfCredentialsAreSet;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 

@@ -50,7 +50,7 @@ class FetchResourcesFromCredential implements ShouldQueue
                 Credential::TYPE_FINANCE => new SyncPlaidTransactionsJob($this->credential, now()->subWeek(), now(), false),
                 Credential::TYPE_EMAIL => new SyncMailboxIfCredentialsAreSet($this->credential),
                 default => Log::error(sprintf('Found unsupported credential type for FetchResourcesFromCredentialsJob: %s', $credential->type), []),
-            }
+            },
         ]);
     }
 }

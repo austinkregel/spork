@@ -16,7 +16,7 @@ class ContainsValueOperator extends AbstractLogicalOperator
             return isset($haystack->$needle);
         }
 
-        if (is_null($needle) && !is_null($haystack)) {
+        if (is_null($needle) && ! is_null($haystack)) {
             // if one is null, and the other, then we obvs need to return false;
             return false;
         }

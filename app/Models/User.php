@@ -30,12 +30,12 @@ class User extends Authenticatable implements ModelQuery
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
+    use HasProjectResource;
     use HasRoles;
     use HasTags;
     use HasTeams;
     use LogsActivity;
     use Notifiable;
-    use HasProjectResource;
     use TwoFactorAuthenticatable;
 
     /**

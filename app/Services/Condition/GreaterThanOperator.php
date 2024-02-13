@@ -20,6 +20,7 @@ class GreaterThanOperator extends AbstractLogicalOperator
                 // we're dealing with a date, or date time.
                 return Carbon::parse($valueFromCondition)->isAfter(Carbon::parse($valueFromParameter));
             }
+
             // This is meant to be a numeric or date operator, checking the greatness of a string is beyond the scope of this lib.
             return strlen($valueFromCondition) > strlen($valueFromParameter);
         }

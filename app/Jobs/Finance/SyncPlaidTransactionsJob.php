@@ -18,7 +18,7 @@ use Illuminate\Queue\SerializesModels;
 
 class SyncPlaidTransactionsJob implements ShouldQueue
 {
-    use Dispatchable, Batchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         protected Credential $accessToken

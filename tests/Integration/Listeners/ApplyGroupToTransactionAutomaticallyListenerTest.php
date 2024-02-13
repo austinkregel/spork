@@ -12,10 +12,7 @@ use App\Models\Finance\Account;
 use App\Models\Finance\Transaction;
 use App\Models\Tag;
 use App\Models\User;
-use App\Services\ConditionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Str;
-use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
@@ -39,7 +36,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $transaction = Transaction::factory()->create([
             'account_id' => $account->account_id,
         ]);
-        $tag  = $user->tags()->create([
+        $tag = $user->tags()->create([
             'type' => 'automatic',
             'name' => 'bill',
         ]);
@@ -78,7 +75,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $tag->conditions()->create([
             'parameter' => 'transaction.name',
             'comparator' => Condition::COMPARATOR_NOT_EQUAL,
-            'value' => $transaction->name
+            'value' => $transaction->name,
         ]);
 
         $handler = new ApplyUserAutomatedTagsToTransaction();
@@ -107,14 +104,14 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
             'account_id' => $account->account_id,
         ]);
         /** @var Tag $tag */
-        $tag  = $user->tags()->create([
+        $tag = $user->tags()->create([
             'type' => 'automatic',
             'name' => 'bill',
         ]);
         $tag->conditions()->create([
             'parameter' => 'transaction.name',
             'comparator' => Condition::COMPARATOR_EQUALS,
-            'value' => $transaction->name
+            'value' => $transaction->name,
         ]);
 
         $transaction->tags()->attach($tag->id);
@@ -148,14 +145,14 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
             'account_id' => $account->account_id,
         ]);
         /** @var Tag $tag */
-        $tag  = $user->tags()->create([
+        $tag = $user->tags()->create([
             'type' => 'automatic',
             'name' => 'bill',
         ]);
         $tag->conditions()->create([
             'parameter' => 'transaction.name',
             'comparator' => Condition::COMPARATOR_EQUALS,
-            'value' => $transaction->name
+            'value' => $transaction->name,
         ]);
 
         $transaction->tags()->attach($tag->id);
@@ -197,7 +194,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $tag->conditions()->create([
             'parameter' => 'account.name',
             'comparator' => Condition::COMPARATOR_LIKE,
-            'value' => 'Business'
+            'value' => 'Business',
         ]);
 
         $handler = new ApplyUserAutomatedTagsToTransaction();
@@ -226,7 +223,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $transaction = Transaction::factory()->create([
             'account_id' => $account->account_id,
             'name' => 'Netflix',
-            'amount' => 9.99
+            'amount' => 9.99,
         ]);
 
         $handler = new ApplyUserAutomatedTagsToTransaction();
@@ -256,10 +253,10 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $transaction = Transaction::factory()->create([
             'account_id' => $account->account_id,
             'name' => 'Netflix',
-            'amount' => 9.99
+            'amount' => 9.99,
         ]);
 
-        $tag  = $user->tags()->create([
+        $tag = $user->tags()->create([
             'type' => 'automatic',
             'name' => 'subscription',
             'must_all_conditions_pass' => false,
@@ -267,12 +264,12 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $tag->conditions()->create([
             'parameter' => 'transaction.amount',
             'comparator' => Condition::COMPARATOR_GREATER_THAN,
-            'value' => '0'
+            'value' => '0',
         ]);
         $tag->conditions()->create([
             'parameter' => 'transaction.name',
             'comparator' => Condition::COMPARATOR_LIKE,
-            'value' => 'Netflix'
+            'value' => 'Netflix',
         ]);
 
         $handler = new ApplyUserAutomatedTagsToTransaction();

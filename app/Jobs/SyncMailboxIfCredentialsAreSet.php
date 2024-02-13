@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Contracts\Repositories\CredentialRepositoryContract;
-use App\Contracts\Services\ImapServiceContract;
 use App\Models\Credential;
-use App\Models\Message;
 use App\Models\Person;
-use App\Services\ImapService;
-use App\Services\Messaging\ImapCredentialService;
 use App\Services\Messaging\ImapFactoryService;
 use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
@@ -22,7 +17,7 @@ use Illuminate\Queue\SerializesModels;
 
 class SyncMailboxIfCredentialsAreSet implements ShouldQueue
 {
-    use Dispatchable, Batchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         protected Credential $credential,
@@ -162,10 +157,10 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
 
         if (empty($person)) {
             $person = Person::first();
-            info('This thing from email: '. $fromEmail);
+            info('This thing from email: '.$fromEmail);
 
             $person->update([
-                'emails' => array_values(array_unique(array_merge($person->emails, [strtolower($fromEmail)])))
+                'emails' => array_values(array_unique(array_merge($person->emails, [strtolower($fromEmail)]))),
             ]);
             // Need some way to determine a "default" user to assign messages to if they don't already have a person record.
         }

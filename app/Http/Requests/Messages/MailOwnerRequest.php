@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Messages;
 
 use App\Models\Message;
@@ -11,6 +13,7 @@ class MailOwnerRequest extends FormRequest
     {
         $messageId = $this->get('id');
         $message = Message::findOrFail($messageId);
+
         return $this->user()->credentials()->where('id', $message->credential_id)->exists();
     }
 

@@ -8,11 +8,8 @@ use App\Events\Models\Transaction\TransactionCreated;
 use App\Models\Finance\Account;
 use App\Models\Finance\Transaction;
 use App\Models\Tag;
-use App\Services\Condition\AbstractLogicalOperator;
 use App\Services\ConditionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Arr;
-use Psr\Log\LoggerInterface;
 
 class ApplyUserAutomatedTagsToTransaction implements ShouldQueue
 {
@@ -53,7 +50,7 @@ class ApplyUserAutomatedTagsToTransaction implements ShouldQueue
         ]));
 
         foreach ($tagsToApply as $tag) {
-            if (!$transaction->tags()->where('id', $tag->id)->exists()) {
+            if (! $transaction->tags()->where('id', $tag->id)->exists()) {
                 $transaction->tags()->attach($tag);
             }
         }

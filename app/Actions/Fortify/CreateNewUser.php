@@ -60,7 +60,7 @@ class CreateNewUser implements CreatesNewUsers
         Person::create([
             'name' => $user->name,
             'emails' => [$user->email],
-            'names' => [$user->name]
+            'names' => [$user->name],
         ]);
     }
 }

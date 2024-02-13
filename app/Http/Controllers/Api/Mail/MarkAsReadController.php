@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Api\Mail;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Messages\MailOwnerRequest;
 use App\Models\Message;
-use App\Services\ImapService;
 use App\Services\Messaging\ImapFactoryService;
 
 class MarkAsReadController extends Controller

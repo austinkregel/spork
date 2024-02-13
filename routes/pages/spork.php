@@ -180,7 +180,9 @@ Route::group(['prefix' => '-', 'middleware' => [
                 'accounts',
                 'domains',
                 'people',
-                'messages' => function ($q) { $q->where('seen', false); },
+                'messages' => function ($q) {
+                    $q->where('seen', false);
+                },
             ])
                 ->with(['conditions'])
                 ->orderBy('type')
@@ -227,13 +229,14 @@ Route::group(['prefix' => '-', 'middleware' => [
             'apiLink' => '/api/crud/'.(new $model)->getTable(),
             'data' => $data,
             'paginator' => $paginator,
-        ]);    });
+        ]);
+    });
     Route::get('/research', function () {
         return Inertia::render('Research/Dashboard', [
             'research' => \App\Models\Research::all(),
         ]);
     });
-    Route::get('/research/{research}', function (\App\Models\Research $research) {
+    Route::get('/research/{research}', function (App\Models\Research $research) {
         return Inertia::render('Research/Topic', [
             'topic' => $research,
         ]);
@@ -247,7 +250,7 @@ Route::group(['prefix' => '-', 'middleware' => [
                 ->paginate(),
         ]);
     });
-    Route::get('/inbox/{message}', function (\App\Models\Message $message) {
+    Route::get('/inbox/{message}', function (App\Models\Message $message) {
         abort_if($message->type !== 'email', 404);
 
         $message = (new \App\Services\ImapService)->findMessage($message->event_id, true);
@@ -314,7 +317,7 @@ Route::group(['prefix' => '-', 'middleware' => [
         return Inertia::render('Manage/Index', [
             'title' => 'Dynamic CRUD',
             'description' => [
-                'fillable' => []
+                'fillable' => [],
             ],
         ]);
     });

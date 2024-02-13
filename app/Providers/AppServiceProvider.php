@@ -13,8 +13,6 @@ use App\Repositories\CredentialRepository;
 use App\Services\Finance\PlaidService;
 use App\Services\Messaging\ImapCredentialService;
 use App\Services\Weather\OpenWeatherService;
-use App\Services\Weather\WeatherApiService;
-use App\Services\Weather\WeatherGovApiService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
