@@ -27,7 +27,7 @@ class MatrixBeeperRequestCode extends Command
      */
     public function handle()
     {
-        $client = new \App\Services\Matrix\MatrixClient($this->argument('email'), $this->option('host'));
+        $client = new \App\Services\Messaging\MatrixClient($this->argument('email'), $this->option('host'));
 
         $client->requestCodeForBeeper($this->argument('email'));
         $this->info('Please check your email, and return within 30 minutes');

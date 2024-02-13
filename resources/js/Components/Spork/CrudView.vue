@@ -76,7 +76,7 @@
                             <input type="checkbox" v-model="selectedItems" :value="datum">
                         </div>
                         <div class="flex-1">
-                            <slot v-if="datum" class="flex-1" :data="datum" name="data">
+                            <slot v-if="datum" class="flex-1" :data="datum" name="data" :open-modal="() => createOpen = true">
                                 <pre class="flex-1">fallback: {{ datum}}</pre>
                             </slot>
                         </div>
@@ -119,9 +119,9 @@
     </div>
 
 
-    <div v-if="createOpen" class="fixed z-0 inset-0 flex items-center outline-none w-screen h-screen overflow-y-scroll">
-        <div class="relative z-10 w-full md:w-1/2 mx-auto max-h-screen overflow-y-auto p-4">
-            <div class="w-full rounded p-4 bg-white dark:bg-stone-600 shadow-lg text-left dark:text-stone-50 ">
+    <div v-if="createOpen" class="fixed z-40 inset-0 flex items-center outline-none w-screen h-screen overflow-y-scroll">
+        <div class="relative z-50 w-full md:max-w-3xl mx-auto max-h-screen overflow-y-auto p-4">
+            <div class="w-full rounded p-4 dark:p-8 bg-white dark:bg-stone-800 shadow-lg text-left dark:text-white ">
                 <div class="text-xl flex justify-between">
                     <slot name="modal-title">Create Modal</slot>
                     <button @click="createOpen = false" class="focus:outline-none">
@@ -129,22 +129,30 @@
                     </button>
                 </div>
                 <div class="flex flex-col border-t border-stone-200 mt-2 pt-4">
-                    <slot name="form"></slot>
-                    <div class="mt-4 flex justify-end">
-                        <SporkButton @click.prevent="async () => {
+                    <slot name="form" :open-modal="() => createOpen = true"></slot>
+                    <div class="mt-4 flex justify-end gap-4">
+                      <SporkButton @click.prevent="async () => {
+                                createOpen = false;
+                            }"
+                                   primary
+                                   medium
+                      >
+                        Close
+                      </SporkButton>
+                      <SporkButton @click.prevent="async () => {
                                 $emit('save', form);
                                 createOpen = false;
                             }"
-                            primary
-                            medium
-                        >
-                            Save
-                        </SporkButton>
+                                   primary
+                                   medium
+                      >
+                        Save
+                      </SporkButton>
                     </div>
                 </div>
             </div>
         </div>
-        <div @click="createOpen = false" v-if="createOpen" class="fixed z-0 cursor-pointer inset-0 flex items-center outline-none" style="background: rgba(0,0,0,0.4);"></div>
+        <div @click="createOpen = false" v-if="createOpen" class="fixed z-30 cursor-pointer inset-0 flex items-center outline-none bg-stone-900/50"></div>
     </div>
 
 </template>

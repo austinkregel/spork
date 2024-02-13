@@ -83,10 +83,10 @@ class LinkServerTest extends TestCase
 
         $attemptToCreateDevice = $this->actingAs($user)
             ->postJson($routeUsedToLinkDevice, [
-            'name' => 'twelve-foot-ninja',
-            'memory' => 512,
-            'threads' => 1,
-        ]);
+                'name' => 'twelve-foot-ninja',
+                'memory' => 512,
+                'threads' => 1,
+            ]);
 
         $attemptToCreateDevice->assertStatus(201);
 

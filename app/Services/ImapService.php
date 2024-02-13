@@ -4,21 +4,28 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Contracts\Services\ImapServiceContract;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class ImapService
+class ImapService implements ImapServiceContract
 {
-    public function findAllMailboxes()
+    public function findAllMailboxes(): Collection
     {
         return collect(imap_list($inbox = imap_open(
             $this->buildMailboxString(),
             env('IMAP_USERNAME'),
             env('IMAP_PASSWORD')
         ), $this->buildMailboxString(), '*'))
-            ->tap(fn () => imap_close($inbox));
+            ->tap(fn () => imap_close($inbox))
+            ->map(fn ($mailbox) => Str::of($mailbox)
+                ->replace('{proton-bridge:143/imap/notls}', '')
+                ->toString()
+            )
+            ->filter(fn ($mailbox) => ! str_starts_with($mailbox, 'Labels'))
+            ->values();
     }
 
     public function findAllFromDate(string $mailbox, Carbon $date): Collection
@@ -47,6 +54,11 @@ class ImapService
                     Carbon::parse($headers['X-Pm-Date']);
                 } catch (\Throwable $e) {
                     dd($headers);
+                }
+
+                if (empty($headers['To'])) {
+                    // ew
+                    $headers['To'] = $headers['Delivered-To'];
                 }
 
                 return [
@@ -97,6 +109,11 @@ class ImapService
         $rfcHeaders = imap_rfc822_parse_headers($message->headersRaw);
 
         $body = base64_encode(empty($message->textHtml) ? $message->textPlain : $message->textHtml);
+
+        if (empty($headers['To'])) {
+            // ew
+            $headers['To'] = $headers['Delivered-To'];
+        }
 
         return [
             'id' => $messageNumber,
@@ -161,7 +178,7 @@ class ImapService
         };
     }
 
-    public function markAsRead(string $messageId)
+    public function markAsRead(string $messageId): void
     {
         $mailbox = new \PhpImap\Mailbox(
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
@@ -173,10 +190,10 @@ class ImapService
             false // Attachment filename mode (optional; false = random filename; true = original filename)
         );
 
-        $mailbox->getMail($messageId, true);
+        $mailbox->getMail((int) $messageId, true);
     }
 
-    public function markAsUnread(string $messageId)
+    public function markAsUnread(string $messageId): void
     {
         $mailbox = new \PhpImap\Mailbox(
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
@@ -188,6 +205,6 @@ class ImapService
             false // Attachment filename mode (optional; false = random filename; true = original filename)
         );
 
-        $mailbox->markMailAsUnread($messageId);
+        $mailbox->markMailAsUnread((int) $messageId);
     }
 }

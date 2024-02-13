@@ -6,8 +6,8 @@ namespace App\Services\Condition;
 
 class GreaterThanOrEqualToOperator extends AbstractLogicalOperator
 {
-    public function compute(mixed $firstValue, mixed $secondValue): bool
+    public function compute(mixed $valueFromCondition, mixed $valueFromParameter): bool
     {
-        return (new GreaterThanOperator)->compute($firstValue, $secondValue) || $firstValue === $secondValue;
+        return (new GreaterThanOperator)->compute($valueFromCondition, $valueFromParameter) || $valueFromCondition === $valueFromParameter;
     }
 }

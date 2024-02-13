@@ -27,7 +27,7 @@ class MatrixBeeperRequestTokenCode extends Command
      */
     public function handle()
     {
-        $client = new \App\Services\Matrix\MatrixClient($this->argument('email'), $this->option('host'));
+        $client = new \App\Services\Messaging\MatrixClient($this->argument('email'), $this->option('host'));
 
         $response = $client->loginWithJwt($this->argument('code'));
 

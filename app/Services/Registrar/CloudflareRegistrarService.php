@@ -57,11 +57,11 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
 
     public function getDomainNs(string $domain): array
     {
-        // TODO: Implement getDomainNs() method.
+        return [];
     }
 
     public function updateDomainNs(string $domain, array $nameservers): array
     {
-        // TODO: Implement updateDomainNs() method.
+        return [];
     }
 }

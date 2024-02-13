@@ -11,6 +11,9 @@ class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
 {
     public function handle(ServerServiceFactory $serviceFactory)
     {
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
         $this->sync();
     }
 

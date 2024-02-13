@@ -25,7 +25,7 @@
                             </div>
                         </template>
                         <template v-slot:data="{ data }">
-                            <div class="flex flex-col">
+                            <div class="flex flex-col">j
                                 <div class="text-lg text-left">
                                     <Link :href="'/'+link+'/'+ data.id" class="underline">
                                         {{ data.name }}
@@ -42,14 +42,7 @@
 
                         <template #form>
                             <div>
-                                <div class="flex flex-wrap">
-                                    <div class="w-full" v-for="(_, key) in form" :key="key+'-input'">
-                                        <div class="w-full"  v-if="description.fillable.includes(key)">
-                                          <label for="name" class="block text-sm font-medium">{{ key }}</label>
-                                          <spork-input v-model="form[key]" type="text" name="name" id="name" />
-                                        </div>
-                                    </div>
-                                </div>
+                              <pre>{{ { description } }}</pre>
                             </div>
                         </template>
 

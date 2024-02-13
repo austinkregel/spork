@@ -14,6 +14,9 @@ abstract class AbstractSyncServerResourceJob extends AbstractSyncResourceJob
 
     public function handle(ServerServiceFactory $serviceFactory)
     {
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
         $this->service = $serviceFactory->make($this->credential);
         $this->sync();
     }

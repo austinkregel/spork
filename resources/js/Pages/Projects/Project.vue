@@ -1,15 +1,15 @@
 <template>
     <AppLayout title="Dashboard">
-        <template #header>
-            <div class=" flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
-                <Link href="/projects" class="underline">
+        <div class="w-full border-b dark:border-slate-700 dark:bg-stone-950">
+            <div class="max-w-7xl mx-auto px-12 py-4 flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
+                <Link href="/-/projects" class="underline">
                     Projects
                 </Link>
                 <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-stone-400" aria-hidden="true" />
                 {{ $page.props.project.name}}
             </div>
-        </template>
-        <div class="py-12">
+        </div>
+        <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-4">
                 <div class="mx-4">
                     <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">Last 30 days</h3>
@@ -207,6 +207,48 @@
                         </Link>
                     </div>
                 </div>
+
+
+              <div class="border-t border-stone-600"></div>
+
+              <div class="mx-4">
+                <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">Research</h3>
+                <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-stone-50 text-stone-900">
+                  <div v-for="item in $page.props.project.research" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-stone-700 px-4 py-5 shadow sm:p-6">
+                    <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+                      <div class="flex flex-wrap justify-between">
+                        <div class="text-2xl">
+                          {{ item.name }}
+                        </div>
+
+                        <spork-button secondary @click="detach(item)">
+                          Delete
+                        </spork-button>
+                      </div>
+                    </dd>
+                    <dt class="truncate text-sm font-medium text-stone-500 dark:text-stone-300">{{ item }}</dt>
+
+                  </div>
+                  <div v-if="!$page.props.project.research?.length" class="p-4 rounded bg-stone-700 italic col-span-2">
+                    There is no research in this project
+                  </div>
+                </dl>
+
+                <div class="text-stone-300 text-sm font-semibold mt-2 flex justify-between">
+                  <div class="flex gap-4">
+                    <button @click="() => {attachOpen = !attachOpen; fetchResearch({ page: 1, limit: 100})}">
+                      Attach research
+                    </button>
+
+                    <Link href="/-/research">
+                      Investigate & Research
+                    </Link>
+                  </div>
+                  <Link href="">
+                    View all credentials
+                  </Link>
+                </div>
+              </div>
             </div>
             <DialogModal :show="attachOpen" :closeable="true" @close="attachOpen = false" >
                 <template #title>
@@ -415,6 +457,19 @@ export default {
 
             this.type = 'App\\Models\\Credential';
             this.attach = data;
+        },
+        async fetchResearch({ page, limit }) {
+          const {data: {data, ...pagination}} = await axios.get(buildUrl(
+              '/api/crud/research', {
+                page, limit,
+                action: 'pagination:100',
+                include: []
+              }
+          ));
+
+          this.type = 'App\\Models\\Research';
+          this.attach = data;
+
         },
         async fetchPages({ page, limit }) {
             const {data: {data, ...pagination}} = await axios.get(buildUrl(

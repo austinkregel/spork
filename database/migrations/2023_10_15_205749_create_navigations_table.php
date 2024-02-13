@@ -33,7 +33,7 @@ return new class extends Migration
         \App\Models\Navigation::create([
             'name' => 'Dashboard',
             'icon' => 'HomeIcon',
-            'href' => '/-',
+            'href' => '/-/dashboard',
             'order' => 0,
             'authentication_required' => true,
         ]);
@@ -120,14 +120,6 @@ return new class extends Migration
             'parameter' => 'config:app.env',
             'comparator' => 'IN',
             'value' => 'dev,local',
-        ]);
-
-        \App\Models\Navigation::create([
-            'name' => 'Banking',
-            'icon' => 'WalletIcon',
-            'href' => '/-/banking',
-            'order' => 6,
-            'authentication_required' => true,
         ]);
 
         \App\Models\Navigation::create([

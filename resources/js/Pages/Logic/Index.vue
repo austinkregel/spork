@@ -48,10 +48,10 @@ const removeListenerForEvent = async ({ event }, listener) => {
                 <div class="flex flex-col gap-2">
                     <div class=" font-bold tracking-wider mx-4">{{ event.event }}</div>
 
-                    <div class="grid grid-cols-1 mx-4">
-                        <div class="text-sm uppercase font-semibold text-stone-300 mb-1">Constructor Parameters</div>
-                        <div v-for="key in event.constructor" class="flex gap-4 my-2 items-center">
-                            <div class="w-1/4 text-xs text-stone-300">
+                    <div v-if="event.constructor.length > 0"  class="grid grid-cols-1 mx-4 gap">
+                        <div class="text-sm uppercase font-semibold text-stone-400 mb-1">Constructor</div>
+                        <div v-for="key in event.constructor" class="flex gap-2 items-center">
+                            <div class="w-1/3 text-xs text-stone-400">
                                 <div v-for="type in types(key)">{{ type }}</div>
                             </div>
                             <div class="w-1/2 text-blue-400 font-bold">
@@ -59,21 +59,19 @@ const removeListenerForEvent = async ({ event }, listener) => {
                             </div>
                         </div>
 
-                        <div v-if="event.constructor.length === 0" class="bg-stone-800 px-2 py-1 rounded text-stone-400 text-xs italic">
-                            Nothing is in the constructor
-                        </div>
                     </div>
+                  <div v-else class="bg-stone-800 px-2 py-1 rounded text-stone-500 text-xs italic mx-4">
+                    Nothing is in the constructor
+                  </div>
 
                     <div class="mx-4">
-                        <div class="text-sm uppercase font-semibold text-stone-300">Class Methods</div>
                         <div v-for="(methodText, method) in event.methods" class="mt-1 flex flex-col border border-stone-600 p-1 rounded">
                             <pre class="text-orange-400 font-mono">{{ method }}</pre>
-                            <SporkInput class="h-20 text-gray-50 font-mono text-xs" v-model="methodText.body" type="textarea"/>
+                            <SporkInput v-if="false" class="h-20 text-gray-50 font-mono text-xs" v-model="methodText.body" type="textarea"/>
                         </div>
                     </div>
 
-                    <div class="mx-4">
-                        <div class="text-stone-200">Classes listening for event</div>
+                    <div class="mx-4 mb-4">
                         <div class="overflow-hidden rounded divide-y divide-stone-700">
                             <div class="font-mono flex justify-between text-xs bg-stone-800  py-1 px-2" v-for="listener in event.listeners">
                                 <span class="text-purple-400">{{ listener }}<span class="text-stone-400">::</span><span class="text-orange-400">class</span></span>
@@ -81,8 +79,8 @@ const removeListenerForEvent = async ({ event }, listener) => {
                             </div>
                         </div>
 
-                        <div v-if="event.listeners.length === 0" class="bg-stone-800 text-stone-400 px-2 py-1 rounded text-xs italic">
-                            Nothing is listening for this event
+                        <div v-if="event.listeners.length === 0" class="bg-stone-800 text-stone-500 px-2 py-1 rounded text-xs italic">
+                            No listeners are defined for this event
                         </div>
 
                         <div class="relative flex flex-wrap justify-end py-2 text-xs mx-2">
@@ -109,11 +107,6 @@ const removeListenerForEvent = async ({ event }, listener) => {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="m-4 flex justify-end">
-                    <SporkButton>
-                        Save in Project
-                    </SporkButton>
                 </div>
             </div>
           </div>

@@ -8,6 +8,10 @@ class ContainsValueStrictOperator extends AbstractLogicalOperator
 {
     public function compute(mixed $needle, mixed $haystack): bool
     {
+        if (gettype($needle) !== gettype($haystack)) {
+            return false;
+        }
+
         if (is_array($haystack)) {
             return in_array($needle, $haystack, true);
         }

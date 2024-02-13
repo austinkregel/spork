@@ -26,11 +26,17 @@ class Transaction extends Model implements Crud, ModelQuery
         'amount',
         'account_id',
         'date',
+
         'pending',
         'category_id',
         'transaction_id',
         'transaction_type',
-        'pending_transaction_id',
+
+        'personal_finance_category',
+        'personal_finance_category_detailed',
+        'personal_finance_icon',
+        'seller_icon',
+
         'data',
     ];
 
