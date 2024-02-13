@@ -52,6 +52,7 @@ class OpenWeatherService implements WeatherServiceContract
             default => '❓',
         };
 
+        $forecast->address = $address;
         $forecast->temperature = $weather->main->temp;
         $forecast->feels_like = $weather->main->feels_like;
         $forecast->humidity = $weather->main->humidity;

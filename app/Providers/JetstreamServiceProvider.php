@@ -46,7 +46,6 @@ class JetstreamServiceProvider extends ServiceProvider
     protected function configurePermissions(): void
     {
         Jetstream::defaultApiTokenPermissions(['read']);
-
         Jetstream::role('admin', 'Administrator', [
             'create',
             'read',

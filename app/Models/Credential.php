@@ -61,6 +61,8 @@ class Credential extends Model implements Crud, ModelQuery
 
     public const TYPE_SSH = 'ssh';
 
+    public const TYPE_EMAIL = 'email';
+
     public const ALL_DOMAIN_PROVIDERS = [
         self::DIGITAL_OCEAN,
         self::CLOUDFLARE,
@@ -183,5 +185,10 @@ class Credential extends Model implements Crud, ModelQuery
     public function accounts()
     {
         return $this->hasMany(Account::class);
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
     }
 }

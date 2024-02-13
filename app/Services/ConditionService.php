@@ -7,6 +7,9 @@ namespace App\Services;
 use App\Contracts\Conditionable;
 use App\Models\Condition;
 use App\Models\Navigation;
+use App\Models\Tag;
+use App\Services\Condition\AbstractLogicalOperator;
+use App\Services\Condition\ArrayContainsValueOperator;
 use App\Services\Condition\ContainsValueOperator;
 use App\Services\Condition\ContainsValueStrictOperator;
 use App\Services\Condition\DoesntContainValueOperator;
@@ -19,6 +22,7 @@ use App\Services\Condition\HasRoleOperator;
 use App\Services\Condition\LessThanOperator;
 use App\Services\Condition\LessThanOrEqualToOperator;
 use App\Services\Condition\StartsWithOperator;
+use Illuminate\Support\Arr;
 
 class ConditionService
 {
@@ -28,7 +32,7 @@ class ConditionService
         Condition::COMPARATOR_EQUALS => EqualsValueOperator::class,
 
         // *strings* or arrays,
-        Condition::COMPARATOR_IN => ContainsValueOperator::class,
+        Condition::COMPARATOR_IN => ArrayContainsValueOperator::class,
         Condition::COMPARATOR_LIKE => ContainsValueOperator::class,
         Condition::COMPARATOR_LIKE_STRICT => ContainsValueStrictOperator::class,
         Condition::COMPARATOR_NOT_LIKE => DoesntContainValueOperator::class,
@@ -50,7 +54,7 @@ class ConditionService
     {
         // So we want to filter out any nav items
         $navItems = Navigation::query()
-            ->with('conditions')
+            ->with('conditions', 'children')
             ->where('authentication_required', auth()->check())
             ->whereNull('parent_id')
             ->orderBy('order')
@@ -61,28 +65,44 @@ class ConditionService
                 return $item;
             });
 
-        return $navItems->filter(function (Navigation $item) {
-            return $this->process($item);
-        });
+        return $navItems->filter(fn (Navigation $item) => $this->process($item));
     }
 
-    public function process(Conditionable $item)
+    public function process(Conditionable $item, array $additionalValueData = [])
     {
         if ($item->conditions->count() === 0) {
             return true;
         }
 
-        return $item->conditions->filter(function (Condition $condition) {
+        $returnedValue = true;
+        /** @var Tag $condition */
+        foreach ($item->conditions as $condition) {
             $comparator = static::AVAILABLE_CONDITIONS[$condition->comparator];
-            /** @var ContainsValueOperator $instance */
+            /** @var AbstractLogicalOperator $instance */
             $instance = new $comparator;
 
-            return $instance->compute($this->processParameter($condition->parameter), $condition->value);
-        })->count() === $item->conditions->count();
+            $passesCondition = $instance->compute(
+                // Looking for the condition value
+                $condition->value,
+                // inside the parameter's interpolated value.
+                $this->processParameter($condition->parameter, $additionalValueData),
+            );
+
+            if ($passesCondition && ! $item->must_all_conditions_pass) {
+                return true;
+            }
+
+            if (! $passesCondition) {
+                $returnedValue = false;
+            }
+        }
+
+        return $returnedValue;
     }
 
-    protected function processParameter(string $parameter)
+    protected function processParameter(string $parameter, array $additionalData)
     {
+        // This might be some thing like config:app.env to return a config value
         if (str_contains($parameter, ':')) {
             [$primaryKey, $field] = explode(':', $parameter);
 
@@ -95,7 +115,9 @@ class ConditionService
             return auth()->user();
         }
 
-        dd('this is likely a parameter, not a function', $parameter);
+        // This can be an single dimensions, or a multidimensional array
+        // Access via dot notation.
+        return Arr::get($additionalData, $parameter);
     }
 
     protected function matchCustomPrimaryKeyFunctions(string $key, ?string $parameter)

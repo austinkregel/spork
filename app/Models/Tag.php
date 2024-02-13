@@ -18,12 +18,21 @@ use App\Models\Finance\Transaction;
 use App\Models\Traits\HasConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property bool $must_all_conditions_pass
+ */
 class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
 {
     // Tags with conditions will essentially only be applied if the conditions pass.
     use HasConditions, HasFactory;
 
-    public $guarded = [];
+    public $fillable = [
+        'name',
+        'slug',
+        'must_all_conditions_pass',
+        'type',
+        'order_column',
+    ];
 
     public $dispatchesEvents = [
         'created' => TagCreated::class,
@@ -77,5 +86,10 @@ class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
     public function people()
     {
         return $this->morphedByMany(Person::class, 'taggable');
+    }
+
+    public function messages()
+    {
+        return $this->morphedByMany(Message::class, 'taggable');
     }
 }

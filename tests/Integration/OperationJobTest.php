@@ -9,10 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Tests\Integration\Operations\AnotherOperation;
-use Tests\Integration\Operations\CancelingOperation;
 use Tests\Integration\Operations\DependantOperation;
 use Tests\Integration\Operations\ExampleOperation;
-use Tests\Integration\Operations\StoppingOperation;
 use Tests\Integration\Operations\TaggedOperation;
 use Tests\TestCase;
 
@@ -69,7 +67,6 @@ class OperationJobTest extends TestCase
 
         $this->assertNotNull($operation->fresh()->finished_run_at);
     }
-
 
     /** @test */
     public function it_has_the_proper_display_name()

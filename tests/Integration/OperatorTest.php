@@ -27,11 +27,11 @@ class OperatorTest extends TestCase
         Queue::fake();
         config([
             'operations.operations' => [
-                 ExampleOperation::class,
-                 AnotherOperation::class,
-                 CustomQueueOperation::class,
-                 CustomConnectionOperation::class,
-            ]
+                ExampleOperation::class,
+                AnotherOperation::class,
+                CustomQueueOperation::class,
+                CustomConnectionOperation::class,
+            ],
         ]);
     }
 

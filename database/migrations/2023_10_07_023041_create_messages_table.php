@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(\App\Models\Credential::class);
             $table->foreignIdFor(\App\Models\Person::class, 'from_person');
+            $table->foreignIdFor(\App\Models\Person::class, 'to_person');
 
             $table->foreignIdFor(\App\Models\Thread::class)->nullable();
 

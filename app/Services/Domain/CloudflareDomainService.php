@@ -37,7 +37,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     public function getDomains(int $limit = 10, int $page = 1): LengthAwarePaginator
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'X-Auth-Key' => $this->apiKey,
             'Content-Type' => 'application/json',
             'X-Auth-Email' => $this->email,
         ])->get(static::CLOUDFLARE_URL.'/zones', [
@@ -66,7 +66,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     public function deleteDnsRecord(string $domain, string $dnsRecordId): void
     {
         Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
         ])->delete(static::CLOUDFLARE_URL."/zones/$domain/dns_records/$dnsRecordId");
     }
@@ -87,7 +87,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     public function createDomain(string $domain): array
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
         ])->post(static::CLOUDFLARE_URL.'/zones', [
             'account' => [
@@ -117,7 +117,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     public function getDns(string $domain, string $type = null, int $limit = 10, int $page = 1): LengthAwarePaginator
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
         ])->get(static::CLOUDFLARE_URL."/zones/$domain/dns_records", array_merge([
             'per_page' => $limit,
@@ -148,7 +148,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     public function createDnsRecord(string $domain, array $dnsRecordArray): void
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
             'content-type' => 'application/json',
         ])->post(static::CLOUDFLARE_URL."/zones/$domain/dns_records", $dnsRecordArray);
@@ -163,7 +163,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     public function hasEmailRouting(string $domain): bool
     {
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer '.$this->apiKey,
+            'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
             'content-type' => 'application/json',
         ])->get(static::CLOUDFLARE_URL."/zones/$domain/email/routing");
@@ -228,7 +228,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     {
         $zone = $domain->cloudflare_id;
         $response = Http::withHeaders([
-            'Authorization' => 'bearer '.$this->apiKey,
+            'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
             'content-type' => 'application/json',
         ])->get(static::CLOUDFLARE_URL."/zones/$zone/dns_analytics/report/bytime?".http_build_query([

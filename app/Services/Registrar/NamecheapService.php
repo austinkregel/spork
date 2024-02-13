@@ -52,7 +52,7 @@ class NamecheapService implements NamecheapServiceContract
                 // 'original' => (array) $domain,
                 'created_at' => Carbon::parse($domain->Created),
                 'expires_at' => Carbon::parse($domain->Expires),
-//                'renews_at' => $this->fetchPriceOfRenewal($domain->Name),
+                //                'renews_at' => $this->fetchPriceOfRenewal($domain->Name),
             ], $domains),
             $domainResponse->CommandResponse->Paging->TotalItems ?? 0,
             $limit,

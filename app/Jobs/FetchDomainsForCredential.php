@@ -45,8 +45,8 @@ class FetchDomainsForCredential implements ShouldQueue
             return;
         }
 
-        $dispatcher->dispatchSync(match ($this->credential->service) {
+        $this->batch()->add([match ($this->credential->service) {
             Credential::CLOUDFLARE => new CloudflareSyncAndPurgeJob($this->credential, $this->user),
-        });
+        }]);
     }
 }

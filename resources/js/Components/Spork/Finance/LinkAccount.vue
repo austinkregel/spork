@@ -10,8 +10,8 @@
             <div v-for="account in accounts" class="p-4 dark:bg-stone-950 dark:text-white rounded">
                 <div class="text-2xl">{{ account.name }}</div>
                 <div>
-                    <span class="text-xl">${{ account.available }}</span>
-                    <span class="text-sm text-stone-300">/ ${{ account.balance }}</span>
+                    <span class="text-xl">${{ account.available.toLocaleString() }}</span>
+                    <span class="text-sm text-stone-300">/ ${{ account.balance.toLocaleString() }}</span>
                 </div>
                 <div class="text-xs text-stone-400">from {{account.credential.name}}</div>
             </div>
