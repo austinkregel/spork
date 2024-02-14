@@ -61,7 +61,7 @@ export default {
                 return 'border-stone-100 dark:border-stone-500 dark:text-stone-50 hover:border-stone-200 focus:ring-stone-500'
             }
             if (this.danger) {
-                return 'border-transparent bg-red-100 hover:bg-red-200 focus:ring-red-500'
+                return 'border-transparent bg-red-100 hover:bg-red-200 focus:ring-red-500 dark:bg-red-500'
             }
 
             return 'border-stone-300 text-stone-700 dark:border-stone-600 dark:text-stone-200 focus:ring-stone-500'

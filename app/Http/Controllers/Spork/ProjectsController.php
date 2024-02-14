@@ -81,6 +81,9 @@ class ProjectsController extends Controller
 
                 ],
             ],
+            'tasks' => $project->tasks()
+                ->where('type', 'task')
+                ->get(),
         ]);
     }
 

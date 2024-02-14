@@ -6,11 +6,22 @@ namespace App\Events\Models\Account;
 
 use App\Events\AbstractLogicalEvent;
 use App\Models\Finance\Account;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class AccountUpdated extends AbstractLogicalEvent
+class AccountUpdated extends AbstractLogicalEvent implements ShouldBroadcast
 {
     public function __construct(
         public Account $model,
     ) {
+    }
+
+    public function broadcastOn()
+    {
+        $this->model->load('credential');
+
+        return [
+            new PrivateChannel('App.Models.User.'.$this->model->credential->user_id),
+        ];
     }
 }

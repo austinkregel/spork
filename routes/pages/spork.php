@@ -154,12 +154,6 @@ Route::group(['prefix' => '-', 'middleware' => [
             'unread_messages' => request()->user()
                 ->messages()
                 ->count(),
-            'tasks_today' => \App\Models\Task::query()
-                ->where(function ($query) {
-                    $query->whereDate('start_date', now())
-                        ->orWhereDate('end_date', now());
-                })->count(),
-
             'messages' => request()->user()
                 ->messages()
                 ->paginate(15, ['*'], 'messages_page'),
