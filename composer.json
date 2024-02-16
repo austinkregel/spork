@@ -29,6 +29,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "league/flysystem-ftp": "^3.0",
+        "lesstif/php-jira-rest-client": "^5.7",
         "miguilim/filament-auto-panel": "^1.4",
         "mustache/mustache": "^2.14",
         "nette/php-generator": "*",
