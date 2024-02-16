@@ -11,44 +11,7 @@
         </div>
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-4">
-              <div class="grid grid-cols-2 gap-6">
-                <div>
-                  <div class="p-4 bg-stone-800 rounded-lg shadow-lg w-96 text-stone-200">
-                    <div v-for="task in $page.props.tasks" class="flex flex-col gap-4">
-                      <div>
-                        <Status :status="task.status" />
-                      </div>
-
-                      <div class="text-stone-900 dark:text-stone-300 font-bold uppercase tracking-widest">name</div>
-
-                      <SporkInput v-model="task.name" />
-
-                      <div class="text-stone-900 dark:text-stone-300 font-bold uppercase tracking-widest">notes</div>
-
-                      <SporkInput v-model="task.notes" type="textarea" />
-
-                      <div class="text-stone-900 dark:text-stone-300 font-bold uppercase tracking-widest">Tasks</div>
-
-                      <div v-if="task.checklist" v-for="(t, $i) in task.checklist" :key="t" class="flex gap-4 items-center">
-                        <input type="checkbox" @change="(e) => {task.checklist[$i].checked = !task.checklist[$i].checked}" :checked="task.checklist[$i].checked" />
-                        <SporkInput  v-model="task.checklist[$i].task" />
-                        <button @click="() => task.checklist = task.checklist.filter((item, i) => i !== $i)">
-                          <DynamicIcon icon-name="TrashIcon" class="w-6 h-6 text-red-500" />
-                        </button>
-                      </div>
-
-                      <div>
-                        <SporkButton secondary @click="() => { task.checklist ? task.checklist.push({ task: '', checked: false}) : task.checklist = [{task: '', checked: false}];}">
-                          Add to checklist
-                        </SporkButton>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="border-t border-stone-600"></div>
-              <div class="grid grid-cols-2 gap-6 w-full">
+             <div class="grid grid-cols-2 gap-6 w-full">
                   <div>
                       <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50 ">Servers</h3>
 
