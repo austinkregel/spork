@@ -6,8 +6,11 @@ namespace App\Services\Programming;
 
 use App\Contracts\LogicalEvent;
 use App\Contracts\LogicalListener;
+use App\Providers\AppServiceProvider;
 use App\Services\Code;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Nette\InvalidArgumentException;
 use Nette\PhpGenerator\Dumper;
 use Nette\PhpGenerator\Literal;
@@ -368,6 +371,52 @@ class LaravelProgrammingStyle extends Code
         }, []);
     }
 
+    public function getMethod(string $methodName)
+    {
+        foreach ($this->phpFiles as $phpFile) {
+            /**
+             * @var string $namespaceName
+             * @var PhpNamespace $namespace
+             */
+            foreach ($phpFile->getNamespaces() as $namespace) {
+                $classes = $namespace->getClasses();
+                foreach ($classes as $class) {
+                    if ($class->hasMethod($methodName)) {
+                        return $class->getMethod($methodName);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static function findContainerBindings(): array
+    {
+        $code = static::for(AppServiceProvider::class);
+
+        foreach ($code->getClasses() as $class) {
+            $c = static::for($class);
+            $method = $code->getMethod('register');
+            $registerMethodWithAppBindings = array_filter(explode("\n", $method->getBody()), fn ($line) => str_contains($line, '->bind('));
+
+
+            $bindings = array_reduce($registerMethodWithAppBindings, function ($allBindings, $bindLine) use ($c) {
+                $binding = $c->parseBindFromServiceProvider($bindLine);
+
+                return array_merge($allBindings,[
+                    $binding['interface'] => array_merge(
+                        $binding,
+                        [
+                            'instances' => static::instancesOf( $binding['interface'])->getClasses(),
+                        ]
+                    ),
+                ]);
+            }, $bindings ?? []);
+        }
+
+        return$bindings;
+    }
     public static function findLogicalEvents(): array
     {
         $code = static::instancesOf(LogicalEvent::class);
@@ -445,5 +494,17 @@ class LaravelProgrammingStyle extends Code
     public static function findLogicalListeners(): array
     {
         return static::instancesOf(LogicalListener::class)->getClasses();
+    }
+
+    public function parseBindFromServiceProvider(string $bindLineFromServiceProvider)
+    {
+        // use a named regex to extract the binding and concrete class.
+        $matches = [];
+        preg_match_all('/((?P<interface>[a-z09\\\_]+::class), \/\*\(n\*\/(?P<concrete>[a-z09\\\_]+::class))/i', $bindLineFromServiceProvider, $matches);
+
+        return [
+            'interface' => trim(str_replace('::class', '', $matches['interface'][0]), '\\'),
+            'concrete' => trim(str_replace('::class', '', $matches['concrete'][0]), '\\'),
+        ];
     }
 }

@@ -86,4 +86,13 @@ class Message extends Model
     {
         return $this->hasManyJson(Person::class, 'emails', 'to_email');
     }
+
+    public function broadcastWith(string $event): array
+    {
+        $data = $this->toArray();
+        unset($data['html_message']);
+        unset($data['message']);
+
+        return $data;
+    }
 }

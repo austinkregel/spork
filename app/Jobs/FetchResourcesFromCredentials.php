@@ -37,8 +37,8 @@ class FetchResourcesFromCredentials implements ShouldQueue
         $credentials = Credential::all();
 
         $jobs = $credentials->groupBy('user_id')
-            ->map(fn (Collection $group) => $group->map(fn ($credential) => new FetchResourcesFromCredential($credential))->toArray()
-            )->toArray();
+            ->map(fn (Collection $group) => $group->map(fn ($credential) => new FetchResourcesFromCredential($credential))->toArray())
+            ->toArray();
 
         $dispatcher->batch($jobs)
             ->name('Updatch Resources From Credentials')

@@ -226,6 +226,7 @@ class Code
                 interface_exists($desiredParentClass) => array_values(array_filter(array_merge($interfaces, $classes), fn ($declaredClass) => isset(class_implements($declaredClass)[$desiredParentClass]))),
                 class_exists($desiredParentClass) => array_values(array_filter($classes, fn ($declaredClass) => is_subclass_of($declaredClass, $desiredParentClass))),
                 trait_exists($desiredParentClass) => array_values(array_filter(array_merge($traits, $classes), fn ($declaredClass) => in_array($desiredParentClass, trait_uses_recursive($declaredClass)))),
+                default => dd($desiredParentClass),
             };
 
             return new static($possibleInstances);

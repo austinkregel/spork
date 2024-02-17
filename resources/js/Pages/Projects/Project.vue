@@ -11,6 +11,10 @@
         </div>
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-4">
+                <div>
+                    {{ $page.props.tasks }}
+                </div>
+
              <div class="grid grid-cols-2 gap-6 w-full">
                   <div>
                       <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50 ">Servers</h3>
