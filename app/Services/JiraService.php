@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Contracts\Services\JiraServiceContract;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Arr;
 use JiraRestApi\Board\Board;
 use JiraRestApi\Board\BoardService;
 use JiraRestApi\Issue\IssueService;
@@ -59,7 +60,7 @@ class JiraService implements JiraServiceContract
     public function findAllTickets(string $project, Carbon $createdAt, int $limit = 15, int $page = 1): LengthAwarePaginator
     {
         $issues = $this->issueService->search("project = \"$project\" and updated >= {$createdAt->format('Y-m-d')} ORDER BY updated ASC", ($page * $limit) - $limit, $limit, [], [
-            'changelog'
+            'changelog',
         ]);
 
         return new LengthAwarePaginator($issues->getIssues(), $issues->total, $limit, $page);
@@ -70,10 +71,6 @@ class JiraService implements JiraServiceContract
         return $this->issueService->get($ticketName);
     }
 
-    /**
-     * @param string $sprint
-     * @return Sprint
-     */
     public function findSprint(string $sprint): Sprint
     {
         return $this->sprintService->getSprint($sprint);
@@ -83,7 +80,7 @@ class JiraService implements JiraServiceContract
      * Jira is a little dumb here... They only associate sprints with boards
      * so to get the sprints for a project, we have to get all the boards first, then
      * loop through all the boards that support sprints, to get the sprints.
-     * @param string $projectKey
+     *
      * @return Sprint[]
      */
     public function findAllSprints(string $projectKey): array
@@ -91,7 +88,7 @@ class JiraService implements JiraServiceContract
         /** @var \ArrayObject $boardList */
         $boardList = $this->boardService->getBoardList([
             'projectKeyOrId' => $projectKey,
-            'type' => 'scrum'
+            'type' => 'scrum',
         ]);
         $boards = array_map(function (Board $board) {
             return $board->getId();
@@ -100,7 +97,7 @@ class JiraService implements JiraServiceContract
         /** @var \ArrayObject[] $boardSprints */
         $boardSprints = array_map(function (int $board) {
             return $this->boardService->getBoardSprints($board, [
-                'maxResults' => 100
+                'maxResults' => 100,
             ])->getArrayCopy();
         }, $boards);
 

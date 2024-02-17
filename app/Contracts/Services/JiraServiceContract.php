@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Contracts\Services;
@@ -14,7 +15,6 @@ interface JiraServiceContract
     public function findOneTicket(string $ticketName);
 
     /**
-     * @param string $sprint
      * @return Sprint
      */
     public function findSprint(string $sprint);

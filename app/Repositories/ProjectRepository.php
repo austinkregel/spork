@@ -13,7 +13,8 @@ class ProjectRepository
 {
     public function __construct(
         protected JiraServiceContract $jira
-    ) {}
+    ) {
+    }
 
     public function createJiraProject(JiraProject $jiraProject, $page = 1): Project
     {
@@ -33,13 +34,13 @@ class ProjectRepository
 
         return Project::query()
             ->firstOrCreate([
-                'name' => $data['key']
-            ],[
-               'name' => $data['key'],
-               'settings' => [
-                   'jira_id' => $data['jira_id'],
-                   'jira_name' => $data['name'],
-               ],
+                'name' => $data['key'],
+            ], [
+                'name' => $data['key'],
+                'settings' => [
+                    'jira_id' => $data['jira_id'],
+                    'jira_name' => $data['name'],
+                ],
                 'team_id' => 1,
             ]);
     }

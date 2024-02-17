@@ -9,8 +9,6 @@ use App\Contracts\LogicalListener;
 use App\Providers\AppServiceProvider;
 use App\Services\Code;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Nette\InvalidArgumentException;
 use Nette\PhpGenerator\Dumper;
 use Nette\PhpGenerator\Literal;
@@ -388,7 +386,6 @@ class LaravelProgrammingStyle extends Code
             }
         }
 
-        return null;
     }
 
     public static function findContainerBindings(): array
@@ -400,23 +397,23 @@ class LaravelProgrammingStyle extends Code
             $method = $code->getMethod('register');
             $registerMethodWithAppBindings = array_filter(explode("\n", $method->getBody()), fn ($line) => str_contains($line, '->bind('));
 
-
             $bindings = array_reduce($registerMethodWithAppBindings, function ($allBindings, $bindLine) use ($c) {
                 $binding = $c->parseBindFromServiceProvider($bindLine);
 
-                return array_merge($allBindings,[
+                return array_merge($allBindings, [
                     $binding['interface'] => array_merge(
                         $binding,
                         [
-                            'instances' => static::instancesOf( $binding['interface'])->getClasses(),
+                            'instances' => static::instancesOf($binding['interface'])->getClasses(),
                         ]
                     ),
                 ]);
             }, $bindings ?? []);
         }
 
-        return$bindings;
+        return $bindings;
     }
+
     public static function findLogicalEvents(): array
     {
         $code = static::instancesOf(LogicalEvent::class);
