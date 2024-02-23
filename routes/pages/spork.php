@@ -8,12 +8,10 @@ use App\Http\Controllers;
 use App\Models\Person;
 use App\Services\Development\DescribeTableService;
 use App\Services\Programming\LaravelProgrammingStyle;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Symfony\Component\Finder\SplFileInfo;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,7 +101,7 @@ Route::middleware([
     Route::post('/api/plaid/create-link-token', Controllers\Api\Plaid\CreateLinkTokenController::class);
     Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
 
-    Route::post('/api/projects/{project}/tasks', Controllers\Api\Projects\CreateTaskController::class);;
+    Route::post('/api/projects/{project}/tasks', Controllers\Api\Projects\CreateTaskController::class);
 
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
 
@@ -112,8 +110,7 @@ Route::middleware([
 
     Route::get('/user/api-query', function (DescribeTableService $descriptionService) {
         return Inertia::render('API/QueryBuilderPage', [
-            'models' =>
-            collect(\App\Services\Code::instancesOf(ModelQuery::class)
+            'models' => collect(\App\Services\Code::instancesOf(ModelQuery::class)
                 ->getClasses())
                 ->map(fn ($model) => $descriptionService->describe(new $model)),
         ]);
@@ -214,7 +211,7 @@ Route::group(['prefix' => '-', 'middleware' => [
                 ->with('research')
                 ->get()
                 ->map(fn ($project) => $project->research)
-                ->flatten()
+                ->flatten(),
         ]);
     });
     Route::get('/research/{research}', function (App\Models\Research $research) {
@@ -291,7 +288,6 @@ Route::group(['prefix' => '-', 'middleware' => [
 
         ]);
     });
-
 
     Route::get('/manage', function () {
         return Inertia::render('Manage/Index', [

@@ -103,7 +103,7 @@ class ProjectsController extends Controller
                 ->where('type', 'daily')
                 ->get(),
             'today_tasks' => $project->tasks()
-            ->where('status', '!=', 'done')
+                ->where('status', '!=', 'done')
 
                 ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
                 ->where(function ($query) {

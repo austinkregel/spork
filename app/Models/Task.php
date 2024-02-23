@@ -8,7 +8,7 @@ use App\Contracts\ModelQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Task extends Model implements ModelQuery, Crud
+class Task extends Model implements Crud, ModelQuery
 {
     use HasFactory;
 
