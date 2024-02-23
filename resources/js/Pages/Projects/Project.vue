@@ -1,7 +1,7 @@
 <template>
     <AppLayout title="Dashboard">
         <div class="w-full border-b dark:border-slate-700 dark:bg-stone-950">
-            <div class="max-w-7xl mx-auto px-12 py-4 flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
+            <div class="max-w-7xl mx-auto px-8 py-4 flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
                 <Link href="/-/projects" class="underline">
                     Projects
                 </Link>
@@ -11,8 +11,18 @@
         </div>
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-4">
-                <div>
-                    {{ $page.props.tasks }}
+                <div class="uppercase tracking-wider">Todo tasks</div>
+                <div class="grid grid-cols-3 w-full gap-4">
+                    <div class="bg-stone-700 rounded-lg py-4">
+
+                          <SmallTaskList :tasks="$page.props.daily_tasks" name="Daily Tasks" @open="() => { createTask = true; form.type = 'daily'}"/>
+                    </div>
+                    <div class="bg-stone-700 rounded-lg py-4">
+                        <SmallTaskList :tasks="$page.props.today_tasks" name="Today's Tasks" @open="() => { createTask = true; form.type = 'today'}" />
+                    </div>
+                    <div class="bg-stone-700 rounded-lg py-4">
+                        <SmallTaskList :tasks="$page.props.future_tasks" name="Future tasks" @open="() => { createTask = true; form.type = 'future'}"/>
+                    </div>
                 </div>
 
              <div class="grid grid-cols-2 gap-6 w-full">
@@ -284,16 +294,46 @@
                     </div>
                 </template>
             </DialogModal>
+
+
+            <DialogModal :show="createTask" :closeable="true" @close="createTask = false" >
+                <template #title>
+                    <div class="dark:text-stone-200 p-4">
+                        Create a task
+                    </div>
+                </template>
+                <template #content>
+                    <div class="dark:text-stone-200 p-4 flex flex-col gap-4 border dark:border-stone-600 rounded-lg">
+                        <SporkField v-model="form.name" label="Name" placeholder="hello there" />
+                        <SporkField v-model="form.type" label="Type" />
+                        <SporkField v-model="form.status" label="Status" />
+                        <SporkField v-model="form.notes" label="Notes" type="textarea"/>
+                        <SporkField v-model="form.start_date" label="Start Date" type="date"/>
+                        <SporkChecklist v-model="form.checklist" label="Checklist"/>
+                    </div>
+                </template>
+                <template #footer>
+                    <div class="dark:text-stone-200 p-4 flex justify-between gap-4">
+                        <spork-button @click="createTask = !createTask" small secondary>
+                            Close
+                        </spork-button>
+                        <spork-button @click="saveTask(form); createTask = !createTask" small primary>
+                            Save
+                        </spork-button>
+                    </div>
+                </template>
+            </DialogModal>
         </div>
     </AppLayout>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import {Head, Link, router} from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
+import SporkField from '@/Components/Spork/SporkField.vue';
 import Status from '@/Components/Status.vue'
 import {buildUrl} from "@kbco/query-builder";
 import {
@@ -315,11 +355,16 @@ import Modal from "@/Components/Modal.vue";
 import DialogModal from "@/Components/DialogModal.vue";
 import SporkButton from "@/Components/Spork/SporkButton.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
+import SporkChecklist from "@/Components/Spork/SporkChecklist.vue";
+import SmallTaskList from "@/Components/Spork/SmallTaskList.vue";
 
 export default {
     components: {
-      DynamicIcon,
+        SmallTaskList,
+        SporkChecklist,
+        DynamicIcon,
         SporkButton,
+        SporkField,
         DialogModal,
         Modal,
         CrudView,
@@ -350,18 +395,7 @@ export default {
             attach: ref([]),
             resources: ref([]),
             attachOpen: ref(false),
-        }
-    },
-    watch: {
-        date(to, from) {
-            this.form.remind_at = dayjs(to).startOf('day').utc().format("YYYY-MM-DD HH:mm:ss")
-        },
-        allSelected(newValue, oldValue) {
-            if (newValue) {
-                this.resources = [... this.attach.map(a => a.id)];
-            } else {
-                this.resources = [];
-            }
+            createTask: ref(false),
         }
     },
     methods: {
@@ -372,43 +406,10 @@ export default {
 
             return this.form.errors[error] ?? null;
         },
-        dateFormat(contact) {
-            return '<span class="text-stone-900">' + contact.starts_at  + '  at </span>' +
-                '<span class="text-stone-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
-        },
-        async save(form) {
-            if (!form.id) {
-                await axios.post('/api/crud/projects', {
-                    ...form,
-                    team_id: this.$page.props.auth.user.current_team.id,
-                });
-
-                this.fetch({ page: 1, limit: 15,})
-            } else {
-                console.log('No edit method defined')
-            }
-        },
         async onDelete(data) {
             await axios.delete('/api/crud/projects/' + form.id);
         },
-        async onExecute({ actionToRun, selectedItems}) {
-            try {
-                await this.$store.dispatch('executeAction', {
-                    url: actionToRun.url,
-                    data: {
-                        selectedItems
-                    },
-                });
-
-            } catch (e) {
-                console.log(e.message, 'error');
-            }
-        },
-        async fetch({ page, limit }) {
-            console.log('attempting to fetch', { page, limit })
-        },
         async fetchServers({ page, limit }) {
-
             const { data: { data, ...pagination} } = await axios.get(buildUrl(
                 '/api/crud/servers', {
                     page, limit,
@@ -458,7 +459,6 @@ export default {
 
           this.type = 'App\\Models\\Research';
           this.attach = data;
-
         },
         async fetchPages({ page, limit }) {
             const {data: {data, ...pagination}} = await axios.get(buildUrl(
@@ -480,17 +480,22 @@ export default {
                 })
             })).then(() => {
                 router.reload({ only: ['project'] })
-
-                this.fetch({ page: 1, limit: 100 });
             });
         },
         async detach(item) {
             await axios.post('/project/' + this.$page.props.project.id + '/detach', item.pivot);
             router.reload({ only: ['project'] })
-        }
+        },
+        async saveTask(form) {
+            await axios.post('/api/projects/'+this.$page.props.project.id + '/tasks', {
+                ...form,
+            });
+            this.createTask = false;
+
+            router.reload({ })
+        },
     },
     created() {
-        this.fetch({ page: 1, limit: 15 })
     }
 
 }

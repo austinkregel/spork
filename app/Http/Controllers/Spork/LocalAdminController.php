@@ -44,6 +44,7 @@ class LocalAdminController extends Controller
         'scripts' => App\Models\Spork\Script::class,
         'servers' => App\Models\Server::class,
         'tags' => App\Models\Tag::class,
+        'tasks' => App\Models\Task::class,
         'threads' => App\Models\Thread::class,
         'transactions' => App\Models\Finance\Transaction::class,
         'users' => App\Models\User::class,

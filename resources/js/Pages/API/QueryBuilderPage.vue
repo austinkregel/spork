@@ -10,18 +10,16 @@ defineProps({
 
 <template>
     <AppLayout title="API Tokens">
-        <template #header>
-            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
+        <div class="py-6 px-4 dark:bg-stone-950">
+            <div class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
                 Query Builder
-            </h2>
-        </template>
+            </div>
+        </div>
 
         <div>
-            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <QueryBuilder
                     :models="models"
                 />
             </div>
-        </div>
     </AppLayout>
 </template>

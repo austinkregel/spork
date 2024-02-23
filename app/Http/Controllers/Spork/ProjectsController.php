@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Research;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -14,7 +16,21 @@ class ProjectsController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Projects/Projects', []);
+        $model = \App\Models\Project::class;
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
+        $paginator = $model::query()
+            ->where('team_id', auth()->user()->current_team_id)
+            ->paginate(request('limit', 15), ['*'], 'page', request('page', 1));
+
+        $data = $paginator->items();
+        $paginator = $paginator->toArray();
+
+        unset($paginator['data']);
+
+        return Inertia::render('Projects/Index', [
+            'data' => $data,
+            'paginator' => $paginator,
+        ]);
     }
 
     public function show(Project $project)
@@ -81,8 +97,28 @@ class ProjectsController extends Controller
 
                 ],
             ],
-            'tasks' => $project->tasks()
-                ->where('type', 'task')
+            'daily_tasks' => $project->tasks()
+                ->where('status', '!=', 'done')
+                ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
+                ->where('type', 'daily')
+                ->get(),
+            'today_tasks' => $project->tasks()
+            ->where('status', '!=', 'done')
+
+                ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
+                ->where(function ($query) {
+                    $query->where('start_date', '<=', now())
+                        ->orWhere('end_date', '>=', now())
+                        ->orWhereNull('end_date');
+                })
+                ->get(),
+            'future_tasks' => $project->tasks()
+                ->where('status', '!=', 'done')
+                ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
+                ->where(function ($query) {
+                    $query->where('start_date', '>=', now())
+                        ->orWhere('end_date', '>=', now());
+                })
                 ->get(),
         ]);
     }
@@ -141,6 +177,8 @@ class ProjectsController extends Controller
                 \App\Models\Domain::class,
                 \App\Models\Credential::class,
                 \App\Models\Page::class,
+                Research::class,
+                Task::class,
             ]),
         ]);
 
@@ -171,6 +209,8 @@ class ProjectsController extends Controller
                 \App\Models\Domain::class,
                 \App\Models\Credential::class,
                 \App\Models\Page::class,
+                Research::class,
+                Task::class,
             ]),
         ]);
 

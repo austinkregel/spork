@@ -2,7 +2,7 @@
 @import "../../../../node_modules/vue-select/dist/vue-select.css";
 
 .tribute-container {
-    @apply bg-white dark:bg-stone-900 rounded shadow text-xs overflow-hidden;
+    @apply bg-white dark:bg-stone-900 rounded shadow text-xs ;
 }
 .tribute-container ul, .tribute-container li {
     list-style: none;
@@ -34,7 +34,7 @@
 <template>
     <div>
         <div class="flex flex-wrap border border-stone-500 dark:border-stone-700 dark:text-stone-50 rounded h-full" style="min-height: 400px;">
-            <form class="w-1/3 h-auto border-r" @submit.prevent="submitForm">
+            <form class="w-1/3 h-auto border-r dark:border-stone-950" @submit.prevent="submitForm">
                 <div class="mx-2">
                     <div class="text-sm uppercase text-stone-600 dark:text-stone-200 py-2 px-1 flex justify-between">
                         <span>Object to query</span>
@@ -50,7 +50,10 @@
                         placeholder="Object to query..."
                         :options="models"
                         :multiple="false"
-                     ></multiselect>
+                        :clearable="true"
+                        :get-option-label="option => option.pretty_name"
+                     >
+                    </multiselect>
                 </div>
 
                 <div v-if="model" class="mx-2">
@@ -61,7 +64,7 @@
                         :options="selectedModel.fields"
                         :clear-on-select="false"
                         :multiple="true"
-
+                        :clearable="true"
                         :hide-selected="true"
                         :close-on-select="true"
                     >
@@ -78,6 +81,7 @@
                         :clear-on-select="false"
                         :close-on-select="true"
                         :multiple="true"
+                        :clearable="true"
                         :hide-selected="true"
                     >
                         <template slot="singleLabel" slot-scope="{ option }">{{ option.name }}</template>
@@ -87,7 +91,7 @@
                 <div v-if="model" class="flex flex-wrap mx-2 relative text-xs" id="autocomplete-container">
                     <div class="w-full text-sm uppercase text-stone-600 dark:text-stone-300 py-2 px-1">Filter data</div>
 
-                    <div class="flex flex-wrap w-full" v-for="(filter, $i) in filters">
+                    <div class="flex  items-center gap-2 w-full" v-for="(filter, $i) in filters">
                         <multiselect
                             v-model="filters[$i]"
                             placeholder="Field..."
@@ -95,11 +99,18 @@
                             :preselect-first="true"
                             track-by="value"
                             label="value"
+                            :clearable="true"
                             class="w-1/2 border-0 "
                         >
                         </multiselect>
                         <div class="w-1/2">
-                            <input type="text" v-model="filters[$i].text" placeholder="value..." class="px-2 py-3 w-full border-r border-t border-b rounded" style="border-color: #e8e8e8;"/>
+                            <SporkInput v-model="filters[$i].text" />
+                        </div>
+
+                        <div>
+                            <button type="button" @click.prevent="() => filters = filters.filter((d, index) => index !== $i )">
+                                <DynamicIcon icon-name="TrashIcon" class="w-4 h-4 text-red-500 dark:text-red-400" />
+                            </button>
                         </div>
                     </div>
 
@@ -119,9 +130,10 @@
                     <multiselect
                         v-model="action"
                         placeholder="get, paginate, or first..."
-                        :options="selectedModel.actions"
+                        :options="selectedModel.query_actions"
                         :hide-selected="true"
                         :close-on-select="true"
+                        :clearable="true"
                         :preselect-first="true"
                     >
                     </multiselect>
@@ -140,7 +152,7 @@
             </form>
             <div class="w-2/3 bg-stone-200 dark:bg-stone-800 dark:text-stone-200">
                 <div>
-                    <input type="text" v-model="url" class="w-full py-2 px-1 text-stone-600 dark:text-stone-200 dark:bg-stone-600">
+                    <input type="text" v-model="url" class="w-full py-1 px-1 text-stone-600 dark:text-indigo-300 dark:bg-stone-950 text-sm">
                 </div>
                 <vue-json-pretty
                     :data="response || {message: 'No model found'}"
@@ -159,9 +171,15 @@ import ActionButton from "@/Components/ActionButton.vue";
 import { buildUrl } from '@kbco/query-builder';
 import Multiselect from "vue-select";
 import 'vue-json-pretty/lib/styles.css';
+import SporkInput from "@/Components/Spork/SporkInput.vue";
+import SporkButton from "@/Components/Spork/SporkButton.vue";
+import DynamicIcon from "@/Components/DynamicIcon.vue";
 
 export default {
     components: {
+        DynamicIcon,
+        SporkButton,
+        SporkInput,
         ActionButton,
         VueJsonPretty,
         Multiselect,
@@ -171,17 +189,7 @@ export default {
         return {
             modelFields: this.models.reduce((objects, model) => {
                 return Object.assign(objects, {
-                    [model]: {
-                        fields: [],
-                        includes: [],
-                        sorts: [],
-                        filters: [],
-                        actions: [
-                            'get',
-                            'first',
-                            'paginate'
-                        ],
-                    }
+                    [model.name]: model,
                 })
             }, {}),
             Object,
@@ -262,7 +270,7 @@ export default {
     },
     computed: {
         selectedModel() {
-            return this.modelFields[this.model];
+            return this.modelFields?.[this.model?.name];
         },
         filterTribute() {
             if (!this.selectedModel) {
@@ -292,9 +300,9 @@ export default {
         },
         url() {
             console.log(Array.isArray(this.fields))
-            return buildUrl('/api/' + this.model, Object.assign({
+            return buildUrl('/api/crud/' + this.model?.name, Object.assign({
                 fields: this.fields.length > 0 ? {
-                    [this.model]: this.fields.join(',')
+                    [this.model.name]: this.fields.join(',')
                 } : null,
                 include: this.includes,
                 action: this.action,
@@ -303,20 +311,13 @@ export default {
         },
         actionInputs() {
             return this.models.reduce((models, model) => {
-                return this.modelFields[model].actions.reduce((actions, action) => {
+                return this.modelFields[model.name].actions.reduce((actions, action) => {
                     return actions;
                 }, models);
             }, {})
         }
     },
     mounted() {
-        this.models.map(model => {
-            axios.get('/api/' + model + '/fields').then(({data}) => {
-                this.modelFields[model] = data;
-            }). catch(console.error);
-            this.actionInputs
-        });
-
         let that = this;
 
         let keybindingHandler = (e) => {

@@ -13,7 +13,7 @@ use App\Events\Models\ShortCode\ShortCodeUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ShortCode extends Model
+class ShortCode extends Model implements Crud
 {
     use HasFactory;
 
