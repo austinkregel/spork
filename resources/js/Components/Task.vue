@@ -51,7 +51,9 @@ import DialogModal from "@/Components/DialogModal.vue";
 const { task } = defineProps({
     task: {
         type: Object,
-        default: () => ({})
+        default: () => ({
+            checklist: []
+        })
     }
 })
 const form = reactive(task);
@@ -68,6 +70,9 @@ watch(task, (newVal, oldValue) => {
 });
 
 const checklistStatus = computed(() => {
+    if (! task?.checklist || task.checklist.length === 0) {
+        return '';
+    }
     const completed = task.checklist.filter((item) => item.checked).length;
     const total = task.checklist.length;
     return  completed + '/' + total ;
@@ -76,7 +81,7 @@ const status = computed(() => {
     return task.status
 })
 const color = computed(() => {
-    if (task.checklist.length === 0) {
+    if (! task?.checklist || task.checklist.length === 0) {
         return 'border-stone-950';
     }
 

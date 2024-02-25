@@ -26,8 +26,6 @@
                     <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-stone-400" aria-hidden="true" />
                 </Link>
             </div>
-
-            {{ paginator }}
         </div>
     </AppLayout>
 </template>
