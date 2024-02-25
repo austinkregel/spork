@@ -1,16 +1,8 @@
 <script setup>
 import dayjs from 'dayjs';
 import { computed } from "vue";
-import { usePage, Link } from '@inertiajs/vue3';
+import { usePage, Link, router } from '@inertiajs/vue3';
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {
-  TagIcon,
-  ServerIcon,
-  LinkIcon,
-    UserIcon,
-  BuildingLibraryIcon,
-  WalletIcon
-} from "@heroicons/vue/24/outline";
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import LinkAccount from "@/Components/Spork/Finance/LinkAccount.vue";
 import SporkTable from "@/Components/Spork/Molecules/SporkTable.vue";

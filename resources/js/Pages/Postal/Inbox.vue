@@ -18,7 +18,7 @@
                     <div class="text-sm">{{ item.human_date }}</div>
                 </div>
                 <div class="w-full text-left text-sm">{{ item.subject }}</div>
-                <div class="w-full text-left text-xs text-stone-400  tracking-wide">{{item.from_email}}</div>
+                <div class="w-full text-left text-xs text-stone-400 overflow-hidden tracking-wide">{{item.from_email}}</div>
               <div class="flex justify-between">
 
                 <div class="flex gap-2 items-center">
@@ -30,18 +30,20 @@
                   <PencilSquareIcon v-if="item.draft" class="w-5 h-5"/>
                 </div>
 
-                <div>{{ formatDate(item.originated_at * 1000) }}</div>
+                <div class="text-xs">{{ formatDate(item.originated_at * 1000) }}</div>
               </div>
             </button>
 
             <div class="flex flex-wrap w-full justify-between">
-              <Link :href="page.props.messages.prev_page_url" :class="[page.props.messages.prev_page_url ? 'text-stone-900 dark:text-stone-50' : 'dark:text-stone-400 text-stone-500 cursor-not-allowed']">
+              <Link :href="page.props.messages.prev_page_url ?? '#'" class="px-4 py-2 border rounded-lg m-1" :class="[page.props.messages.prev_page_url ? 'text-stone-900 dark:text-stone-50 border-stone-900 dark:border-stone-50' : 'border-stone-500 dark:stone-400 dark:text-stone-400 text-stone-500 cursor-not-allowed']">
                 Previous
               </Link>
               <Link
                   v-if="page.props.messages.next_page_url"
                   :href="page.props.messages.next_page_url"
-                  :class="[page.props.messages.next_page_url ? 'text-stone-900 dark:text-stone-50' : 'dark:text-stone-400 text-stone-500']">
+                  class="px-4 py-2 border rounded-lg m-1"
+                  :class="[page.props.messages.next_page_url ? 'text-stone-900 dark:text-stone-50 border-stone-900 dark:border-stone-50' : 'border-stone-500 dark:stone-400 dark:text-stone-400 text-stone-500 cursor-not-allowed']"
+              >
                 Next
               </Link>
             </div>

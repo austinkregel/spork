@@ -8,12 +8,10 @@ use App\Http\Controllers;
 use App\Models\Person;
 use App\Services\Development\DescribeTableService;
 use App\Services\Programming\LaravelProgrammingStyle;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Symfony\Component\Finder\SplFileInfo;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,18 +101,18 @@ Route::middleware([
     Route::post('/api/plaid/create-link-token', Controllers\Api\Plaid\CreateLinkTokenController::class);
     Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
 
+    Route::post('/api/projects/{project}/tasks', Controllers\Api\Projects\CreateTaskController::class);
+
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
 
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
-    Route::get('/user/api-query', function () {
+    Route::get('/user/api-query', function (DescribeTableService $descriptionService) {
         return Inertia::render('API/QueryBuilderPage', [
-            'models' => collect(app(Filesystem::class)->allFiles(app_path('Models')))->map(function (SplFileInfo $file) {
-                $modelClass = ucfirst(str_replace('/', '\\', str_replace('.php', '', substr(str_replace(base_path(), '', $file), 1))));
-
-                return new $modelClass;
-            })->filter(fn ($thing) => ($thing instanceof ModelQuery))->map(fn ($model) => $model->getTable())->values(),
+            'models' => collect(\App\Services\Code::instancesOf(ModelQuery::class)
+                ->getClasses())
+                ->map(fn ($model) => $descriptionService->describe(new $model)),
         ]);
     })->middleware(\App\Http\Middleware\Authenticate::class)->name('user.api-query');
 
@@ -154,18 +152,12 @@ Route::group(['prefix' => '-', 'middleware' => [
             'unread_messages' => request()->user()
                 ->messages()
                 ->count(),
-            'tasks_today' => \App\Models\Task::query()
-                ->where(function ($query) {
-                    $query->whereDate('start_date', now())
-                        ->orWhereDate('end_date', now());
-                })->count(),
-
             'messages' => request()->user()
                 ->messages()
                 ->paginate(15, ['*'], 'messages_page'),
 
         ]);
-    });
+    })->name('dashboard');
 
     Route::get('/tag-manager', function () {
         return Inertia::render('Tags/Index', [
@@ -206,34 +198,20 @@ Route::group(['prefix' => '-', 'middleware' => [
                 ->paginate(request('limit', 15), ['*'], 'page', 1),
         ]);
     });
-    Route::get('/projects', function () {
-        $model = \App\Models\Project::class;
+    Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
+    Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
 
-        $description = (new DescribeTableService)->describe(new $model);
-
-        /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
-        $paginator = $model::query()
-            ->paginate(request('limit', 15), ['*'], 'page', request('page', 1));
-
-        $data = $paginator->items();
-        $paginator = $paginator->toArray();
-
-        unset($paginator['data']);
-
-        return Inertia::render('Manage/Index', [
-            'title' => 'CRUD '.Str::ucfirst(str_replace('_', ' ', Str::ascii((new $model)->getTable(), 'en'))),
-            'description' => $description,
-            'singular' => Str::singular((new $model)->getTable()),
-            'plural' => Str::title((new $model)->getTable()),
-            'link' => '/'.(new $model)->getTable(),
-            'apiLink' => '/api/crud/'.(new $model)->getTable(),
-            'data' => $data,
-            'paginator' => $paginator,
-        ]);
+    Route::get('/projects/create', function () {
+        return Inertia::render('Projects/Create');
     });
+
     Route::get('/research', function () {
         return Inertia::render('Research/Dashboard', [
-            'research' => \App\Models\Research::all(),
+            'research' => request()->user()->projects()
+                ->with('research')
+                ->get()
+                ->map(fn ($project) => $project->research)
+                ->flatten(),
         ]);
     });
     Route::get('/research/{research}', function (App\Models\Research $research) {
@@ -311,8 +289,6 @@ Route::group(['prefix' => '-', 'middleware' => [
         ]);
     });
 
-    Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
-
     Route::get('/manage', function () {
         return Inertia::render('Manage/Index', [
             'title' => 'Dynamic CRUD',
@@ -351,7 +327,7 @@ Route::group(['prefix' => '-', 'middleware' => [
             'title' => 'CRUD '.Str::ucfirst(str_replace('_', ' ', Str::ascii((new $model)->getTable(), 'en'))),
             'description' => $description,
             'singular' => Str::singular((new $model)->getTable()),
-            'plural' => Str::title((new $model)->getTable()),
+            'plural' => Str::plural((new $model)->getTable()),
             'link' => '/'.(new $model)->getTable(),
             'apiLink' => '/api/crud/'.(new $model)->getTable(),
             'data' => $data,
@@ -384,6 +360,7 @@ Route::middleware([
 
     Route::get('/-/logic', function () {
         return Inertia::render('Logic/Index', [
+            'container_bindings' => \App\Services\Programming\LaravelProgrammingStyle::findContainerBindings(),
             'events' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalEvents(),
             'listeners' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalListeners(),
         ]);

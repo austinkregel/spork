@@ -129,7 +129,7 @@ async function saveResearch(topic) {
   await axios.put('/api/crud/research/'+topic.id, topic)
 }
 
-function searchForResearch(query, debounceTimeout) {
+async function searchForResearch(query, debounceTimeout) {
 
 }
 

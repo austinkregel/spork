@@ -9,11 +9,11 @@
             :key="'research-'+i"
             >
             <Link
-                :href="'/research/'+ topic.id"
+                :href="'/-/research/'+ topic.id"
             >
                 <div  class="font-medium truncate">{{ topic.name }}</div>
-            </Link>
             <pre class=" h-48 shadow-inset overflow-hidden text-xs border-t py-2 my-2">{{ topic.notes }}</pre>
+            </Link>
             <div class="text-stone-500 dark:text-stone-200 border-t mt-4 pt-2 flex items-center justify-between">
                 <span>{{ date(topic.updated_at) }}</span>
 

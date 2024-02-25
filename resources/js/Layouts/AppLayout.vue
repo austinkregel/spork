@@ -41,6 +41,7 @@ defineProps({
 
 const userNavigation = [
     { name: 'Your profile', href: '/user/profile' },
+    { name: 'Query Builder', href: '/user/api-query' },
     { name: 'Sign out', href: '#' },
 ]
 
@@ -124,7 +125,7 @@ const logout = () => {
 
         <!-- Static sidebar for desktop -->
         <div class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-10 lg:block lg:w-20 lg:bg-stone-950 lg:pb-4 relative">
-            <Link href="/-" class="flex h-16 shrink-0 items-center flex flex-col justify-center">
+            <Link href="/-/dashboard" class="flex h-16 shrink-0 items-center flex flex-col justify-center">
                 <CpuChipIcon class="h-8 w-8 text-slate-500" />
             </Link>
             <div class="text-white absolute left-16 z-0 mr-8 -mt-4 bg-stone-700 rounded-full w-6 h-6">
@@ -191,7 +192,7 @@ const logout = () => {
                 </div>
             </div>
 
-            <main class="overflow-y-scroll"  style="max-height: calc(100vh - 65px);">
+            <main class=""  style="max-height: calc(100vh - 65px);">
                 <slot/>
             </main>
         </div>

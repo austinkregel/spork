@@ -95,6 +95,11 @@ class Project extends Model implements Crud, ModelQuery
         return $this->belongsTo(Team::class);
     }
 
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
     public function credentialFor(string $service): ?Credential
     {
         $credential = $this->credentials()->where('service', $service)->first();

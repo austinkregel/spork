@@ -28,6 +28,10 @@
             />
 
         </label>
+
+        <div v-if="errors" class="flex flex-col">
+            <div v-for="error in errors" :key="error" class="text-red-500 dark:text-red-400 px-4 text-xs py-1"> {{ error }}</div>
+        </div>
     </div>
 </template>
 
@@ -39,7 +43,8 @@ const {
   type,
   autofocus,
   disabledInput,
-  editableLabel
+  editableLabel,
+    error
 } = defineProps({
   modelValue: Object,
   type: String,
@@ -51,7 +56,8 @@ const {
   editableLabel: {
     type: Boolean,
     default: () => false,
-  }
+  },
+    errors: Array | null
 })
 // emits: ['update:modelValue'],
 

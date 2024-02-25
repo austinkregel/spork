@@ -102,6 +102,9 @@ class DescribeTableService
         //        dd(array_map(fn ($q) => new $q, $actions));
 
         return [
+            'name' => $model->getTable(),
+            'model' => get_class($model),
+            'pretty_name' => class_basename(get_class($model)),
             'actions' => array_map(fn ($class) => (array) (new $class), $model->actions ?? []),
             'query_actions' => ActionFilter::WHITELISTED_ACTIONS,
             'fillable' => $fillable,
@@ -193,6 +196,7 @@ class DescribeTableService
         });
 
         return [
+            'name' => $table,
             'actions' => ActionFilter::WHITELISTED_ACTIONS,
             'fillable' => ['name'],
             'fields' => $fields,

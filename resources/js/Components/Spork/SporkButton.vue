@@ -18,6 +18,10 @@ export default {
         icon: {
             default: undefined
         },
+        xsmall: {
+            type: Boolean,
+            default: false
+        },
         small: {
             type: Boolean,
             default: false
@@ -61,12 +65,15 @@ export default {
                 return 'border-stone-100 dark:border-stone-500 dark:text-stone-50 hover:border-stone-200 focus:ring-stone-500'
             }
             if (this.danger) {
-                return 'border-transparent bg-red-100 hover:bg-red-200 focus:ring-red-500'
+                return 'border-transparent bg-red-100 hover:bg-red-200 focus:ring-red-500 dark:bg-red-500'
             }
 
-            return 'border-stone-300 text-stone-700 dark:border-stone-600 dark:text-stone-200 focus:ring-stone-500'
+            return 'border-stone-300 text-stone-700 dark:border-stone-500 dark:text-stone-300 focus:ring-stone-500'
         },
         size() {
+            if (this.xsmall) {
+                return 'px-2 py-1 text-xs leading-4'
+            }
             if (this.small) {
                 return 'px-3 py-2 text-sm leading-4'
             }

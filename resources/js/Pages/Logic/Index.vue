@@ -10,6 +10,7 @@ import {
     WalletIcon
 } from "@heroicons/vue/24/outline";
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
+import SporkSelect from '@/Components/Spork/SporkSelect.vue';
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import SporkButton from "@/Components/Spork/SporkButton.vue";
 import { router } from '@inertiajs/vue3';
@@ -36,11 +37,42 @@ const removeListenerForEvent = async ({ event }, listener) => {
         })
     }, 1000)
 };
+
+const changeBinding = async (binding, face) => {
+    await axios.post('/api/logic/change-binding', { binding, interface: face })
+    setTimeout(() => {
+        router.reload({
+            only: ['container_bindings']
+        })
+    }, 1000)
+};
+
 </script>
 
 <template>
     <AppLayout title="Profile">
         <div>
+            <div class="text-2xl my-8 mx-4">Container Bindings</div>
+            <div class="grid grid-cols-2 mx-4">
+                <div class="text-stone-400">
+                    Change your container's bindings. Once saved, requests made after will use the new binding.
+                </div>
+
+                <div class="flex flex-col gap-4 mx-4">
+                    <div v-for="(p, face) in page.props.container_bindings" class="bg-stone-800 p-4 rounded-xl gap-2 flex-col flex">
+                        <span class="text-purple-400">{{ face.replace('App\\', '') }}<span class="text-stone-400">::</span><span class="text-orange-400">class</span></span>
+
+                        <SporkSelect
+                            v-model="p.concrete"
+                        >
+                            <template v-for="binding in p.instances" :key="binding">
+                                <option :value="binding">{{ binding.replace('App\\', '') }}</option>
+                            </template>
+                        </SporkSelect>
+                    </div>
+                </div>
+            </div>
+
             <div class="text-2xl my-8 mx-4">Ways to handle events in your app</div>
 
           <div class="gap-8 grid grid-cols-2 mx-auto max-w-7xl">
@@ -110,10 +142,6 @@ const removeListenerForEvent = async ({ event }, listener) => {
                 </div>
             </div>
           </div>
-
-            <div class=" mx-6 my-4">
-                Heloo
-            </div>
         </div>
     </AppLayout>
 </template>

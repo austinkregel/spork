@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Welcome from '@/Components/Welcome.vue';
 import MetricCard from '@/Components/Spork/Molecules/MetricCard.vue';
-import { usePage, Link } from '@inertiajs/vue3'
+import {usePage, Link, router} from '@inertiajs/vue3'
 import { computed, ref } from 'vue';
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
@@ -11,12 +11,13 @@ import { buildUrl } from '@kbco/query-builder';
 import Manage from "@/Layouts/Manage.vue";
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 const page = usePage()
-const { title, data, description, paginator, link, apiLink, body } = defineProps({
+const { title, data, description, paginator, link, plural, apiLink, singular, body } = defineProps({
   data: Array,
   title: String,
   paginator: Object,
   description: Object,
   singular: String,
+  plural: String,
   link: String,
   body: String,
   apiLink: String,
@@ -37,7 +38,7 @@ const DynamicFormToFillableArray = function (model) {
 }
 
 const form = ref(FillableArrayToDynamicForm(description.fillable));
-
+const errors = ref(null);
 const fetch = async (options) => {
   const response = await axios.get(buildUrl(apiLink, {
     page: 1,
@@ -57,7 +58,19 @@ const onExecute = async ({ selectedItems, actionToRun, next }) => {
 
   next()
 }
-const onSave = () => {}
+const onSave = (form) => {
+    const data = form.reduce((all, { name, value }) => ({ ...all, [name]: value }), {});
+
+    console.log('form save',  data);
+
+    axios.post('/api/crud/'+plural, data).then(() => {
+      router.reload({
+          only: ['data', 'paginator'],
+      });
+    }).catch((e) => {
+        errors.value = e?.response?.data?.errors;
+    });
+}
 
 const possibleDescriptionForData = (data) => {
   const fieldsToUse = description?.fields?.filter(field => ![
@@ -86,6 +99,7 @@ const log = console.log;
         v-if="singular"
         :form="form"
         :singular="singular"
+        :plural="plural"
         :description="description"
         @destroy="onDelete"
         @index="({ page, limit, ...args }) => fetch({ page, limit, ...args })"
@@ -137,6 +151,7 @@ const log = console.log;
                   :type="description.types[field.name].type ?? 'text'"
                   :disabled-input="!description.fillable.includes(field.name)"
                   :editable-label="false"
+                  :errors="errors?.[field.name]"
               />
           </div>
         </div>

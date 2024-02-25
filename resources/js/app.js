@@ -81,10 +81,20 @@ createInertiaApp({
         addComponentToRegistry(BuilderText);
         addComponentToRegistry(Grid);
         addComponentToRegistry(TitleAndFooterTextCard);
-        Echo.private(`App.Models.User.${props?.initialPage?.props.auth.user.id}`)
-            .listen('.MessageCreated', (e) => {
-                router.reload()
-            });
+        if (props?.initialPage?.props?.auth?.user?.id) {
+            Echo.private(`App.Models.User.${props?.initialPage?.props?.auth?.user?.id}`)
+                .listen('.MessageCreated', (e) => {
+                    router.reload({
+                        only: ['messages', 'unread_email_count'],
+                    });
+                })
+                .listen('.AccountUpdated', e => {
+                    router.refresh({
+                        only: ['accounts', 'unread_email_count']
+                    })
+                });
+        }
+
         return app.mount(el);
     },
     progress: {

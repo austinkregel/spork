@@ -13,7 +13,7 @@ class UpdateProjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->route('project')->team_id === $this->user()->current_team_id;
     }
 
     /**
@@ -24,7 +24,14 @@ class UpdateProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'string',
+            'type' => 'string',
+            'status' => 'string',
+            'notes' => 'string',
+            'start_date' => 'date',
+            'checklist' => 'array',
+            'checklist.*.name' => 'string',
+            'checklist.*.checked' => 'boolean',
         ];
     }
 }

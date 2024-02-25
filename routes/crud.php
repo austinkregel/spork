@@ -44,6 +44,7 @@ developerRoute('research', App\Models\Research::class);
 developerRoute('scripts', App\Models\Spork\Script::class);
 developerRoute('servers', App\Models\Server::class);
 developerRoute('tags', App\Models\Tag::class);
+developerRoute('tasks', App\Models\Task::class);
 developerRoute('threads', App\Models\Thread::class);
 developerRoute('transactions', App\Models\Finance\Transaction::class);
 developerRoute('users', App\Models\User::class);
