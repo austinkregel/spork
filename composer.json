@@ -35,7 +35,7 @@
         "nette/php-generator": "*",
         "nunomaduro/laravel-console-dusk": "^1.11",
         "php-imap/php-imap": "^5.0",
-        "pusher/pusher-php-server": "^7.2",
+        "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-feed": "^4.2",
         "spatie/laravel-ignition": "^2.2",

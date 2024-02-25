@@ -45,30 +45,6 @@ Route::middleware([
         }
     }
 
-    Route::get('/api/files/{basepath}', function ($path) {
-        $decoded = base64_decode($path);
-
-        if (is_dir($decoded)) {
-            $files = Storage::disk(config('spork.filesystem.default'))->files($decoded);
-            $directories = Storage::disk(config('spork.filesystem.default'))->directories($decoded);
-
-            return array_map(
-                fn ($file) => [
-                    'name' => basename($file),
-                    'file_path' => base64_encode($file),
-                    'is_directory' => is_dir($file),
-                    'type' => 'file',
-                ],
-                array_merge(
-                    $directories,
-                    $files
-                )
-            );
-        }
-
-        return file_get_contents($decoded);
-    });
-
     Route::get('/api/device-code', function () {
         $code = request()->user()->codes()->firstWhere('is_enabled', true);
 
@@ -149,13 +125,37 @@ Route::group(['prefix' => '-', 'middleware' => [
             'weather' => Arr::first(app(\App\Contracts\Services\WeatherServiceContract::class)->query(
                 $person->primary_address,
             )),
-            'unread_messages' => request()->user()
-                ->messages()
-                ->count(),
-            'messages' => request()->user()
-                ->messages()
-                ->paginate(15, ['*'], 'messages_page'),
 
+            'news' => (\App\Models\Article::query()
+                ->with('externalRssFeed.tags')
+                ->whereHas('externalRssFeed', function ($query) {
+                    $query->where('owner_type', \App\Models\User::class)
+                        ->where('owner_id', auth()->id());
+
+                    $query->whereHas('tags', fn ($q) => $q->where('name->en', 'news'));
+                })
+                ->orderByDesc('last_modified')
+                ->paginate(request('news_limit', 15), ['*'], 'news_page', request('news_page', 1))),
+
+            'video_feed' => \App\Models\Article::query()
+                ->with('externalRssFeed.tags')
+                ->whereHas('externalRssFeed', function ($query) {
+                    $query->where('owner_type', \App\Models\User::class)
+                        ->where('owner_id', auth()->id());
+
+                    $query->whereHas('tags', fn ($q) => $q->where('name->en', 'video'));
+                })
+                ->orderByDesc('last_modified')
+                ->paginate(request('video_limit', 15), ['*'], 'video_page', request('video_page', 1)),
+            'expiring_domains'  => auth()->user()
+                    ->domains()
+                    ->where('expires_at', '>=', now()->subDays(7))
+                    ->where('expires_at', '<=', now()->addWeeks(4))
+                    ->orderByDesc('expires_at')
+                    ->paginate(request('expiring_limit', 15), ['*'], 'expiring_page', request('expiring_page', 1)),
+            'job_batches'  => \App\Models\JobBatch::query()
+                ->orderByDesc('created_at')
+                ->paginate(request('job_limit', 10), ['*'], 'job_page', request('job_page', 1)),
         ]);
     })->name('dashboard');
 
@@ -367,5 +367,27 @@ Route::middleware([
     });
     Route::post('/api/logic/add-listener-for-event', Controllers\Logic\AddListenerForEventController::class);
     Route::post('/api/logic/remove-listener-for-event', Controllers\Logic\RemoveListenerForEventController::class);
+    Route::get('/api/files/{basepath}', function ($path) {
+        $decoded = base64_decode($path);
 
+        if (is_dir($decoded)) {
+            $files = Storage::disk(config('spork.filesystem.default'))->files($decoded);
+            $directories = Storage::disk(config('spork.filesystem.default'))->directories($decoded);
+
+            return array_map(
+                fn ($file) => [
+                    'name' => basename($file),
+                    'file_path' => base64_encode($file),
+                    'is_directory' => is_dir($file),
+                    'type' => 'file',
+                ],
+                array_merge(
+                    $directories,
+                    $files
+                )
+            );
+        }
+
+        return file_get_contents($decoded);
+    });
 });
