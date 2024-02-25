@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Jobs\News;
 
+use App\Events\Models\JobBatch\JobBatchCreated;
+use App\Events\Models\JobBatch\JobBatchUpdated;
 use App\Models\ExternalRssFeed;
+use App\Models\JobBatch;
+use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -23,6 +27,18 @@ class UpdateAllFeeds implements ShouldQueue
             ->get()
             ->map(fn (ExternalRssFeed $feed) => new \App\Jobs\News\UpdateFeed($feed));
 
-        Bus::batch($jobs)->allowFailures()->name('Update All Feeds')->dispatch();
+        $batch = Bus::batch($jobs)
+            ->allowFailures()
+            ->name('Update All Feeds')
+            ->then(function (Batch $batch) {
+                broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $batch->id)));
+            })->catch(function (Batch $batch, \Throwable $e) {
+                broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $batch->id)));
+            })->finally(function (Batch $batch) {
+                broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $batch->id)));
+            })
+            ->dispatch();
+
+        broadcast(new JobBatchCreated(JobBatch::firstWhere('id', $batch->id)));
     }
 }

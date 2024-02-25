@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\News\Feeds;
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use SimpleXMLElement;
 
@@ -40,7 +41,7 @@ abstract class AbstractFeed
         return Arr::get($this->headers, 'etag', [null])[0];
     }
 
-    abstract public function getLastModified(): ?string;
+    abstract public function getLastModified(): ?Carbon;
 
     abstract public function getPhoto(): ?string;
 

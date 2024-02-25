@@ -33,6 +33,11 @@ class Domain extends Model implements Crud, ModelQuery
         'registered_at',
     ];
 
+    public $casts = [
+        'registered_at' => 'datetime:Y-m-d',
+        'expires_at' => 'datetime:Y-m-d',
+    ];
+
     public $dispatchesEvents = [
         'created' => DomainCreated::class,
         'creating' => DomainCreating::class,

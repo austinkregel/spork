@@ -43,6 +43,11 @@ class ExternalRssFeed extends Model implements Crud
         return $this->morphMany(Article::class, 'author');
     }
 
+    public function owner()
+    {
+        return $this->morphTo();
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

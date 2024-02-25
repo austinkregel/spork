@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Services\News\Feeds;
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
 class RdfFeed extends AbstractFeed
 {
-    public function getLastModified(): ?string
+    public function getLastModified(): ?Carbon
     {
         $headers = array_change_key_case($this->headers, CASE_LOWER);
 
         $lastModifiedHeader = Arr::get($headers, 'last-modified', [null])[0];
 
         if (isset($lastModifiedHeader)) {
-            return $lastModifiedHeader;
+            return Carbon::parse($lastModifiedHeader);
         }
 
         if (isset($this->element->date)) {
-            return $this->element->date;
+            return Carbon::parse((string) $this->element->date);
         }
 
         return null;

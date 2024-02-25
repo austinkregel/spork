@@ -137,6 +137,10 @@ class Project extends Model implements Crud, ModelQuery
         return $credential;
     }
 
+    public function owner()
+    {
+        return $this->morphMany(ExternalRssFeed::class, 'owner');
+    }
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
