@@ -22,13 +22,13 @@ const dateFormat = (date) => {
     <Disclosure>
         <DisclosureButton>
             <div class="px-4 py-2 text-left flex gap-4 items-center">
-                <div>
-                    <img :src="article.external_rss_feed.profile_photo_path" :alt="article.external_rss_feed.name" v-if="article.external_rss_feed.profile_photo_path"  class="max-h-8 max-h-8"/>
+                <div class="w-8">
+                    <img :src="article.external_rss_feed.profile_photo_path" :alt="article.external_rss_feed.name" v-if="article.external_rss_feed.profile_photo_path"  class="h-8 w-8"/>
                 </div>
-                <div>{{ article.headline }}</div>
+                <div class="overflow-ellipsis w-full">{{ article.headline }}</div>
             </div>
         </DisclosureButton>
-        <DisclosurePanel >
+        <DisclosurePanel>
             <div class="dark:bg-stone-950 p-4">
                 <div class="text-sm tracking-wider leading-tight mb-4">{{ dateFormat(article.last_modified) }}</div>
                 <div class="text-sm prose prose-sm dark:prose-invert w-full" v-html="article.content"></div>

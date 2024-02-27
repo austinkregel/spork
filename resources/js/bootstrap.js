@@ -36,9 +36,9 @@ window.axios.interceptors.request.use(function (config) {
 }, {
 
 });
-
+//
 window.onerror = (error) => {
-    toaster.error(error.message);
+    console.error(error);
 }
 
 /**

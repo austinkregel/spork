@@ -183,7 +183,7 @@ const deleteCondition= () => {}
             </div>
           </div>
 
-          <button @click="addCondition" class="mt-4 px-2 py-1 text-sm focus:outline-none rounded-lg flex items-center hover:shadow" v-dark-mode-button>
+          <button @click="addCondition" class="mt-4 px-2 py-1 text-sm focus:outline-none rounded-lg flex items-center hover:shadow">
             <span class="ml-2">Add condition</span>
           </button>
         </div>

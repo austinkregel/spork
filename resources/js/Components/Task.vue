@@ -1,6 +1,9 @@
 <template>
-    <div>
-        <div class="flex flex-col gap-1 bg-stone-800 p-2 rounded-lg my-2 border-t-4" :class="[color]">
+    <ContextMenu>
+        <div
+            class="flex flex-col gap-1 bg-stone-800 p-2 rounded-lg my-2 border-t-4"
+            :class="[color]"
+        >
             <button @click="() => { createTask = true;}" class="text-left">{{ task.name}}</button>
             <SporkChecklist v-model="task.checklist" :can-add-more="true"/>
             <div class="text-xs justify-end flex -mt-4">
@@ -8,9 +11,11 @@
             </div>
         </div>
 
-
-
-        <DialogModal :show="createTask" :closeable="true" @close="createTask = false" >
+        <DialogModal
+            :show="createTask"
+            :closeable="true"
+            @close="createTask = false"
+        >
             <template #title>
                 <div class="dark:text-stone-200 p-4">
                     Create a task
@@ -37,16 +42,43 @@
                 </div>
             </template>
         </DialogModal>
-    </div>
+
+        <template #items>
+            <!-- Active: "bg-stone-100 text-stone-900", Not Active: "text-stone-700" -->
+            <Link :href="'/-/research/'+task.id" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
+                <ArrowTopRightOnSquareIcon  class="w-4 h-4" />
+                Open
+            </Link>
+
+            <button @click="() => {}" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
+                <UserPlusIcon class="w-4 h-4" />
+                Share
+            </button>
+
+            <hr class="border-t border-stone-200 dark:border-stone-500" />
+
+            <button @click="() => {}" class="flex items-center gap-2 px-4 py-2 ">
+                <TrashIcon class="w-4 h-4 text-red-500" />
+                Delete
+            </button>
+        </template>
+    </ContextMenu>
 </template>
 
 <script setup>
 import SporkChecklist from "@/Components/Spork/SporkChecklist.vue";
-import {watch, computed, reactive, ref} from 'vue';
-import {router} from "@inertiajs/vue3";
+import { watch, computed, reactive, ref } from 'vue';
+import {Link, router} from "@inertiajs/vue3";
 import SporkButton from "@/Components/Spork/SporkButton.vue";
 import SporkField from "@/Components/Spork/SporkField.vue";
 import DialogModal from "@/Components/DialogModal.vue";
+import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
+import {
+    ArrowTopRightOnSquareIcon,
+    DocumentDuplicateIcon,
+    PencilIcon, TrashIcon,
+    UserPlusIcon
+} from "@heroicons/vue/24/outline/index.js";
 
 const { task } = defineProps({
     task: {
@@ -57,8 +89,22 @@ const { task } = defineProps({
     }
 })
 const form = reactive(task);
+const openContext = ref(false);
+const contextX = ref(0);
+const contextY = ref(0);
+const openForTopic = ref(null)
 
 const createTask = ref(false);
+
+const openContextMenu = (e,) => {
+    openContext.value = true;
+    contextX.value = e.clientX;
+    contextY.value = e.clientY;
+};
+const closeMenu = () => {
+    openContext.value = false;
+    openForTopic.value = null;
+};
 
 watch(task, (newVal, oldValue) => {
     const task = Object.assign({}, newVal);
