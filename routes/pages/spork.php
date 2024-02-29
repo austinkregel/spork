@@ -122,9 +122,9 @@ Route::group(['prefix' => '-', 'middleware' => [
             // Tasks due today
             // Domains that expire this month, or in the last 7 days
             // Weather at my primary address
-            'weather' => Arr::first(app(\App\Contracts\Services\WeatherServiceContract::class)->query(
+            'weather' => $person->primary_address ? Arr::first(app(\App\Contracts\Services\WeatherServiceContract::class)->query(
                 $person->primary_address,
-            )),
+            )) : null,
 
             'news' => (\App\Models\Article::query()
                 ->with('externalRssFeed.tags')

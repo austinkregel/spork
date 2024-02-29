@@ -52,11 +52,6 @@ class Domain extends Model implements Crud, ModelQuery
         return $this->hasMany(DomainRecord::class);
     }
 
-    public function domainAnalytics(): HasMany
-    {
-        return $this->hasMany(DomainAnalytics::class);
-    }
-
     public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
