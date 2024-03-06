@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
-use App;
+use App\Actions\Spork\CustomAction;
 use App\Contracts\ModelQuery;
 use App\Http\Requests\Dynamic\CreateRequest;
 use App\Http\Requests\Dynamic\DeleteRequest;
@@ -13,7 +13,10 @@ use App\Http\Requests\Dynamic\IndexRequest;
 use App\Http\Requests\Dynamic\RestoreRequest;
 use App\Http\Requests\Dynamic\UpdateRequest;
 use App\Http\Requests\Dynamic\ViewRequest;
+use App\Models\Crud;
+use App\Models\Taggable;
 use App\Services\ActionFilter;
+use App\Services\Code;
 use App\Services\Development\DescribeTableService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -27,29 +30,6 @@ class LocalAdminController extends Controller
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public const MODELS = [
-        'accounts' => App\Models\Finance\Account::class,
-        'articles' => App\Models\Article::class,
-        'budgets' => App\Models\Finance\Budget::class,
-        'conditions' => App\Models\Condition::class,
-        'credentials' => App\Models\Credential::class,
-        'domains' => App\Models\Domain::class,
-        'external_rss_feeds' => App\Models\ExternalRssFeed::class,
-        'messages' => App\Models\Message::class,
-        'navigations' => App\Models\Navigation::class,
-        'pages' => App\Models\Page::class,
-        'people' => App\Models\Person::class,
-        'projects' => App\Models\Project::class,
-        'research' => App\Models\Research::class,
-        'scripts' => App\Models\Spork\Script::class,
-        'servers' => App\Models\Server::class,
-        'tags' => App\Models\Tag::class,
-        'tasks' => App\Models\Task::class,
-        'threads' => App\Models\Thread::class,
-        'transactions' => App\Models\Finance\Transaction::class,
-        'users' => App\Models\User::class,
-    ];
-
     public function fields(IndexRequest $request)
     {
         return response()->json((new DescribeTableService)->describe($this->getModel($request)));
@@ -57,12 +37,21 @@ class LocalAdminController extends Controller
 
     protected function getModel(Request $request)
     {
-        $parts = $request->path();
-        $split = array_filter(explode('/', $parts), fn ($part) => ! is_numeric($part));
+        $split = array_filter(explode('/', $request->path()), fn ($part) => ! is_numeric($part));
 
-        $tableFromUrl = end($split);
+        $tableFromUrl = match(count($split)) {
+            3 => $split[2],
+            4 => $split[2],
 
-        return static::MODELS[$tableFromUrl];
+            default => dd($split),
+        };
+
+        $models = array_reduce(Code::instancesOf(Crud::class)->getClasses(), fn ($all, $class) => array_merge(
+            $all,
+            [(new $class)->getTable() => $class]
+        ), []);
+
+        return $models[$tableFromUrl];
     }
 
     /**
@@ -111,6 +100,25 @@ class LocalAdminController extends Controller
         return $query->find($abstractEloquentModel) ?? response([
             'message' => 'No resource found by that id.',
         ], 414);
+    }
+    public function tag(ViewRequest $request, $abstractEloquentModel = null)
+    {
+        $request->validate([
+            'tags' => 'required|array',
+            'tags.*' => 'exists:tags,id',
+        ]);
+        $model = QueryBuilder::for($this->getModel($request))->findOrFail($abstractEloquentModel);
+
+        if (!($model instanceof Taggable)) {
+            abort(414, 'This model does not support tags.');
+            return;
+        }
+
+        $model->attachTags(
+            array_map(fn ($tagId) => \App\Models\Tag::find($tagId), $request->input('tags'))
+        );
+
+        return response()->json($model);
     }
 
     public function update(UpdateRequest $request, $abstractEloquentModel = null)

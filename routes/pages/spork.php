@@ -231,7 +231,11 @@ Route::group(['prefix' => '-', 'middleware' => [
     Route::get('/inbox/{message}', function (App\Models\Message $message) {
         abort_if($message->type !== 'email', 404);
 
-        $message = (new \App\Services\ImapService)->findMessage($message->event_id, true);
+        $message->load('credential');
+
+        abort_unless($message->credential->user_id === auth()->id(), 404);
+
+        $message = (new App\Services\Messaging\ImapCredentialService($message->credential))->findMessage($message->event_id, true);
         $messageBody = base64_decode($message['body']);
 
         $bodyWithTheImagesDisabledForPrivacy = str_replace(' src=', ' data-src=', $messageBody);
@@ -316,7 +320,12 @@ Route::group(['prefix' => '-', 'middleware' => [
 
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
         $paginator = $model::query()
-            ->paginate(request('limit', 15), ['*'], 'page', request('page', 1));
+            ->with(
+                array_filter($description['includes'], fn ($relation) => !in_array($relation, [
+                    'tagsTranslated',
+                ]))
+            )
+            ->paginate(request('limit', 15), ['*'], 'manage_page', request('manage_page', 1));
 
         $data = $paginator->items();
         $paginator = $paginator->toArray();

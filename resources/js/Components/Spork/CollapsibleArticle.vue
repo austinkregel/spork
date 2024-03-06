@@ -14,6 +14,9 @@ const dateFormat = (date) => {
     return dayjs(date).format('MMMM D, YYYY HH:mm:A');
 }
 
+const markAsRead = () => {
+    console.log('mark as read');
+}
 </script>
 
 <template>
@@ -29,9 +32,10 @@ const dateFormat = (date) => {
             </div>
         </DisclosureButton>
         <DisclosurePanel>
-            <div class="dark:bg-stone-950 p-4">
+            <div @click="markAsRead" class="dark:bg-stone-950 p-4">
                 <div class="text-sm tracking-wider leading-tight mb-4">{{ dateFormat(article.last_modified) }}</div>
                 <div class="text-sm prose prose-sm dark:prose-invert w-full" v-html="article.content"></div>
+                <a target="_blank" :href="article.url" class="mt-4 text-sm underline">Continue reading...</a>
             </div>
         </DisclosurePanel>
     </Disclosure>

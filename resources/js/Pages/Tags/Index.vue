@@ -197,7 +197,7 @@ const deleteCondition= () => {}
             <TagIcon class="w-8 h-8 text-green-400" v-else />
             <span class="text-2xl">{{ tag.name?.en }}</span>
           </div>
-          <div class="flex gap-4 my-2 mx-6">
+          <div class="flex flex-wrap items-center gap-4 my-2 mx-6">
             <div class="flex gap-2">
               <ServerIcon class="w-6 h-6" />
               {{ tag.servers_count }}

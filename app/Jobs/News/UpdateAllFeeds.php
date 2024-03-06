@@ -27,6 +27,10 @@ class UpdateAllFeeds implements ShouldQueue
             ->get()
             ->map(fn (ExternalRssFeed $feed) => new \App\Jobs\News\UpdateFeed($feed));
 
+        if ($jobs->isEmpty()) {
+            return;
+        }
+
         $batch = Bus::batch($jobs)
             ->allowFailures()
             ->name('Update All Feeds')
@@ -37,6 +41,7 @@ class UpdateAllFeeds implements ShouldQueue
             })->finally(function (Batch $batch) {
                 broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $batch->id)));
             })
+            ->onQueue('secondary')
             ->dispatch();
 
         broadcast(new JobBatchCreated(JobBatch::firstWhere('id', $batch->id)));

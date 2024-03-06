@@ -18,12 +18,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Tags\HasTags;
 
-class Domain extends Model implements Crud, ModelQuery
+class Domain extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
     use HasProjectResource;
     use LogsActivity;
+    use HasTags;
 
     public $fillable = [
         'name',

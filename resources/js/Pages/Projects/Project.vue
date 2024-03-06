@@ -14,7 +14,6 @@
                 <div class="uppercase tracking-wider">Todo tasks</div>
                 <div class="grid grid-cols-3 w-full gap-4">
                     <div class="bg-stone-700 rounded-lg py-4">
-
                           <SmallTaskList :tasks="$page.props.daily_tasks" name="Daily Tasks" @open="() => { createTask = true; form.type = 'daily'}"/>
                     </div>
                     <div class="bg-stone-700 rounded-lg py-4">
@@ -264,7 +263,10 @@
                                     :value="item.id"
                                 />
                                 <span>
-                                    {{ item.name ?? item.title}} ({{item?.tags?.map(i => i.name?.en)?.join(', ') ?? item?.credential?.name ?? item?.credential_id ?? item.slug }})
+                                    {{ item.name ?? item.title ?? item.topic}}
+                                    <span v-if="item?.tags?.map(i => i.name?.en)?.join(', ') ?? item?.credential?.name ?? item?.credential_id ?? item.slug ?? item?.type">
+                                        ({{item?.tags?.map(i => i.name?.en)?.join(', ') ?? item?.credential?.name ?? item?.credential_id ?? item.slug ?? item?.type }})
+                                    </span>
                                 </span>
                             </label>
                         </div>
@@ -376,7 +378,9 @@ export default {
             console,
             allSelected: ref(false),
             createOpen: ref(false),
-            form: ref(({})),
+            form: ref(({
+                status: 'To Do',
+            })),
             data: ref([]),
             pagination: ref({}),
             attach: ref([]),

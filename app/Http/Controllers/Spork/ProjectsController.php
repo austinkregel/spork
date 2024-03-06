@@ -53,6 +53,7 @@ class ProjectsController extends Controller
                 ->get(),
             'today_tasks' => $project->tasks()
                 ->where('status', '!=', 'done')
+                ->where('status', '!=', 'Blocked')
 
                 ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
                 ->where(function ($query) {
@@ -62,12 +63,8 @@ class ProjectsController extends Controller
                 })
                 ->get(),
             'future_tasks' => $project->tasks()
-                ->where('status', '!=', 'done')
+                ->where('status', '=', 'Blocked')
                 ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
-                ->where(function ($query) {
-                    $query->where('start_date', '>=', now())
-                        ->orWhere('end_date', '>=', now());
-                })
                 ->get(),
         ]);
     }

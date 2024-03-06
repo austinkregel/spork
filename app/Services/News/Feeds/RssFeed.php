@@ -41,6 +41,7 @@ class RssFeed extends AbstractFeed
 
     public function getData(): array
     {
+        try {
         return array_map(function ($post) {
             $feedItem = new FeedItem();
             $feedItem->id = (string) ($post->guid ?? Str::uuid());
@@ -52,5 +53,8 @@ class RssFeed extends AbstractFeed
 
             return $feedItem;
         }, ((array) $this->element->channel)['item']);
+            } catch (\Throwable $e) {
+             dd($e, ((array) $this->element->channel)['item']);
+            }
     }
 }

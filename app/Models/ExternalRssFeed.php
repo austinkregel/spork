@@ -16,7 +16,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
-class ExternalRssFeed extends Model implements Crud
+class ExternalRssFeed extends Model implements Crud, Taggable
 {
     use HasFactory;
     use HasTags;
@@ -27,6 +27,8 @@ class ExternalRssFeed extends Model implements Crud
         'url',
         'name',
         'profile_photo_path',
+        'owner_id',
+        'owner_type',
     ];
 
     public $dispatchesEvents = [

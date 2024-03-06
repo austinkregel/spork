@@ -25,7 +25,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Tags\HasTags;
 
-class User extends Authenticatable implements ModelQuery
+class User extends Authenticatable implements ModelQuery, Taggable
 {
     use HasApiTokens;
     use HasFactory;

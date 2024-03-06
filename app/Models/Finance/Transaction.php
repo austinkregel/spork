@@ -12,12 +12,13 @@ use App\Events\Models\Transaction\TransactionDeleting;
 use App\Events\Models\Transaction\TransactionUpdated;
 use App\Events\Models\Transaction\TransactionUpdating;
 use App\Models\Crud;
+use App\Models\Taggable;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Tags\HasTags;
 
-class Transaction extends Model implements Crud, ModelQuery
+class Transaction extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory, HasTags;
 

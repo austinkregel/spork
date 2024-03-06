@@ -43,21 +43,30 @@
             </template>
         </DialogModal>
 
-        <template #items>
+        <template #items="{ close }">
             <!-- Active: "bg-stone-100 text-stone-900", Not Active: "text-stone-700" -->
-            <Link :href="'/-/research/'+task.id" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
+            <button @click="() => createTask = true" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
                 <ArrowTopRightOnSquareIcon  class="w-4 h-4" />
                 Open
-            </Link>
-
-            <button @click="() => {}" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
-                <UserPlusIcon class="w-4 h-4" />
-                Share
             </button>
 
+            <button v-if="task.status !== 'In Progress'" @click="() => {task.status = 'In Progress'; close() }" class="flex items-center gap-2 px-4 py-2">
+                <DynamicIcon icon-name="BriefcaseIcon" class="w-4 h-4" />
+                Start Work
+            </button>
+            <button v-if="task.status !== 'To Do'" @click="() => {task.status = 'To Do'; close() }" class="flex items-center gap-2 px-4 py-2">
+                <DynamicIcon icon-name="ClockIcon" class="w-4 h-4" />
+                Back to the start
+            </button>
+            <button v-if="task.status !== 'Done'" @click="() => {task.status = 'Done'; close() }" class="flex items-center gap-2 px-4 py-2">
+                <DynamicIcon icon-name="CheckCircleIcon" class="w-4 h-4" />
+                Mark as Done
+            </button>
+
+            <!-- Actions I could take with a single task. Mark as in progress or done, adding a checklist,  -->
             <hr class="border-t border-stone-200 dark:border-stone-500" />
 
-            <button @click="() => {}" class="flex items-center gap-2 px-4 py-2 ">
+            <button @click="deleteTask" class="flex items-center gap-2 px-4 py-2 ">
                 <TrashIcon class="w-4 h-4 text-red-500" />
                 Delete
             </button>
@@ -76,9 +85,11 @@ import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
 import {
     ArrowTopRightOnSquareIcon,
     DocumentDuplicateIcon,
-    PencilIcon, TrashIcon,
+    PencilIcon,
+    TrashIcon,
     UserPlusIcon
 } from "@heroicons/vue/24/outline/index.js";
+import DynamicIcon from "@/Components/DynamicIcon.vue";
 
 const { task } = defineProps({
     task: {
@@ -89,28 +100,23 @@ const { task } = defineProps({
     }
 })
 const form = reactive(task);
-const openContext = ref(false);
-const contextX = ref(0);
-const contextY = ref(0);
-const openForTopic = ref(null)
 
 const createTask = ref(false);
-
-const openContextMenu = (e,) => {
-    openContext.value = true;
-    contextX.value = e.clientX;
-    contextY.value = e.clientY;
-};
-const closeMenu = () => {
-    openContext.value = false;
-    openForTopic.value = null;
-};
 
 watch(task, (newVal, oldValue) => {
     const task = Object.assign({}, newVal);
 
     axios.put('/api/crud/tasks/' + task.id, task)
         .then((response) => {
+            createTask.value = false;
+            router.reload({
+                only: [
+                    'project',
+                    'daily_tasks',
+                    'today_tasks',
+                    'future_tasks',
+                ]
+            })
 
         })
 });
@@ -127,27 +133,29 @@ const status = computed(() => {
     return task.status
 })
 const color = computed(() => {
-    if (! task?.checklist || task.checklist.length === 0) {
-        return 'border-stone-950';
-    }
-
-    if (task.checklist.filter((item) => item.checked).length === task.checklist.length) {
-        return 'border-green-500';
-    }
-
-    if (task.checklist.filter((item) => item.checked).length > 0) {
-        return 'border-yellow-500';
-    }
-
     switch(status.value) {
         case 'todo':
+        case 'To Do':
             return 'border-red-500';
         case 'in-progress':
+        case 'in progress':
+        case 'In Progress':
             return 'border-yellow-500';
         case 'done':
+        case 'Done':
             return 'border-green-500';
         default:
-            return 'border-stone-800';
+            if (! task?.checklist || task.checklist.length === 0) {
+                return 'border-stone-950';
+            }
+
+            if (task.checklist.filter((item) => item.checked).length === task.checklist.length) {
+                return 'border-green-500';
+            }
+
+            if (task.checklist.filter((item) => item.checked).length > 0) {
+                return 'border-yellow-500';
+            }
     }
 })
 
@@ -155,6 +163,25 @@ const updateTask = async () => {
     await axios.put('/api/crud/tasks/' + form.id, {
         ...form,
     });
-    router.reload({ })
+    router.reload({
+        only: [
+            'project',
+            'daily_tasks',
+            'today_tasks',
+            'future_tasks',
+        ]
+    })
 }
+const deleteTask = async () => {
+    await axios.delete('/api/crud/tasks/' + task.id);
+    router.reload({
+        only: [
+            'project',
+            'daily_tasks',
+            'today_tasks',
+            'future_tasks',
+        ]
+    })
+}
+
 </script>

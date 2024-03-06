@@ -22,4 +22,6 @@ interface JiraServiceContract
     public function findAllSprints(string $projectKey): array;
 
     public function findAllProjects(int $limit = 50, int $page = 1): LengthAwarePaginator;
+
+    public function updateTicket(string $ticketName, array $data);
 }

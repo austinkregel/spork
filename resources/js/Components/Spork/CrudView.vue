@@ -53,19 +53,36 @@
                         </button>
 
                         <div v-if="filtersOpen" class="absolute z-10 bg-white dark:bg-stone-700 shadow-lg top-0 right-0 mt-14 mr-4 border border-stone-200 dark:border-stone-500 rounded-lg" style="width: 250px;">
-                        <div class="bg-stone-100 dark:bg-stone-800 uppercase py-2 px-2 font-bold text-stone-500 dark:text-stone-400 text-sm rounded-t-lg">
-                            filters
+                            <div class="bg-stone-100 dark:bg-stone-800 uppercase py-2 px-2 font-bold text-stone-500 dark:text-stone-400 text-sm rounded-t-lg">
+                                filters
+                            </div>
+                            <div class="flex flex-wrap items-center p-2">
+                                <select @change="(e) => router.reload({
+                                    search: {limit: 321}
+                                })" class="border border-stone-300 rounded-lg w-full p-1 dark:border-stone-600 dark:bg-stone-600">
+                                    <option value="15">15 items per page</option>
+                                    <option value="30">30 items per page</option>
+                                    <option value="100">100 items per page</option>
+                                </select>
+                            </div>
+                            <div v-if="description.tags" class="bg-stone-100 dark:bg-stone-800 uppercase py-2 px-2 font-bold text-stone-500 dark:text-stone-400 text-sm">
+                                Apply tag to selected
+                            </div>
+                            <div v-if="description?.tags" class="flex justify-between">
+                                <SporkSelect v-model="selectedTagToApply">
+                                    <template #options>
+                                        <optgroup label="Tags">
+                                            <option key="none" :value="null"></option>
+                                            <option v-for="tag in description.tags" :key="tag.name" :value="tag.id">{{tag.name}}</option>
+                                        </optgroup>
+                                    </template>
+                                </SporkSelect>
+
+                                <button @click="() => applyTag()" class="mx-2">
+                                    <PlayIcon class="w-5 h-5 text-green-500" />
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex flex-wrap items-center p-2">
-                            <select @change="(e) => router.reload({
-                                search: {limit: 321}
-                            })" class="border border-stone-300 rounded-lg w-full p-1 dark:border-stone-600 dark:bg-stone-600">
-                                <option value="15">15 items per page</option>
-                                <option value="30">30 items per page</option>
-                                <option value="100">100 items per page</option>
-                            </select>
-                        </div>
-                    </div>
                     </div>
 
                 </div>
@@ -163,6 +180,7 @@ import { PlayIcon, XMarkIcon, ArrowPathIcon } from "@heroicons/vue/24/outline";
 import SporkInput from './SporkInput.vue';
 import SporkButton from './SporkButton.vue';
 import { router, Link } from '@inertiajs/vue3';
+import SporkSelect from "@/Components/Spork/SporkSelect.vue";
 const {
   form,
   title,
@@ -174,6 +192,7 @@ const {
   paginator,
   settings,
   description,
+    apiLink,
 } = defineProps({
   form: {
     type: Object,
@@ -223,8 +242,17 @@ const {
       fields: [],
       required: [],
       sorts: [],
+        tags: [],
     })
-  }
+  },
+    plural: {
+        type: String,
+        default: ''
+    },
+    apiLink: {
+        type: String,
+        default: '/api/crud/models'
+    }
 })
 const $emit = defineEmits([
     'index', 'destroy', 'save', 'execute'
@@ -239,6 +267,7 @@ const searchQuery = ref(localStorage.getItem('searchQuery') ? localStorage.getIt
 const debounceSearch = ref(null);
 const executing = ref(false);
 
+const selectedTagToApply = ref(null);
 
 const hasPreviousPage = computed(() => {
   return paginator.prev_page_url !== null;
@@ -282,7 +311,21 @@ onMounted(() => {
         limit: itemsPerPage.value
     })
 })
+const applyTag = async () => {
+    if (!selectedTagToApply.value) {
+        return;
+    }
 
+    await Promise.all(selectedItems.value.map(async (item) => {
+        await axios.post(`${apiLink}/${item.id}/tags`, {
+            tags: [selectedTagToApply.value]
+        })
+    }))
+
+    router.reload({
+        only: ['data', 'paginator', 'description']
+    })
+}
 // const searchQuery = (newVal, oldVal) => {
 //     if (debounceSearch !== null) {
 //         clearTimeout(this.debounceSearch)

@@ -64,4 +64,24 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
     {
         return [];
     }
+
+    public function getTlds(): array
+    {
+        // TODO: Implement getTlds() method.
+    }
+
+    public function searchDomain(string $domain): array
+    {
+        // TODO: Implement searchDomain() method.
+    }
+
+    public function registerDomain(string $domain, int $years = 1): array
+    {
+        // TODO: Implement registerDomain() method.
+    }
+
+    public function renewDomain(string $domain, int $years = 1): array
+    {
+        // TODO: Implement renewDomain() method.
+    }
 }
