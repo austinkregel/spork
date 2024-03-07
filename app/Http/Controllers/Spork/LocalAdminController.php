@@ -101,7 +101,7 @@ class LocalAdminController extends Controller
             'message' => 'No resource found by that id.',
         ], 414);
     }
-    public function tag(ViewRequest $request, $abstractEloquentModel = null)
+    public function tag(UpdateRequest $request, $abstractEloquentModel = null)
     {
         $request->validate([
             'tags' => 'required|array',
