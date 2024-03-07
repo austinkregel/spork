@@ -13,7 +13,7 @@ class SyncDataFromCredential extends CustomAction
 {
     public function __construct($name = 'Sync Data From Credential', $slug = 'sync-data-from-credential')
     {
-        parent::__construct($name, $slug, models: Credential::class);
+        parent::__construct($name, $slug, models: [Credential::class]);
     }
 
     public function __invoke(Dispatcher $dispatcher, Request $request)

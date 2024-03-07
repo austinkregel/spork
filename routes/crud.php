@@ -9,7 +9,7 @@ if (! function_exists('developerRoute')) {
     {
         cache()->rememberForever($name, fn () => $model);
 
-        Route::prefix('crud')->group(function () use ($name) {
+        Route::prefix('crud')->group(function () use ($name, $model) {
             Route::get($name, [\App\Http\Controllers\Spork\LocalAdminController::class, 'index'])->name($name.'.index');
 
             Route::post($name.'', [\App\Http\Controllers\Spork\LocalAdminController::class, 'store'])->name($name.'.store');
@@ -24,6 +24,7 @@ if (! function_exists('developerRoute')) {
             Route::delete($name.'/{'.$name.'}', [\App\Http\Controllers\Spork\LocalAdminController::class, 'destroy'])->name($name.'.destroy');
             // Force delete
             Route::delete($name.'/{'.$name.'}/force', [\App\Http\Controllers\Spork\LocalAdminController::class, 'forceDestroy'])->name($name.'.forceDestroy');
+            Route::post($name.'/{'.$name.'}/tags', [\App\Http\Controllers\Spork\LocalAdminController::class, 'tag'])->name($name.'.tags');
         });
     }
 }
@@ -34,6 +35,7 @@ developerRoute('budgets', App\Models\Finance\Budget::class);
 developerRoute('conditions', App\Models\Condition::class);
 developerRoute('credentials', App\Models\Credential::class);
 developerRoute('domains', App\Models\Domain::class);
+developerRoute('domain_records', App\Models\DomainRecord::class);
 developerRoute('external_rss_feeds', App\Models\ExternalRssFeed::class);
 developerRoute('messages', App\Models\Message::class);
 developerRoute('navigations', App\Models\Navigation::class);

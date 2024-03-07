@@ -109,7 +109,7 @@ const logout = () => {
                                 <nav class="flex flex-1 flex-col">
                                     <ul role="list" class="-mx-2 flex-1 space-y-1">
                                         <li v-for="item in page.props.navigation" :key="item.name">
-                                            <Link :href="item.href" :class="[item.current ? 'bg-stone-800 text-white' : 'text-stone-400 hover:text-white hover:bg-stone-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                                            <Link :href="item?.href ?? '#'" :class="[item.current ? 'bg-stone-800 text-white' : 'text-stone-400 hover:text-white hover:bg-stone-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
                                                 <DynamicIcon :icon-name="item.icon" :active="item.current" class="h-6 w-6 shrink-0" aria-hidden="true" />
                                                 {{ item.name }}
                                             </Link>
@@ -134,7 +134,7 @@ const logout = () => {
 
             <nav class="mt-8">
                 <div class="mt-6 w-full flex-1 space-y-1 px-2">
-                    <Link v-for="item in page.props.navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium']" :aria-current="item.current ? 'page' : undefined">
+                    <Link v-for="item in page.props.navigation" :key="item.name" :href="item?.href ?? '#'" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium']" :aria-current="item.current ? 'page' : undefined">
                         <DynamicIcon :icon-name="item.icon"  :active="item.current"  :class="[item.current ? 'text-white' : 'text-slate-300 group-hover:text-white', 'h-6 w-6']" aria-hidden="true" />
                         <span class="mt-2">{{ item.name }}</span>
                     </Link>

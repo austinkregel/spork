@@ -2,7 +2,7 @@
     <div>
         <div class="mx-4">{{ name }}</div>
         <div v-if="tasks.length > 0" class="py-2 mx-2  flex-col gap-4">
-            <Task v-for="task in tasks" :task="task"></Task>
+            <Task v-for="task in tasks" :key="task.id+task.name" :task="task"></Task>
         </div>
         <div v-else>
             <div class="text-center italic py-4 ">No tasks</div>

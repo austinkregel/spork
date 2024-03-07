@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Events\Models\JobBatch\JobBatchCreated;
+use App\Events\Models\JobBatch\JobBatchUpdated;
 use App\Models\Credential;
+use App\Models\JobBatch;
+use Illuminate\Bus\Batch;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Bus\QueueingDispatcher;
@@ -40,9 +44,18 @@ class FetchResourcesFromCredentials implements ShouldQueue
             ->map(fn (Collection $group) => $group->map(fn ($credential) => new FetchResourcesFromCredential($credential))->toArray())
             ->toArray();
 
-        $dispatcher->batch($jobs)
+        $batch = $dispatcher->batch($jobs)
             ->name('Updatch Resources From Credentials')
             ->allowFailures()
+            ->then(function (Batch $batch) {
+                broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $batch->id)));
+            })->catch(function (Batch $batch, \Throwable $e) {
+                broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $batch->id)));
+            })->finally(function (Batch $batch) {
+                broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $batch->id)));
+            })
             ->dispatch();
+
+        broadcast(new JobBatchCreated(JobBatch::firstWhere('id', $batch->id)));
     }
 }

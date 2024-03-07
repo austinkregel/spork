@@ -56,7 +56,7 @@ defineEmits(["update:modelValue"]);
             <DynamicIcon icon-name="TrashIcon" class="w-5 h-5 text-red-500" />
         </button>
     </label>
-    <div v-if="canAddMore">
+    <div v-if="canAddMore" :class="[undefined, 0].includes(modelValue?.length) ? 'mb-3' : ''">
         <SporkButton xsmall plain @click="() => $emit('update:modelValue', Array.isArray(modelValue) ? [...modelValue, { name: '', checked: false }] : [{ name: '', checked: false }])">Add</SporkButton>
     </div>
 </div>

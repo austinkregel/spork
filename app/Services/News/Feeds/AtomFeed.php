@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\Services\News\Feeds;
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
 class AtomFeed extends AbstractFeed
 {
-    public function getLastModified(): ?string
+    public function getLastModified(): ?Carbon
     {
         $lastModifiedHeader = Arr::get($this->headers, 'last-modified', [null])[0];
 
         if (isset($lastModifiedHeader)) {
-            return $lastModifiedHeader;
+            return Carbon::parse($lastModifiedHeader);
         }
 
         if (isset($this->element->updated)) {
-            return $this->element->updated;
+            return Carbon::parse((string) $this->element->updated);
         }
 
         return null;

@@ -183,7 +183,7 @@ const deleteCondition= () => {}
             </div>
           </div>
 
-          <button @click="addCondition" class="mt-4 px-2 py-1 text-sm focus:outline-none rounded-lg flex items-center hover:shadow" v-dark-mode-button>
+          <button @click="addCondition" class="mt-4 px-2 py-1 text-sm focus:outline-none rounded-lg flex items-center hover:shadow">
             <span class="ml-2">Add condition</span>
           </button>
         </div>
@@ -197,7 +197,7 @@ const deleteCondition= () => {}
             <TagIcon class="w-8 h-8 text-green-400" v-else />
             <span class="text-2xl">{{ tag.name?.en }}</span>
           </div>
-          <div class="flex gap-4 my-2 mx-6">
+          <div class="flex flex-wrap items-center gap-4 my-2 mx-6">
             <div class="flex gap-2">
               <ServerIcon class="w-6 h-6" />
               {{ tag.servers_count }}

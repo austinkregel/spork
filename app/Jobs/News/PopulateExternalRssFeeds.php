@@ -27,6 +27,7 @@ class PopulateExternalRssFeeds implements ShouldQueue
 
     public function handle(RssFeedService $service)
     {
+
         $rssFeed = $service->fetchRssFeed($this->feed->url);
 
         if ($rssFeed === null) {

@@ -11,12 +11,14 @@ use App\Events\Models\Budget\BudgetDeleting;
 use App\Events\Models\Budget\BudgetUpdated;
 use App\Events\Models\Budget\BudgetUpdating;
 use App\Models\Crud;
+use App\Models\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Tags\HasTags;
 
-class Budget extends Model implements Crud
+class Budget extends Model implements Crud, Taggable
 {
-    use HasFactory;
+    use HasFactory, HasTags;
 
     public $dispatchesEvents = [
         'created' => BudgetCreated::class,

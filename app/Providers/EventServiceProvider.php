@@ -56,6 +56,9 @@ class EventServiceProvider extends ServiceProvider
         Events\Models\Transaction\TransactionCreated::class => [
             Listeners\Finance\ApplyUserAutomatedTagsToTransaction::class,
         ],
+        Events\Models\Task\TaskUpdated::class => [
+            Listeners\Tasks\MoveJiraTicketIfApplicableListener::class,
+        ]
     ];
 
     /**

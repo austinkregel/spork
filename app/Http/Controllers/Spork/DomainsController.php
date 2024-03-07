@@ -14,14 +14,14 @@ class DomainsController extends Controller
     {
         return Inertia::render('Domains', [
             'domains' => Domain::query()
-                ->withCount('records', 'domainAnalytics')
+                ->withCount('records')
                 ->paginate(request('limit'), ['*'], 'page', request('page')),
         ]);
     }
 
     public function show(Domain $domain)
     {
-        $domain->load('domainAnalytics', 'records');
+        $domain->load('records');
 
         return Inertia::render('Domain', [
             'domain' => $domain,

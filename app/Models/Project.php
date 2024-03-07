@@ -22,7 +22,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
-class Project extends Model implements Crud, ModelQuery
+class Project extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
     use HasTags;
@@ -137,6 +137,10 @@ class Project extends Model implements Crud, ModelQuery
         return $credential;
     }
 
+    public function owner()
+    {
+        return $this->morphMany(ExternalRssFeed::class, 'owner');
+    }
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

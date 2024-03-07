@@ -75,6 +75,11 @@ class Article extends Model implements Crud
         return $this->morphTo();
     }
 
+    public function externalRssFeed()
+    {
+        return $this->belongsTo(ExternalRssFeed::class, 'author_id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

@@ -19,7 +19,7 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
  * @property-read Credential $credential
  */
 /** @mixin \Eloquent */
-class Message extends Model
+class Message extends Model implements Taggable
 {
     use HasFactory, HasJsonRelationships, HasTags;
 

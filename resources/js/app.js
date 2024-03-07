@@ -81,17 +81,32 @@ createInertiaApp({
         addComponentToRegistry(BuilderText);
         addComponentToRegistry(Grid);
         addComponentToRegistry(TitleAndFooterTextCard);
+
         if (props?.initialPage?.props?.auth?.user?.id) {
-            Echo.private(`App.Models.User.${props?.initialPage?.props?.auth?.user?.id}`)
-                .listen('.MessageCreated', (e) => {
+            const userId = props?.initialPage?.props?.auth?.user?.id;
+            Echo.private(`App.Models.User.${userId}`)
+                .listen('Models.Message.MessageCreated', (e) => {
                     router.reload({
                         only: ['messages', 'unread_email_count'],
                     });
                 })
-                .listen('.AccountUpdated', e => {
-                    router.refresh({
+                .listen('Models.Account.AccountUpdated', e => {
+                    router.reload({
                         only: ['accounts', 'unread_email_count']
                     })
+                })
+                .listen('Models.JobBatch.JobBatchCreated', e => {
+                    router.reload({
+                        only: ['job_batches', 'news']
+                    })
+                })
+                .listen('Models.JobBatch.JobBatchUpdated', e => {
+                    router.reload({
+                        only: ['job_batches', 'news']
+                    })
+                })
+                .error((error) => {
+                    console.error(error);
                 });
         }
 

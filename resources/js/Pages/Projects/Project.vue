@@ -14,7 +14,6 @@
                 <div class="uppercase tracking-wider">Todo tasks</div>
                 <div class="grid grid-cols-3 w-full gap-4">
                     <div class="bg-stone-700 rounded-lg py-4">
-
                           <SmallTaskList :tasks="$page.props.daily_tasks" name="Daily Tasks" @open="() => { createTask = true; form.type = 'daily'}"/>
                     </div>
                     <div class="bg-stone-700 rounded-lg py-4">
@@ -61,37 +60,24 @@
                   </div>
                   <div>
                     <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">Domains</h3>
-                    <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 dark:text-stone-50 text-stone-900">
-                        <div v-for="item in $page.props.project.domains" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-stone-700 px-4 py-5 shadow sm:p-6">
-                            <dd class="mt-1 font-semibold tracking-tight text-stone-900 dark:text-stone-50">
-
-                                <div class="flex flex-wrap items-center justify-between border border-stone-700" v-if="item.domain_analytics.length > 0">
-                                    <div class="flex flex-col p-2" v-for="analytic in item.domain_analytics">
-                                        <div class="text-3xl">{{analytic.query_count}}</div>
-                                        <div>Queries</div>
-                                    </div>
-                                    <div class="flex flex-col p-2 " v-for="analytic in item.domain_analytics">
-                                        <div class="text-3xl">{{analytic.uncached_count}}</div>
-                                        <div>Uncached</div>
-                                    </div>
-                                    <div class="flex flex-col p-2 " v-for="analytic in item.domain_analytics">
-                                        <div class="text-3xl">{{analytic.stale_count}}</div>
-                                        <div>Stale</div>
-                                    </div>
-
-                                </div>
-                                <div class="flex flex-wrap justify-between">
+                    <dl class="mt-5 grid grid-cols-1 gap-5 dark:text-stone-50 text-stone-900">
+                        <div v-for="item in $page.props.project.domains" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-stone-700 p-2  shadow sm:p-4">
+                            <dd class="font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+                                <div class="flex flex-wrap justify-between items-center">
                                     <div class="flex flex-col">
-                                        <div class="text-2xl">
+                                        <div class="text-xl">
                                             <Link class="underline" :href="'/domains/'+item.id">{{ item.name }}</Link>
                                         </div>
-                                        <div class="text-sm">{{ item.expires_at }}</div>
                                     </div>
+                                    <div>
 
-                                    <spork-button secondary @click="detach(item)">
-                                        Delete
-                                    </spork-button>
+                                    </div>
                                 </div>
+                                <pre class="text-xs">{{ item.records.map(i => i.type).reduce((counts, type) => ({
+                                    ...counts,
+                                    [type]: (counts[type] || 0) + 1
+                                }), {}) }}</pre>
+
                             </dd>
                             <dt class="truncate text-sm font-medium text-stone-500 dark:text-stone-300">{{ item.registered_at }}</dt>
 
@@ -277,7 +263,10 @@
                                     :value="item.id"
                                 />
                                 <span>
-                                    {{ item.name ?? item.title}} ({{item?.tags?.map(i => i.name?.en)?.join(', ') ?? item?.credential?.name ?? item?.credential_id ?? item.slug }})
+                                    {{ item.name ?? item.title ?? item.topic}}
+                                    <span v-if="item?.tags?.map(i => i.name?.en)?.join(', ') ?? item?.credential?.name ?? item?.credential_id ?? item.slug ?? item?.type">
+                                        ({{item?.tags?.map(i => i.name?.en)?.join(', ') ?? item?.credential?.name ?? item?.credential_id ?? item.slug ?? item?.type }})
+                                    </span>
                                 </span>
                             </label>
                         </div>
@@ -389,7 +378,9 @@ export default {
             console,
             allSelected: ref(false),
             createOpen: ref(false),
-            form: ref(({})),
+            form: ref(({
+                status: 'To Do',
+            })),
             data: ref([]),
             pagination: ref({}),
             attach: ref([]),
