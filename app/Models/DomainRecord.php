@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class DomainRecord extends Model implements ModelQuery, Crud
+class DomainRecord extends Model implements Crud, ModelQuery
 {
     use HasFactory;
     use LogsActivity;

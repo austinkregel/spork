@@ -5,9 +5,7 @@
                     ['app', 'src', 'resources', 'system'].includes(name) ? 'bg-blue-500/10' :'',
                     ['bootstrap', 'public'].includes(name) ? 'bg-stone-700/10' :'',
                     ['vendor', 'node_modules'].includes(name) ? 'bg-orange-500/10' :'',
-                    //$store.getters.features?.development?.map(feature => feature?.settings?.path ?? null).includes(file.file_path) ? 'bg-amber-600/10 dark:bg-amber-400/10' :'',
-            ]"
->
+            ]">
             <button
                 v-if="folder"
                 class="flex gap-1 items-center dark:hover:bg-stone-900/50 focus:bg-stone-900/50 focus:ring-2 focus:ring-blue-800 text-stone-700 dark:text-stone-200"
@@ -17,7 +15,6 @@
                     ['bootstrap', 'public'].includes(name) ? 'text-stone-600 dark:text-stone-400' :'',
                     ['vendor', 'node_modules'].includes(name) ? 'text-orange-600 dark:text-orange-400' :'',
                     // Projects in an existing file root.
-                    //$store.getters.features?.development?.map(feature => feature?.settings?.path ?? null).includes(file.file_path) ? 'text-amber-600 dark:text-amber-400' :'',
                 ]"
                 @dblclick="onToggleFolderExpand"
             >
@@ -43,7 +40,7 @@
                 ['package.json', 'yarn.lock', 'package-lock.json',].includes(name) ? 'text-orange-600 dark:text-orange-400' :'',
                 !['artisan', 'composer', 'composer.phar', 'dev', 'sail', 'tests', 'public', 'composer.json', 'composer.lock', 'package.json', 'yarn.lock', 'package-lock.json',].includes(name) ? 'text-stone-700 dark:text-stone-100' :'',
             ]"
-            @dblclick="$emit("openFile", file)">
+            @dblclick="$emit('openFile', file)">
                 <div class="w-4 h-4 flex-none"></div>
 
                 <svg class="w-4 h-4 flex-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -68,7 +65,7 @@
 <script>
 export default {
     props: ['file'],
-    emits: ['openFile']
+    emits: ['openFile'],
     data: () => ({
         open: false,
         collapsed: true,

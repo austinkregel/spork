@@ -9,7 +9,7 @@ if (! function_exists('developerRoute')) {
     {
         cache()->rememberForever($name, fn () => $model);
 
-        Route::prefix('crud')->group(function () use ($name, $model) {
+        Route::prefix('crud')->group(function () use ($name) {
             Route::get($name, [\App\Http\Controllers\Spork\LocalAdminController::class, 'index'])->name($name.'.index');
 
             Route::post($name.'', [\App\Http\Controllers\Spork\LocalAdminController::class, 'store'])->name($name.'.store');

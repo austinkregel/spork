@@ -64,14 +64,14 @@ class NamecheapService implements NamecheapServiceContract
     {
         [$domainPart, $tld] = explode('.', $domain);
         $url = static::NAMECHEAP_URL.'?'.http_build_query([
-                'ApiUser' => $this->credential->settings['api_user'],
-                'ApiKey' => $this->credential->access_token,
-                'UserName' => $this->credential->settings['username'],
-                'Command' => 'namecheap.domains.dns.getList',
-                'ClientIp' => $this->credential->settings['client_ip'],
-                'SLD' => $domainPart,
-                'TLD' => $tld,
-            ]);
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'Command' => 'namecheap.domains.dns.getList',
+            'ClientIp' => $this->credential->settings['client_ip'],
+            'SLD' => $domainPart,
+            'TLD' => $tld,
+        ]);
         $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn () => Http::get($url)->body());
 
         $domainResponse = json_decode(json_encode(simplexml_load_string($xmlDebugResponse)));
@@ -85,15 +85,16 @@ class NamecheapService implements NamecheapServiceContract
             dd($domainResponse);
         }
     }
+
     public function getTlds(): array
     {
         $url = static::NAMECHEAP_URL.'?'.http_build_query([
-                'ApiUser' => $this->credential->settings['api_user'],
-                'ApiKey' => $this->credential->access_token,
-                'UserName' => $this->credential->settings['username'],
-                'Command' => 'namecheap.domains.getTldList',
-                'ClientIp' => $this->credential->settings['client_ip'],
-            ]);
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'Command' => 'namecheap.domains.getTldList',
+            'ClientIp' => $this->credential->settings['client_ip'],
+        ]);
         $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn () => Http::get($url)->body());
 
         $parser = xml_parser_create();
@@ -103,6 +104,7 @@ class NamecheapService implements NamecheapServiceContract
         $tlds = array_values(array_filter($data, fn ($row) => $row['tag'] === 'TLD' && $row['type'] === 'open' && $row['attributes']['ISAPIREGISTERABLE'] === 'true'));
 
         dd(array_map(fn ($tld) => $tld['attributes']['NAME'], $tlds));
+
         return $domainResponse->CommandResponse->DomainDNSGetListResult->Nameserver;
     }
 
@@ -172,18 +174,18 @@ class NamecheapService implements NamecheapServiceContract
     {
         // Command: namecheap.domains.check
         $url = static::NAMECHEAP_URL.'?'.http_build_query([
-                // Auth
-                'ApiUser' => $this->credential->settings['api_user'],
-                'ApiKey' => $this->credential->access_token,
-                'UserName' => $this->credential->settings['username'],
-                'ClientIp' => $this->credential->settings['client_ip'],
-                // command
-                'Command' => 'namecheap.domains.check',
-                // request deets
-                'DomainList' => $domain,
-            ]);
+            // Auth
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'ClientIp' => $this->credential->settings['client_ip'],
+            // command
+            'Command' => 'namecheap.domains.check',
+            // request deets
+            'DomainList' => $domain,
+        ]);
 
-        $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn () =>Http::get($url)->body());
+        $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn () => Http::get($url)->body());
 
         $parser = xml_parser_create();
         xml_parse_into_struct($parser, $xmlDebugResponse, $data);
@@ -198,16 +200,17 @@ class NamecheapService implements NamecheapServiceContract
     {
         // Command: namecheap.domains.check
         $url = static::NAMECHEAP_URL.'?'.http_build_query([
-                // Auth
-                'ApiUser' => $this->credential->settings['api_user'],
-                'ApiKey' => $this->credential->access_token,
-                'UserName' => $this->credential->settings['username'],
-                'ClientIp' => $this->credential->settings['client_ip'],
-                // command
-                'Command' => 'namecheap.domains.check',
-                // request deets
-                'DomainList' => $domain,
-            ]);
+            // Auth
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'ClientIp' => $this->credential->settings['client_ip'],
+            // command
+            'Command' => 'namecheap.domains.check',
+            // request deets
+            'DomainList' => $domain,
+        ]);
+
         return [];
     }
 
@@ -215,16 +218,16 @@ class NamecheapService implements NamecheapServiceContract
     {
         // Command: namecheap.domains.check
         $url = static::NAMECHEAP_URL.'?'.http_build_query([
-                // Auth
-                'ApiUser' => $this->credential->settings['api_user'],
-                'ApiKey' => $this->credential->access_token,
-                'UserName' => $this->credential->settings['username'],
-                'ClientIp' => $this->credential->settings['client_ip'],
-                // command
-                'Command' => 'namecheap.domains.check',
-                // request deets
-                'DomainList' => $domain,
-            ]);
+            // Auth
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'ClientIp' => $this->credential->settings['client_ip'],
+            // command
+            'Command' => 'namecheap.domains.check',
+            // request deets
+            'DomainList' => $domain,
+        ]);
 
         // TODO: Implement renewDomain() method.
 

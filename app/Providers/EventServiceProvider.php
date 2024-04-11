@@ -58,7 +58,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         Events\Models\Task\TaskUpdated::class => [
             Listeners\Tasks\MoveJiraTicketIfApplicableListener::class,
-        ]
+        ],
     ];
 
     /**

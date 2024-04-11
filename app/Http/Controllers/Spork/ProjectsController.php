@@ -9,7 +9,6 @@ use App\Models\Project;
 use App\Models\Research;
 use App\Models\Task;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ProjectsController extends Controller
@@ -165,5 +164,10 @@ class ProjectsController extends Controller
             'resource_id' => request()->get('resource_id'),
             'project_id' => $project->id,
         ])->delete();
+    }
+
+    public function create()
+    {
+        return Inertia::render('Projects/Create');
     }
 }

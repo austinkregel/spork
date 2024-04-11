@@ -42,19 +42,19 @@ class RssFeed extends AbstractFeed
     public function getData(): array
     {
         try {
-        return array_map(function ($post) {
-            $feedItem = new FeedItem();
-            $feedItem->id = (string) ($post->guid ?? Str::uuid());
-            $feedItem->setTitle($post->title);
-            $feedItem->setPublishedAt($post->pubDate);
-            $feedItem->setUrl($post);
-            $feedItem->content = (string) $post->description ?? null;
-            $feedItem->authorName = (string) $post->source ?? null;
+            return array_map(function ($post) {
+                $feedItem = new FeedItem();
+                $feedItem->id = (string) ($post->guid ?? Str::uuid());
+                $feedItem->setTitle($post->title);
+                $feedItem->setPublishedAt($post->pubDate);
+                $feedItem->setUrl($post);
+                $feedItem->content = (string) $post->description ?? null;
+                $feedItem->authorName = (string) $post->source ?? null;
 
-            return $feedItem;
-        }, ((array) $this->element->channel)['item']);
-            } catch (\Throwable $e) {
-             dd($e, ((array) $this->element->channel)['item']);
-            }
+                return $feedItem;
+            }, ((array) $this->element->channel)['item']);
+        } catch (\Throwable $e) {
+            dd($e, ((array) $this->element->channel)['item']);
+        }
     }
 }

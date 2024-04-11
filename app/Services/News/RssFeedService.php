@@ -46,7 +46,7 @@ class RssFeedService implements RssServiceContract
                     ];
                 }
             );
-        } catch (ConnectionException | ClientException | HttpException $e) {
+        } catch (ConnectionException|ClientException|HttpException $e) {
             info('Exception occurred', [$e->getMessage(), $url]);
 
             return null;

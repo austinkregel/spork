@@ -35,13 +35,12 @@ class Task extends Model implements Crud, ModelQuery
 
     public $dispatchesEvents = [
         'created' => TaskCreated::class,
-        'creating' =>TaskCreating::class,
-        'deleting' =>TaskDeleting::class,
+        'creating' => TaskCreating::class,
+        'deleting' => TaskDeleting::class,
         'deleted' => TaskDeleted::class,
-        'updating' =>TaskUpdating::class,
+        'updating' => TaskUpdating::class,
         'updated' => TaskUpdated::class,
     ];
-
 
     public function project()
     {

@@ -6,14 +6,10 @@ namespace App\Actions\Spork\Domains;
 
 use App\Actions\Spork\CustomAction;
 use App\Contracts\ActionInterface;
-use App\Contracts\Services\CloudflareDomainServiceContract;
-use App\Jobs\FetchResourcesFromCredential;
 use App\Models\Credential;
 use App\Models\Domain;
-use App\Services\Domain\CloudflareDomainService;
 use App\Services\Factories\DomainServiceFactory;
 use App\Services\Factories\RegistrarServiceFactory;
-use Egulias\EmailValidator\Result\Reason\DomainHyphened;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
 

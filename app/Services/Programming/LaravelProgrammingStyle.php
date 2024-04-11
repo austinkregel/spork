@@ -174,7 +174,7 @@ class LaravelProgrammingStyle extends Code
         return $this;
     }
 
-    public function renameClass(string $newClassName, string $newNamespace = null)
+    public function renameClass(string $newClassName, ?string $newNamespace = null)
     {
         /** @var PhpFile $phpFile */
         foreach ($this->phpFiles as $filePath => $phpFile) {

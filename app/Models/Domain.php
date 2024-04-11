@@ -24,8 +24,8 @@ class Domain extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
     use HasProjectResource;
-    use LogsActivity;
     use HasTags;
+    use LogsActivity;
 
     public $fillable = [
         'name',

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners\Tasks;
 
 use App\Contracts\Services\JiraServiceContract;
 use App\Events\Models\Task\TaskUpdated;
-use App\Models\Task;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class MoveJiraTicketIfApplicableListener implements ShouldQueue

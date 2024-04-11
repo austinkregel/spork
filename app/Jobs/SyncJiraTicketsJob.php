@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Jobs;
@@ -30,9 +31,9 @@ class SyncJiraTicketsJob implements ShouldQueue
                         ->where('service_identifier', $ticket->id)
                         ->first();
 
-                    if (!empty($task)) {
+                    if (! empty($task)) {
                         $task->update([
-                            'name' => $ticket->key . ' - ' . $ticket->fields->summary,
+                            'name' => $ticket->key.' - '.$ticket->fields->summary,
                             'notes' => $ticket->fields->description,
                             'status' => $ticket->fields->status->name,
                             'type' => strtoupper($ticket->fields->issuetype->name),
@@ -40,7 +41,7 @@ class SyncJiraTicketsJob implements ShouldQueue
                     } else {
                         $project->tasks()->create([
                             'service_identifier' => $ticket->id,
-                            'name' => $ticket->key . ' - ' . $ticket->fields->summary,
+                            'name' => $ticket->key.' - '.$ticket->fields->summary,
                             'notes' => $ticket->fields->description,
                             'status' => $ticket->fields->status->name,
                             'type' => strtoupper($ticket->fields->issuetype->name),

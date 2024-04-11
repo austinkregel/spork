@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console;
 
-use App\Jobs\FetchCloudflareAnalytics;
 use App\Jobs\FetchResourcesFromCredentials;
 use App\Jobs\News\UpdateAllFeeds;
 use App\Jobs\SyncJiraTicketsJob;

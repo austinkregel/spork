@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,16 +12,16 @@ class JobBatch extends Model
     use HasFactory;
 
     public $fillable = [
-            'id',
-            'name',
-            'total_jobs',
-            'pending_jobs',
-            'failed_jobs',
-            'failed_job_ids',
-            'options',
-            'cancelled_at',
-            'created_at',
-            'finished_at',
+        'id',
+        'name',
+        'total_jobs',
+        'pending_jobs',
+        'failed_jobs',
+        'failed_job_ids',
+        'options',
+        'cancelled_at',
+        'created_at',
+        'finished_at',
     ];
 
     public $dispatchesEvents = [

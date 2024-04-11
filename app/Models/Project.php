@@ -141,6 +141,7 @@ class Project extends Model implements Crud, ModelQuery, Taggable
     {
         return $this->morphMany(ExternalRssFeed::class, 'owner');
     }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

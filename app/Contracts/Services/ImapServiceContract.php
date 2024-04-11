@@ -14,7 +14,7 @@ interface ImapServiceContract
     public function findAllFromDate(string $mailbox, Carbon $date): Collection;
 
     /**
-     * @param  bool  $peak This will set the read status in the imap server, when set to true, mail will be marked as read.
+     * @param  bool  $peak  This will set the read status in the imap server, when set to true, mail will be marked as read.
      */
     public function findMessage(string $messageNumber, bool $peak = true): array;
 

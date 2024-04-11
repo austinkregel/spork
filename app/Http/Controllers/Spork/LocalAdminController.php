@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
-use App\Actions\Spork\CustomAction;
 use App\Contracts\ModelQuery;
 use App\Http\Requests\Dynamic\CreateRequest;
 use App\Http\Requests\Dynamic\DeleteRequest;
@@ -39,7 +38,7 @@ class LocalAdminController extends Controller
     {
         $split = array_filter(explode('/', $request->path()), fn ($part) => ! is_numeric($part));
 
-        $tableFromUrl = match(count($split)) {
+        $tableFromUrl = match (count($split)) {
             3 => $split[2],
             4 => $split[2],
 
@@ -101,6 +100,7 @@ class LocalAdminController extends Controller
             'message' => 'No resource found by that id.',
         ], 414);
     }
+
     public function tag(UpdateRequest $request, $abstractEloquentModel = null)
     {
         $request->validate([
@@ -109,8 +109,9 @@ class LocalAdminController extends Controller
         ]);
         $model = QueryBuilder::for($this->getModel($request))->findOrFail($abstractEloquentModel);
 
-        if (!($model instanceof Taggable)) {
+        if (! ($model instanceof Taggable)) {
             abort(414, 'This model does not support tags.');
+
             return;
         }
 

@@ -3,26 +3,11 @@
 declare(strict_types=1);
 
 use App\Actions\Spork\CustomAction;
-use App\Contracts\ModelQuery;
 use App\Http\Controllers;
-use App\Models\Person;
-use App\Services\Development\DescribeTableService;
 use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -84,13 +69,7 @@ Route::middleware([
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
-    Route::get('/user/api-query', function (DescribeTableService $descriptionService) {
-        return Inertia::render('API/QueryBuilderPage', [
-            'models' => collect(\App\Services\Code::instancesOf(ModelQuery::class)
-                ->getClasses())
-                ->map(fn ($model) => $descriptionService->describe(new $model)),
-        ]);
-    })->middleware(\App\Http\Middleware\Authenticate::class)->name('user.api-query');
+    Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\App\Http\Middleware\Authenticate::class)->name('user.api-query');
 
     Route::post('project/{project}/deploy', [Controllers\Spork\ProjectsController::class, 'deploy'])->name('project.deploy');
 
@@ -106,253 +85,29 @@ Route::group(['prefix' => '-', 'middleware' => [
     config('jetstream.auth_session'),
     'verified',
 ]], function () {
-    Route::get('/dashboard', function () {
-        $person = Person::whereJsonContains('emails', auth()->user()->email)
-            // for now, this is fine, my email base does support this idea, but I know if someone/
-            // wanted to be malicious they could take advantage of this.
-            ->first();
+    Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
 
-        return Inertia::render('Dashboard', [
-            'project_count' => \App\Models\Project::count(),
-            'server_count' => \App\Models\Server::count(),
-            'domain_count' => \App\Models\Domain::count(),
-            'credential_count' => \App\Models\Credential::count(),
-            'user_count' => \App\Models\User::count(),
-            // Unread Messages
-            // Tasks due today
-            // Domains that expire this month, or in the last 7 days
-            // Weather at my primary address
-            'weather' => $person->primary_address ? Arr::first(app(\App\Contracts\Services\WeatherServiceContract::class)->query(
-                $person->primary_address,
-            )) : null,
-
-            'news' => (\App\Models\Article::query()
-                ->with('externalRssFeed.tags')
-                ->whereHas('externalRssFeed', function ($query) {
-                    $query->where('owner_type', \App\Models\User::class)
-                        ->where('owner_id', auth()->id());
-
-                    $query->whereHas('tags', fn ($q) => $q->where('name->en', 'news'));
-                })
-                ->orderByDesc('last_modified')
-                ->paginate(request('news_limit', 15), ['*'], 'news_page', request('news_page', 1))),
-
-            'video_feed' => \App\Models\Article::query()
-                ->with('externalRssFeed.tags')
-                ->whereHas('externalRssFeed', function ($query) {
-                    $query->where('owner_type', \App\Models\User::class)
-                        ->where('owner_id', auth()->id());
-
-                    $query->whereHas('tags', fn ($q) => $q->where('name->en', 'video'));
-                })
-                ->orderByDesc('last_modified')
-                ->paginate(request('video_limit', 15), ['*'], 'video_page', request('video_page', 1)),
-            'expiring_domains'  => auth()->user()
-                    ->domains()
-                    ->where('expires_at', '>=', now()->subDays(7))
-                    ->where('expires_at', '<=', now()->addWeeks(4))
-                    ->orderByDesc('expires_at')
-                    ->paginate(request('expiring_limit', 15), ['*'], 'expiring_page', request('expiring_page', 1)),
-            'job_batches'  => \App\Models\JobBatch::query()
-                ->orderByDesc('created_at')
-                ->paginate(request('job_limit', 10), ['*'], 'job_page', request('job_page', 1)),
-        ]);
-    })->name('dashboard');
-
-    Route::get('/tag-manager', function () {
-        return Inertia::render('Tags/Index', [
-            'tags' => \App\Models\Tag::withCount([
-                'conditions',
-                'articles',
-                'feeds',
-                'servers',
-                'transactions',
-                'projects',
-                'budgets',
-                'accounts',
-                'domains',
-                'people',
-                'messages' => function ($q) {
-                    $q->where('seen', false);
-                },
-            ])
-                ->with(['conditions'])
-                ->orderBy('type')
-                ->paginate(
-                    request('limit', 30),
-                    ['*'],
-                    'page',
-                    request('page')
-                ),
-        ]);
-    });
-    Route::get('/postal', function () {
-        return Inertia::render('Postal/Index', [
-            'threads' => \App\Models\Thread::query()
-                ->with([
-                    'participants' => function ($query) {
-                        $query->where('name', 'not like', '%bridge bot%');
-                    },
-                ])
-                ->orderByDesc('origin_server_ts')
-                ->paginate(request('limit', 15), ['*'], 'page', 1),
-        ]);
-    });
     Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
     Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
+    Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');
+    Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
 
-    Route::get('/projects/create', function () {
-        return Inertia::render('Projects/Create');
-    });
+    Route::get('/inbox', [Controllers\Spork\InboxController::class, 'index']);
+    Route::get('/inbox/{message}', [Controllers\Spork\InboxController::class, 'show']);
 
-    Route::get('/research', function () {
-        return Inertia::render('Research/Dashboard', [
-            'research' => request()->user()->projects()
-                ->with('research')
-                ->get()
-                ->map(fn ($project) => $project->research)
-                ->flatten(),
-        ]);
-    });
-    Route::get('/research/{research}', function (App\Models\Research $research) {
-        return Inertia::render('Research/Topic', [
-            'topic' => $research,
-        ]);
-    });
-    Route::get('/inbox', function () {
-        return Inertia::render('Postal/Inbox', [
-            'messages' => \App\Models\Message::query()
-                ->with('from', 'to')
-                ->where('type', 'email')
-                ->orderByDesc('originated_at')
-                ->paginate(),
-        ]);
-    });
-    Route::get('/inbox/{message}', function (App\Models\Message $message) {
-        abort_if($message->type !== 'email', 404);
+    Route::get('/manage/{link}', [Controllers\Spork\ManageController::class, 'show'])->name('crud.show');
+    Route::get('/manage', [Controllers\Spork\ManageController::class, 'index']);
 
-        $message->load('credential');
+    Route::get('/settings', Controllers\Spork\SettingsController::class);
+    Route::get('/tag-manager', Controllers\Spork\TagManagerController::class);
 
-        abort_unless($message->credential->user_id === auth()->id(), 404);
+    Route::get('/postal', [Controllers\Spork\MessageController::class, 'index'])->name('postal.index');
+    Route::get('/postal/{thread}', [Controllers\Spork\MessageController::class, 'show'])->name('postal.show');
 
-        $message = (new App\Services\Messaging\ImapCredentialService($message->credential))->findMessage($message->event_id, true);
-        $messageBody = base64_decode($message['body']);
+    Route::get('/research', [Controllers\Spork\ResearchController::class, 'index'])->name('research.index');
+    Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');
 
-        $bodyWithTheImagesDisabledForPrivacy = str_replace(' src=', ' data-src=', $messageBody);
-
-        return view('emails.'.$message['view'], [
-            'body' => $bodyWithTheImagesDisabledForPrivacy,
-        ]);
-    });
-    Route::get('/postal/{thread}', function ($thread) {
-        return Inertia::render('Postal/Thread', [
-            'threads' => \App\Models\Thread::query()
-                ->with([
-                    'participants' => function ($query) {
-                        $query->where('name', 'not like', '%bridge bot%');
-                    },
-                ])
-
-                ->orderByDesc('origin_server_ts')
-                ->paginate(request('limit', 15), ['*'], 'page', 1),
-            'thread' => \App\Models\Thread::query()
-                ->with(['messages' => function ($query) {
-                    $query->orderBy('originated_at');
-                }, 'participants' => function ($query) {
-                    $query->where('name', 'not like', '%bridge bot%');
-                }])
-                ->orderByDesc('updated_at')
-                ->findOrFail($thread),
-        ]);
-    });
-    Route::get('/file-manager', function () {
-        $filesystem = \Illuminate\Support\Facades\Storage::disk(config('spork.filesystem.default'));
-
-        return Inertia::render('FileManager', [
-            'files' => array_map(
-                fn ($file) => [
-                    'name' => basename($file),
-                    'file_path' => base64_encode('/'.$file),
-                    'is_directory' => false,
-                    'type' => 'file',
-                    'last_modified' => \Carbon\Carbon::parse($filesystem->lastModified($file)),
-                ],
-                $filesystem->files()
-            ),
-            'directories' => array_map(
-                fn ($file) => [
-                    'name' => basename($file),
-                    'file_path' => base64_encode('/'.$file),
-                    'is_directory' => true,
-                    'type' => 'folder',
-                    'last_modified' => \Carbon\Carbon::parse($filesystem->lastModified($file)),
-                ],
-                $filesystem->directories()
-            ),
-
-        ]);
-    });
-
-    Route::get('/manage', function () {
-        return Inertia::render('Manage/Index', [
-            'title' => 'Dynamic CRUD',
-            'description' => [
-                'fillable' => [],
-            ],
-        ]);
-    });
-    Route::get('/banking', function () {
-        $accounts = request()->user()
-            ->accounts()
-            ->with('credential')->get();
-
-        return Inertia::render('Finance/Index', [
-            'title' => 'Banking ',
-            'accounts' => $accounts,
-            'transactions' => \App\Models\Finance\Transaction::whereIn('account_id', $accounts->pluck('account_id'))
-                ->with('tags')
-                ->orderByDesc('date')
-                ->paginate(),
-        ]);
-    });
-    Route::get('/manage/{link}', function ($model) {
-        $description = (new DescribeTableService)->describe(new $model);
-
-        /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
-        $paginator = $model::query()
-            ->with(
-                array_filter($description['includes'], fn ($relation) => !in_array($relation, [
-                    'tagsTranslated',
-                ]))
-            )
-            ->paginate(request('limit', 15), ['*'], 'manage_page', request('manage_page', 1));
-
-        $data = $paginator->items();
-        $paginator = $paginator->toArray();
-
-        unset($paginator['data']);
-
-        return Inertia::render('Manage/Index', [
-            'title' => 'CRUD '.Str::ucfirst(str_replace('_', ' ', Str::ascii((new $model)->getTable(), 'en'))),
-            'description' => $description,
-            'singular' => Str::singular((new $model)->getTable()),
-            'plural' => Str::plural((new $model)->getTable()),
-            'link' => '/'.(new $model)->getTable(),
-            'apiLink' => '/api/crud/'.(new $model)->getTable(),
-            'data' => $data,
-            'paginator' => $paginator,
-        ]);
-    })->name('crud');
-    Route::get('/settings', function () {
-        // settings are things that can be configured in between requests.
-        // They cannot be changed at run time, and might even require a restart of the servers.
-        return Inertia::render('Settings/Index', [
-            'title' => 'Settings',
-            'settings' => new class()
-            {
-            },
-        ]);
-    });
+    Route::get('/projects/create', [Controllers\Spork\ProjectsController::class, 'create']);
 });
 
 Route::middleware([
@@ -367,36 +122,8 @@ Route::middleware([
     Route::post('/api/enable', Controllers\EnableProviderController::class);
     Route::post('/api/disable', Controllers\DisableProviderController::class);
 
-    Route::get('/-/logic', function () {
-        return Inertia::render('Logic/Index', [
-            'container_bindings' => \App\Services\Programming\LaravelProgrammingStyle::findContainerBindings(),
-            'events' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalEvents(),
-            'listeners' => \App\Services\Programming\LaravelProgrammingStyle::findLogicalListeners(),
-        ]);
-    });
+    Route::get('/-/logic', Controllers\Spork\LogicController::class);
     Route::post('/api/logic/add-listener-for-event', Controllers\Logic\AddListenerForEventController::class);
     Route::post('/api/logic/remove-listener-for-event', Controllers\Logic\RemoveListenerForEventController::class);
-    Route::get('/api/files/{basepath}', function ($path) {
-        $decoded = base64_decode($path);
-
-        if (is_dir($decoded)) {
-            $files = Storage::disk(config('spork.filesystem.default'))->files($decoded);
-            $directories = Storage::disk(config('spork.filesystem.default'))->directories($decoded);
-
-            return array_map(
-                fn ($file) => [
-                    'name' => basename($file),
-                    'file_path' => base64_encode($file),
-                    'is_directory' => is_dir($file),
-                    'type' => 'file',
-                ],
-                array_merge(
-                    $directories,
-                    $files
-                )
-            );
-        }
-
-        return file_get_contents($decoded);
-    });
+    Route::get('/api/files/{basepath}', [Controller\Spork\FileManagerController::class, 'show']);
 });

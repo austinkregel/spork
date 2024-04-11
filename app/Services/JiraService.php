@@ -10,9 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use JiraRestApi\Board\Board;
 use JiraRestApi\Board\BoardService;
-use JiraRestApi\Issue\IssueField;
 use JiraRestApi\Issue\IssueService;
-use JiraRestApi\Issue\IssueStatus;
 use JiraRestApi\Issue\Transition;
 use JiraRestApi\Project\Project;
 use JiraRestApi\Project\ProjectService;
@@ -131,7 +129,7 @@ class JiraService implements JiraServiceContract
     public function updateTicket(string $ticketName, array $data)
     {
         if (isset($data['status'])) {
-        /** @var \ArrayObject $possibleStatuses */
+            /** @var \ArrayObject $possibleStatuses */
             $possibleStatuses = $this->issueService->getTransition($ticketName);
             /** @var Transition $status */
             $status = Arr::first(array_filter($possibleStatuses->getArrayCopy(), function (Transition $status) use ($data) {

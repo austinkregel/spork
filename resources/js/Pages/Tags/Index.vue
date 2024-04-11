@@ -87,7 +87,9 @@ const events = [
   'App\\Events\\Finance\\BudgetReset',
 
 ];
-
+const round = ( value) => {
+    return Math.round(value * 100) / 100;
+}
 const parameters = [
     // New Email
   {
@@ -212,7 +214,8 @@ const deleteCondition= () => {}
             </div>
             <div class="flex gap-2">
               <WalletIcon class="w-6 h-6" />
-              {{ tag.transactions_count }}
+                {{ tag.transactions_count }}
+                ${{ round(tag.transactions_sum_amount) }}
             </div>
             <div class="flex gap-2">
               <DynamicIcon icon-name="EmailIcon" class="w-6 h-6" />
