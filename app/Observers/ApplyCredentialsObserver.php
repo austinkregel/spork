@@ -12,7 +12,7 @@ use Spatie\Permission\Models\Permission;
  * When a model is created, we want to ensure that we create the respective CRUD perms when a model is created,
  *  and delete them when they model they're based on is deleted.
  */
-class ApplyCredentialsObserver implements Contracts
+class ApplyCredentialsObserver
 {
     protected $permissions = [
         'view' => 'view_',
