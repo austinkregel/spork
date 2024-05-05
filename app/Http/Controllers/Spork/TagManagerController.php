@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
+use Inertia\Inertia;
+
 class TagManagerController
 {
     public function __invoke()
