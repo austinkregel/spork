@@ -168,7 +168,7 @@ return [
     |
     */
 
-    'memory_limit' => 64,
+    'memory_limit' => 128,
 
     /*
     |--------------------------------------------------------------------------
@@ -194,6 +194,8 @@ return [
             'tries' => 1,
             'timeout' => 6000,
             'nice' => 0,
+            'balanceMaxShift' => 1,
+            'balanceCooldown' => 3,
         ],
         'supervisor-2' => [
             'connection' => 'redis',
@@ -207,6 +209,8 @@ return [
             'tries' => 1,
             'timeout' => 6000,
             'nice' => 0,
+            'balanceMaxShift' => 1,
+            'balanceCooldown' => 3,
         ],
     ],
 
@@ -214,8 +218,12 @@ return [
         'production' => [
             'supervisor-1' => [
                 'maxProcesses' => 10,
+            ],
+            'supervisor-2' => [
+                'maxProcesses' => 5,  
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
+
             ],
         ],
 
