@@ -52,7 +52,7 @@ const changeBinding = async (binding, face) => {
 <template>
     <AppLayout title="Profile">
         <div>
-            <div class="text-2xl my-8 mx-4">Container Bindings</div>
+            <!-- <div class="text-2xl my-8 mx-4">Container Bindings</div>
             <div class="grid grid-cols-2 mx-4">
                 <div class="text-stone-400">
                     Change your container's bindings. Once saved, requests made after will use the new binding.
@@ -71,11 +71,11 @@ const changeBinding = async (binding, face) => {
                         </SporkSelect>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <div class="text-2xl my-8 mx-4">Ways to handle events in your app</div>
 
-          <div class="gap-8 grid grid-cols-2 mx-auto max-w-7xl">
+          <div class="gap-8 grid grid-cols-2 mx-auto max-w-7xl px-4">
             <div v-for="(event,) in page.props.events" class="border border-stone-700 p-2 rounded flex flex-col justify-between">
                 <div class="flex flex-col gap-2">
                     <div class=" font-bold tracking-wider mx-4">{{ event.event }}</div>
