@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Development;
 
 use App\Contracts\ActionInterface;
+use App\Models\Tag;
+use App\Models\Taggable;
 use App\Services\ActionFilter;
 use App\Services\Code;
 use Illuminate\Database\Eloquent\Model;
@@ -50,7 +52,6 @@ class DescribeTableService
 
             return false;
         });
-
         $returnTypes = array_reduce(get_class_methods($model), function ($allClassMethods, $method) use ($model) {
             $ref = new \ReflectionMethod($model, $method);
 
@@ -97,15 +98,16 @@ class DescribeTableService
         });
         $fillable = empty($model->getFillable()) ? ['name'] : $model->getFillable();
 
-        //        $actions = Code::instancesOf(ActionInterface::class)->getClasses();
-        //
-        //        dd(array_map(fn ($q) => new $q, $actions));
+        $actions = array_map(fn ($e) => (array) app($e), array_filter(
+            Code::instancesOf(ActionInterface::class)->getClasses(),
+            fn ($class) => in_array($model::class, app($class)->models)
+        ));
 
-        return [
+        return array_merge([
             'name' => $model->getTable(),
             'model' => get_class($model),
             'pretty_name' => class_basename(get_class($model)),
-            'actions' => array_map(fn ($class) => (array) (new $class), $model->actions ?? []),
+            'actions' => $actions,
             'query_actions' => ActionFilter::WHITELISTED_ACTIONS,
             'fillable' => $fillable,
             'fields' => $fields,
@@ -142,7 +144,9 @@ class DescribeTableService
                 );
             }, []),
             'required' => $mapField(array_filter($description, fn ($query) => $query->Null === 'NO' && $query->Extra !== 'auto_increment')),
-        ];
+        ], $model instanceof Taggable ? [
+            'tags' => Tag::query()->whereNull('type')->orWhere('type', Str::singular($model->getTable()))->get(),
+        ] : []);
     }
 
     public function describeTable(string $table): array

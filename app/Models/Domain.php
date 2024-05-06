@@ -18,11 +18,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Tags\HasTags;
 
-class Domain extends Model implements Crud, ModelQuery
+class Domain extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
     use HasProjectResource;
+    use HasTags;
     use LogsActivity;
 
     public $fillable = [
@@ -31,6 +33,11 @@ class Domain extends Model implements Crud, ModelQuery
         'cloudflare_id',
         'domain_id',
         'registered_at',
+    ];
+
+    public $casts = [
+        'registered_at' => 'datetime:Y-m-d',
+        'expires_at' => 'datetime:Y-m-d',
     ];
 
     public $dispatchesEvents = [
@@ -45,11 +52,6 @@ class Domain extends Model implements Crud, ModelQuery
     public function records(): HasMany
     {
         return $this->hasMany(DomainRecord::class);
-    }
-
-    public function domainAnalytics(): HasMany
-    {
-        return $this->hasMany(DomainAnalytics::class);
     }
 
     public function credential(): BelongsTo

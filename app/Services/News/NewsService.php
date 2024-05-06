@@ -50,7 +50,7 @@ class NewsService implements NewsServiceContract
         ]);
     }
 
-    public function headlines(string $query, string $category = null): array
+    public function headlines(string $query, ?string $category = null): array
     {
         return $this->request('top-headlines', array_merge([
             'apiKey' => env('NEWS_API_KEY'),

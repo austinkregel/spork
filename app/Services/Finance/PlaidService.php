@@ -257,7 +257,7 @@ class PlaidService implements PlaidServiceContract
             ->toArray();
     }
 
-    public function syncTransactions(string $access_token, string $cursor = null): array
+    public function syncTransactions(string $access_token, ?string $cursor = null): array
     {
         return $this->http
             ->{config('services.plaid.env')}()

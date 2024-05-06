@@ -43,10 +43,10 @@ class HandleInertiaRequests extends Middleware
             'conversations' => Thread::query()
                 ->orderByDesc('origin_server_ts')
                 ->paginate(
-                    request('limit'),
+                    request('conversation_limit'),
                     ['*'],
-                    'page',
-                    request('page')
+                    'conversation_page',
+                    request('conversation_page')
                 ),
             'unread_email_count' => $request->user() ?
                 $request->user()->messages()

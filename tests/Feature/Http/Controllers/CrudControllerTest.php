@@ -6,7 +6,9 @@ namespace Feature\Http\Controllers;
 
 use App;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class CrudControllerTest extends TestCase
@@ -15,12 +17,18 @@ class CrudControllerTest extends TestCase
 
     protected ?App\Models\User $user = null;
 
-    public function actingAsUser()
+    public function actingAsUser(): User
     {
-        return $this->actingAs($this->user = App\Models\User::factory()->withPersonalTeam()->create());
+        if (!Role::firstWhere('name', 'developer')) {
+            Role::create(['name' => 'developer']);
+        }
+
+        $this->actingAs($this->user = App\Models\User::factory()->withPersonalTeam()->create());
+        $this->user->assignRole('developer');
+        return $this->user;
     }
 
-    public function testBasicTestWithoutBypassSuccess()
+    public function testBasicTestSuccess()
     {
         $this->actingAsUser();
         Project::factory()->create([
@@ -32,7 +40,7 @@ class CrudControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testCreateTestWithoutBypassSuccess()
+    public function testCreateTestSuccess()
     {
         $this->actingAsUser();
         Project::factory()->create([
@@ -48,7 +56,7 @@ class CrudControllerTest extends TestCase
         $response->assertStatus(201);
     }
 
-    public function testUpdateTestWithoutBypassSuccess()
+    public function testUpdateTestSuccess()
     {
         $this->actingAsUser();
         $project = Project::factory()->create([
@@ -65,7 +73,7 @@ class CrudControllerTest extends TestCase
         $response->assertJsonFragment(['name' => 'Austin Kregel']);
     }
 
-    public function testUpdatePatchTestWithoutBypassSuccess()
+    public function testUpdatePatchTestSuccess()
     {
         $this->actingAsUser();
         $project = Project::factory()->create([
@@ -82,7 +90,7 @@ class CrudControllerTest extends TestCase
         $response->assertJsonFragment(['name' => 'Austin Kregel']);
     }
 
-    public function testDeleteTestWithoutBypassSuccess()
+    public function testDeleteTestSuccess()
     {
         $this->actingAsUser();
         $project = Project::factory()->create([
@@ -98,7 +106,7 @@ class CrudControllerTest extends TestCase
         $this->assertDatabaseMissing('projects', $project2->toArray());
     }
 
-    public function testShowTestWithoutBypassSuccess()
+    public function testShowTestSuccess()
     {
         $this->actingAsUser();
         $project = Project::factory()->create([

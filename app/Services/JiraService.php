@@ -7,9 +7,11 @@ namespace App\Services;
 use App\Contracts\Services\JiraServiceContract;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 use JiraRestApi\Board\Board;
 use JiraRestApi\Board\BoardService;
 use JiraRestApi\Issue\IssueService;
+use JiraRestApi\Issue\Transition;
 use JiraRestApi\Project\Project;
 use JiraRestApi\Project\ProjectService;
 use JiraRestApi\Sprint\Sprint;
@@ -122,5 +124,25 @@ class JiraService implements JiraServiceContract
     public function findUser(string $accountId)
     {
         return $this->userService->get(['accountId' => $accountId]);
+    }
+
+    public function updateTicket(string $ticketName, array $data)
+    {
+        if (isset($data['status'])) {
+            /** @var \ArrayObject $possibleStatuses */
+            $possibleStatuses = $this->issueService->getTransition($ticketName);
+            /** @var Transition $status */
+            $status = Arr::first(array_filter($possibleStatuses->getArrayCopy(), function (Transition $status) use ($data) {
+                return strtolower($status->name) === strtolower($data['status']);
+            }));
+
+            $transition = new Transition();
+            $transition->transition = [
+                'name' => $status->name,
+                'id' => $status->id,
+            ];
+
+            $this->issueService->transition($ticketName, $transition);
+        }
     }
 }

@@ -10,7 +10,6 @@ $ ./bin/sail up -d
 ```
 (On Mac or Linux)
 
-
 # What does it do? Features?
  - [x] Syncing domains from Namecheap
  - [x] Syncing servers from Laravel Forge
@@ -44,3 +43,7 @@ $ ./bin/sail up -d
    - [ ] List events from all projects
    - [ ] List budget usage -- if applicable.
  - [ ] Domain Purchasing and Renewals
+
+## Screenshots
+
+![screenshot-dashboard-2024-02-25.png](/resources/screenshots/screenshot-dashboard-2024-02-25.png)

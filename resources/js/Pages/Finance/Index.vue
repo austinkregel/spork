@@ -1,5 +1,6 @@
 <script setup>
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
 import { computed } from "vue";
 import { usePage, Link, router } from '@inertiajs/vue3';
 import AppLayout from "@/Layouts/AppLayout.vue";
@@ -7,7 +8,7 @@ import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import LinkAccount from "@/Components/Spork/Finance/LinkAccount.vue";
 import SporkTable from "@/Components/Spork/Molecules/SporkTable.vue";
 const page = usePage();
-
+dayjs.extend(utc);
 const accounts = computed(() => page.props.accounts)
 
 const transactionHeaders = [
@@ -17,11 +18,11 @@ const transactionHeaders = [
     },
     {
         name: 'Amount',
-        accessor: 'amount'
+        accessor: value => value?.amount ? value.amount.toLocaleString('en-US', {style: 'currency', currency: 'USD'}) : null
     },
     {
         name: 'Date',
-        accessor: (value) => value?.date ? dayjs(value.date).format("MMM DD, YYYY") : null
+        accessor: (value) => value?.date ? dayjs.utc(value.date).format("MMM DD, YYYY") : null
     },
     {
         name : 'Tags',

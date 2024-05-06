@@ -86,6 +86,28 @@ class NamecheapService implements NamecheapServiceContract
         }
     }
 
+    public function getTlds(): array
+    {
+        $url = static::NAMECHEAP_URL.'?'.http_build_query([
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'Command' => 'namecheap.domains.getTldList',
+            'ClientIp' => $this->credential->settings['client_ip'],
+        ]);
+        $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn () => Http::get($url)->body());
+
+        $parser = xml_parser_create();
+        xml_parse_into_struct($parser, $xmlDebugResponse, $data);
+        xml_parser_free($parser);
+
+        $tlds = array_values(array_filter($data, fn ($row) => $row['tag'] === 'TLD' && $row['type'] === 'open' && $row['attributes']['ISAPIREGISTERABLE'] === 'true'));
+
+        dd(array_map(fn ($tld) => $tld['attributes']['NAME'], $tlds));
+
+        return $domainResponse->CommandResponse->DomainDNSGetListResult->Nameserver;
+    }
+
     public function updateDomainNs(string $domain, array $nameservers): array
     {
         [$domainPart, $tld] = explode('.', $domain);
@@ -146,5 +168,69 @@ class NamecheapService implements NamecheapServiceContract
             }
 
         });
+    }
+
+    public function searchDomain(string $domain): array
+    {
+        // Command: namecheap.domains.check
+        $url = static::NAMECHEAP_URL.'?'.http_build_query([
+            // Auth
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'ClientIp' => $this->credential->settings['client_ip'],
+            // command
+            'Command' => 'namecheap.domains.check',
+            // request deets
+            'DomainList' => $domain,
+        ]);
+
+        $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn () => Http::get($url)->body());
+
+        $parser = xml_parser_create();
+        xml_parse_into_struct($parser, $xmlDebugResponse, $data);
+        xml_parser_free($parser);
+
+        dd($data, simplexml_load_string($xmlDebugResponse));
+
+        return [];
+    }
+
+    public function registerDomain(string $domain, int $years = 1): array
+    {
+        // Command: namecheap.domains.check
+        $url = static::NAMECHEAP_URL.'?'.http_build_query([
+            // Auth
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'ClientIp' => $this->credential->settings['client_ip'],
+            // command
+            'Command' => 'namecheap.domains.check',
+            // request deets
+            'DomainList' => $domain,
+        ]);
+
+        return [];
+    }
+
+    public function renewDomain(string $domain, int $years = 1): array
+    {
+        // Command: namecheap.domains.check
+        $url = static::NAMECHEAP_URL.'?'.http_build_query([
+            // Auth
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'ClientIp' => $this->credential->settings['client_ip'],
+            // command
+            'Command' => 'namecheap.domains.check',
+            // request deets
+            'DomainList' => $domain,
+        ]);
+
+        // TODO: Implement renewDomain() method.
+
+        return [];
     }
 }

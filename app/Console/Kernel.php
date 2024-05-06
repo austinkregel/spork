@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Console;
 
-use App\Jobs\FetchCloudflareAnalytics;
 use App\Jobs\FetchResourcesFromCredentials;
 use App\Jobs\News\UpdateAllFeeds;
+use App\Jobs\SyncJiraTicketsJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -17,9 +17,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->job(UpdateAllFeeds::class)->hourly();
+        $schedule->job(SyncJiraTicketsJob::class)->daily();
+        $schedule->job(UpdateAllFeeds::class)->everyFifteenMinutes();
         $schedule->job(FetchResourcesFromCredentials::class)->hourly();
-        $schedule->job(FetchCloudflareAnalytics::class)->everyFourHours();
         $schedule->command('operations:queue')->everyFiveMinutes();
     }
 

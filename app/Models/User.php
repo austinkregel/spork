@@ -25,7 +25,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Tags\HasTags;
 
-class User extends Authenticatable implements ModelQuery
+class User extends Authenticatable implements ModelQuery, Taggable
 {
     use HasApiTokens;
     use HasFactory;
@@ -104,6 +104,11 @@ class User extends Authenticatable implements ModelQuery
         return $this->hasMany(Credential::class);
     }
 
+    public function domains()
+    {
+        return $this->hasManyThrough(Domain::class, Credential::class);
+    }
+
     public function accounts()
     {
         return $this->hasManyThrough(Account::class, Credential::class);
@@ -112,5 +117,10 @@ class User extends Authenticatable implements ModelQuery
     public function messages()
     {
         return $this->hasManyThrough(Message::class, Credential::class)->orderByDesc('originated_at');
+    }
+
+    public function externalRssFeeds()
+    {
+        return $this->morphMany(ExternalRssFeed::class, 'owner');
     }
 }

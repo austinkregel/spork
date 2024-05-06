@@ -65,11 +65,11 @@ class UpdateFeed implements ShouldQueue
         }
 
         if (! empty($rssFeed->getLastModified())) {
-            //            $this->feed->last_modified = $rssFeed->getLastModified();
+            $this->feed->last_modified = $rssFeed->getLastModified();
         }
 
         if (! empty($rssFeed->getEtag())) {
-            //            $this->feed->etag = $rssFeed->getEtag();
+            $this->feed->etag = $rssFeed->getEtag();
         }
 
         if ($this->feed->isDirty()) {

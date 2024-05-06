@@ -5,33 +5,26 @@
         <div
             v-for="(topic, i) in research ?? []"
             class="w-64 p-3 border border-stone-200 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-600"
-            @contextmenu.prevent="(e) => openContextMenu(e, topic)"
             :key="'research-'+i"
-            >
-            <Link
-                :href="'/-/research/'+ topic.id"
-            >
-                <div  class="font-medium truncate">{{ topic.name }}</div>
-            <pre class=" h-48 shadow-inset overflow-hidden text-xs border-t py-2 my-2">{{ topic.notes }}</pre>
-            </Link>
-            <div class="text-stone-500 dark:text-stone-200 border-t mt-4 pt-2 flex items-center justify-between">
-                <span>{{ date(topic.updated_at) }}</span>
+        >
+            <ContextMenu>
+                <div>
+                    <Link :href="'/-/research/'+ topic.id">
+                            <div  class="font-medium truncate">{{ topic.name }}</div>
+                            <pre class=" h-48 shadow-inset overflow-hidden text-xs border-t py-2 my-2">{{ topic.notes }}</pre>
+                    </Link>
+                    <div class="text-stone-500 dark:text-stone-200 border-t mt-4 pt-2 flex items-center justify-between">
+                        <span>{{ date(topic.updated_at) }}</span>
 
-                <button @click="() => deleteFeature(topic)">
-                    <TrashIcon class="w-4 h-4 text-red-500" />
-                </button>
-            </div>
-        </div>
+                        <button @click="() => deleteFeature(topic)">
+                            <TrashIcon class="w-4 h-4 text-red-500" />
+                        </button>
+                    </div>
+                </div>
 
-        <div  v-if="openContext && openForTopic">
-            <div @click="openContext = false" class="absolute inset-0 z-0 bg-stone-900/20 cusor-pointer"></div>
-
-            <div class="absolute z-10 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-stone-600 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
-            :style="'top: '+contextY+'px; left: '+contextX+'px;'"
-            >
-                <div class="py-1 text-sm flex flex-col" role="none">
+                <template #items>
                     <!-- Active: "bg-stone-100 text-stone-900", Not Active: "text-stone-700" -->
-                    <Link :href="'/-/research/'+openForTopic.id" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
+                    <Link :href="'/-/research/'+topic.id" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
                         <ArrowTopRightOnSquareIcon  class="w-4 h-4" />
                         Open
                     </Link>
@@ -57,8 +50,8 @@
                         <TrashIcon class="w-4 h-4 text-red-500" />
                         Delete
                     </button>
-                </div>
-            </div>
+                </template>
+            </ContextMenu>
         </div>
     </div>
   </AppLayout>
@@ -73,32 +66,25 @@ import {
     UserPlusIcon
 } from '@heroicons/vue/24/outline';
 import AppLayout from "@/Layouts/AppLayout.vue";
+import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
 import { Link } from '@inertiajs/vue3'
-import { ref } from 'vue';
 
 const { research } = defineProps({
   research: Array,
 })
 
-const openContext = ref(false);
-const contextX = ref(0);
-const contextY = ref(0);
-const openForTopic = ref(null)
-
-const shareFeature = () => {};
-const deleteFeature = () => {};
-const renameFeature = () => {};
-const duplicateFeature = () => {};
+const shareFeature = () => {
+    console.log('shareFeature')
+};
+const deleteFeature = () => {
+    console.log('deleteFeature')
+};
+const renameFeature = () => {
+    console.log('renameFeature')
+};
+const duplicateFeature = () => {
+    console.log('duplicateFeature')
+};
 const date = () => {}
-const openContextMenu = (e, topic) => {
-  openContext.value = true;
-  contextX.value = e.clientX;
-  contextY.value = e.clientY;
-  openForTopic.value = topic;
-};
-const closeMenu = () => {
-  openContext.value = false;
-  openForTopic.value = null;
-};
 
 </script>

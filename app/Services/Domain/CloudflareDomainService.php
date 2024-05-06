@@ -114,7 +114,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         return $response->json('result.name_servers');
     }
 
-    public function getDns(string $domain, string $type = null, int $limit = 10, int $page = 1): LengthAwarePaginator
+    public function getDns(string $domain, ?string $type = null, int $limit = 10, int $page = 1): LengthAwarePaginator
     {
         $response = Http::withHeaders([
             'X-Auth-Key' => $this->apiKey,

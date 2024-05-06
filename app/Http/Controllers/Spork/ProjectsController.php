@@ -9,7 +9,6 @@ use App\Models\Project;
 use App\Models\Research;
 use App\Models\Task;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ProjectsController extends Controller
@@ -41,62 +40,11 @@ class ProjectsController extends Controller
             'pages.domain',
             'research',
             'credentials',
-            'domains' => function ($domainQuery) {
-                $domainQuery->with([
-                    'domainAnalytics' => function ($analyticsQuery) {
-                        $analyticsQuery
-                            ->select([
-                                \DB::raw('sum(query_count) as query_count'),
-                                \DB::raw('sum(uncached_count) as uncached_count'),
-                                \DB::raw('sum(stale_count) as stale_count'),
-                                \DB::raw('min(date) as min_date'),
-                                \DB::raw('max(date) as max_date'),
-                                'domain_id',
-                            ])
-                            ->where('date', '>=', now()->subHours(24))
-                            ->where('date', '<=', now())
-                            ->groupBy('domain_id', DB::raw('date(date)'))
-                            ->orderBy('query_count', 'desc');
-                    },
-                ]);
-            },
+            'domains',
         ]);
 
         return Inertia::render('Projects/Project', [
             'project' => $project,
-            'project_analytics' => [
-                [
-                    'name' => 'Total Queries',
-                    'stat' => $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('query_count'), 0),
-                    'duration' => $project->domains->reduce(function (int $carry, $domain) {
-                        $maxDate = $domain->domainAnalytics->map->min_date->min();
-                        $minDate = $domain->domainAnalytics->map->max_date->max();
-
-                        return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
-                    }, 0).' hours',
-                ],
-                [
-                    'name' => 'Total Uncached',
-                    'stat' => $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('uncached_count'), 0),
-                    'duration' => $project->domains->reduce(function (int $carry, $domain) {
-                        $maxDate = $domain->domainAnalytics->map->min_date->min();
-                        $minDate = $domain->domainAnalytics->map->max_date->max();
-
-                        return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
-                    }, 0).' hours',
-                ],
-                [
-                    'name' => 'Total Stale',
-                    'stat' => $project->domains->reduce(fn ($carry, $domain) => $carry + $domain->domainAnalytics->sum('stale_count'), 0),
-                    'duration' => $project->domains->reduce(function (int $carry, $domain) {
-                        $maxDate = $domain->domainAnalytics->map->min_date->min();
-                        $minDate = $domain->domainAnalytics->map->max_date->max();
-
-                        return max(\Carbon\Carbon::parse($maxDate)->diffInHours(\Carbon\Carbon::parse($minDate)), $carry);
-                    }, 0).' hours',
-
-                ],
-            ],
             'daily_tasks' => $project->tasks()
                 ->where('status', '!=', 'done')
                 ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
@@ -104,6 +52,7 @@ class ProjectsController extends Controller
                 ->get(),
             'today_tasks' => $project->tasks()
                 ->where('status', '!=', 'done')
+                ->where('status', '!=', 'Blocked')
 
                 ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
                 ->where(function ($query) {
@@ -113,12 +62,8 @@ class ProjectsController extends Controller
                 })
                 ->get(),
             'future_tasks' => $project->tasks()
-                ->where('status', '!=', 'done')
+                ->where('status', '=', 'Blocked')
                 ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
-                ->where(function ($query) {
-                    $query->where('start_date', '>=', now())
-                        ->orWhere('end_date', '>=', now());
-                })
                 ->get(),
         ]);
     }
@@ -219,5 +164,10 @@ class ProjectsController extends Controller
             'resource_id' => request()->get('resource_id'),
             'project_id' => $project->id,
         ])->delete();
+    }
+
+    public function create()
+    {
+        return Inertia::render('Projects/Create');
     }
 }

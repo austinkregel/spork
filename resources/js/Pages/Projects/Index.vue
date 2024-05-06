@@ -1,6 +1,6 @@
 <template>
     <AppLayout title="Dashboard">
-        <div class="w-full border-b dark:border-slate-700 dark:bg-stone-950">
+        <div class="w-full border-b dark:border-stone-700 dark:bg-stone-950">
             <div  class="max-w-7xl mx-auto px-8 py-4 flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
                 <Link href="/-/projects" class="underline">
                     Projects
@@ -20,8 +20,8 @@
         </div>
 
         <div class="max-w-7xl w-full mx-auto py-8 px-4 grid grid-cols-2 gap-4">
-            <div v-for="item in data" class="">
-                <Link :href="'/-/projects/' +  item.id" class="block p-4 bg-white dark:bg-stone-700 rounded-lg shadow-md hover:shadow-lg flex items-center justify-between">
+            <div v-for="item in data" :key="item">
+                <Link :href="'/-/projects/' +  item.id" class="block p-4 bg-white dark:bg-stone-950 rounded-lg shadow-md hover:shadow-lg flex items-center justify-between">
                     <span>{{ item.name }}</span>
                     <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-stone-400" aria-hidden="true" />
                 </Link>

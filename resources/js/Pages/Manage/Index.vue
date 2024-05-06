@@ -50,6 +50,17 @@ const fetch = async (options) => {
     data.value =pageOfData;
     paginator.value = pagination_;
 }
+const colors = (type) => {
+    switch(type) {
+        case 'finance':
+            return 'bg-blue-300 dark:bg-blue-600';
+        case 'server':
+            return 'bg-amber-300 dark:bg-amber-600';
+        case 'automatic':
+        default:
+            return 'bg-green-300 dark:bg-green-700';
+    }
+};
 const onDelete = () => {}
 const onExecute = async ({ selectedItems, actionToRun, next }) => {
   await axios.post('/api/actions/'+actionToRun.slug, {
@@ -106,6 +117,7 @@ const log = console.log;
         @execute="onExecute"
         @save="onSave"
         :save="onSave"
+        :api-link="apiLink"
         :data="data"
         :paginator="paginator"
     >
@@ -118,13 +130,22 @@ const log = console.log;
         <div class="w-full grid grid-cols-6 ">
           <div class="col-span-5">
             <div class="flex flex-col">
-              <div class="text-lg text-left">
+              <div class="text-lg text-left flex items-center gap-2">
+                  <img v-if="data?.personal_finance_icon" :src="data?.personal_finance_icon" class="h-5 w-5" />
                 {{ data.name }}
               </div>
-              <div class="flex flex-wrap gap-2">
+              <div class="flex flex-col gap-2">
                 <div class="text-xs dark:text-stone-300">
-                  {{ data }}
+                    {{ possibleDescriptionForData(data) }}
                 </div>
+                  <div class="text-xs dark:text-blue-50 flex flex-wrap gap-2">
+                      <div v-for="tag in data?.tags" :key="tag.name"
+                           class="py-1 px-2 rounded-full bg-blue-300 dark:bg-blue-600"
+                           :class="colors(tag.type)"
+                      >
+                          {{ tag.name.en }}
+                      </div>
+                  </div>
               </div>
             </div>
           </div>
@@ -134,7 +155,6 @@ const log = console.log;
             </button>
           </div>
         </div>
-
 
       </template>
       <template #no-data>

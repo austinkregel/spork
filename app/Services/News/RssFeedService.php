@@ -6,8 +6,10 @@ namespace App\Services\News;
 
 use App\Contracts\Services\News\RssServiceContract;
 use App\Services\News\Feeds\AbstractFeed;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class RssFeedService implements RssServiceContract
 {
@@ -33,6 +35,10 @@ class RssFeedService implements RssServiceContract
                         $request->body()
                     );
 
+                    if ($request->status() >= 400) {
+                        abort(404);
+                    }
+
                     return [
                         'url' => $url,
                         'headers' => array_change_key_case($request->headers(), CASE_LOWER),
@@ -40,7 +46,7 @@ class RssFeedService implements RssServiceContract
                     ];
                 }
             );
-        } catch (ConnectionException $e) {
+        } catch (ConnectionException|ClientException|HttpException $e) {
             info('Exception occurred', [$e->getMessage(), $url]);
 
             return null;

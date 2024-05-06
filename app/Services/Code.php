@@ -147,6 +147,7 @@ class Code
                             $lineWithEvent = $lineNumber;
                         }
                     }
+                    dd($content, $lineWithEvent);
 
                     //                    if ($lineWithEvent === null) {
                     //                        $content = array_merge(array_slice($content, 0, 1), [
