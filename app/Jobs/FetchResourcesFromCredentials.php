@@ -38,7 +38,10 @@ class FetchResourcesFromCredentials implements ShouldQueue
      */
     public function handle(QueueingDispatcher $dispatcher)
     {
-        $credentials = Credential::all();
+        $credentials = Credential::query()
+            // Matrix credentials are handled in their own way.
+            ->where('service', '!=', 'matrix')
+            ->get();
 
         $jobs = $credentials->groupBy('user_id')
             ->map(fn (Collection $group) => $group->map(fn ($credential) => new FetchResourcesFromCredential($credential))->toArray())

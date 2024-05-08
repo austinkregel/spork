@@ -130,16 +130,16 @@ services:
                 condition: service_healthy
             meilisearch:
                 condition: service_healthy
-#    matrix-bot:
-#        build:
-#            context: ./docker/matrix-bot
-#            dockerfile: Dockerfile
-#        volumes:
-#            - '.:/var/www/html'
-#        networks:
-#            - sail
-#        depends_on:
-#            - mariadb
+    matrix-bot:
+       build:
+           context: ./docker/matrix-bot
+           dockerfile: Dockerfile
+       volumes:
+           - '.:/var/www/html'
+       networks:
+           - sail
+       depends_on:
+           - mariadb
     laravel.websocket:
         image: austinkregel/reforged-websocket:latest
         build:

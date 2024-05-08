@@ -1,7 +1,7 @@
 <template>
     <div class="fixed transition-all bottom-0 right-0 bg-blue-200 m-8 overflow-hidden z-0 shadow rounded dark:bg-stone-900 dark:text-white" :style="{ width, height }" :class="[open ? 'rounded' : 'rounded-full']">
         <div class="py-2 px-4 bg-amber-200 dark:bg-stone-950 flex items-center justify-between" v-if="open">
-            <div class="flex flex-wrap items-center justify-center gap-4">
+            <div class="flex items-center justify-center gap-4">
                 <button @click="() => {active.chat = null; active.messages = []; title = 'Chat' }">
                     <ChevronLeftIcon  class="w-6 h-6 text-stone-100" />
                 </button>
@@ -44,20 +44,20 @@
                 </div>
             </div>
             <div class="bg-stone-100 dark:bg-stone-800 relative flex flex-col justify-between">
-                <div style="height: calc(450px - 96px - 40px)" class="overflow-y-scroll">
-                    <div v-for="message in active.messages">
-                        {{ message.message}}
+                <div style="height: calc(283px)" class="overflow-y-scroll">
+                    <div v-for="message in (active?.chat?.messages ?? [])">
+                        {{ message.message}} {{message.from_person}}
                     </div>
                 </div>
                 <div class=" flex ">
                     <SporkInput v-model="input"/>
-                    <button>Submit</button>
+                    <button @click="sendMessage">Submit</button>
                 </div>
             </div>
         </div>
 
         <div class="bg-stone-800 h-full rounded-b divide-y divide-stone-400 dark:divide-stone-700 overflow-y-scroll">
-            <div v-for="person in page.props.conversations.data" class="flex justify-between items-center gap-x-6 py-2 px-4">
+            <div v-for="person in page.props.conversations.data" :key="person" class="flex justify-between items-center gap-x-6 py-2 px-4">
                 <div class="flex items-center min-w-0 gap-x-2">
                     <img class="h-8 w-8 flex-none rounded-full bg-stone-50 dark:bg-stone-600" :src="person.imageUrl" alt="" />
                     <div class="min-w-0 flex-auto">
@@ -127,4 +127,8 @@ const active = ref({
 const showChat = ref(false);
 const title = ref('Chat');
 const input = ref('');
+
+const sendMessage = () => {
+    console.log(input.value);
+}
 </script>

@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
             'navigation' => $navigation = (new ConditionService)->navigation(),
             'current_navigation' => $navigation->where('current', true)->first(),
             'conversations' => Thread::query()
+                ->with('messages')
                 ->orderByDesc('origin_server_ts')
                 ->paginate(
                     request('conversation_limit'),

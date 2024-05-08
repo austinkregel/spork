@@ -15,7 +15,8 @@ class BankingController
             ->accounts()
             ->with('credential')->get();
 
-        return Inertia::render('Finance/Index', [
+
+        return Inertia::render('Banking/Index', [
             'title' => 'Banking ',
             'accounts' => $accounts,
             'transactions' => Transaction::whereIn('account_id', $accounts->pluck('account_id'))

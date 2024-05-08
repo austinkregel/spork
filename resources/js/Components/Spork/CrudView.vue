@@ -5,6 +5,10 @@
                 {{ title }}
             </div>
 
+
+            <SporkButton
+                    @click="() => createOpen = true"
+                >Create New {{ singular }}</SporkButton>
             <SporkTable :headers="[]" :data="data">
                 <template #table-top>
                     <div class="relative w-full flex flex-wrap justify-between items-center ">
@@ -115,7 +119,7 @@
                         Close
                       </SporkButton>
                       <SporkButton @click.prevent="async () => {
-                                $emit('save', form);
+                                $emit('save', form, () => createOpen = !createOpen);
                                 createOpen = false;
                             }"
                                    primary
