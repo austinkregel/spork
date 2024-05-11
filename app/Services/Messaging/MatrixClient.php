@@ -114,4 +114,18 @@ class MatrixClient
             'Authorization' => 'Bearer '.$jwt,
         ])->get('https://matrix.'.$this->homeserver.'/_matrix/client/v3/devices')->json());
     }
+
+    public function sendMessage(
+        string $body,
+        string $room,
+        string $jwt,
+    ){
+        $eventId = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$jwt,
+        ])->post('https://matrix.'.$this->homeserver.'/_matrix/client/r0/rooms/'.$room.'/send/m.room.message', [
+            'msgtype' => 'm.text',
+            'body' => $body,
+        ])->json();
+    }
 }

@@ -37,18 +37,24 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        if (auth()->check()) {
+            auth()->user()->setRelation('person', auth()->user()->person());
+        }
         return array_merge(parent::share($request), [
             'navigation' => $navigation = (new ConditionService)->navigation(),
             'current_navigation' => $navigation->where('current', true)->first(),
-            'conversations' => Thread::query()
-                ->with('messages')
+            'conversations' => auth()->check() ? Thread::query()
+                ->with(['messages', 'messages.fromPerson', 'messages.toPerson'])
+                ->whereHas('participants', function ($query) {
+                    $query->where('person_id', auth()->user()->person->id);
+                })
                 ->orderByDesc('origin_server_ts')
                 ->paginate(
                     request('conversation_limit'),
                     ['*'],
                     'conversation_page',
                     request('conversation_page')
-                ),
+                ) : null,
             'unread_email_count' => $request->user() ?
                 $request->user()->messages()
                     ->where('messages.type', 'email')

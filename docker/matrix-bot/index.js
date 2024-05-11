@@ -13,13 +13,14 @@ import {
 } from "matrix-bot-sdk";
 import { StoreType } from "@matrix-org/matrix-sdk-crypto-nodejs";
 import dotenv from 'dotenv';
-import Sequelize, {DataTypes, QueryTypes} from "sequelize";
+import Sequelize, { DataTypes, QueryTypes } from "sequelize";
 import fs from 'fs';
 import ora from 'ora';
 import dayjs from 'dayjs';
 import crypto from "crypto";
 
 dotenv.config();
+let dmTarget = null
 
 const storageProvider = new SimpleFsStorageProvider("./docker/matrix-bot/bot.json"); // or any other IStorageProvider
 const cryptoProvider = new RustSdkCryptoStorageProvider("./docker/matrix-bot/db", StoreType.Sled);
@@ -30,7 +31,7 @@ const sequelize = new Sequelize(
     process.env.DB_USERNAME,
     process.env.DB_PASSWORD,
     {
-        host: '127.0.0.1',
+        host: process.env.DB_HOST,
         dialect: process.env.DB_CONNECTION,
         logging: false,
     }
@@ -41,7 +42,16 @@ const sequelize = new Sequelize(
 //   Nothing in our UI will update, and no php code will trigger.
 // We need a way to hook
 
-async function findOrCreateMessageEvent(Threads, Messages, People, thread, message, credential, is_decrypted = false) {
+async function findOrCreateMessageEvent(
+    Threads,
+    Messages,
+    People,
+    Participant,
+    thread,
+    message,
+    credential,
+    is_decrypted = false
+) {
     if (message.type !== 'm.room.message') {
         console.log('Told this was a message, but reporeted as ', message.type)
         return null;
@@ -51,13 +61,24 @@ async function findOrCreateMessageEvent(Threads, Messages, People, thread, messa
     });
 
     if (!threadInQuestion?.name) {
-        console.error('Thread doesn\'t exist yet', thread);
+        console.error('Thread doesn\'`t exist yet', thread);
 
         threadInQuestion = await Threads.create({
             thread_id: thread,
             name: thread,
             origin_server_ts: dayjs(),
         });
+        const sender = await findPersonByIdentifier(People, message?.sender);
+        await Participant.create({
+            person_id: sender.id,
+            thread_id: threadInQuestion.id,
+            joined_at: dayjs(),
+        })
+        await Participant.create({
+            person_id: dmTarget?.id,
+            thread_id: threadInQuestion.id,
+            joined_at: dayjs(),
+        })
     }
 
     const messageToCreate = await Messages.findOne({
@@ -66,9 +87,8 @@ async function findOrCreateMessageEvent(Threads, Messages, People, thread, messa
 
     if (!messageToCreate?.event_id) {
         const thread_id = threadInQuestion.id
-        const dmTarget = '@kregel:communication.ventures';
 
-        const sender = await findPersonByIdentifier(People, message);
+        const sender = await findPersonByIdentifier(People, message?.sender);
 
         const messageModel = await Messages.create({
             ...(message?.content?.info?.thumbnail_url !== undefined ? {
@@ -76,9 +96,7 @@ async function findOrCreateMessageEvent(Threads, Messages, People, thread, messa
             } : {}),
             ...(message?.content?.settings ? message?.content?.settings : {}),
             from_person: sender?.id,
-            to_person: (await findPersonByIdentifier(People, {
-                sender: dmTarget
-            })).id,
+            to_person: dmTarget?.id,
             thread_id,
             type: message.type,
             originated_at: dayjs(message.origin_server_ts).format('YYYY-MM-DD HH:mm:ss'),
@@ -99,29 +117,18 @@ async function findOrCreateMessageEvent(Threads, Messages, People, thread, messa
     }
 }
 
-async function findPersonByIdentifier(People, message) {
-    const identifier = message.sender;
-
+async function findPersonByIdentifier(People, identifier) {
     let peoples = await sequelize.query('select * from people where JSON_CONTAINS(identifiers, :identifier, \'$\')', {
         type: QueryTypes.SELECT,
         replacements: {
             identifier: JSON.stringify(identifier)
         },
     })
-
-    const person = peoples[0];
-
+    let person = peoples[0];
     if (peoples && !person) {
-        const person = await People.create({
-            name: message.content.displayname ?? identifier,
+        person = await People.create({
+            name: identifier,
             identifiers: JSON.stringify([identifier])
-        });
-
-        peoples = await sequelize.query('select * from people where JSON_CONTAINS(identifiers, :identifier, \'$\')', {
-            type: QueryTypes.SELECT,
-            replacements: {
-                identifier: JSON.stringify(identifier)
-            },
         });
     }
 
@@ -460,11 +467,12 @@ async function main() {
             )
         }
 
-
         const { user_id, device_id } = await client.getWhoAmI();
         console.log('[-]   #############################');
         console.log('[-]   Authenticated as', user_id, device_id);
         console.log('[-]   #############################');
+
+        dmTarget = await findPersonByIdentifier(People, user_id)
 
         if (!await storageProvider.isUserRegistered(user_id)) {
             storageProvider.addRegisteredUser(user_id);
@@ -482,8 +490,17 @@ async function main() {
 
         client.on("room.message", async (roomId, messageEvent) => {
             // await client.upload
-            console.log(roomId, 'received a new message from', messageEvent?.sender)
-            await findOrCreateMessageEvent(Threads, Messages, People, roomId, messageEvent, credential, true);
+            console.log(roomId, 'received a new message from', messageEvent)
+            await findOrCreateMessageEvent(
+                Threads,
+                Messages,
+                People,
+                Participant,
+                roomId,
+                messageEvent,
+                credential,
+                true
+            );
         });
         // console.log('[-] Preparing crypto lib');
         // const cryptoSpinner = ora('Syncing joined rooms, and preparing encryption').start();
@@ -498,7 +515,6 @@ async function main() {
         // let encryptedRoomId = null;
         for (const roomId in rooms) {
             if (await client.crypto.isRoomEncrypted(roomId)) {
-                encryptedRooId = roomId;
             }
         }
 

@@ -45,8 +45,8 @@
             </div>
             <div class="bg-stone-100 dark:bg-stone-800 relative flex flex-col justify-between">
                 <div style="height: calc(283px)" class="overflow-y-scroll">
-                    <div v-for="message in (active?.chat?.messages ?? [])">
-                        {{ message.message}} {{message.from_person}}
+                    <div v-for="message in (active?.chat?.messages ?? [])" :key="message.id" class="flex flex-col gap-2">
+                        <Message :message="message" :self="page.props.auth.user?.person" />
                     </div>
                 </div>
                 <div class=" flex ">
@@ -55,7 +55,6 @@
                 </div>
             </div>
         </div>
-
         <div class="bg-stone-800 h-full rounded-b divide-y divide-stone-400 dark:divide-stone-700 overflow-y-scroll">
             <div v-for="person in page.props.conversations.data" :key="person" class="flex justify-between items-center gap-x-6 py-2 px-4">
                 <div class="flex items-center min-w-0 gap-x-2">
@@ -91,6 +90,7 @@ import {Head, Link, router, usePage} from '@inertiajs/vue3';
 import { XMarkIcon, ChatBubbleLeftRightIcon } from '@heroicons/vue/24/solid'
 import { ChevronLeftIcon  } from '@heroicons/vue/20/solid'
 import SporkInput from "@/Components/Spork/SporkInput.vue";
+import Message from "@/Components/Messages/Message.vue";
 
 const open = ref(false);
 
@@ -128,7 +128,16 @@ const showChat = ref(false);
 const title = ref('Chat');
 const input = ref('');
 
-const sendMessage = () => {
-    console.log(input.value);
+const sendMessage =  async () => {
+    const response = await router.post('/api/message/reply', {
+        message: input.value,
+        thread_id: active.value.chat.thread_id
+    });
+
+    setTimeout(() => {
+        router.reload({
+            only: ['conversations.threads'],
+        })
+    }, 250)
 }
 </script>

@@ -110,6 +110,15 @@ createInertiaApp({
                 });
         }
 
+        if (props?.initialPage?.props.auth.user?.person?.id) {
+            Echo.private('App.Models.Person.'+props?.initialPage?.props.auth.user?.person?.id)
+                .listen('message', (data) => {
+                    console.log('Message from server', data)
+                })
+
+
+        }
+
         return app.mount(el);
     },
     progress: {

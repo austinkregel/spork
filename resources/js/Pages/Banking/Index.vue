@@ -7,6 +7,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import LinkAccount from "@/Components/Spork/Finance/LinkAccount.vue";
 import SporkTable from "@/Components/Spork/Molecules/SporkTable.vue";
+import {buildUrl} from "@kbco/query-builder";
 const page = usePage();
 dayjs.extend(utc);
 const accounts = computed(() => page.props.accounts)
@@ -29,6 +30,14 @@ const transactionHeaders = [
         accessor: value => value?.tags?.map(tag => tag.name.en)?.join(', ')
     }
 ]
+const dateFormat = (value) => dayjs(value).format('YYYY-MM-DD')
+const filterUrl = (field, value) => {
+    return buildUrl('/-/banking', {
+        filter: {
+            [field]: value
+        }
+    })
+}
 
 </script>
 
@@ -55,10 +64,12 @@ const transactionHeaders = [
               <span class="uppercase font-bold tracking-widest text-stone-900 dark:text-stone-300">for:</span>
               {{  item.name }}
             </div>
-            <div>Link to more by name</div>
-            <div>Link to more by date</div>
+            <a :href="filterUrl('name', item.name)">Link to more by name</a>
+            <a :href="filterUrl('date', dateFormat(item.date))">Link to more by date</a>
 
-            <div v-for="tag in item.tags" :key="tag">Others with tag: {{ tag.name.en }} </div>
+            <a v-for="tag in item.tags" :href="filterUrl('tag', tag.name.en)":key="tag">
+                Others with tag: {{ tag.name.en }}
+            </a>
           </div>
         </template>
       </SporkTable>
