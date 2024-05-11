@@ -59,6 +59,8 @@ Route::middleware([
     Route::post('/api/mail/forward', Controllers\Api\Mail\ForwardMessageController::class);
     Route::post('/api/mail/destroy', Controllers\Api\Mail\DestroyMailController::class);
 
+    Route::post('/api/message/reply', Controllers\Api\Message\ReplyController::class);
+
     Route::post('/api/plaid/create-link-token', Controllers\Api\Plaid\CreateLinkTokenController::class);
     Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
 
