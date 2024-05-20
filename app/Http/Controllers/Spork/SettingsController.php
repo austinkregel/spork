@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
+use App\Services\Code;
+use Illuminate\Notifications\Notification;
 use Inertia\Inertia;
 
 class SettingsController
@@ -17,20 +19,11 @@ class SettingsController
             'settings' => new class()
             {
             },
-            'files' => collect((new \Illuminate\Filesystem\Filesystem())->directories(app_path()))
-                ->map(fn ($directory) => [
-                    'name' => basename($directory),
-                    'file_path' => base64_encode($directory),
-                    'is_directory' => true,
-                ])
-                ->concat(
-                    collect((new \Illuminate\Filesystem\Filesystem())->files(app_path()))
-                        ->map(fn (\SplFileInfo $file) => [
-                            'name' => $file->getFilename(),
-                            'file_path' => base64_encode($file->getPathname()),
-                            'is_directory' => false,
-                        ])
-                ),
+            'notifications' =>
+                array_map(
+                    fn ($class) => $class,
+                    Code::instancesOf(Notification::class)->getClasses(),
+                )
 
         ]);
     }

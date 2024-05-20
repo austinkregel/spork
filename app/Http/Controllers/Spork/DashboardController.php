@@ -42,6 +42,7 @@ class DashboardController extends Controller
 
                     $query->whereHas('tags', fn ($q) => $q->where('name->en', 'news'));
                 })
+                ->distinct(['headline'])
                 ->orderByDesc('last_modified')
                 ->paginate(request('news_limit', 15), ['*'], 'news_page', request('news_page', 1))),
 

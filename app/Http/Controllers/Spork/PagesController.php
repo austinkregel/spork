@@ -16,6 +16,6 @@ class PagesController extends Controller
 
     public function create()
     {
-        return Inertia::render('Pages/Create', []);
+        return Inertia::render('Pages/BlueprintEditor', []);
     }
 }

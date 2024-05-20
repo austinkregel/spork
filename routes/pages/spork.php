@@ -94,6 +94,27 @@ Route::group(['prefix' => '-', 'middleware' => [
     Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');
     Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
 
+    Route::get('kvm', function () {
+        $vmName = 'ubuntu22.04';
+        $libvirt = libvirt_connect('qemu:///system', false);
+        $domain = libvirt_domain_lookup_by_name($libvirt, $vmName);
+        $data = libvirt_domain_get_screenshot_api($domain, 0);
+        $filePath = $data['file'];
+        $img = new \Imagick($filePath);
+        $img->readImage($filePath);
+        $img->setImageFormat('jpeg');
+        $img->setImageCompressionQuality(90);
+        $img->writeImageFile(fopen($filePath.'.jpg', 'w'));
+        try {
+            return response(file_get_contents($filePath . '.jpg'), 200, [
+                'Content-Type' => 'image/jpeg',
+            ]);
+        } finally {
+            unlink($filePath);
+            unlink($filePath.'.jpg');
+        }
+    });
+
     Route::get('/inbox', [Controllers\Spork\InboxController::class, 'index']);
     Route::get('/inbox/{message}', [Controllers\Spork\InboxController::class, 'show']);
 

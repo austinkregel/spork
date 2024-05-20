@@ -20,6 +20,8 @@ services:
         volumes:
             - '.:/var/www/html'
             - '/media:/media'
+            - '/var/lib/libvirt:/var/lib/libvirt'
+            - '/var/run/libvirt:/var/run/libvirt'
         networks:
             - sail
         depends_on:
@@ -33,8 +35,6 @@ services:
     mariadb:
         container_name: mariadb
         image: 'mariadb:10'
-        ports:
-            - '${FORWARD_DB_PORT:-3306}:3306'
         environment:
             MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
             MYSQL_ROOT_HOST: '%'
@@ -42,6 +42,8 @@ services:
             MYSQL_USER: '${DB_USERNAME}'
             MYSQL_PASSWORD: '${DB_PASSWORD}'
             MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        ports:
+            - 3306:3306
         volumes:
             - 'sail-mariadb:/var/lib/mysql'
             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
@@ -55,8 +57,6 @@ services:
     redis:
         container_name: redis
         image: 'redis:alpine'
-        ports:
-            - '${FORWARD_REDIS_PORT:-6379}:6379'
         volumes:
             - 'sail-redis:/data'
         networks:
@@ -70,8 +70,6 @@ services:
             timeout: 5s
     meilisearch:
         image: 'getmeili/meilisearch:latest'
-        ports:
-            - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
         volumes:
             - 'sail-meilisearches:/meili_data'
         networks:
@@ -167,12 +165,14 @@ services:
             meilisearch:
                 condition: service_healthy
     proton-bridge:
+        container_name: proton-bridge
         image: shenxn/protonmail-bridge:latest
         volumes:
             - protonmail:/root
         networks:
             - sail
-
+        ports:
+            - 143:143
 networks:
     sail:
         driver: bridge

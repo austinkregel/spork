@@ -106,7 +106,7 @@ createInertiaApp({
                     })
                 })
                 .error((error) => {
-                    console.error(error);
+                    console.error('non-fatal error', error);
                 });
         }
 
@@ -115,8 +115,9 @@ createInertiaApp({
                 .listen('message', (data) => {
                     console.log('Message from server', data)
                 })
-
-
+                .error((error) => {
+                    console.error(error);
+                });
         }
 
         return app.mount(el);

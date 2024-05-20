@@ -12,7 +12,7 @@
         />
         <label
             class="flex dark:bg-stone-600 dark:placeholder-stone-300 rounded-b-md h-10"
-            v-if="type !== 'object'"
+            v-if="type !== 'object' && type !== 'select'"
             :class="[type === 'checkbox' ? 'pl-4 pt-4': 'p-0']"
         >
             <input
@@ -29,6 +29,17 @@
 
         </label>
 
+        <SporkSelect
+            v-if="type === 'select'"
+            :modelValue="modelValue"
+            @update:modelValue="$emit('update:modelValue', $event)"
+        >
+            <template #options>
+            <option v-for="option in options" :key="option">{{ prettyOptionName(option?.name)}}</option>
+            </template>
+        </SporkSelect>
+
+
         <div v-if="errors" class="flex flex-col">
             <div v-for="error in errors" :key="error" class="text-red-500 dark:text-red-400 px-4 text-xs py-1"> {{ error }}</div>
         </div>
@@ -37,6 +48,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import SporkSelect from "@/Components/Spork/SporkSelect.vue";
 
 const {
   modelValue,
@@ -44,7 +56,8 @@ const {
   autofocus,
   disabledInput,
   editableLabel,
-    error
+  error,
+  options,
 } = defineProps({
   modelValue: Object,
   type: String,
@@ -57,10 +70,20 @@ const {
     type: Boolean,
     default: () => false,
   },
-    errors: Array | null
+    errors: Array | null,
+    options: {
+        type: Array,
+        default: () => [],
+    },
 })
 // emits: ['update:modelValue'],
+const prettyOptionName = (option) => {
+  if (typeof option === 'object') {
+    return option.en;
+  }
 
+  return option;
+};
 const inputClasses = (disabled) => {
   let baseClasses = [];
   if (type !== 'checkbox') {

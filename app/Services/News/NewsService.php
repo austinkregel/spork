@@ -106,7 +106,12 @@ class NewsService implements NewsServiceContract
                     return array_merge([
                         'id' => substr(sha1($article->url), 0, 10),
                     ], (array) $article);
-                })->toArray()
+                })
+                    ->filter(function($article) {
+                        return $article['title'] !== '[Removed]';
+                    })
+                ->values()
+            ->toArray()
         );
     }
 }

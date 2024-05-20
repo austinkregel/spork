@@ -37,10 +37,6 @@ window.axios.interceptors.request.use(function (config) {
 
 });
 //
-window.onerror = (error) => {
-    console.error(error);
-}
-
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting

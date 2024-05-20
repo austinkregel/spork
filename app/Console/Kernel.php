@@ -6,6 +6,7 @@ namespace App\Console;
 
 use App\Jobs\FetchResourcesFromCredentials;
 use App\Jobs\News\UpdateAllFeeds;
+use App\Jobs\Notifications\BuildSummaryNotificationJob;
 use App\Jobs\SyncJiraTicketsJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -20,6 +21,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(SyncJiraTicketsJob::class)->daily();
         $schedule->job(UpdateAllFeeds::class)->everyFifteenMinutes();
         $schedule->job(FetchResourcesFromCredentials::class)->hourly();
+        $schedule->job(BuildSummaryNotificationJob::class)->dailyAt('13:00');
         $schedule->command('operations:queue')->everyFiveMinutes();
     }
 

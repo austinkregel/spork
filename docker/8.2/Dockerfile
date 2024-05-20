@@ -27,6 +27,9 @@ RUN apt-get -y install wget \
   && make \
   && make install \
   && rm -rf /tmp/pear
+RUN groupadd -g139 -f libvirt && usermod -a -G libvirt sail
+RUN groupadd kvm && usermod -a -G kvm sail
+
 
 EXPOSE 8000
 

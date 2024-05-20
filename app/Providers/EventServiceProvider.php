@@ -59,6 +59,14 @@ class EventServiceProvider extends ServiceProvider
         Events\Models\Task\TaskUpdated::class => [
             Listeners\Tasks\MoveJiraTicketIfApplicableListener::class,
         ],
+        Events\Models\Person\PersonUpdated::class => [
+            // UpdatePropertyValueIfLocationChangedListener
+            // For Different Identifiers, query different social media sites to gain additional information
+            //   Like LinkedIn for job stats, glassdoor for salary information, etc.
+            // If they set a phone number, we want to enable SMS notifications as an option.
+            // If they set an email, we want to enable email notifications as an option.
+
+        ],
     ];
 
     /**

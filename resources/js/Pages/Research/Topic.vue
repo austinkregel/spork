@@ -165,8 +165,12 @@ const textareaPaste = (e) => {
   if (clipboard.startsWith('https://') || clipboard.startsWith('http://')) {
     const url = new URL(clipboard);
     topic.value = {
-      ...topic,
-      source: [ ... new Set([...topic.source, clipboard])]
+      ...topic.value,
+      source: [ ... new Set([
+              ...(topic?.source ? topic.source : []),
+              clipboard
+          ])
+      ]
     }
 
     clipboard = '[' + url.hostname+url.pathname + '](' + clipboard + ')';
