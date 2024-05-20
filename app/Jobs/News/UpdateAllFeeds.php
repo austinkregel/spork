@@ -20,7 +20,7 @@ class UpdateAllFeeds implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function handle()
+    public function handle(): void
     {
         $jobs = ExternalRssFeed::query()
             ->select('id')

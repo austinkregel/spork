@@ -26,7 +26,7 @@ class UploadAssetsToStorageJob implements ShouldQueue
     ) {
     }
 
-    public function handle()
+    public function handle(): void
     {
 
         // Get the path to the compiled assets and vendor directory

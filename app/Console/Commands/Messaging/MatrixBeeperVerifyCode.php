@@ -25,7 +25,7 @@ class MatrixBeeperVerifyCode extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $client = new \App\Services\Messaging\MatrixClient($this->argument('email'), $this->option('host'));
 

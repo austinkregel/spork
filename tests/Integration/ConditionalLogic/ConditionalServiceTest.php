@@ -13,7 +13,7 @@ class ConditionalServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testWeShowLoginRouteWhenUnauthenticated()
+    public function testWeShowLoginRouteWhenUnauthenticated(): void
     {
         $service = new ConditionService();
 
@@ -31,7 +31,7 @@ class ConditionalServiceTest extends TestCase
         $this->assertSame('/login', $login['href']);
     }
 
-    public function testWeShowDashboardRoutesWhenLoggedIn()
+    public function testWeShowDashboardRoutesWhenLoggedIn(): void
     {
         $service = new ConditionService();
         $user = User::factory()->create();
@@ -54,7 +54,7 @@ class ConditionalServiceTest extends TestCase
         ], array_map(fn ($item) => $item['name'], $items));
     }
 
-    public function testWeShowLogicRouteWhenLoggedInAndLocal()
+    public function testWeShowLogicRouteWhenLoggedInAndLocal(): void
     {
         config(['app.env' => 'local']);
 

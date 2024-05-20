@@ -28,7 +28,7 @@ class DeploySslCertificateJob implements ShouldQueue
     ) {
     }
 
-    public function handle()
+    public function handle(): void
     {
         // Configure the domain for the server
         //  DNS, Setup SSL, Verify

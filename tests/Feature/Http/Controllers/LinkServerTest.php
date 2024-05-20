@@ -13,14 +13,14 @@ class LinkServerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testFailsToCreateDevice()
+    public function testFailsToCreateDevice(): void
     {
         $request = $this->postJson(route('create-device'), []);
 
         $request->assertStatus(422);
     }
 
-    public function testCanCreateDevice()
+    public function testCanCreateDevice(): void
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -44,7 +44,7 @@ class LinkServerTest extends TestCase
         ]);
     }
 
-    public function testCreateShortCodeUrlForDeviceRegistration()
+    public function testCreateShortCodeUrlForDeviceRegistration(): void
     {
         /** @var User $user */
         $user = User::factory()->create();
@@ -57,7 +57,7 @@ class LinkServerTest extends TestCase
         ]);
     }
 
-    public function testWeProvideRedirectLinkWithAuth()
+    public function testWeProvideRedirectLinkWithAuth(): void
     {
         /** @var User $user */
         $user = User::factory()->create();

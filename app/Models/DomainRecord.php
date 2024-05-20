@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Contracts\ModelQuery;
 use App\Events\Models\DomainRecord\DomainRecordCreated;
 use App\Events\Models\DomainRecord\DomainRecordCreating;
@@ -44,7 +45,7 @@ class DomainRecord extends Model implements Crud, ModelQuery
         'updated' => DomainRecordUpdated::class,
     ];
 
-    public function domain()
+    public function domain(): BelongsTo
     {
         return $this->belongsTo(Domain::class);
     }

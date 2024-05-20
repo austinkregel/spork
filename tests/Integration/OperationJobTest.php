@@ -27,7 +27,7 @@ class OperationJobTest extends TestCase
     }
 
     /** @test */
-    public function it_can_hold_an_operation()
+    public function it_can_hold_an_operation(): void
     {
         $operation = new ExampleOperation();
 
@@ -37,7 +37,7 @@ class OperationJobTest extends TestCase
     }
 
     /** @test */
-    public function handle_successfully_runs_operation()
+    public function handle_successfully_runs_operation(): void
     {
         $operation = new ExampleOperation();
         $operation->should_run_at = Carbon::now();
@@ -56,7 +56,7 @@ class OperationJobTest extends TestCase
     }
 
     /** @test */
-    public function handle_successfully_binds_dependencies()
+    public function handle_successfully_binds_dependencies(): void
     {
         $operation = new DependantOperation();
         $operation->should_run_at = Carbon::now();
@@ -69,7 +69,7 @@ class OperationJobTest extends TestCase
     }
 
     /** @test */
-    public function it_has_the_proper_display_name()
+    public function it_has_the_proper_display_name(): void
     {
         $exampleOperation = new ExampleOperation();
         $exampleOperationJob = new OperationJob($exampleOperation);
@@ -81,7 +81,7 @@ class OperationJobTest extends TestCase
     }
 
     /** @test */
-    public function it_has_the_proper_tags()
+    public function it_has_the_proper_tags(): void
     {
         $exampleOperation = new ExampleOperation();
         $exampleOperation->id = 123;
@@ -103,7 +103,7 @@ class OperationJobTest extends TestCase
     }
 
     /** @test */
-    public function it_uses_custom_tags_from_operation_instead_of_default_tags()
+    public function it_uses_custom_tags_from_operation_instead_of_default_tags(): void
     {
         $taggedOperation = new TaggedOperation();
         $taggedOperation->id = 123;

@@ -30,7 +30,7 @@ class CompileNewInstanceOfClass extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $sourceClass = $this->argument('sourceClass');
         $destinationClass = $this->argument('destination');

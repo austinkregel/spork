@@ -36,7 +36,7 @@ class LaravelWithDatabaseAndCron implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $table = Str::snake($this->domain);
         $client = new Forge($this->credential->access_token, new Client([

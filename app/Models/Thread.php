@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Events\Models\Thread\ThreadCreated;
 use App\Events\Models\Thread\ThreadCreating;
 use App\Events\Models\Thread\ThreadDeleted;
@@ -31,12 +33,12 @@ class Thread extends Model implements Crud
         'updated' => ThreadUpdated::class,
     ];
 
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }
 
-    public function participants()
+    public function participants(): BelongsToMany
     {
         return $this->belongsToMany(Person::class, 'thread_participants');
     }

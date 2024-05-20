@@ -12,7 +12,7 @@ abstract class AbstractSyncServerResourceJob extends AbstractSyncResourceJob
 {
     protected ServerServiceContract $service;
 
-    public function handle(ServerServiceFactory $serviceFactory)
+    public function handle(ServerServiceFactory $serviceFactory): void
     {
         if ($this->batch()?->cancelled()) {
             return;

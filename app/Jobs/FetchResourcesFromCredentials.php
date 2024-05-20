@@ -36,7 +36,7 @@ class FetchResourcesFromCredentials implements ShouldQueue
      *
      * @return void
      */
-    public function handle(QueueingDispatcher $dispatcher)
+    public function handle(QueueingDispatcher $dispatcher): void
     {
         $credentials = Credential::query()
             // Matrix credentials are handled in their own way.

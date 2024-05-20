@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Actions\Spork\Domains\ApplyTagToModelAction;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedCreated;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedCreating;
@@ -45,12 +47,12 @@ class ExternalRssFeed extends Model implements Crud, Taggable
         'updated' => ExternalRssFeedUpdated::class,
     ];
 
-    public function articles()
+    public function articles(): MorphMany
     {
         return $this->morphMany(Article::class, 'author');
     }
 
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo();
     }

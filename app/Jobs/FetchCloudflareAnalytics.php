@@ -13,7 +13,7 @@ class FetchCloudflareAnalytics implements ShouldQueue
 {
     use InteractsWithQueue, Queueable;
 
-    public function handle()
+    public function handle(): void
     {
         $services = Credential::where('service', 'cloudflare')->get();
 

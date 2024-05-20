@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\Finance;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Transaction\TransactionCreated;
 use App\Events\Models\Transaction\TransactionCreating;
@@ -60,12 +62,12 @@ class Transaction extends Model implements Crud, ModelQuery, Taggable
         ];
     }
 
-    public function account()
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id', 'account_id');
     }
 
-    public function user()
+    public function user(): HasManyThrough
     {
         return $this->hasManyThrough(User::class, Account::class);
     }

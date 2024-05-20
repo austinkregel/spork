@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\ShortCode\ShortCodeCreated;
 use App\Events\Models\ShortCode\ShortCodeCreating;
 use App\Events\Models\ShortCode\ShortCodeDeleted;
@@ -40,7 +41,7 @@ class ShortCode extends Model
         ];
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

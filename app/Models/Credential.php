@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Actions\Spork\SyncDataFromCredential;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Credential\CredentialCreated;
@@ -138,7 +140,7 @@ class Credential extends Model implements Crud, ModelQuery
         ];
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -180,17 +182,17 @@ class Credential extends Model implements Crud, ModelQuery
             ->logOnlyDirty();
     }
 
-    public function servers()
+    public function servers(): HasMany
     {
         return $this->hasMany(Server::class);
     }
 
-    public function accounts()
+    public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
     }
 
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }

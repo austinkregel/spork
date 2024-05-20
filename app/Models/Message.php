@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\Message\MessageCreated;
 use App\Events\Models\Message\MessageCreating;
 use App\Events\Models\Message\MessageDeleted;
@@ -70,17 +71,17 @@ class Message extends Model implements Taggable
         return auth()->id() === $this->from_person;
     }
 
-    public function credential()
+    public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
     }
 
-    public function fromPerson()
+    public function fromPerson(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'from_person');
     }
 
-    public function toPerson()
+    public function toPerson(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'to_person');
     }

@@ -28,7 +28,7 @@ class SetupLoadBalancerDnsRecordJob implements ShouldQueue
     ) {
     }
 
-    public function handle()
+    public function handle(): void
     {
         $this->project->load([
             'domains' => function ($query) {

@@ -26,7 +26,7 @@ class UpdateFeed implements ShouldQueue
         $this->feed = $feed;
     }
 
-    public function handle(\App\Services\News\RssFeedService $service)
+    public function handle(\App\Services\News\RssFeedService $service): void
     {
         if ($this->batch() && $this->batch()->cancelled()) {
             return;

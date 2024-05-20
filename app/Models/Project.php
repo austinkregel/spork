@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Project\ProjectCreated;
 use App\Events\Models\Project\ProjectCreating;
@@ -100,7 +102,7 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         return $this->belongsTo(Team::class);
     }
 
-    public function tasks()
+    public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
     }
@@ -142,7 +144,7 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         return $credential;
     }
 
-    public function owner()
+    public function owner(): MorphMany
     {
         return $this->morphMany(ExternalRssFeed::class, 'owner');
     }

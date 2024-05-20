@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphedByMany;
 use App\Contracts\Conditionable;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Tag\TagCreated;
@@ -43,52 +44,52 @@ class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
         'updated' => TagUpdated::class,
     ];
 
-    public function articles()
+    public function articles(): MorphedByMany
     {
         return $this->morphedByMany(Article::class, 'taggable');
     }
 
-    public function feeds()
+    public function feeds(): MorphedByMany
     {
         return $this->morphedByMany(ExternalRssFeed::class, 'taggable');
     }
 
-    public function servers()
+    public function servers(): MorphedByMany
     {
         return $this->morphedByMany(Server::class, 'taggable');
     }
 
-    public function transactions()
+    public function transactions(): MorphedByMany
     {
         return $this->morphedByMany(Transaction::class, 'taggable');
     }
 
-    public function projects()
+    public function projects(): MorphedByMany
     {
         return $this->morphedByMany(Project::class, 'taggable');
     }
 
-    public function budgets()
+    public function budgets(): MorphedByMany
     {
         return $this->morphedByMany(Budget::class, 'taggable');
     }
 
-    public function accounts()
+    public function accounts(): MorphedByMany
     {
         return $this->morphedByMany(Account::class, 'taggable');
     }
 
-    public function domains()
+    public function domains(): MorphedByMany
     {
         return $this->morphedByMany(Domain::class, 'taggable');
     }
 
-    public function people()
+    public function people(): MorphedByMany
     {
         return $this->morphedByMany(Person::class, 'taggable');
     }
 
-    public function messages()
+    public function messages(): MorphedByMany
     {
         return $this->morphedByMany(Message::class, 'taggable');
     }

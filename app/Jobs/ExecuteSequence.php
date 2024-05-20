@@ -31,7 +31,7 @@ class ExecuteSequence
 
     }
 
-    public function handle(MustacheTemplateService $mustache)
+    public function handle(MustacheTemplateService $mustache): void
     {
         $this->mustache = $mustache;
         $stepClosures = $this->sequence->steps()

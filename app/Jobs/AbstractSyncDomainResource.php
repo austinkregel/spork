@@ -11,7 +11,7 @@ abstract class AbstractSyncDomainResource extends AbstractSyncResourceJob
 {
     protected DomainServiceContract $service;
 
-    public function handle(DomainServiceFactory $domainServiceFactory)
+    public function handle(DomainServiceFactory $domainServiceFactory): void
     {
         $this->service = $domainServiceFactory->make($this->credential);
         if ($this->batch()?->cancelled()) {

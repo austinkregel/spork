@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Finance;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\Account\AccountCreated;
 use App\Events\Models\Account\AccountCreating;
 use App\Events\Models\Account\AccountDeleted;
@@ -40,7 +41,7 @@ class Account extends Model implements Crud
         'updated' => AccountUpdated::class,
     ];
 
-    public function credential()
+    public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
     }

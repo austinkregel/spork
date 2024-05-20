@@ -27,7 +27,7 @@ class SetupCloudflareDns implements ShouldQueue
     ) {
     }
 
-    public function handle(DomainServiceFactory $factory)
+    public function handle(DomainServiceFactory $factory): void
     {
         // Check with our DNS service to see if our domain already exists there.
 

@@ -13,7 +13,7 @@ class QueueCommand extends BaseCommand
 
     protected $description = 'Queue any operations that are ready to be run';
 
-    public function handle()
+    public function handle(): void
     {
         Operator::queue();
     }

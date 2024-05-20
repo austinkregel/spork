@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Task\TaskCreated;
 use App\Events\Models\Task\TaskCreating;
@@ -45,7 +46,7 @@ class Task extends Model implements Crud, ModelQuery
         ];
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }

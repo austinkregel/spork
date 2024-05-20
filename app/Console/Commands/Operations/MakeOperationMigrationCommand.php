@@ -26,7 +26,7 @@ final class MakeOperationMigrationCommand extends BaseCommand
         $this->composer = $composer;
     }
 
-    public function handle()
+    public function handle(): void
     {
         $name = Str::snake(Str::plural($this->input->getArgument('name')));
         $table = Str::snake(Str::pluralStudly(class_basename($this->input->getArgument('name'))));

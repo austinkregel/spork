@@ -15,7 +15,7 @@ class SyncJiraTicketsJob implements ShouldQueue
 {
     use Queueable;
 
-    public function handle(JiraServiceContract $jiraService)
+    public function handle(JiraServiceContract $jiraService): void
     {
         $projects = Project::query()
             ->whereNotNull('settings->jira_id')

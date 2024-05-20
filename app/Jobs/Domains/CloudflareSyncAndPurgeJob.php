@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
 {
-    public function handle(DomainServiceFactory $serviceFactory)
+    public function handle(DomainServiceFactory $serviceFactory): void
     {
         if ($this->batch()?->cancelled()) {
             return;

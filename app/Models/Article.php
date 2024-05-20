@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\Article\ArticleCreated;
 use App\Events\Models\Article\ArticleCreating;
 use App\Events\Models\Article\ArticleDeleted;
@@ -73,12 +75,12 @@ class Article extends Model implements Crud
         return $post;
     }
 
-    public function author()
+    public function author(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function externalRssFeed()
+    public function externalRssFeed(): BelongsTo
     {
         return $this->belongsTo(ExternalRssFeed::class, 'author_id');
     }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Contracts\Conditionable;
 use App\Events\Models\Navigation\NavigationCreated;
 use App\Events\Models\Navigation\NavigationCreating;
@@ -42,17 +44,17 @@ class Navigation extends Model implements Conditionable, Crud
         ];
     }
 
-    public function children()
+    public function children(): HasMany
     {
         return $this->hasMany(Navigation::class, 'parent_id');
     }
 
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Navigation::class);
     }
 
-    public function domain()
+    public function domain(): BelongsTo
     {
         return $this->belongsTo(Domain::class);
     }

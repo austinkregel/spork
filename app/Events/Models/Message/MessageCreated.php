@@ -16,7 +16,7 @@ class MessageCreated extends AbstractLogicalEvent implements ShouldBroadcast
     ) {
     }
 
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         $this->model->load('credential');
 

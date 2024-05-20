@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Contracts\ModelQuery;
 use App\Events\Models\User\UserCreated;
 use App\Events\Models\User\UserCreating;
@@ -97,32 +100,32 @@ class User extends Authenticatable implements ModelQuery, Taggable
             ->logOnlyDirty();
     }
 
-    public function codes()
+    public function codes(): HasMany
     {
         return $this->hasMany(ShortCode::class);
     }
 
-    public function credentials()
+    public function credentials(): HasMany
     {
         return $this->hasMany(Credential::class);
     }
 
-    public function domains()
+    public function domains(): HasManyThrough
     {
         return $this->hasManyThrough(Domain::class, Credential::class);
     }
 
-    public function accounts()
+    public function accounts(): HasManyThrough
     {
         return $this->hasManyThrough(Account::class, Credential::class);
     }
 
-    public function messages()
+    public function messages(): HasManyThrough
     {
         return $this->hasManyThrough(Message::class, Credential::class)->orderByDesc('originated_at');
     }
 
-    public function externalRssFeeds()
+    public function externalRssFeeds(): MorphMany
     {
         return $this->morphMany(ExternalRssFeed::class, 'owner');
     }
