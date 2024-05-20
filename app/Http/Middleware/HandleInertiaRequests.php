@@ -46,7 +46,7 @@ class HandleInertiaRequests extends Middleware
             'conversations' => auth()->check() ? Thread::query()
                 ->with(['messages', 'messages.fromPerson', 'messages.toPerson'])
                 ->whereHas('participants', function ($query) {
-                    $query->where('person_id', auth()->user()->person->id);
+                    $query->where('person_id', auth()->user()?->person()?->id);
                 })
                 ->orderByDesc('origin_server_ts')
                 ->paginate(
