@@ -26,17 +26,36 @@ use App\Models\User;
 use App\Observers\ApplyCredentialsObserver;
 use App\Operations\Operator;
 use App\Repositories\CredentialRepository;
+use App\Services\Code;
 use App\Services\Finance\PlaidService;
 use App\Services\JiraService;
 use App\Services\Messaging\ImapCredentialService;
 use App\Services\News\NewsService;
 use App\Services\Registrar\NamecheapService;
 use App\Services\Weather\OpenWeatherService;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\Finder\SplFileInfo;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * The path to your application's "home" route.
+     *
+     * Typically, users are redirected here after authentication.
+     *
+     * @var string
+     */
+    public const HOME = '/-/dashboard';
+
     /**
      * Register any application services.
      */
@@ -71,6 +90,57 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+
+        $this->bootRoute();
+    }
+
+    public function bootRoute(): void
+    {
+        Route::macro('domains', function (array $domains, $callback) {
+            foreach ($domains as $domain) {
+                Route::domain($domain)->group($callback)->name($domain);
+            }
+        });
+
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+        Route::bind('abstract_model', function ($tableName) {
+            return collect(app(Filesystem::class)->allFiles(app_path('Models')))->filter(fn (SplFileInfo $file) => ! str_contains(strtolower($file->getRealPath()), 'trait'))->map(function (SplFileInfo $file) {
+                $modelClass = ucfirst(str_replace('/', '\\', str_replace('.php', '', substr(str_replace(base_path(), '', $file->getRealPath()), 1))));
+
+                return new $modelClass;
+            })->filter(function ($model) use ($tableName) {
+                return $model->getTable() === $tableName;
+            })->first();
+        });
+
+        Route::bind('abstract_model_id', function ($value) {
+            $class = request()->route('abstract_model');
+
+            $model = new $class;
+
+            return $model::find($value);
+        });
+
+        Route::bind('link', function ($value) {
+            $model = Arr::first(array_values(array_filter(
+                Code::instancesOf(Model::class)
+                    ->getClasses(),
+                function ($class) use ($value) {
+                    try {
+                        return (new $class)->getTable() === Str::slug($value, '_');
+                    } catch (\Throwable $e) {
+                        return false;
+                    }
+                })));
+
+            abort_unless(isset($model), 404);
+
+            return $model;
+        });
+
 
     }
 }
