@@ -24,10 +24,6 @@ class ShortCode extends Model
         'status',
     ];
 
-    public $casts = [
-        'is_enabled' => 'bool',
-    ];
-
     public $dispatchesEvents = [
         'created' => ShortCodeCreated::class,
         'creating' => ShortCodeCreating::class,
@@ -36,6 +32,13 @@ class ShortCode extends Model
         'updating' => ShortCodeUpdating::class,
         'updated' => ShortCodeUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_enabled' => 'bool',
+        ];
+    }
 
     public function user()
     {

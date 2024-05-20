@@ -35,11 +35,6 @@ class Domain extends Model implements Crud, ModelQuery, Taggable
         'registered_at',
     ];
 
-    public $casts = [
-        'registered_at' => 'datetime:Y-m-d',
-        'expires_at' => 'datetime:Y-m-d',
-    ];
-
     public $dispatchesEvents = [
         'created' => DomainCreated::class,
         'creating' => DomainCreating::class,
@@ -48,6 +43,14 @@ class Domain extends Model implements Crud, ModelQuery, Taggable
         'updating' => DomainUpdating::class,
         'updated' => DomainUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'registered_at' => 'datetime:Y-m-d',
+            'expires_at' => 'datetime:Y-m-d',
+        ];
+    }
 
     public function records(): HasMany
     {

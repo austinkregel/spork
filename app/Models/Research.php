@@ -21,10 +21,6 @@ class Research extends Model implements Crud
     use HasFactory;
     use LogsActivity;
 
-    public $casts = [
-        'sources' => 'json',
-    ];
-
     public $fillable = [
         'topic',
         'notes',
@@ -39,6 +35,13 @@ class Research extends Model implements Crud
         'updating' => ResearchUpdating::class,
         'updated' => ResearchUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'sources' => 'json',
+        ];
+    }
 
     public function projects(): MorphToMany
     {

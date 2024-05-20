@@ -106,10 +106,6 @@ class Credential extends Model implements Crud, ModelQuery
         'refresh_token',
     ];
 
-    public $casts = [
-        'settings' => 'json',
-    ];
-
     public $fillable = [
         'name',
         'type',
@@ -134,6 +130,13 @@ class Credential extends Model implements Crud, ModelQuery
     public $actions = [
         SyncDataFromCredential::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'settings' => 'json',
+        ];
+    }
 
     public function user()
     {

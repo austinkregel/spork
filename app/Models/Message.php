@@ -43,14 +43,6 @@ class Message extends Model implements Taggable
         'subject',
     ];
 
-    public $casts = [
-        'seen' => 'bool',
-        'spam' => 'bool',
-        'answered' => 'bool',
-        'originated_at' => 'timestamp',
-        'settings' => 'json',
-    ];
-
     public $appends = ['is_user'];
 
     public $dispatchesEvents = [
@@ -61,6 +53,17 @@ class Message extends Model implements Taggable
         'updating' => MessageUpdating::class,
         'updated' => MessageUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'seen' => 'bool',
+            'spam' => 'bool',
+            'answered' => 'bool',
+            'originated_at' => 'timestamp',
+            'settings' => 'json',
+        ];
+    }
 
     public function getIsUserAttribute()
     {

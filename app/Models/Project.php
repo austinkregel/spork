@@ -30,8 +30,6 @@ class Project extends Model implements Crud, ModelQuery, Taggable
 
     public $guarded = [];
 
-    protected $casts = ['settings' => 'json'];
-
     public $dispatchesEvents = [
         'created' => ProjectCreated::class,
         'creating' => ProjectCreating::class,
@@ -40,6 +38,13 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         'updating' => ProjectUpdating::class,
         'updated' => ProjectUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'settings' => 'json'
+        ];
+    }
 
     public function scopeQ(Builder $query, string $string): void
     {

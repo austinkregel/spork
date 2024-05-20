@@ -37,12 +37,6 @@ class Page extends Model implements Crud, ModelQuery
         'published_at',
     ];
 
-    public $casts = [
-        'is_active' => 'boolean',
-        'middleware' => 'json',
-        'settings' => 'json',
-    ];
-
     public $dispatchesEvents = [
         'created' => PageCreated::class,
         'creating' => PageCreating::class,
@@ -51,6 +45,15 @@ class Page extends Model implements Crud, ModelQuery
         'updating' => PageUpdating::class,
         'updated' => PageUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'middleware' => 'json',
+            'settings' => 'json',
+        ];
+    }
 
     public function domain(): BelongsTo
     {

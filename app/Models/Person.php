@@ -21,18 +21,6 @@ class Person extends Model implements Crud, ModelQuery
 
     public $guarded = [];
 
-    public $casts = [
-        'birthdate' => 'date',
-        'phone_numbers' => 'array',
-        'addresses' => 'array',
-        'emails' => 'array',
-        'names' => 'array',
-        'identifiers' => 'array',
-        'locality' => 'array',
-        'jobs' => 'array',
-        'education' => 'array',
-    ];
-
     public $dispatchesEvents = [
         'created' => PersonCreated::class,
         'creating' => PersonCreating::class,
@@ -41,6 +29,21 @@ class Person extends Model implements Crud, ModelQuery
         'updating' => PersonUpdating::class,
         'updated' => PersonUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'birthdate' => 'date',
+            'phone_numbers' => 'array',
+            'addresses' => 'array',
+            'emails' => 'array',
+            'names' => 'array',
+            'identifiers' => 'array',
+            'locality' => 'array',
+            'jobs' => 'array',
+            'education' => 'array',
+        ];
+    }
 
     public function scopeQ(Builder $query, string $string): void
     {

@@ -34,10 +34,6 @@ class Article extends Model implements Crud
         'url',
     ];
 
-    public $casts = [
-        'last_modified' => 'datetime',
-    ];
-
     public $dispatchesEvents = [
         'created' => ArticleCreated::class,
         'creating' => ArticleCreating::class,
@@ -46,6 +42,13 @@ class Article extends Model implements Crud
         'updating' => ArticleUpdating::class,
         'updated' => ArticleUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'last_modified' => 'datetime',
+        ];
+    }
 
     public static function fromFeedItem(ExternalRssFeed $feed, FeedItem $item): self
     {

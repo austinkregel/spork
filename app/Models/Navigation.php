@@ -21,11 +21,6 @@ class Navigation extends Model implements Conditionable, Crud
 
     public $guarded = [];
 
-    public $casts = [
-        'authentication_required' => 'boolean',
-        'settings' => 'json',
-    ];
-
     public $hidden = [
         'id', 'created_at', 'updated_at',
     ];
@@ -38,6 +33,14 @@ class Navigation extends Model implements Conditionable, Crud
         'updating' => NavigationUpdating::class,
         'updated' => NavigationUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'authentication_required' => 'boolean',
+            'settings' => 'json',
+        ];
+    }
 
     public function children()
     {

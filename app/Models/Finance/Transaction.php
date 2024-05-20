@@ -41,13 +41,6 @@ class Transaction extends Model implements Crud, ModelQuery, Taggable
         'data',
     ];
 
-    protected $casts = [
-        'amount' => 'float',
-        'date' => 'datetime',
-        'pending' => 'boolean',
-        'data' => 'json',
-    ];
-
     public $dispatchesEvents = [
         'created' => TransactionCreated::class,
         'creating' => TransactionCreating::class,
@@ -56,6 +49,16 @@ class Transaction extends Model implements Crud, ModelQuery, Taggable
         'updating' => TransactionUpdating::class,
         'updated' => TransactionUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'float',
+            'date' => 'datetime',
+            'pending' => 'boolean',
+            'data' => 'json',
+        ];
+    }
 
     public function account()
     {

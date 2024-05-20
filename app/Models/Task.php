@@ -29,10 +29,6 @@ class Task extends Model implements Crud, ModelQuery
         'service_identifier',
     ];
 
-    protected $casts = [
-        'checklist' => 'json',
-    ];
-
     public $dispatchesEvents = [
         'created' => TaskCreated::class,
         'creating' => TaskCreating::class,
@@ -41,6 +37,13 @@ class Task extends Model implements Crud, ModelQuery
         'updating' => TaskUpdating::class,
         'updated' => TaskUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'checklist' => 'json',
+        ];
+    }
 
     public function project()
     {
