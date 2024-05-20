@@ -4,7 +4,7 @@ import Toaster from "@meforma/vue-toaster";
 import { createApp, h } from 'vue';
 import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist';
 import { createStore } from "vuex";
 import Hero from './Builder/Components/Heros/Classic.vue';
 import BuilderButton from './Builder/Components/BuilderButton.vue';
