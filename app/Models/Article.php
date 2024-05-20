@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\Article\ArticleCreated;
 use App\Events\Models\Article\ArticleCreating;
 use App\Events\Models\Article\ArticleDeleted;
@@ -15,6 +13,8 @@ use App\Events\Models\Article\ArticleUpdating;
 use App\Services\News\Feeds\FeedItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 

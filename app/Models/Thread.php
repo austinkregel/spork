@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Events\Models\Thread\ThreadCreated;
 use App\Events\Models\Thread\ThreadCreating;
 use App\Events\Models\Thread\ThreadDeleted;
@@ -15,6 +13,8 @@ use App\Events\Models\Thread\ThreadUpdating;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Thread extends Model implements Crud
 {

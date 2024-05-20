@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Task\TaskCreated;
 use App\Events\Models\Task\TaskCreating;
@@ -14,6 +13,7 @@ use App\Events\Models\Task\TaskUpdated;
 use App\Events\Models\Task\TaskUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model implements Crud, ModelQuery
 {

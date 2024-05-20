@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use App\Actions\Spork\Domains\ApplyTagToModelAction;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedCreated;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedCreating;
@@ -15,6 +13,8 @@ use App\Events\Models\ExternalRssFeed\ExternalRssFeedUpdated;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;

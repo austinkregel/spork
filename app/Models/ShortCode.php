@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\ShortCode\ShortCodeCreated;
 use App\Events\Models\ShortCode\ShortCodeCreating;
 use App\Events\Models\ShortCode\ShortCodeDeleted;
@@ -13,6 +12,7 @@ use App\Events\Models\ShortCode\ShortCodeUpdated;
 use App\Events\Models\ShortCode\ShortCodeUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ShortCode extends Model
 {

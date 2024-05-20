@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Finance;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\Account\AccountCreated;
 use App\Events\Models\Account\AccountCreating;
 use App\Events\Models\Account\AccountDeleted;
@@ -15,6 +14,7 @@ use App\Models\Credential;
 use App\Models\Crud;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Account extends Model implements Crud
 {

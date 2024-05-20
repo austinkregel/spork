@@ -33,8 +33,6 @@ class FetchServersForCredential implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle(Dispatcher $dispatcher): void
     {

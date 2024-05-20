@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Schedule;
 
 declare(strict_types=1);
 
-
 Schedule::job(SyncJiraTicketsJob::class)->daily();
 Schedule::job(UpdateAllFeeds::class)->everyFifteenMinutes();
 Schedule::job(FetchResourcesFromCredentials::class)->hourly();

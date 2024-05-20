@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Contracts\Conditionable;
 use App\Events\Models\Navigation\NavigationCreated;
 use App\Events\Models\Navigation\NavigationCreating;
@@ -16,6 +14,8 @@ use App\Events\Models\Navigation\NavigationUpdating;
 use App\Models\Traits\HasConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Navigation extends Model implements Conditionable, Crud
 {

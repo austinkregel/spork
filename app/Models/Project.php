@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Project\ProjectCreated;
 use App\Events\Models\Project\ProjectCreating;
@@ -18,6 +16,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
@@ -44,7 +44,7 @@ class Project extends Model implements Crud, ModelQuery, Taggable
     protected function casts(): array
     {
         return [
-            'settings' => 'json'
+            'settings' => 'json',
         ];
     }
 

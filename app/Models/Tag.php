@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\MorphedByMany;
 use App\Contracts\Conditionable;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Tag\TagCreated;
@@ -18,6 +17,7 @@ use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
 use App\Models\Traits\HasConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphedByMany;
 
 /**
  * @property bool $must_all_conditions_pass

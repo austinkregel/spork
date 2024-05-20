@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Finance;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Transaction\TransactionCreated;
 use App\Events\Models\Transaction\TransactionCreating;
@@ -18,6 +16,8 @@ use App\Models\Taggable;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Spatie\Tags\HasTags;
 
 class Transaction extends Model implements Crud, ModelQuery, Taggable

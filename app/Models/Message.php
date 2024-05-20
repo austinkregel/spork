@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\Message\MessageCreated;
 use App\Events\Models\Message\MessageCreating;
 use App\Events\Models\Message\MessageDeleted;
@@ -13,6 +12,7 @@ use App\Events\Models\Message\MessageUpdated;
 use App\Events\Models\Message\MessageUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Tags\HasTags;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 

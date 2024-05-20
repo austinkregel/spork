@@ -91,7 +91,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-
         $this->bootRoute();
     }
 
@@ -140,7 +139,6 @@ class AppServiceProvider extends ServiceProvider
 
             return $model;
         });
-
 
     }
 }
