@@ -71,7 +71,7 @@ Route::middleware([
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
-    Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\App\Http\Middleware\Authenticate::class)->name('user.api-query');
+    Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
 
     Route::post('project/{project}/deploy', [Controllers\Spork\ProjectsController::class, 'deploy'])->name('project.deploy');
 
