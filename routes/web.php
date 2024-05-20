@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if (file_exists(base_path('routes/generate-pages.php'))) {
     include_once base_path('routes/generate-pages.php');
 }
