@@ -16,7 +16,7 @@ use Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController;
 use Laravel\Jetstream\Http\Controllers\TeamInvitationController;
 use Laravel\Jetstream\Jetstream;
 
-Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
+Route::middleware(config('jetstream.middleware', ['web']))->group(function () {
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {
         Route::get('/terms-of-service', [TermsOfServiceController::class, 'show'])->name('terms.show');
         Route::get('/privacy-policy', [PrivacyPolicyController::class, 'show'])->name('policy.show');
@@ -30,7 +30,7 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
         ? config('jetstream.auth_session')
         : null;
 
-    Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
+    Route::middleware(array_values(array_filter([$authMiddleware, $authSessionMiddleware])))->group(function () {
         // User & Profile...
         Route::get('/user/profile', [UserProfileController::class, 'show'])
             ->name('profile.show');
@@ -46,7 +46,7 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
                 ->name('current-user.destroy');
         }
 
-        Route::group(['middleware' => 'verified'], function () {
+        Route::middleware('verified')->group(function () {
             // API...
             if (Jetstream::hasApiFeatures()) {
                 Route::get('/user/api-tokens', [ApiTokenController::class, 'index'])->name('api-tokens.index');

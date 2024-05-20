@@ -82,11 +82,7 @@ Route::middleware([
         ->name('project.detach');
 });
 
-Route::group(['prefix' => '-', 'middleware' => [
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-]], function () {
+Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'), 'verified')->group(function () {
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
 
     Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
