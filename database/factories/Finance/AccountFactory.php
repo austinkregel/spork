@@ -22,7 +22,7 @@ class AccountFactory extends Factory
     {
         return [
             'credential_id' => Credential::factory(),
-            'name' => $this->faker->name,
+            'name' => $this->faker->name(),
             'mask' => $this->faker->randomNumber(4),
             'type' => 'checking',
             'account_id' => Str::random(32),
