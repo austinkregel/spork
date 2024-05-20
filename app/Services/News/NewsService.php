@@ -107,11 +107,11 @@ class NewsService implements NewsServiceContract
                         'id' => substr(sha1($article->url), 0, 10),
                     ], (array) $article);
                 })
-                    ->filter(function($article) {
-                        return $article['title'] !== '[Removed]';
-                    })
+                ->filter(function ($article) {
+                    return $article['title'] !== '[Removed]';
+                })
                 ->values()
-            ->toArray()
+                ->toArray()
         );
     }
 }

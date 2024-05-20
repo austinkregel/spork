@@ -119,7 +119,7 @@ class MatrixClient
         string $body,
         string $room,
         string $jwt,
-    ){
+    ) {
         $eventId = Http::withHeaders([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer '.$jwt,

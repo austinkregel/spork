@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Notifications;
 
-use App\Contracts\Services\News\NewsServiceContract;
 use App\Contracts\Services\WeatherServiceContract;
 use App\Models\Article;
 use App\Models\Finance\Transaction;
@@ -19,10 +20,10 @@ use Illuminate\Queue\SerializesModels;
 class BuildSummaryNotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     public function handle(
         WeatherServiceContract $weatherService,
-    ): void
-    {
+    ): void {
         $now = Carbon::now();
         $nowLocal = Carbon::now('America/Detroit');
         $page = 1;
@@ -52,7 +53,7 @@ class BuildSummaryNotificationJob implements ShouldQueue
 
                 $weather = null;
 
-                if (!empty($person->primary_address)) {
+                if (! empty($person->primary_address)) {
                     $weatherResponse = $weatherService->query($person->primary_address);
                     $weather = collect($weatherResponse)->first();
                 }

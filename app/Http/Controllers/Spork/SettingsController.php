@@ -19,11 +19,10 @@ class SettingsController
             'settings' => new class()
             {
             },
-            'notifications' =>
-                array_map(
-                    fn ($class) => $class,
-                    Code::instancesOf(Notification::class)->getClasses(),
-                )
+            'notifications' => array_map(
+                fn ($class) => $class,
+                Code::instancesOf(Notification::class)->getClasses(),
+            ),
 
         ]);
     }

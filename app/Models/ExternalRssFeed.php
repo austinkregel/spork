@@ -24,7 +24,7 @@ class ExternalRssFeed extends Model implements Crud, Taggable
     use LogsActivity;
 
     public $actions = [
-        ApplyTagToModelAction::class
+        ApplyTagToModelAction::class,
     ];
 
     public $fillable = [

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications\Daily;
 
 use App\Forecast;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -22,8 +23,7 @@ class SummaryNotification extends Notification
         public ?array $articles,
         public Collection $transactions,
         public Collection $accounts,
-    )
-    {
+    ) {
         //
     }
 
@@ -44,6 +44,7 @@ class SummaryNotification extends Notification
                 'accounts' => $this->accounts,
             ]
         );
+
         return $message;
     }
 

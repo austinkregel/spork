@@ -19,12 +19,13 @@ class CrudControllerTest extends TestCase
 
     public function actingAsUser(): User
     {
-        if (!Role::firstWhere('name', 'developer')) {
+        if (! Role::firstWhere('name', 'developer')) {
             Role::create(['name' => 'developer']);
         }
 
         $this->actingAs($this->user = App\Models\User::factory()->withPersonalTeam()->create());
         $this->user->assignRole('developer');
+
         return $this->user;
     }
 

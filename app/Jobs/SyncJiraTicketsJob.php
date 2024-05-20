@@ -7,13 +7,14 @@ namespace App\Jobs;
 use App\Contracts\Services\JiraServiceContract;
 use App\Models\Project;
 use App\Models\Task;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use JiraRestApi\Issue\Issue;
 
 class SyncJiraTicketsJob implements ShouldQueue
 {
     use Queueable;
+
     public function handle(JiraServiceContract $jiraService)
     {
         $projects = Project::query()

@@ -28,8 +28,8 @@ interface ServerServiceContract
 
     public function findAllSshkeys(): array;
 
-//    public function changeMemory(int|string $identifier, int $memory): void;
-//    public function changeCpu(int|string $identifier, int $vcpu, int $cores, int $threads): void;
-//    public function changeDisk(int|string $identifier, int $disk_capacity): void;
+    //    public function changeMemory(int|string $identifier, int $memory): void;
+    //    public function changeCpu(int|string $identifier, int $vcpu, int $cores, int $threads): void;
+    //    public function changeDisk(int|string $identifier, int $disk_capacity): void;
 
 }

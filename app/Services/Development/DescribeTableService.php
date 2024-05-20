@@ -98,7 +98,6 @@ class DescribeTableService
         });
         $fillable = empty($model->getFillable()) ? ['name'] : $model->getFillable();
 
-
         $notedInstances = Code::instancesOf(ActionInterface::class)->getClasses();
         $actions = [];
         foreach ($notedInstances as $class) {

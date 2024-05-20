@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 class LibvirtService implements ServerServiceContract
 {
     protected $resource;
+
     public function __construct()
     {
         $this->resource = libvirt_connect('qemu:///system', false);
@@ -71,9 +72,9 @@ class LibvirtService implements ServerServiceContract
             $topology->addAttribute('threads', (string) ($config['threads'] ?? 1));
         }
 
-//        $domain->addChild('on_poweroff', 'destroy');
+        //        $domain->addChild('on_poweroff', 'destroy');
         $domain->addChild('on_reboot', 'restart');
-//        $domain->addChild('on_crash', 'destroy');
+        //        $domain->addChild('on_crash', 'destroy');
         $pm = $domain->addChild('pm');
         $pm->addChild('suspend-to-mem')->addAttribute('enabled', 'no');
         $pm->addChild('suspend-to-disk')->addAttribute('enabled', 'no');
@@ -193,6 +194,7 @@ class LibvirtService implements ServerServiceContract
 
         libvirt_domain_define_xml($this->resource, $domain->asXML());
         libvirt_domain_create(libvirt_domain_lookup_by_name($this->resource, $config['name']));
+
         // libvirt_domain_define_xml will --- Will save VM
         return json_decode(json_encode($domain), true);
     }
@@ -200,7 +202,7 @@ class LibvirtService implements ServerServiceContract
     public function findAllRegions(): array
     {
         return [
-            'default'
+            'default',
         ];
     }
 

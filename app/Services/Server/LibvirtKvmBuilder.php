@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Server;
@@ -10,18 +11,23 @@ class LibvirtKvmBuilder
     ) {
         $this->kvm = new \SimpleXMLElement('<domain/>');
     }
+
     public function setMemory(string $memory): self
     {
         $this->kvm->addChild('memory', $memory)
             ->addAttribute('unit', 'KiB');
+
         return $this;
     }
+
     public function setVcpu(string $vcpu): self
     {
         $this->kvm->addChild('vcpu', $vcpu)
             ->addAttribute('placement', 'static');
+
         return $this;
     }
+
     public function setOs(string $type, string $arch, string $machine = 'pc-q35-6.2'): self
     {
         $os = $this->kvm->addChild('os');
@@ -30,6 +36,7 @@ class LibvirtKvmBuilder
         $type->addAttribute('machine', $machine);
         $os->addChild('boot')
             ->addAttribute('dev', 'cdrom');
+
         return $this;
     }
 

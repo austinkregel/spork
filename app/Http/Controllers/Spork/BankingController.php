@@ -18,21 +18,19 @@ class BankingController
             ->accounts()
             ->with('credential')->get();
 
-
         return Inertia::render('Banking/Index', [
             'title' => 'Banking ',
             'accounts' => $accounts,
-            'transactions' =>
-                QueryBuilder::for(Transaction::class)
+            'transactions' => QueryBuilder::for(Transaction::class)
                 ->allowedFilters([
                     AllowedFilter::partial('name'),
                     AllowedFilter::callback('tag', function (Builder $builder, $name) {
-                        $builder->whereHas('tags', fn ($query) => $query->where('name', 'like', '%' . $name . '%'));
+                        $builder->whereHas('tags', fn ($query) => $query->where('name', 'like', '%'.$name.'%'));
                     }),
                     AllowedFilter::partial('date'),
                 ])
-                ->allowedIncludes(['account','tags'])
-                ->allowedSorts(['name','amount', 'date'])
+                ->allowedIncludes(['account', 'tags'])
+                ->allowedSorts(['name', 'amount', 'date'])
                 ->whereIn('account_id', $accounts->pluck('account_id'))
                 ->with('tags')
                 ->orderByDesc('date')

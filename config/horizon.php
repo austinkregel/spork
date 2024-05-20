@@ -220,7 +220,7 @@ return [
                 'maxProcesses' => 10,
             ],
             'supervisor-2' => [
-                'maxProcesses' => 5,  
+                'maxProcesses' => 5,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
 

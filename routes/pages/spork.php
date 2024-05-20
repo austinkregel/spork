@@ -106,7 +106,7 @@ Route::group(['prefix' => '-', 'middleware' => [
         $img->setImageCompressionQuality(90);
         $img->writeImageFile(fopen($filePath.'.jpg', 'w'));
         try {
-            return response(file_get_contents($filePath . '.jpg'), 200, [
+            return response(file_get_contents($filePath.'.jpg'), 200, [
                 'Content-Type' => 'image/jpeg',
             ]);
         } finally {
