@@ -123,4 +123,11 @@ class User extends Authenticatable implements ModelQuery, Taggable
     {
         return $this->morphMany(ExternalRssFeed::class, 'owner');
     }
+    public function person()
+    {
+        return Person::whereJsonContains('emails', $this->email)
+            // for now, this is fine, my email base does support this idea, but I know if someone/
+            // wanted to be malicious they could take advantage of this.
+            ->first();
+    }
 }

@@ -106,6 +106,16 @@ createInertiaApp({
                     })
                 })
                 .error((error) => {
+                    console.error('non-fatal error', error);
+                });
+        }
+
+        if (props?.initialPage?.props.auth.user?.person?.id) {
+            Echo.private('App.Models.Person.'+props?.initialPage?.props.auth.user?.person?.id)
+                .listen('message', (data) => {
+                    console.log('Message from server', data)
+                })
+                .error((error) => {
                     console.error(error);
                 });
         }

@@ -8,6 +8,7 @@ use App\Models\Credential;
 use App\Models\Domain;
 use App\Services\Factories\DomainServiceFactory;
 use App\Services\Factories\RegistrarServiceFactory;
+use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
@@ -35,10 +36,10 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
     {
         $page = 1;
         $registrarService = (new RegistrarServiceFactory)->make($this->credential);
-
+        $dispatcher = Model::getEventDispatcher();
+        Model::unsetEventDispatcher();
         do {
             $domains = $this->service->getDomains(100, $page++);
-
             foreach ($domains as $domain) {
                 // In order for domain jobs to be able to run, we need the domain to exist from a registrar.
                 $localDomain = Domain::where('name', $domain['domain'])->first();
@@ -68,21 +69,20 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
                     continue;
                 }
                 $dnsResults = $this->service->getDns($localDomain->cloudflare_id);
-
                 foreach ($dnsResults as $dnsRecord) {
                     $localDomain->records()->firstOrCreate([
-                        'record_id' => $dnsRecord['id'],
                         'type' => $dnsRecord['type'],
                         'name' => $dnsRecord['name'],
+                    ], [
+                        'record_id' => $dnsRecord['id'],
                         'ttl' => $dnsRecord['ttl'],
                         'value' => $dnsRecord['content'],
-                    ], [
                         'priority' => $dnsRecord['priority'],
                         'proxied_through_cloudflare' => $dnsRecord['proxied_through_cloudflare'],
                     ]);
                 }
-
             }
         } while ($domains->hasMorePages());
+        Model::setEventDispatcher($dispatcher);
     }
 }

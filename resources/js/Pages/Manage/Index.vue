@@ -69,7 +69,7 @@ const onExecute = async ({ selectedItems, actionToRun, next }) => {
 
   next()
 }
-const onSave = (form) => {
+const onSave = (form, toggle) => {
     const data = form.reduce((all, { name, value }) => ({ ...all, [name]: value }), {});
 
     console.log('form save',  data);
@@ -79,6 +79,7 @@ const onSave = (form) => {
           only: ['data', 'paginator'],
       });
     }).catch((e) => {
+        toggle();
         errors.value = e?.response?.data?.errors;
     });
 }
@@ -158,12 +159,11 @@ const log = console.log;
 
       </template>
       <template #no-data>
-        <div class="w-full p-4 italic text-center">No {{ singular }} data</div>
+        <div class="w-full p-4 italic text-center px-4 dark:text-white">No {{ singular }} data</div>
       </template>
 
-      <template #form v-slot="{ openModal }">
+      <template #form="{ openModal }">
         <div>
-
           <div class="grid grid-cols-1 gap-4 mt-2" v-for="(field, i) in form">
               <SporkDynamicInput
                   :key="i+'.form-value'"

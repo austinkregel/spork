@@ -72,27 +72,27 @@ class DigitalOceanService implements DigitalOceanServiceContract
         //        $this->digitalOcean->key()->delete($identifier);
     }
 
-    public function deleteServer(int $identifier): void
+    public function deleteServer(int|string $identifier): void
     {
         //        $this->digitalOcean->droplet()->delete($identifier);
     }
 
-    public function powerOnServer(int $identifier): void
+    public function powerOnServer(int|string $identifier): void
     {
         $this->digitalOcean->droplet()->powerOn($identifier);
     }
 
-    public function powerOffServer(int $identifier): void
+    public function powerOffServer(int|string $identifier): void
     {
         $this->digitalOcean->droplet()->powerOff($identifier);
     }
 
-    public function shutdownServer(int $identifier): void
+    public function shutdownServer(int|string $identifier): void
     {
         $this->digitalOcean->droplet()->shutdown($identifier);
     }
 
-    public function rebootServer(int $identifier): void
+    public function rebootServer(int|string $identifier): void
     {
         $this->digitalOcean->droplet()->reboot($identifier);
     }

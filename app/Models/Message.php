@@ -77,6 +77,10 @@ class Message extends Model implements Taggable
         return $this->belongsTo(Person::class, 'from_person');
     }
 
+    public function toPerson()
+    {
+        return $this->belongsTo(Person::class, 'to_person');
+    }
     public function from()
     {
         return $this->hasManyJson(Person::class, 'emails', 'from_email');

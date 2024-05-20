@@ -98,10 +98,21 @@ class DescribeTableService
         });
         $fillable = empty($model->getFillable()) ? ['name'] : $model->getFillable();
 
-        $actions = array_map(fn ($e) => (array) app($e), array_filter(
-            Code::instancesOf(ActionInterface::class)->getClasses(),
-            fn ($class) => in_array($model::class, app($class)->models)
-        ));
+
+        $notedInstances = Code::instancesOf(ActionInterface::class)->getClasses();
+        $actions = [];
+        foreach ($notedInstances as $class) {
+            $instance = app($class);
+            if (in_array($model::class, $instance->models)) {
+                $arrayedInstance = (array) $instance;
+
+                if (method_exists($instance, 'fields')) {
+                    $arrayedInstance['fields'] = $instance->fields();
+                }
+
+                $actions[] = $arrayedInstance;
+            }
+        }
 
         return array_merge([
             'name' => $model->getTable(),

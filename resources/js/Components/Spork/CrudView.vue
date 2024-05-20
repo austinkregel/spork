@@ -5,6 +5,10 @@
                 {{ title }}
             </div>
 
+
+            <SporkButton @click="() => createOpen = true">
+                Create New {{ singular }}
+            </SporkButton>
             <SporkTable :headers="[]" :data="data">
                 <template #table-top>
                     <div class="relative w-full flex flex-wrap justify-between items-center ">
@@ -20,10 +24,7 @@
                                     <option v-for="action in description?.actions ??[]" :key="action" :value="action">{{ action.name }} ({{ selectedItems.length }})</option>
                                 </select>
 
-                                <button type="button" @click.prevent="() => {
-                              executing = true;
-                                $emit('execute', { selectedItems, actionToRun, next: () => { selectedItems = []; executing = false;} })
-                            }">
+                                <button type="button" @click.prevent="executeActionOrOpenDialog">
                                     <PlayIcon v-if="!executing" class="w-6 h-6 stroke-current mr-2 text-green-400" />
                                     <ArrowPathIcon v-else class="w-6 h-6 stroke-current mr-2 text-blue-400" />
                                 </button>
@@ -93,53 +94,76 @@
         </div>
     </div>
 
-
-    <div v-if="createOpen" class="fixed z-40 inset-0 flex items-center outline-none w-screen h-screen overflow-y-scroll">
-        <div class="relative z-50 w-full md:max-w-3xl mx-auto max-h-screen overflow-y-auto p-4">
-            <div class="w-full rounded p-4 dark:p-8 bg-white dark:bg-stone-800 shadow-lg text-left dark:text-white ">
-                <div class="text-xl flex justify-between">
-                    <slot name="modal-title">Create Modal</slot>
-                    <button @click="createOpen = false" class="focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-                <div class="flex flex-col border-t border-stone-200 mt-2 pt-4">
-                    <slot name="form" :open-modal="() => createOpen = true"></slot>
-                    <div class="mt-4 flex justify-end gap-4">
-                      <SporkButton @click.prevent="async () => {
+    <Modal :show="createOpen">
+        <div class="text-xl flex justify-between p-4">
+            <slot name="modal-title">Create Modal</slot>
+            <button @click="createOpen = false" class="focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="flex flex-col border-t border-stone-200 mt-2 p-4">
+            <slot name="form" :open-modal="() => createOpen = true"></slot>
+            <div class="mt-4 flex justify-end gap-4">
+                <SporkButton @click.prevent="async () => {
                                 createOpen = false;
                             }"
-                                   primary
-                                   medium
-                      >
-                        Close
-                      </SporkButton>
-                      <SporkButton @click.prevent="async () => {
-                                $emit('save', form);
+                             primary
+                             medium
+                >
+                    Close
+                </SporkButton>
+                <SporkButton @click.prevent="async () => {
+                                $emit('save', form, () => createOpen = !createOpen);
                                 createOpen = false;
                             }"
-                                   primary
-                                   medium
-                      >
-                        Save
-                      </SporkButton>
-                    </div>
-                </div>
+                             primary
+                             medium
+                >
+                    Save
+                </SporkButton>
             </div>
         </div>
-        <div @click="createOpen = false" v-if="createOpen" class="fixed z-30 cursor-pointer inset-0 flex items-center outline-none bg-stone-900/50"></div>
-    </div>
+    </Modal>
 
+    <Modal :show="executing && actionToRun && actionToRun.fields">
+        <div class="text-xl flex flex-col justify-between p-4">
+            Hello there
+
+            <div v-for="(field, fieldName) in actionToRun.fields">
+                <div>
+                    {{ fieldName }}
+                </div>
+                <SporkDynamicInput
+                    v-model="form[fieldName]"
+                    :type="field.type"
+                    :autofocus="field?.autofocus ?? false"
+                    :disabledInput="field?.disabled ?? false"
+                    :editableLabel="field?.editableLabel ?? false"
+                    :error="hasErrors(fieldName)"
+                    :options="field?.options ?? []"
+                >
+                </SporkDynamicInput>
+            </div>
+
+            <div class="mt-4">
+                <SporkButton xsmall plain>
+                    Apply
+                </SporkButton>
+            </div>
+        </div>
+    </Modal>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import { PlayIcon, XMarkIcon, ArrowPathIcon } from "@heroicons/vue/24/outline";
 import SporkInput from './SporkInput.vue';
 import SporkButton from './SporkButton.vue';
 import { router, Link } from '@inertiajs/vue3';
 import SporkSelect from "@/Components/Spork/SporkSelect.vue";
 import SporkTable from "@/Components/Spork/SporkTable.vue";
+import Modal from "@/Components/Modal.vue";
+import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 const {
   form,
   title,
@@ -228,6 +252,17 @@ const executing = ref(false);
 
 const selectedTagToApply = ref(null);
 
+watch(
+    () => actionToRun.value,
+    (newVal) => {
+        if (newVal?.fields) {
+            form.value = {};
+            Object.keys(newVal.fields).forEach((field) => {
+                form[field] = '';
+            })
+        }
+    }
+)
 const hasPreviousPage = computed(() => {
   return paginator.prev_page_url !== null;
 });
@@ -262,6 +297,18 @@ const selectAll = (event) => {
 }
 const clearSearch = () => {
   searchQuery.value = '';
+}
+
+const executeActionOrOpenDialog = async () => {
+  executing.value = true;
+  // await $emit('execute', {
+  //     selectedItems,
+  //     actionToRun,
+  //     next: () => {
+  //         selectedItems.value = [];
+  //         executing.value = false;
+  //     }
+  // })
 }
 
 onMounted(() => {

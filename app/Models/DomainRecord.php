@@ -30,6 +30,9 @@ class DomainRecord extends Model implements Crud, ModelQuery
         'tags',
         'value',
         'timeout',
+        'record_id',
+        'proxied_through_cloudflare',
+        'priority',
     ];
 
     public $dispatchesEvents = [

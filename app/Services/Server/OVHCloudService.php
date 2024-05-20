@@ -55,27 +55,27 @@ class OVHCloudService implements ServerServiceContract
         $this->ovh->delete("/cloud/project/instance/$identifier/sshkey");
     }
 
-    public function deleteServer(int $identifier): void
+    public function deleteServer(int|string $identifier): void
     {
         $this->ovh->delete("/cloud/project/instance/$identifier");
     }
 
-    public function powerOnServer(int $identifier): void
+    public function powerOnServer(int|string $identifier): void
     {
         $this->ovh->post("/cloud/project/instance/$identifier/action/start");
     }
 
-    public function powerOffServer(int $identifier): void
+    public function powerOffServer(int|string $identifier): void
     {
         $this->ovh->post("/cloud/project/instance/$identifier/action/stop");
     }
 
-    public function shutdownServer(int $identifier): void
+    public function shutdownServer(int|string $identifier): void
     {
         $this->ovh->post("/cloud/project/instance/$identifier/action/shutdown");
     }
 
-    public function rebootServer(int $identifier): void
+    public function rebootServer(int|string $identifier): void
     {
         $this->ovh->post("/cloud/project/instance/$identifier/action/reboot");
     }

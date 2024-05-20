@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Actions\Spork;
 
+use App\Contracts\ActionInterface;
 use App\Jobs\FetchResourcesFromCredential;
 use App\Models\Credential;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
 
-class SyncDataFromCredential extends CustomAction
+class SyncDataFromCredential extends CustomAction implements ActionInterface
 {
     public function __construct($name = 'Sync Data From Credential', $slug = 'sync-data-from-credential')
     {

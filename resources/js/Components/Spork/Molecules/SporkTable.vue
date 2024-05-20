@@ -18,11 +18,15 @@
             </tr>
             </thead>
             <tbody class="bg-white dark:bg-stone-900">
-            <tr v-for="person in items" :key="person" class="even:bg-stone-50 dark:even:bg-stone-800">
+            <ContextMenu as="tr" v-for="person in items" :key="person" class="even:bg-stone-50 dark:even:bg-stone-800">
               <td v-for="header in headers" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-stone-900 dark:text-stone-50 sm:pl-3">
-              {{ parseTheAccessor(header, person) }}
+                {{ parseTheAccessor(header, person) }}
               </td>
-            </tr>
+
+              <template #items>
+                <slot name="context-items" :item="person"></slot>
+              </template>
+            </ContextMenu>
 
             <tr v-if="items?.length === 0">
               <td :colspan="headers.length + 1" class="text-center p-4 dark:text-stone-50">
@@ -39,6 +43,7 @@
 
 <script setup>
 import dayjs from 'dayjs';
+import ContextMenu from '@/Components/ContextMenus/ContextMenu.vue'
 defineProps({
   headers: Array,
   items: Array,

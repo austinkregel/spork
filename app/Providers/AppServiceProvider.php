@@ -8,6 +8,7 @@ use App\Contracts\Repositories\CredentialRepositoryContract;
 use App\Contracts\Services\ImapServiceContract;
 use App\Contracts\Services\JiraServiceContract;
 use App\Contracts\Services\NamecheapServiceContract;
+use App\Contracts\Services\News\NewsServiceContract;
 use App\Contracts\Services\PlaidServiceContract;
 use App\Contracts\Services\WeatherServiceContract;
 use App\Models\Credential;
@@ -28,6 +29,7 @@ use App\Repositories\CredentialRepository;
 use App\Services\Finance\PlaidService;
 use App\Services\JiraService;
 use App\Services\Messaging\ImapCredentialService;
+use App\Services\News\NewsService;
 use App\Services\Registrar\NamecheapService;
 use App\Services\Weather\OpenWeatherService;
 use Illuminate\Support\ServiceProvider;
@@ -54,6 +56,7 @@ class AppServiceProvider extends ServiceProvider
         Team::observe(ApplyCredentialsObserver::class);
         User::observe(ApplyCredentialsObserver::class);
 
+        $this->app->bind(NewsServiceContract::class, NewsService::class);
         $this->app->bind(NamecheapServiceContract::class, NamecheapService::class);
         $this->app->bind(PlaidServiceContract::class, PlaidService::class);
         $this->app->bind(CredentialRepositoryContract::class, CredentialRepository::class);
