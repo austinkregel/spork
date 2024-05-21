@@ -13,6 +13,8 @@ use App\Events\Models\User\UserUpdated;
 use App\Events\Models\User\UserUpdating;
 use App\Models\Finance\Account;
 use App\Models\Traits\HasProjectResource;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -40,36 +42,29 @@ class User extends Authenticatable implements ModelQuery, Taggable
     use LogsActivity;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name', 'email', 'password',
-    ];
+    protected $fillable = ['name', 'email', 'password'];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
-    ];
+    protected $hidden = ['password', 'remember_token', 'two_factor_recovery_codes', 'two_factor_secret'];
 
     /**
      * The accessors to append to the model's array form.
      *
      * @var array<int, string>
      */
-    protected $appends = [
-        'profile_photo_url',
-    ];
+    protected $appends = ['profile_photo_url'];
 
     public $dispatchesEvents = [
         'created' => UserCreated::class,

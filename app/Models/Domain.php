@@ -12,6 +12,8 @@ use App\Events\Models\Domain\DomainDeleting;
 use App\Events\Models\Domain\DomainUpdated;
 use App\Events\Models\Domain\DomainUpdating;
 use App\Models\Traits\HasProjectResource;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,14 +28,10 @@ class Domain extends Model implements Crud, ModelQuery, Taggable
     use HasProjectResource;
     use HasTags;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
-    public $fillable = [
-        'name',
-        'verification_key',
-        'cloudflare_id',
-        'domain_id',
-        'registered_at',
-    ];
+    public $fillable = ['name', 'verification_key', 'cloudflare_id', 'domain_id', 'registered_at'];
 
     public $dispatchesEvents = [
         'created' => DomainCreated::class,

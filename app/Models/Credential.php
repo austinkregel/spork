@@ -14,6 +14,8 @@ use App\Events\Models\Credential\CredentialUpdated;
 use App\Events\Models\Credential\CredentialUpdating;
 use App\Models\Finance\Account;
 use App\Models\Traits\HasProjectResource;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,43 +28,27 @@ class Credential extends Model implements Crud, ModelQuery
     use HasFactory;
     use HasProjectResource;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public const DIGITAL_OCEAN = 'digital-ocean';
-
     public const CLOUDFLARE = 'cloudflare';
-
     public const NAMECHEAP = 'namecheap';
-
     public const OVH_CLOUD = 'ovhcloud';
-
     public const VULTR = 'vultr';
-
     public const LINODE = 'linode';
-
     public const GO_DADDY = 'godaddy';
-
     public const GOOGLE_DOMAINS = 'google-domains';
-
     public const AWS_ROUTE_53 = 'aws-route53';
-
     public const GITHUB_SOURCE = 'github';
-
     public const FORGE_DEVELOPMENT = 'forge';
-
     public const TYPE_SERVER = 'server';
-
     public const TYPE_DOMAIN = 'domain';
-
     public const TYPE_REGISTRAR = 'registrar';
-
     public const TYPE_DEVELOPMENT = 'development';
-
     public const TYPE_SOURCE = 'source';
-
     public const TYPE_FINANCE = 'finance';
-
     public const TYPE_SSH = 'ssh';
-
     public const TYPE_EMAIL = 'email';
 
     public const ALL_DOMAIN_PROVIDERS = [
@@ -76,12 +62,7 @@ class Credential extends Model implements Crud, ModelQuery
         self::AWS_ROUTE_53,
     ];
 
-    public const ALL_SERVER_PROVIDERS = [
-        self::DIGITAL_OCEAN,
-        self::OVH_CLOUD,
-        self::VULTR,
-        self::LINODE,
-    ];
+    public const ALL_SERVER_PROVIDERS = [self::DIGITAL_OCEAN, self::OVH_CLOUD, self::VULTR, self::LINODE];
 
     public const ALL_REGISTRAR_PROVIDERS = [
         self::OVH_CLOUD,
@@ -92,21 +73,11 @@ class Credential extends Model implements Crud, ModelQuery
         self::GO_DADDY,
     ];
 
-    public const ALL_DEVELOPMENT_PROVIDERS = [
-        self::FORGE_DEVELOPMENT,
-    ];
-
-    public const ALL_SOURCE_PROVIDERS = [
-        self::GITHUB_SOURCE,
-    ];
+    public const ALL_DEVELOPMENT_PROVIDERS = [self::FORGE_DEVELOPMENT];
+    public const ALL_SOURCE_PROVIDERS = [self::GITHUB_SOURCE];
 
     public $guarded = [];
-
-    public $hidden = [
-        'api_key',
-        'access_token',
-        'refresh_token',
-    ];
+    public $hidden = ['api_key', 'access_token', 'refresh_token'];
 
     public $fillable = [
         'name',
@@ -129,9 +100,7 @@ class Credential extends Model implements Crud, ModelQuery
         'updated' => CredentialUpdated::class,
     ];
 
-    public $actions = [
-        SyncDataFromCredential::class,
-    ];
+    public $actions = [SyncDataFromCredential::class];
 
     protected function casts(): array
     {

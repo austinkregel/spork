@@ -11,6 +11,8 @@ use App\Events\Models\Server\ServerDeleted;
 use App\Events\Models\Server\ServerDeleting;
 use App\Events\Models\Server\ServerUpdated;
 use App\Events\Models\Server\ServerUpdating;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +26,8 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     use HasFactory;
     use HasTags;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $fillable = [
         'server_id',

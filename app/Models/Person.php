@@ -11,6 +11,8 @@ use App\Events\Models\Person\PersonDeleted;
 use App\Events\Models\Person\PersonDeleting;
 use App\Events\Models\Person\PersonUpdated;
 use App\Events\Models\Person\PersonUpdating;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 class Person extends Model implements Crud, ModelQuery
 {
     use HasFactory;
+    use ScopeRelativeSearch;
 
     public $guarded = [];
 
@@ -48,5 +51,10 @@ class Person extends Model implements Crud, ModelQuery
     public function scopeQ(Builder $query, string $string): void
     {
         $query->where('name', 'like', '%'.$string.'%');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

@@ -10,6 +10,8 @@ use App\Events\Models\Article\ArticleDeleted;
 use App\Events\Models\Article\ArticleDeleting;
 use App\Events\Models\Article\ArticleUpdated;
 use App\Events\Models\Article\ArticleUpdating;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use App\Services\News\Feeds\FeedItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +24,8 @@ class Article extends Model implements Crud
 {
     use HasFactory;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $fillable = [
         'uuid',

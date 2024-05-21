@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 interface Crud
 {
-//    public function scopeQ(Builder $query, string $string): void;
-//    public function scopeRelative(Builder $query, string $string): void;
+    public function scopeQ(Builder $query, string $string): void;
+    public function scopeRelative(Builder $query, string $string): void;
 }

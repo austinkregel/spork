@@ -13,6 +13,8 @@ use App\Events\Models\Transaction\TransactionUpdated;
 use App\Events\Models\Transaction\TransactionUpdating;
 use App\Models\Crud;
 use App\Models\Taggable;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,24 +24,24 @@ use Spatie\Tags\HasTags;
 
 class Transaction extends Model implements Crud, ModelQuery, Taggable
 {
-    use HasFactory, HasTags;
+    use HasFactory;
+    use HasTags;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $fillable = [
         'name',
         'amount',
         'account_id',
         'date',
-
         'pending',
         'category_id',
         'transaction_id',
         'transaction_type',
-
         'personal_finance_category',
         'personal_finance_category_detailed',
         'personal_finance_icon',
         'seller_icon',
-
         'data',
     ];
 

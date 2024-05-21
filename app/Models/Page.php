@@ -12,6 +12,8 @@ use App\Events\Models\Page\PageDeleting;
 use App\Events\Models\Page\PageUpdated;
 use App\Events\Models\Page\PageUpdating;
 use App\Models\Traits\HasProjectResource;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +22,8 @@ class Page extends Model implements Crud, ModelQuery
 {
     use HasFactory;
     use HasProjectResource;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $fillable = [
         'title',

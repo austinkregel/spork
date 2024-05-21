@@ -10,6 +10,8 @@ use App\Events\Models\Research\ResearchDeleted;
 use App\Events\Models\Research\ResearchDeleting;
 use App\Events\Models\Research\ResearchUpdated;
 use App\Events\Models\Research\ResearchUpdating;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -20,12 +22,10 @@ class Research extends Model implements Crud
 {
     use HasFactory;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
-    public $fillable = [
-        'topic',
-        'notes',
-        'sources',
-    ];
+    public $fillable = ['topic', 'notes', 'sources'];
 
     public $dispatchesEvents = [
         'created' => ResearchCreated::class,

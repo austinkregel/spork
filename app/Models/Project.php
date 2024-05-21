@@ -12,6 +12,7 @@ use App\Events\Models\Project\ProjectDeleting;
 use App\Events\Models\Project\ProjectUpdated;
 use App\Events\Models\Project\ProjectUpdating;
 use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use App\Services\SshKeyGeneratorService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,6 +31,8 @@ class Project extends Model implements Crud, ModelQuery, Taggable
     use HasFactory;
     use HasTags;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $guarded = [];
 
@@ -84,6 +87,9 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         );
     }
 
+    /**
+     * These are credentials that are explicitly assigned to the project.
+     */
     public function credentials(): MorphToMany
     {
         return $this->morphedByMany(
@@ -142,7 +148,7 @@ class Project extends Model implements Crud, ModelQuery, Taggable
 
     public function owner(): MorphMany
     {
-        return $this->morphMany(ExternalRssFeed::class, 'owner');
+        return $this->morphMany(User::class, 'owner');
     }
 
     public function getActivitylogOptions(): LogOptions
