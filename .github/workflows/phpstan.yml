@@ -1,8 +1,8 @@
 name: PHP Unit
 on: [ pull_request ]
 jobs:
-  phpunit:
-    name: PHPStan
+  larastan:
+    name: Larastan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +21,10 @@ jobs:
           touch database/database.sqlite
           cp .env.ci .env
           ./bin/sail up -d
-      - name: tear down containers
+      - name: Larastan Analysis
         run: |
           ./bin/sail bin phpstan analyse --error-format=github
 
+      - name: tear down containers
+        run: |
+          ./bin/sail down
