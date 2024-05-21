@@ -15,7 +15,7 @@ class MoveJiraTicketIfApplicableListener implements ShouldQueue
     ) {
     }
 
-    public function handle(TaskUpdated $updatedTask)
+    public function handle(TaskUpdated $updatedTask): void
     {
         $task = $updatedTask->model;
         $task->load('project');

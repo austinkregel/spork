@@ -19,16 +19,17 @@ class CrudControllerTest extends TestCase
 
     public function actingAsUser(): User
     {
-        if (!Role::firstWhere('name', 'developer')) {
+        if (! Role::firstWhere('name', 'developer')) {
             Role::create(['name' => 'developer']);
         }
 
         $this->actingAs($this->user = App\Models\User::factory()->withPersonalTeam()->create());
         $this->user->assignRole('developer');
+
         return $this->user;
     }
 
-    public function testBasicTestSuccess()
+    public function testBasicTestSuccess(): void
     {
         $this->actingAsUser();
         Project::factory()->create([
@@ -40,7 +41,7 @@ class CrudControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testCreateTestSuccess()
+    public function testCreateTestSuccess(): void
     {
         $this->actingAsUser();
         Project::factory()->create([
@@ -56,7 +57,7 @@ class CrudControllerTest extends TestCase
         $response->assertStatus(201);
     }
 
-    public function testUpdateTestSuccess()
+    public function testUpdateTestSuccess(): void
     {
         $this->actingAsUser();
         $project = Project::factory()->create([
@@ -73,7 +74,7 @@ class CrudControllerTest extends TestCase
         $response->assertJsonFragment(['name' => 'Austin Kregel']);
     }
 
-    public function testUpdatePatchTestSuccess()
+    public function testUpdatePatchTestSuccess(): void
     {
         $this->actingAsUser();
         $project = Project::factory()->create([
@@ -90,7 +91,7 @@ class CrudControllerTest extends TestCase
         $response->assertJsonFragment(['name' => 'Austin Kregel']);
     }
 
-    public function testDeleteTestSuccess()
+    public function testDeleteTestSuccess(): void
     {
         $this->actingAsUser();
         $project = Project::factory()->create([
@@ -106,7 +107,7 @@ class CrudControllerTest extends TestCase
         $this->assertDatabaseMissing('projects', $project2->toArray());
     }
 
-    public function testShowTestSuccess()
+    public function testShowTestSuccess(): void
     {
         $this->actingAsUser();
         $project = Project::factory()->create([

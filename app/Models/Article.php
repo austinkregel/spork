@@ -10,9 +10,13 @@ use App\Events\Models\Article\ArticleDeleted;
 use App\Events\Models\Article\ArticleDeleting;
 use App\Events\Models\Article\ArticleUpdated;
 use App\Events\Models\Article\ArticleUpdating;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use App\Services\News\Feeds\FeedItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -20,6 +24,8 @@ class Article extends Model implements Crud
 {
     use HasFactory;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $fillable = [
         'uuid',
@@ -34,10 +40,6 @@ class Article extends Model implements Crud
         'url',
     ];
 
-    public $casts = [
-        'last_modified' => 'datetime',
-    ];
-
     public $dispatchesEvents = [
         'created' => ArticleCreated::class,
         'creating' => ArticleCreating::class,
@@ -46,6 +48,13 @@ class Article extends Model implements Crud
         'updating' => ArticleUpdating::class,
         'updated' => ArticleUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'last_modified' => 'datetime',
+        ];
+    }
 
     public static function fromFeedItem(ExternalRssFeed $feed, FeedItem $item): self
     {
@@ -70,12 +79,12 @@ class Article extends Model implements Crud
         return $post;
     }
 
-    public function author()
+    public function author(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function externalRssFeed()
+    public function externalRssFeed(): BelongsTo
     {
         return $this->belongsTo(ExternalRssFeed::class, 'author_id');
     }

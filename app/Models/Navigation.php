@@ -12,23 +12,23 @@ use App\Events\Models\Navigation\NavigationDeleting;
 use App\Events\Models\Navigation\NavigationUpdated;
 use App\Events\Models\Navigation\NavigationUpdating;
 use App\Models\Traits\HasConditions;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Navigation extends Model implements Conditionable, Crud
 {
-    use HasConditions, HasFactory;
+    use HasConditions;
+    use HasFactory;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $guarded = [];
 
-    public $casts = [
-        'authentication_required' => 'boolean',
-        'settings' => 'json',
-    ];
-
-    public $hidden = [
-        'id', 'created_at', 'updated_at',
-    ];
+    public $hidden = ['id', 'created_at', 'updated_at'];
 
     public $dispatchesEvents = [
         'created' => NavigationCreated::class,
@@ -39,17 +39,25 @@ class Navigation extends Model implements Conditionable, Crud
         'updated' => NavigationUpdated::class,
     ];
 
-    public function children()
+    protected function casts(): array
+    {
+        return [
+            'authentication_required' => 'boolean',
+            'settings' => 'json',
+        ];
+    }
+
+    public function children(): HasMany
     {
         return $this->hasMany(Navigation::class, 'parent_id');
     }
 
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Navigation::class);
     }
 
-    public function domain()
+    public function domain(): BelongsTo
     {
         return $this->belongsTo(Domain::class);
     }

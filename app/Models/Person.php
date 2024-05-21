@@ -11,6 +11,7 @@ use App\Events\Models\Person\PersonDeleted;
 use App\Events\Models\Person\PersonDeleting;
 use App\Events\Models\Person\PersonUpdated;
 use App\Events\Models\Person\PersonUpdating;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,20 +19,9 @@ use Illuminate\Database\Eloquent\Model;
 class Person extends Model implements Crud, ModelQuery
 {
     use HasFactory;
+    use ScopeRelativeSearch;
 
     public $guarded = [];
-
-    public $casts = [
-        'birthdate' => 'date',
-        'phone_numbers' => 'array',
-        'addresses' => 'array',
-        'emails' => 'array',
-        'names' => 'array',
-        'identifiers' => 'array',
-        'locality' => 'array',
-        'jobs' => 'array',
-        'education' => 'array',
-    ];
 
     public $dispatchesEvents = [
         'created' => PersonCreated::class,
@@ -42,8 +32,28 @@ class Person extends Model implements Crud, ModelQuery
         'updated' => PersonUpdated::class,
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'birthdate' => 'date',
+            'phone_numbers' => 'array',
+            'addresses' => 'array',
+            'emails' => 'array',
+            'names' => 'array',
+            'identifiers' => 'array',
+            'locality' => 'array',
+            'jobs' => 'array',
+            'education' => 'array',
+        ];
+    }
+
     public function scopeQ(Builder $query, string $string): void
     {
         $query->where('name', 'like', '%'.$string.'%');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

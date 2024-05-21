@@ -9,7 +9,7 @@ use App\Models\Person;
 
 class CreatePersonForNewUserListener
 {
-    public function handle(UserCreated $userEvent)
+    public function handle(UserCreated $userEvent): void
     {
         $user = $userEvent->model;
         Person::create([

@@ -21,7 +21,7 @@ class CreateDefaultProjectsListener
         'Friends & Partners',
     ];
 
-    public function handle(UserCreated $userEvent)
+    public function handle(UserCreated $userEvent): void
     {
         $user = $userEvent->model;
 

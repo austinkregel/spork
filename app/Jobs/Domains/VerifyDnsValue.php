@@ -19,7 +19,7 @@ class VerifyDnsValue implements ShouldQueue
     ) {
     }
 
-    public function handle()
+    public function handle(): void
     {
         $value = array_map(fn (array $record) => $record['ip'], dns_get_record($this->host, DNS_A));
 

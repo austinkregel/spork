@@ -28,7 +28,7 @@ class SetupLoadBalancerJob implements ShouldQueue
     ) {
     }
 
-    public function handle()
+    public function handle(): void
     {
         // Configure the domain for the server
         // Register the domain to forge.

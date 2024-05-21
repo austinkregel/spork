@@ -12,6 +12,7 @@ use App\Events\Models\Message\MessageUpdated;
 use App\Events\Models\Message\MessageUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Tags\HasTags;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
@@ -43,14 +44,6 @@ class Message extends Model implements Taggable
         'subject',
     ];
 
-    public $casts = [
-        'seen' => 'bool',
-        'spam' => 'bool',
-        'answered' => 'bool',
-        'originated_at' => 'timestamp',
-        'settings' => 'json',
-    ];
-
     public $appends = ['is_user'];
 
     public $dispatchesEvents = [
@@ -62,25 +55,37 @@ class Message extends Model implements Taggable
         'updated' => MessageUpdated::class,
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'seen' => 'bool',
+            'spam' => 'bool',
+            'answered' => 'bool',
+            'originated_at' => 'timestamp',
+            'settings' => 'json',
+        ];
+    }
+
     public function getIsUserAttribute()
     {
         return auth()->id() === $this->from_person;
     }
 
-    public function credential()
+    public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
     }
 
-    public function fromPerson()
+    public function fromPerson(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'from_person');
     }
 
-    public function toPerson()
+    public function toPerson(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'to_person');
     }
+
     public function from()
     {
         return $this->hasManyJson(Person::class, 'emails', 'from_email');

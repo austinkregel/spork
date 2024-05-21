@@ -12,6 +12,7 @@ use App\Events\Models\ShortCode\ShortCodeUpdated;
 use App\Events\Models\ShortCode\ShortCodeUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ShortCode extends Model
 {
@@ -24,10 +25,6 @@ class ShortCode extends Model
         'status',
     ];
 
-    public $casts = [
-        'is_enabled' => 'bool',
-    ];
-
     public $dispatchesEvents = [
         'created' => ShortCodeCreated::class,
         'creating' => ShortCodeCreating::class,
@@ -37,7 +34,14 @@ class ShortCode extends Model
         'updated' => ShortCodeUpdated::class,
     ];
 
-    public function user()
+    protected function casts(): array
+    {
+        return [
+            'is_enabled' => 'bool',
+        ];
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

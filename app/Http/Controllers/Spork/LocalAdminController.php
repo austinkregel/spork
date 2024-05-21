@@ -42,7 +42,7 @@ class LocalAdminController extends Controller
             3 => $split[2],
             4 => $split[2],
 
-            default => dd($split),
+            default => abort(404, 'No model found for path'),
         };
 
         $models = array_reduce(Code::instancesOf(Crud::class)->getClasses(), fn ($all, $class) => array_merge(
@@ -68,6 +68,7 @@ class LocalAdminController extends Controller
             ->allowedFields($description['fields'])
             ->allowedFilters(array_merge([
                 Filter::scope('q'),
+                Filter::scope('relative'),
             ], $description['filters']))
             ->allowedIncludes($description['includes'])
             ->allowedSorts($description['sorts']);

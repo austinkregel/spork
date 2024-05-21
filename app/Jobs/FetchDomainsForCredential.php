@@ -33,10 +33,8 @@ class FetchDomainsForCredential implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle(Dispatcher $dispatcher)
+    public function handle(Dispatcher $dispatcher): void
     {
         if ($this->batch()?->cancelled()) {
             return;

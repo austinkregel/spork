@@ -32,7 +32,7 @@ class RunDeployment implements ShouldQueue
     {
     }
 
-    public function handle()
+    public function handle(): void
     {
         $servers = $this->project->servers;
         $domains = $this->project->domains;

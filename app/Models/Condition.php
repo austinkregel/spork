@@ -10,12 +10,16 @@ use App\Events\Models\Condition\ConditionDeleted;
 use App\Events\Models\Condition\ConditionDeleting;
 use App\Events\Models\Condition\ConditionUpdated;
 use App\Events\Models\Condition\ConditionUpdating;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Condition extends Model implements Crud
 {
     use HasFactory;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public const ALL_COMPARATORS = [
         self::COMPARATOR_EQUALS,
@@ -59,13 +63,7 @@ class Condition extends Model implements Crud
 
     public const COMPARATOR_GREATER_THAN_EQUAL = 'GREATER_THAN_EQUAL';
 
-    public $fillable = [
-        'parameter',
-        'comparator',
-        'value',
-        'conditionable_type',
-        'conditionable_id',
-    ];
+    public $fillable = ['parameter', 'comparator', 'value', 'conditionable_type', 'conditionable_id'];
 
     public $dispatchesEvents = [
         'created' => ConditionCreated::class,

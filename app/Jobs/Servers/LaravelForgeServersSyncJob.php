@@ -9,7 +9,7 @@ use App\Services\Factories\ServerServiceFactory;
 
 class LaravelForgeServersSyncJob extends AbstractSyncServerResourceJob
 {
-    public function handle(ServerServiceFactory $serviceFactory)
+    public function handle(ServerServiceFactory $serviceFactory): void
     {
         if ($this->batch()?->cancelled()) {
             return;

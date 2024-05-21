@@ -21,11 +21,11 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
+            'name' => $this->faker->name(),
             'amount' => $this->faker->numberBetween(2, 100),
             'account_id' => fn () => Account::factory()->create()->account_id,
             'date' => $this->faker->date(),
-            'pending' => $this->faker->boolean,
+            'pending' => $this->faker->boolean(),
             'category_id' => $this->faker->numberBetween(2, 1000),
             'transaction_id' => Str::random(32),
             'transaction_type' => 'depository',

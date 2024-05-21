@@ -71,7 +71,7 @@ Route::middleware([
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
-    Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\App\Http\Middleware\Authenticate::class)->name('user.api-query');
+    Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
 
     Route::post('project/{project}/deploy', [Controllers\Spork\ProjectsController::class, 'deploy'])->name('project.deploy');
 
@@ -82,11 +82,7 @@ Route::middleware([
         ->name('project.detach');
 });
 
-Route::group(['prefix' => '-', 'middleware' => [
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-]], function () {
+Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'), 'verified')->group(function () {
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
 
     Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
@@ -106,7 +102,7 @@ Route::group(['prefix' => '-', 'middleware' => [
         $img->setImageCompressionQuality(90);
         $img->writeImageFile(fopen($filePath.'.jpg', 'w'));
         try {
-            return response(file_get_contents($filePath . '.jpg'), 200, [
+            return response(file_get_contents($filePath.'.jpg'), 200, [
                 'Content-Type' => 'image/jpeg',
             ]);
         } finally {

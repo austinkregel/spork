@@ -17,7 +17,7 @@ final class MakeOperationCommand extends GeneratorCommand
 
     protected $type = 'Operation';
 
-    public function handle()
+    public function handle(): void
     {
         parent::handle();
 

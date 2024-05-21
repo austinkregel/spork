@@ -14,8 +14,12 @@ use App\Events\Models\Credential\CredentialUpdated;
 use App\Events\Models\Credential\CredentialUpdating;
 use App\Models\Finance\Account;
 use App\Models\Traits\HasProjectResource;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -24,6 +28,8 @@ class Credential extends Model implements Crud, ModelQuery
     use HasFactory;
     use HasProjectResource;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public const DIGITAL_OCEAN = 'digital-ocean';
 
@@ -74,12 +80,7 @@ class Credential extends Model implements Crud, ModelQuery
         self::AWS_ROUTE_53,
     ];
 
-    public const ALL_SERVER_PROVIDERS = [
-        self::DIGITAL_OCEAN,
-        self::OVH_CLOUD,
-        self::VULTR,
-        self::LINODE,
-    ];
+    public const ALL_SERVER_PROVIDERS = [self::DIGITAL_OCEAN, self::OVH_CLOUD, self::VULTR, self::LINODE];
 
     public const ALL_REGISTRAR_PROVIDERS = [
         self::OVH_CLOUD,
@@ -90,25 +91,13 @@ class Credential extends Model implements Crud, ModelQuery
         self::GO_DADDY,
     ];
 
-    public const ALL_DEVELOPMENT_PROVIDERS = [
-        self::FORGE_DEVELOPMENT,
-    ];
+    public const ALL_DEVELOPMENT_PROVIDERS = [self::FORGE_DEVELOPMENT];
 
-    public const ALL_SOURCE_PROVIDERS = [
-        self::GITHUB_SOURCE,
-    ];
+    public const ALL_SOURCE_PROVIDERS = [self::GITHUB_SOURCE];
 
     public $guarded = [];
 
-    public $hidden = [
-        'api_key',
-        'access_token',
-        'refresh_token',
-    ];
-
-    public $casts = [
-        'settings' => 'json',
-    ];
+    public $hidden = ['api_key', 'access_token', 'refresh_token'];
 
     public $fillable = [
         'name',
@@ -131,11 +120,16 @@ class Credential extends Model implements Crud, ModelQuery
         'updated' => CredentialUpdated::class,
     ];
 
-    public $actions = [
-        SyncDataFromCredential::class,
-    ];
+    public $actions = [SyncDataFromCredential::class];
 
-    public function user()
+    protected function casts(): array
+    {
+        return [
+            'settings' => 'json',
+        ];
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -177,17 +171,17 @@ class Credential extends Model implements Crud, ModelQuery
             ->logOnlyDirty();
     }
 
-    public function servers()
+    public function servers(): HasMany
     {
         return $this->hasMany(Server::class);
     }
 
-    public function accounts()
+    public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
     }
 
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }

@@ -27,7 +27,7 @@ class CompileNpmAssetsJob implements ShouldQueue
     ) {
     }
 
-    public function handle()
+    public function handle(): void
     {
         $sshCredential = $this->project->credentialFor(Credential::TYPE_SSH);
 

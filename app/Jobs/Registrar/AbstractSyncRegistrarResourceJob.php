@@ -12,7 +12,7 @@ abstract class AbstractSyncRegistrarResourceJob extends AbstractSyncResourceJob
 {
     protected RegistrarServiceContract $service;
 
-    public function handle(RegistrarServiceFactory $registrarServiceFactory)
+    public function handle(RegistrarServiceFactory $registrarServiceFactory): void
     {
         $this->service = $registrarServiceFactory->make($this->credential);
         $this->sync();

@@ -12,12 +12,17 @@ use App\Events\Models\Account\AccountUpdated;
 use App\Events\Models\Account\AccountUpdating;
 use App\Models\Credential;
 use App\Models\Crud;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Account extends Model implements Crud
 {
     use HasFactory;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     protected $fillable = [
         'account_id',
@@ -40,7 +45,7 @@ class Account extends Model implements Crud
         'updated' => AccountUpdated::class,
     ];
 
-    public function credential()
+    public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
     }

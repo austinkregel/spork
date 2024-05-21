@@ -32,10 +32,8 @@ class SimpleLaravelWithCron implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $client = new Forge($this->credential->access_token, new Client([
             'base_uri' => 'https://forge.laravel.com/api/v1/',

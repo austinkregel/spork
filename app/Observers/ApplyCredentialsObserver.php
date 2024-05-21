@@ -21,17 +21,17 @@ class ApplyCredentialsObserver
         'restore' => 'restore_',
     ];
 
-    public function created($modelThatWillHavePermissionsCreatedForIt)
+    public function created($modelThatWillHavePermissionsCreatedForIt): void
     {
         $this->createPermissionsForModel($modelThatWillHavePermissionsCreatedForIt);
     }
 
-    public function deleted($modelThatHadPermissionsCreatedForIt)
+    public function deleted($modelThatHadPermissionsCreatedForIt): void
     {
         $this->deletePermissionsForModel($modelThatHadPermissionsCreatedForIt);
     }
 
-    public function restored($modelThatHadPermissionsCreatedForIt)
+    public function restored($modelThatHadPermissionsCreatedForIt): void
     {
         $this->createPermissionsForModel($modelThatHadPermissionsCreatedForIt);
     }

@@ -17,7 +17,7 @@ class JobBatchUpdated extends AbstractLogicalEvent implements ShouldBroadcast
     ) {
     }
 
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         return User::query()
             ->whereIn('email', config('auth.admin_emails'))

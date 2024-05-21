@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
-use App\Services\Code;
-use Illuminate\Notifications\Notification;
 use Inertia\Inertia;
 
 class SettingsController
@@ -19,11 +17,7 @@ class SettingsController
             'settings' => new class()
             {
             },
-            'notifications' =>
-                array_map(
-                    fn ($class) => $class,
-                    Code::instancesOf(Notification::class)->getClasses(),
-                )
+            'notifications' => auth()->user()->notifications,
 
         ]);
     }

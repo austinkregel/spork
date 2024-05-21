@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Notifications;
 
-use App\Contracts\Services\News\NewsServiceContract;
 use App\Contracts\Services\WeatherServiceContract;
 use App\Models\Article;
-use App\Models\Finance\Transaction;
 use App\Models\Person;
 use App\Models\User;
 use App\Notifications\Daily\SummaryNotification;
@@ -19,15 +19,16 @@ use Illuminate\Queue\SerializesModels;
 class BuildSummaryNotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     public function handle(
         WeatherServiceContract $weatherService,
-    ): void
-    {
+    ): void {
         $now = Carbon::now();
         $nowLocal = Carbon::now('America/Detroit');
         $page = 1;
         $headlines = Article::query()
             ->limit(10)
+            ->select('headline', 'last_modified', 'url')
             ->distinct('headline')
             ->where('last_modified', '>=', $nowLocal->copy()->startOfDay())
             ->inRandomOrder()
@@ -43,34 +44,24 @@ class BuildSummaryNotificationJob implements ShouldQueue
                 );
 
             /** @var User $user */
-            foreach ($userPaginator->items() as $user) {
-                /** @var Person $person */
-                $person = $user->person();
-                if (empty($person)) {
-                    continue;
-                }
-
-                $weather = null;
-
-                if (!empty($person->primary_address)) {
-                    $weatherResponse = $weatherService->query($person->primary_address);
-                    $weather = collect($weatherResponse)->first();
-                }
-
-                $user->notify(new SummaryNotification(
-                    $weather,
-                    $headlines->toArray(),
-                    Transaction::query()
-                        ->whereIn('account_id', $user->accounts()->pluck('account_id'))
-                        ->where('date', '<=', $nowLocal->copy()->addDay()->endOfDay())
-                        ->where('date', '>=', $nowLocal->copy()->subDays(7)->startOfDay())
-                        ->where('name', 'not like', '%Transfer%')
-                        ->orderBy('date', 'desc')
-                        ->get()
-                        ->groupBy('date'),
-                    $user->accounts
-                ));
-            }
         } while ($userPaginator->hasMorePages());
+        foreach ($userPaginator->items() as $user) {
+            /** @var Person $person */
+            $person = $user->person();
+            if (empty($person)) {
+                continue;
+            }
+
+            $weather = null;
+
+            if (! empty($person->primary_address)) {
+                $weatherResponse = $weatherService->query($person->primary_address);
+                $weather = collect($weatherResponse)->first();
+            }
+
+            $user->notify(new SummaryNotification(
+                $headlines->toArray(),
+            ));
+        }
     }
 }

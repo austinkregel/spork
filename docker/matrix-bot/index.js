@@ -5,22 +5,17 @@ import {
     AutojoinUpgradedRoomsMixin,
     SimpleFsStorageProvider,
     RustSdkCryptoStorageProvider,
-    RustSdkAppserviceCryptoStorageProvider,
-    Appservice,
-    SimpleRetryJoinStrategy,
-    EncryptionAlgorithm,
-    ConsoleLogger,
 } from "matrix-bot-sdk";
 import { StoreType } from "@matrix-org/matrix-sdk-crypto-nodejs";
 import dotenv from 'dotenv';
 import Sequelize, { DataTypes, QueryTypes } from "sequelize";
 import fs from 'fs';
-import ora from 'ora';
 import dayjs from 'dayjs';
 import crypto from "crypto";
 
 dotenv.config();
 let dmTarget = null
+const matrixUserName = '@'+process.env.MATRIX_USERNAME+':'+(new URL(process.env.MATRIX_HOST?.replace('matrix.', ''))).hostname;
 
 const storageProvider = new SimpleFsStorageProvider("./docker/matrix-bot/bot.json"); // or any other IStorageProvider
 const cryptoProvider = new RustSdkCryptoStorageProvider("./docker/matrix-bot/db", StoreType.Sled);
@@ -37,7 +32,6 @@ const sequelize = new Sequelize(
     }
 );
 
-
 // Since we're talking directly with our database, Laravel isn't getting any of the events
 //   Nothing in our UI will update, and no php code will trigger.
 // We need a way to hook
@@ -53,7 +47,6 @@ async function findOrCreateMessageEvent(
     is_decrypted = false
 ) {
     if (message.type !== 'm.room.message') {
-        console.log('Told this was a message, but reporeted as ', message.type)
         return null;
     }
     let threadInQuestion = await Threads.findOne({
@@ -63,6 +56,7 @@ async function findOrCreateMessageEvent(
     if (!threadInQuestion?.name) {
         console.error('Thread doesn\'`t exist yet', thread);
 
+        console.log('Creating it now');
         threadInQuestion = await Threads.create({
             thread_id: thread,
             name: thread,
@@ -126,9 +120,11 @@ async function findPersonByIdentifier(People, identifier) {
     })
     let person = peoples[0];
     if (peoples && !person) {
+        const personSystemUser = await findPersonByIdentifier(People, matrixUserName);
         person = await People.create({
             name: identifier,
-            identifiers: JSON.stringify([identifier])
+            identifiers: JSON.stringify([identifier]),
+            user_id: personSystemUser.id
         });
     }
 
@@ -449,6 +445,7 @@ async function main() {
             const auth = new MatrixAuth(process.env.MATRIX_HOST);
             client = await auth.passwordLogin(process.env.MATRIX_USERNAME, process.env.MATRIX_PASSWORD);
             const { user_id, device_id } = await client.getWhoAmI();
+            const user = await findPersonByIdentifier(People, matrixUserName);
 
             credential = await Credential.create({
                 name: device_id,
@@ -456,7 +453,7 @@ async function main() {
                 service: 'matrix',
                 'access_token': client.accessToken,
                 enabled_on: dayjs(),
-                user_id: 1,
+                user_id: user.id,
             });
         } else {
             client = new MatrixClient(
@@ -608,6 +605,7 @@ async function processRoomState(state, {
     Participant,
     credential,
 }) {
+    const personSystemUser = await findPersonByIdentifier(People, matrixUserName);
     for (let stateIndex in state) {
         const event = state[stateIndex];
         let test = null;
@@ -647,9 +645,11 @@ async function processRoomState(state, {
                 const person = matchingPeople[0];
 
                 if (matchingPeople.length === 0 && !person) {
+
                     await People.create({
                         name: event.content?.displayname ?? event.sender,
-                        identifiers: JSON.stringify([event.sender])
+                        identifiers: JSON.stringify([event.sender]),
+                        user_id: personSystemUser.id
                     })
                 }
                 matchingPeople = await sequelize.query('select * from people where json_contains(identifiers, ?, \'$\')', {

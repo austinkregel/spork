@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('vcpu')->nullable();
             $table->integer('memory')->nullable();
             $table->integer('disk')->nullable();
-            $table->unsignedFloat('cost_per_hour', 10, 8)->nullable();
+            $table->float('cost_per_hour', 10, 8)->unsigned()->nullable();
 
             $table->string('ip_address')->nullable();
             $table->string('ip_address_v6')->nullable();

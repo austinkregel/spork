@@ -11,11 +11,14 @@ use App\Events\Models\Project\ProjectDeleted;
 use App\Events\Models\Project\ProjectDeleting;
 use App\Events\Models\Project\ProjectUpdated;
 use App\Events\Models\Project\ProjectUpdating;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use App\Services\SshKeyGeneratorService;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
@@ -27,10 +30,10 @@ class Project extends Model implements Crud, ModelQuery, Taggable
     use HasFactory;
     use HasTags;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $guarded = [];
-
-    protected $casts = ['settings' => 'json'];
 
     public $dispatchesEvents = [
         'created' => ProjectCreated::class,
@@ -41,9 +44,11 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         'updated' => ProjectUpdated::class,
     ];
 
-    public function scopeQ(Builder $query, string $string): void
+    protected function casts(): array
     {
-        $query->where('name', 'like', '%'.$string.'%');
+        return [
+            'settings' => 'json',
+        ];
     }
 
     public function domains(): MorphToMany
@@ -81,6 +86,9 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         );
     }
 
+    /**
+     * These are credentials that are explicitly assigned to the project.
+     */
     public function credentials(): MorphToMany
     {
         return $this->morphedByMany(
@@ -95,7 +103,7 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         return $this->belongsTo(Team::class);
     }
 
-    public function tasks()
+    public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
     }
@@ -137,9 +145,9 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         return $credential;
     }
 
-    public function owner()
+    public function owner(): MorphMany
     {
-        return $this->morphMany(ExternalRssFeed::class, 'owner');
+        return $this->morphMany(User::class, 'owner');
     }
 
     public function getActivitylogOptions(): LogOptions

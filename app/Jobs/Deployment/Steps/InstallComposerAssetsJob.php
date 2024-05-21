@@ -26,7 +26,7 @@ class InstallComposerAssetsJob
     ) {
     }
 
-    public function handle()
+    public function handle(): void
     {
         $sshCredential = $this->project->credentialFor(Credential::TYPE_SSH);
         // Run npm install, then npm run production

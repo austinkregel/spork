@@ -21,19 +21,12 @@ class DashboardController extends Controller
             ->first();
 
         return Inertia::render('Dashboard', [
-            'project_count' => \App\Models\Project::count(),
-            'server_count' => \App\Models\Server::count(),
-            'domain_count' => \App\Models\Domain::count(),
-            'credential_count' => \App\Models\Credential::count(),
-            'user_count' => \App\Models\User::count(),
-            // Unread Messages
-            // Tasks due today
-            // Domains that expire this month, or in the last 7 days
-            // Weather at my primary address
+            'accounts' => auth()->user()->accounts()
+                ->where('accounts.type', 'checking')
+                ->get(),
             'weather' => $person->primary_address ? Arr::first(app(\App\Contracts\Services\WeatherServiceContract::class)->query(
                 $person->primary_address,
             )) : null,
-
             'news' => (\App\Models\Article::query()
                 ->with('externalRssFeed.tags')
                 ->whereHas('externalRssFeed', function ($query) {

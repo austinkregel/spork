@@ -7,6 +7,8 @@ import FileOrFolder from "@/Components/Spork/FileOrFolder.vue";
 import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
 import DialogModal from "../../../../vendor/laravel/jetstream/stubs/inertia/resources/js/Components/DialogModal.vue";
 import {ref, watch} from "vue";
+import WeatherHeader from "@/Pages/Petoskey/WeatherHeader.vue";
+import dayjs from "dayjs";
 const {
     title,
     notifications,
@@ -14,7 +16,7 @@ const {
     title: String,
     notifications: Array
 });
-
+const now = ref(dayjs());
 const updateSettings = async () => {
     const response = await axios.post('/api/notification-settings', {
         database: this.database,
@@ -29,26 +31,10 @@ const updateSettings = async () => {
 <template>
   <AppLayout :title="title">
       <!-- Notification management -->
-      <pre class="min-h-28 min-w-full bg-white text-black">{{ notifications }}</pre>
-      <form @submit.prevent="updateSettings">
-          <label>
-              <input type="checkbox" v-model="database">
-              Database
-          </label>
-          <label>
-              <input type="checkbox" v-model="mail">
-              Mail
-          </label>
-          <label>
-              <input type="checkbox" v-model="webhook">
-              Webhook
-          </label>
-          <label>
-              <input type="checkbox" v-model="broadcast">
-              Broadcast
-          </label>
-          <button type="submit">Save</button>
-      </form>
+      <div class="bg-white dark:bg-stone-950 rounded shadow p-4 m-4">
+
+
+      </div>
   </AppLayout>
 </template>
 

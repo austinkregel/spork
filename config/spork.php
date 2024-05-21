@@ -23,6 +23,7 @@ return [
                 'mockery',
                 'zendframework',
                 'nativephp',
+                'laravel',
             ],
             'whitelist' => [],
         ],

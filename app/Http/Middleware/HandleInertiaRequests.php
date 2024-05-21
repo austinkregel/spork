@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
         if (auth()->check()) {
             auth()->user()->setRelation('person', auth()->user()->person());
         }
+
         return array_merge(parent::share($request), [
             'navigation' => $navigation = (new ConditionService)->navigation(),
             'current_navigation' => $navigation->where('current', true)->first(),

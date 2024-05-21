@@ -26,7 +26,7 @@ class CompileAndUploadAssetsToStorage implements ShouldQueue
     ) {
     }
 
-    public function handle()
+    public function handle(): void
     {
         Bus::chain([
             new InstallComposerAssetsJob($this->server, $this->domain, $this->project),

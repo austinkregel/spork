@@ -26,7 +26,7 @@ class VisitFacebookPageJob extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('https://www.facebook.com/newsreview')->assertSee('Facebook');

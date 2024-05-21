@@ -11,8 +11,11 @@ use App\Events\Models\DomainRecord\DomainRecordDeleted;
 use App\Events\Models\DomainRecord\DomainRecordDeleting;
 use App\Events\Models\DomainRecord\DomainRecordUpdated;
 use App\Events\Models\DomainRecord\DomainRecordUpdating;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -20,6 +23,8 @@ class DomainRecord extends Model implements Crud, ModelQuery
 {
     use HasFactory;
     use LogsActivity;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     protected $fillable = [
         'name',
@@ -44,7 +49,7 @@ class DomainRecord extends Model implements Crud, ModelQuery
         'updated' => DomainRecordUpdated::class,
     ];
 
-    public function domain()
+    public function domain(): BelongsTo
     {
         return $this->belongsTo(Domain::class);
     }

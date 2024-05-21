@@ -12,6 +12,8 @@ use App\Events\Models\Page\PageDeleting;
 use App\Events\Models\Page\PageUpdated;
 use App\Events\Models\Page\PageUpdating;
 use App\Models\Traits\HasProjectResource;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +22,8 @@ class Page extends Model implements Crud, ModelQuery
 {
     use HasFactory;
     use HasProjectResource;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $fillable = [
         'title',
@@ -37,12 +41,6 @@ class Page extends Model implements Crud, ModelQuery
         'published_at',
     ];
 
-    public $casts = [
-        'is_active' => 'boolean',
-        'middleware' => 'json',
-        'settings' => 'json',
-    ];
-
     public $dispatchesEvents = [
         'created' => PageCreated::class,
         'creating' => PageCreating::class,
@@ -51,6 +49,15 @@ class Page extends Model implements Crud, ModelQuery
         'updating' => PageUpdating::class,
         'updated' => PageUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'middleware' => 'json',
+            'settings' => 'json',
+        ];
+    }
 
     public function domain(): BelongsTo
     {

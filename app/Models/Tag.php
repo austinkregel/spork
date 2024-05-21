@@ -16,23 +16,22 @@ use App\Models\Finance\Account;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
 use App\Models\Traits\HasConditions;
+use App\Models\Traits\ScopeQSearch;
+use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @property bool $must_all_conditions_pass
  */
 class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
 {
-    // Tags with conditions will essentially only be applied if the conditions pass.
-    use HasConditions, HasFactory;
+    use HasConditions;
+    use HasFactory;
+    use ScopeQSearch;
+    use ScopeRelativeSearch;
 
-    public $fillable = [
-        'name',
-        'slug',
-        'must_all_conditions_pass',
-        'type',
-        'order_column',
-    ];
+    public $fillable = ['name', 'slug', 'must_all_conditions_pass', 'type', 'order_column'];
 
     public $dispatchesEvents = [
         'created' => TagCreated::class,
@@ -43,52 +42,52 @@ class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
         'updated' => TagUpdated::class,
     ];
 
-    public function articles()
+    public function articles(): MorphToMany
     {
         return $this->morphedByMany(Article::class, 'taggable');
     }
 
-    public function feeds()
+    public function feeds(): MorphToMany
     {
         return $this->morphedByMany(ExternalRssFeed::class, 'taggable');
     }
 
-    public function servers()
+    public function servers(): MorphToMany
     {
         return $this->morphedByMany(Server::class, 'taggable');
     }
 
-    public function transactions()
+    public function transactions(): MorphToMany
     {
         return $this->morphedByMany(Transaction::class, 'taggable');
     }
 
-    public function projects()
+    public function projects(): MorphToMany
     {
         return $this->morphedByMany(Project::class, 'taggable');
     }
 
-    public function budgets()
+    public function budgets(): MorphToMany
     {
         return $this->morphedByMany(Budget::class, 'taggable');
     }
 
-    public function accounts()
+    public function accounts(): MorphToMany
     {
         return $this->morphedByMany(Account::class, 'taggable');
     }
 
-    public function domains()
+    public function domains(): MorphToMany
     {
         return $this->morphedByMany(Domain::class, 'taggable');
     }
 
-    public function people()
+    public function people(): MorphToMany
     {
         return $this->morphedByMany(Person::class, 'taggable');
     }
 
-    public function messages()
+    public function messages(): MorphToMany
     {
         return $this->morphedByMany(Message::class, 'taggable');
     }
