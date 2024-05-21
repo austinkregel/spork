@@ -1,16 +1,17 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Welcome from '@/Components/Welcome.vue';
-import MetricCard from '@/Components/Spork/Molecules/MetricCard.vue';
+import MetricCard from '@/Components/Spork/Atoms/MetricCard.vue';
+import MetricApiCard from '@/Components/Spork/Molecules/MetricApiCard.vue';
 import WeatherHeader from "@/Pages/Petoskey/WeatherHeader.vue";
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
-
+import { Link } from '@inertiajs/vue3';
 import CollapsibleArticle from "@/Components/Spork/CollapsibleArticle.vue";
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-const { weather, news, expiring_domains, job_batches } = defineProps({
+const { weather, news, expiring_domains, job_batches, accounts } = defineProps({
     project_count: Number,
     server_count: Number,
     domain_count: Number,
@@ -22,6 +23,7 @@ const { weather, news, expiring_domains, job_batches } = defineProps({
     news: Object,
     expiring_domains: Object,
     job_batches: Object,
+    accounts: Object,
 })
 
 const now = ref(dayjs());
@@ -69,15 +71,35 @@ onMounted(() => {
         </div>
         <div class="py-2">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-5 gap-4">
-                <MetricCard title="Projects" :value="project_count" />
-                <MetricCard title="Users" :value="user_count" />
-                <MetricCard title="Servers" :value="server_count" />
-                <MetricCard title="Domains" :value="domain_count" />
-                <MetricCard title="Credentials" :value="credential_count" />
+                <MetricApiCard url="/api/crud/projects?action=count&filter[relative]=user" title="Projects" />
+                <MetricApiCard url="/api/crud/people?action=count&filter[relative]=user" title="people" />
+                <MetricApiCard url="/api/crud/servers?action=count&filter[relative]=user" title="Servers" />
+                <MetricApiCard url="/api/crud/domains?action=count&filter[relative]=user" title="Domains" />
+                <MetricApiCard url="/api/crud/credentials?action=count&filter[relative]=user" title="Credentials" />
             </div>
-          <div class="border-t border-stone-700 mt-4"></div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-8">
+        <div class="border-t border-stone-700 my-4"></div>
+        <div class="max-w-7xl mx-auto px-2 flex flex-col">
+            <div class="text-xl px-6 p-4">
+                State of Money
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mx-6">
+                <div v-for="account in accounts" :key="account.account_id" class="bg-stone-200 dark:bg-stone-800 p-2 md:p-4 rounded">
+                    <div class="text-xs tracking-wider">{{ account.name }}</div>
+                    <div class="text-2xl font-bold tracking-wide">${{ account.balance }}</div>
+                    <div class="text-xs">{{ account.available }} available</div>
+                </div>
+            </div>
+
+            <Link href="/-/banking" class="text-white text-sm px-6 underline pt-2">
+                More Banking Details...
+            </Link>
+
+        </div>
+        <div class="border-t border-stone-700 my-4"></div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-6">
             <div>
                 <div class="text-xl tracking-wider leading-tight underline pb-4 pt-2">News</div>
                 <div class="flex-col flex max-h-[50vh] overflow-auto dark:bg-stone-800 rounded-lg divide-y dark:divide-stone-600">

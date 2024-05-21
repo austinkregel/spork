@@ -6,7 +6,7 @@ import { usePage, Link, router } from '@inertiajs/vue3';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import LinkAccount from "@/Components/Spork/Finance/LinkAccount.vue";
-import SporkTable from "@/Components/Spork/Molecules/SporkTable.vue";
+import SporkTable from "@/Components/Spork/Atoms/SporkTable.vue";
 import {buildUrl} from "@kbco/query-builder";
 const page = usePage();
 dayjs.extend(utc);

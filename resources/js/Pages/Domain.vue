@@ -31,7 +31,7 @@ import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
 import {ChevronRightIcon} from "@heroicons/vue/24/solid/index.js";
-import SporkTable from "@/Components/Spork/Molecules/SporkTable.vue";
+import SporkTable from "@/Components/Spork/Atoms/SporkTable.vue";
 export default {
     components: {
         SporkTable,

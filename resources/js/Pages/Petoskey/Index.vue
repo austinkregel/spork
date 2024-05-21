@@ -2,7 +2,7 @@
 import PetoskeyLayout from "@/Layouts/PetoskeyLayout.vue";
 // This component uses data from the OpenWeatherAPI
 import WeatherHeader from "./WeatherHeader.vue";
-import ListComponent from "../../Components/Spork/Molecules/ListComponent.vue";
+import ListComponent from "@/Components/Spork/Atoms/ListComponent.vue";
 import {defineProps, ref, onMounted, onBeforeUnmount, onUnmounted} from 'vue';
 import Grid from "../../Components/Grid.vue";
 import dayjs from "dayjs";

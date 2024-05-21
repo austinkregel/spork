@@ -26,6 +26,10 @@ class DashboardController extends Controller
             'domain_count' => \App\Models\Domain::count(),
             'credential_count' => \App\Models\Credential::count(),
             'user_count' => \App\Models\User::count(),
+
+            'accounts' => auth()->user()->accounts()
+                ->where('accounts.type', 'checking')
+                ->get(),
             // Unread Messages
             // Tasks due today
             // Domains that expire this month, or in the last 7 days

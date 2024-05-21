@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Welcome from '@/Components/Welcome.vue';
-import MetricCard from '@/Components/Spork/Molecules/MetricCard.vue';
+import MetricCard from '@/Components/Spork/Atoms/MetricCard.vue';
 import {usePage, Link, router} from '@inertiajs/vue3'
 import { computed, ref } from 'vue';
 import DynamicIcon from "@/Components/DynamicIcon.vue";

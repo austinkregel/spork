@@ -2,7 +2,6 @@
 defineProps({
     title: String,
     value: Number,
-    icon: Object,
 })
 </script>
 

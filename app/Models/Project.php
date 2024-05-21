@@ -11,6 +11,7 @@ use App\Events\Models\Project\ProjectDeleted;
 use App\Events\Models\Project\ProjectDeleting;
 use App\Events\Models\Project\ProjectUpdated;
 use App\Events\Models\Project\ProjectUpdating;
+use App\Models\Traits\ScopeQSearch;
 use App\Services\SshKeyGeneratorService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,11 +47,6 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         return [
             'settings' => 'json',
         ];
-    }
-
-    public function scopeQ(Builder $query, string $string): void
-    {
-        $query->where('name', 'like', '%'.$string.'%');
     }
 
     public function domains(): MorphToMany
