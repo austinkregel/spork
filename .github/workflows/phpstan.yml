@@ -1,4 +1,4 @@
-name: PHP Unit
+name: LaraStan Analysis
 on: [ pull_request ]
 jobs:
   larastan:
