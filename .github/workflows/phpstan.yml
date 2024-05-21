@@ -23,7 +23,7 @@ jobs:
           ./bin/sail up -d
       - name: Larastan Analysis
         run: |
-          ./bin/sail bin phpstan analyse --error-format=github
+          ./bin/sail bin phpstan analyse --error-format=github app
 
       - name: tear down containers
         run: |
