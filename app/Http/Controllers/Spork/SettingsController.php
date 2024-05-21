@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
-use App\Services\Code;
-use Illuminate\Notifications\Notification;
 use Inertia\Inertia;
 
 class SettingsController

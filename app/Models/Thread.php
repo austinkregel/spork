@@ -25,6 +25,7 @@ class Thread extends Model implements Crud
     use ScopeRelativeSearch;
 
     public $casts = ['settings' => 'json', 'origin_server_ts' => 'datetime'];
+
     public $appends = ['human_timestamp'];
 
     public $dispatchesEvents = [

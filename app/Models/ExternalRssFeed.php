@@ -30,6 +30,7 @@ class ExternalRssFeed extends Model implements Crud, Taggable
     use ScopeRelativeSearch;
 
     public $actions = [ApplyTagToModelAction::class];
+
     public $fillable = ['uuid', 'url', 'name', 'profile_photo_path', 'owner_id', 'owner_type'];
 
     public $dispatchesEvents = [

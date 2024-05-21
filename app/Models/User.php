@@ -41,9 +41,9 @@ class User extends Authenticatable implements ModelQuery, Taggable
     use HasTeams;
     use LogsActivity;
     use Notifiable;
-    use TwoFactorAuthenticatable;
     use ScopeQSearch;
     use ScopeRelativeSearch;
+    use TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.

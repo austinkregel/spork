@@ -6,7 +6,6 @@ namespace App\Jobs\Notifications;
 
 use App\Contracts\Services\WeatherServiceContract;
 use App\Models\Article;
-use App\Models\Finance\Transaction;
 use App\Models\Person;
 use App\Models\User;
 use App\Notifications\Daily\SummaryNotification;
@@ -63,6 +62,6 @@ class BuildSummaryNotificationJob implements ShouldQueue
             $user->notify(new SummaryNotification(
                 $headlines->toArray(),
             ));
-            }
+        }
     }
 }

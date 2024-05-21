@@ -27,6 +27,7 @@ class Navigation extends Model implements Conditionable, Crud
     use ScopeRelativeSearch;
 
     public $guarded = [];
+
     public $hidden = ['id', 'created_at', 'updated_at'];
 
     public $dispatchesEvents = [

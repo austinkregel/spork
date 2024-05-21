@@ -6,7 +6,6 @@ namespace App\Notifications\Daily;
 
 use App\Forecast;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
