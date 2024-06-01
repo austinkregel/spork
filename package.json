@@ -50,6 +50,7 @@
         "supertest": "^6.3.3",
         "vue-draggable-next": "^2.2.1",
         "vue-json-pretty": "^2.2.4",
+        "vue-multiselect": "^3.0.0",
         "vue-select": "^4.0.0-beta.6",
         "vue3-markdown-it": "^1.0.10",
         "vuedraggable": "^4.1.0",
