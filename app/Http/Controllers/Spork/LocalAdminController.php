@@ -140,6 +140,7 @@ class LocalAdminController extends Controller
 
         return response('', 204);
     }
+
     public function destroyMany(DeleteRequest $request, $abstractEloquentModel)
     {
         $modelClass = $this->getModel($request);

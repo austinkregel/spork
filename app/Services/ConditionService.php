@@ -68,10 +68,9 @@ class ConditionService
                     $item->children->filter(fn ($item) => $item->href === $parsedUrl['path'])
                         ->count() > 0
                 );
+
                 return $item;
             });
-
-        ;
 
         return $navItems->filter(fn (Navigation $item) => $this->process($item));
     }

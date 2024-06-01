@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Documents;
@@ -10,7 +11,7 @@ class PdfReaderService extends Parser
 {
     public function parseContent(string $content): Document
     {
-        list($xref, $data) = $this->rawDataParser->parseData($content);
+        [$xref, $data] = $this->rawDataParser->parseData($content);
         if (isset($xref['trailer']['encrypt'])) {
             $this->stripEncryption($xref);
         }

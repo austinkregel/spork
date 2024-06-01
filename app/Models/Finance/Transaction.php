@@ -16,7 +16,6 @@ use App\Models\Crud;
 use App\Models\Taggable;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Documents;
@@ -21,12 +22,12 @@ class MenuCardParser
 
         dd($pdfContents);
         $replacements = [
-            "  " => " ",
-            "\n" => " ",
-            "\t" => " ",
-            " - " => "-",
-            "- " => "-",
-            " -" => "-",
+            '  ' => ' ',
+            "\n" => ' ',
+            "\t" => ' ',
+            ' - ' => '-',
+            '- ' => '-',
+            ' -' => '-',
         ];
 
         foreach ($replacements as $search => $replace) {
@@ -43,7 +44,7 @@ class MenuCardParser
                     ->map(fn ($str) => preg_replace('/[^[:print:]]/', '', trim(str_replace(' ', '', $str), " \t\n\r\0\x0B:)(")))
                     ->filter()
                     // The MRA email gets caught in this regex, so let's filter out anything starting with MRA
-                    ->filter(fn ($str) => !str_starts_with($str, 'MRA') && !str_starts_with($str, 'AGE') && !str_starts_with($str, 'LLC'))
+                    ->filter(fn ($str) => ! str_starts_with($str, 'MRA') && ! str_starts_with($str, 'AGE') && ! str_starts_with($str, 'LLC'))
                     ->merge($matches)
                     ->unique();
             }
@@ -56,6 +57,7 @@ class MenuCardParser
     {
         $pdfContents = $this->parseAndHandleEncryptedPdf($filename);
         $lines = array_values(array_filter(explode("\n", $pdfContents)));
+
         return $this->parsePdf($lines);
     }
 
@@ -63,6 +65,7 @@ class MenuCardParser
     {
         $pdfContents = $this->parseAndHandleEncryptedPdf($filename);
         $lines = array_values(array_filter(explode("\n", $pdfContents)));
+
         return $this->parsePackagesFromPdf($lines);
     }
 
@@ -74,12 +77,14 @@ class MenuCardParser
             if (empty($pdfText)) {
                 throw new \Exception('Secured pdf file are currently not supported.');
             }
+
             return $pdfText;
         } catch (\Exception $e) {
             if ($e->getMessage() === 'Secured pdf file are currently not supported.' && $recursionCounter < 3) {
                 // We can actually use pdftk to decrypt the file and then re-run the extraction.
                 $pdf = new Pdf();
                 $pdf->addFile($filename, null, '')->saveAs($filename);
+
                 return $this->parserService->getPdfTextFromFile($filename);
             }
             throw $e;
@@ -109,20 +114,24 @@ class MenuCardParser
             $isStoreBlock = $this->isStoreBlock($line);
             $isPackageBlock = $this->isPackageBlock($line);
 
-            if (!empty($isStoreBlock)) {
+            if (! empty($isStoreBlock)) {
                 // New store has been discovered, set package info and reset
                 $currentStore = $isStoreBlock;
                 $currentPackage = null;
+
                 continue;
             }
 
-            if (!empty($isPackageBlock)) {
+            if (! empty($isPackageBlock)) {
                 // New package discovered
                 $currentPackage = $isPackageBlock;
+
                 continue;
             }
 
-            if (empty($currentPackage)) continue;
+            if (empty($currentPackage)) {
+                continue;
+            }
 
             if (empty($recalls[$currentStore])) {
                 $recalls[$currentStore] = [];
@@ -132,7 +141,7 @@ class MenuCardParser
                 $recalls[$currentStore][$currentPackage] = '';
             }
 
-            $recalls[$currentStore][$currentPackage] .= ' ' . str_replace(array_keys($recalls), '', $this->trim($line));
+            $recalls[$currentStore][$currentPackage] .= ' '.str_replace(array_keys($recalls), '', $this->trim($line));
         }
 
         /**
@@ -146,6 +155,7 @@ class MenuCardParser
                 $recalls[$store][$package] = $this->trim(str_replace($stores, '', $recallInfo));
             }
         }
+
         return $recalls;
     }
 
@@ -153,7 +163,7 @@ class MenuCardParser
     {
         $storeNameRegex = '/This recall affects.*from ([a-zA-Z0-9\-_ &]*).*/i';
         preg_match_all($storeNameRegex, $line, $matches);
-        if (!empty($matches[1])) {
+        if (! empty($matches[1])) {
             return $this->trim($matches[1][0]);
         }
 
@@ -164,7 +174,7 @@ class MenuCardParser
     {
         $packageRegex = '/[Package]? ?#? ?(1A[A-Z0-9]*)/i';
         preg_match_all($packageRegex, $line, $matches);
-        if (!empty($matches[1])) {
+        if (! empty($matches[1])) {
             return $this->trim($matches[1][0]);
         }
 

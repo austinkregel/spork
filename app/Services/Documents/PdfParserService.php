@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services\Documents;
 
 use App\Contracts\Services\Documents\PdfParserServiceContract;
 use Smalot\PdfParser\Document;
-use Smalot\PdfParser\Parser;
 
 class PdfParserService implements PdfParserServiceContract
 {
@@ -24,14 +24,14 @@ class PdfParserService implements PdfParserServiceContract
             $dataChunks = $page->getDataTm();
 
             foreach ($dataChunks as $index => $chunk) {
-                if ($index < 18 ) {
+                if ($index < 18) {
                     continue;
                 }
-                if (!isset($item)) {
+                if (! isset($item)) {
                     $item = [];
                 }
 
-                $text = trim(match(count($chunk)) {
+                $text = trim(match (count($chunk)) {
                     2 => $chunk[1],
                 });
 
@@ -58,6 +58,7 @@ class PdfParserService implements PdfParserServiceContract
     public function getPdfTextFromRawContent(string $contents): string
     {
         $pdf = $this->parser->parseContent($contents);
+
         return $this->readPdfText($pdf);
     }
 
