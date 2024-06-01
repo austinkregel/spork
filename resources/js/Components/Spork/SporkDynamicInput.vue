@@ -32,6 +32,7 @@
         <SporkSelect
             v-if="type === 'select'"
             :modelValue="modelValue"
+            :disabled="disabledInput"
             @update:modelValue="$emit('update:modelValue', $event)"
         >
             <template #options>
@@ -92,9 +93,8 @@ const inputClasses = (disabled) => {
 
   baseClasses.push('border', 'p-1');
 
-  console.log({disabled})
   if (disabled) {
-    baseClasses.push('bg-stone-50', 'border-stone-50', 'dark:border-stone-900/50', 'dark:bg-stone-700/50', 'dark:placeholder-stone-300')
+    baseClasses.push('bg-stone-200', 'border-stone-200', 'dark:border-stone-900', 'dark:bg-slate-800/50', 'dark:placeholder-stone-300')
   } else {
     baseClasses.push('bg-stone-50', 'border-stone-50', 'dark:border-stone-700', 'dark:bg-stone-700', 'dark:placeholder-stone-300')
   }

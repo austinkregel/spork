@@ -6,6 +6,7 @@ namespace App\Jobs;
 
 use App\Models\Credential;
 use App\Models\Person;
+use App\Models\User;
 use App\Services\Messaging\ImapFactoryService;
 use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
@@ -124,6 +125,7 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
             $person = Person::create([
                 'name' => $fromName,
                 'emails' => [$fromEmail],
+                'user_id' => User::firstWhere('email', env('SPORK_ADMIN_EMAILS'))->id,
             ]);
         }
         $emails = array_values(array_unique(array_filter(array_merge($person->emails, [$message['from']['email']]), fn ($val) => ! empty($val))));

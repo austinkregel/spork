@@ -17,6 +17,7 @@ use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Account extends Model implements Crud
 {
@@ -48,5 +49,10 @@ class Account extends Model implements Crud
     public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

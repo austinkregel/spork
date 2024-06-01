@@ -12,6 +12,16 @@ import BuilderText from './Builder/Components/BuilderText.vue';
 import Notifications from 'notiwind';
 import Grid from './Components/Grid.vue';
 import TitleAndFooterTextCard from "./Builder/Components/Cards/TitleAndFooterTextCard.vue";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import 'dayjs/locale/en';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.locale('en');
+
+window.dayjs = dayjs;
 const registeredComponents = [];
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 

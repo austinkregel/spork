@@ -25,3 +25,4 @@ Route::middleware('api')
 
 Route::domain(env('LINK_SHORTENING_DOMAIN', ''))
     ->group(base_path('routes/pages/link-shortening.php'));
+

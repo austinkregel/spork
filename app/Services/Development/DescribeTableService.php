@@ -103,7 +103,7 @@ class DescribeTableService
         foreach ($notedInstances as $class) {
             $instance = app($class);
             if (in_array($model::class, $instance->models)) {
-                $arrayedInstance = (array) $instance;
+                $arrayedInstance = (array)$instance;
 
                 if (method_exists($instance, 'fields')) {
                     $arrayedInstance['fields'] = $instance->fields();
@@ -156,7 +156,15 @@ class DescribeTableService
             'required' => $mapField(array_filter($description, fn ($query) => $query->Null === 'NO' && $query->Extra !== 'auto_increment')),
         ], $model instanceof Taggable ? [
             'tags' => Tag::query()->whereNull('type')->orWhere('type', Str::singular($model->getTable()))->get(),
-        ] : []);
+        ] : [],
+        [
+            'permissions' => [
+                'create' => auth()->user()->can('create_'.Str::singular($model->getTable())) || auth()->user()->hasRole('developer'),
+                'update' => auth()->user()->can('update_'.Str::singular($model->getTable())) || auth()->user()->hasRole('developer'),
+                'delete' => auth()->user()->can('delete_'.Str::singular($model->getTable())) || auth()->user()->hasRole('developer'),
+                'delete_any' => auth()->user()->can('delete_any_'.Str::singular($model->getTable())) || auth()->user()->hasRole('developer'),
+            ]
+        ]);
     }
 
     public function describeTable(string $table): array

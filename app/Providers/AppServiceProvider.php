@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Contracts\Repositories\CredentialRepositoryContract;
+use App\Contracts\Services\Documents\PdfParserServiceContract;
 use App\Contracts\Services\ImapServiceContract;
 use App\Contracts\Services\JiraServiceContract;
 use App\Contracts\Services\NamecheapServiceContract;
@@ -27,6 +28,7 @@ use App\Observers\ApplyCredentialsObserver;
 use App\Operations\Operator;
 use App\Repositories\CredentialRepository;
 use App\Services\Code;
+use App\Services\Documents\PdfParserService;
 use App\Services\Finance\PlaidService;
 use App\Services\JiraService;
 use App\Services\Messaging\ImapCredentialService;
@@ -83,6 +85,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(WeatherServiceContract::class, OpenWeatherService::class);
         $this->app->bind(JiraServiceContract::class, JiraService::class);
         $this->app->alias(Operator::class, 'operator');
+        $this->app->bind(PdfParserServiceContract::class, PdfParserService::class);
     }
 
     /**

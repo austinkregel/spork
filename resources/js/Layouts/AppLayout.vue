@@ -143,7 +143,7 @@ const logout = () => {
         </div>
 
         <div class="lg:pl-20 min-h-screen">
-            <div class="sticky top-0 z-0 flex h-16 shrink-0 items-center gap-x-4 border-b border-stone-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+            <div class="shadow-lg sticky top-0 z-50 flex h-16 shrink-0 items-center gap-x-4 border-b border-stone-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
                 <button type="button" class="-m-2.5 p-2.5 text-stone-700 lg:hidden" @click="sidebarOpen = true">
                     <span class="sr-only">Open sidebar</span>
                     <Bars3Icon class="h-6 w-6" aria-hidden="true" />
@@ -153,25 +153,25 @@ const logout = () => {
                 <div class="h-6 w-px bg-stone-900/10 lg:hidden" aria-hidden="true" />
 
                 <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                    <form class="relative flex flex-1" action="#" method="GET">
+                    <form class="relative z-10 flex flex-1" action="#" method="GET">
                         <label for="search-field" class="sr-only">Search</label>
                         <MagnifyingGlassIcon class="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-stone-400" aria-hidden="true" />
                         <input id="search-field" class="block h-full w-full border-0 dark:bg-neutral-900 py-0 pl-8 pr-0 text-stone-900 placeholder:text-stone-400 focus:ring-0 sm:text-sm" placeholder="Search..." type="search" name="search" />
                     </form>
                     <div class="flex items-center gap-x-4 lg:gap-x-6">
-                        <button @click="" class="-m-2.5 p-2.5 text-stone-400 hover:text-stone-500 relative">
+                        <Link href="/-/postal" class="-m-2.5 p-2.5 text-stone-400 hover:text-stone-500 relative">
                             <span class="sr-only">View notifications</span>
                             <BellIcon class="h-6 w-6" aria-hidden="true" />
-                            <span class="bg-red-500 absolute top-0 right-0 rounded-full text-sm text-white py-0.5 px-1">
+                            <span class="bg-red-500 absolute top-0 right-0 rounded-full text-xs text-white py-0.5 px-1">
                               {{ notificationCount }}
                             </span>
-                        </button>
+                        </Link>
 
                         <!-- Separator -->
                         <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-stone-900/10" aria-hidden="true" />
 
                         <!-- Profile dropdown -->
-                        <Menu as="div" class="relative">
+                        <Menu as="div" class="relative z-20">
                             <MenuButton class="-m-1.5 flex items-center p-1.5">
                                 <span class="sr-only">Open user menu</span>
                                 <img class="h-8 w-8 rounded-full bg-stone-50" :src="user.profile_photo_url" alt="" />

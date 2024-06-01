@@ -85,6 +85,9 @@ Route::middleware([
 Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'), 'verified')->group(function () {
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
 
+    Route::get('/notifications', function () {
+        return \Inertia\Inertia::render('Notifications');
+    });
     Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
     Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
     Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');

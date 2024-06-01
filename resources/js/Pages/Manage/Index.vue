@@ -39,7 +39,7 @@ const DynamicFormToFillableArray = function (model) {
 
 const form = ref(FillableArrayToDynamicForm(description.fillable));
 const errors = ref(null);
-const fetch = async (options) => {
+const fetchData = async (options) => {
   const response = await axios.get(buildUrl(apiLink, {
     page: 1,
     limit: 15,
@@ -61,7 +61,23 @@ const colors = (type) => {
             return 'bg-green-300 dark:bg-green-700';
     }
 };
-const onDelete = () => {}
+const onDelete = (data) => {
+    axios.delete('/api/crud/'+plural+'/'+data.id).finally(() => {
+    router.reload({
+      only: ['data', 'paginator'],
+    });
+  });
+}
+
+const onDeleteMany = (manyData) => {
+    axios.post('/api/crud/'+plural+'/delete-many', {
+        items: manyData.map(item => item.id)
+    }).finally(() => {
+        router.reload({
+        only: ['data', 'paginator'],
+        });
+    });
+}
 const onExecute = async ({ selectedItems, actionToRun, next }) => {
   await axios.post('/api/actions/'+actionToRun.slug, {
     items: selectedItems.map(item => item.id)
@@ -69,15 +85,19 @@ const onExecute = async ({ selectedItems, actionToRun, next }) => {
 
   next()
 }
-const onSave = (form, toggle) => {
+const onSave = async (form, toggle) => {
     const data = form.reduce((all, { name, value }) => ({ ...all, [name]: value }), {});
+    let url = '/api/crud/'+plural;
 
-    console.log('form save',  data);
+    if (data?.id) {
+        url += '/'+data.id;
+    }
 
-    axios.post('/api/crud/'+plural, data).then(() => {
+    axios[data?.id ? 'put' : 'post'](url, data).then(() => {
       router.reload({
           only: ['data', 'paginator'],
       });
+      toggle();
     }).catch((e) => {
         toggle();
         errors.value = e?.response?.data?.errors;
@@ -114,10 +134,11 @@ const log = console.log;
         :plural="plural"
         :description="description"
         @destroy="onDelete"
-        @index="({ page, limit, ...args }) => fetch({ page, limit, ...args })"
+        @destroy-many="onDeleteMany"
+        @index="fetchData"
         @execute="onExecute"
         @save="onSave"
-        :save="onSave"
+        @clear-form="() => { form = FillableArrayToDynamicForm(description.fillable); }"
         :api-link="apiLink"
         :data="data"
         :paginator="paginator"
@@ -127,7 +148,7 @@ const log = console.log;
           Upsert {{ singular }}
         </div>
       </template>
-      <template v-slot:data="{ data, openModal }">
+      <template #data="{ data, openModal }">
         <div class="w-full grid grid-cols-6 ">
           <div class="col-span-5">
             <div class="flex flex-col">
@@ -150,10 +171,14 @@ const log = console.log;
               </div>
             </div>
           </div>
-          <div class="col-span-1 flex items-center justify-end px-4">
-            <button @click="(e) => { form = (DynamicFormToFillableArray(data)); openModal(); }">
-              <DynamicIcon icon-name="PencilIcon" class="h-5 w-5 fill-current text-green-400" />
-            </button>
+          <div class="col-span-1 flex gap-4 items-center justify-end px-4">
+              <button @click="(e) => { form = (DynamicFormToFillableArray(data)); openModal(); }">
+                  <DynamicIcon icon-name="PencilIcon" class="h-5 w-5 fill-current text-green-400" />
+              </button>
+
+              <button @click="() => onDelete(data)">
+                  <DynamicIcon icon-name="TrashIcon" class="h-5 w-5 fill-current text-red-400" />
+              </button>
           </div>
         </div>
 
@@ -163,15 +188,17 @@ const log = console.log;
       </template>
 
       <template #form="{ openModal }">
-        <div>
-          <div class="grid grid-cols-1 gap-4 mt-2" v-for="(field, i) in form">
+        <div class="flex flex-col -mt-4">
+          <div v-for="(field, i) in form">
               <SporkDynamicInput
                   :key="i+'.form-value'"
                   v-model="form[i]"
+                  v-if="description.types[field.name]"
                   :type="description.types[field.name].type ?? 'text'"
                   :disabled-input="!description.fillable.includes(field.name)"
                   :editable-label="false"
                   :errors="errors?.[field.name]"
+                  class="mt-4"
               />
           </div>
         </div>

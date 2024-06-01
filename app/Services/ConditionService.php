@@ -52,6 +52,8 @@ class ConditionService
 
     public function navigation()
     {
+        $parsedUrl = parse_url(request()->getRequestUri());
+
         // So we want to filter out any nav items
         $navItems = Navigation::query()
             ->with('conditions', 'children')
@@ -59,11 +61,17 @@ class ConditionService
             ->whereNull('parent_id')
             ->orderBy('order')
             ->get()
-            ->map(function (Navigation $item) {
-                $item->current = $item->href === request()->getRequestUri() || ($item->children->isNotEmpty() && $item->children->filter(fn ($item) => $item->href === request()->getRequestUri())->count() > 0);
-
+            ->map(function (Navigation $item) use ($parsedUrl) {
+                $item->current = $item->href === request()->getRequestUri() || (
+                    $item->children->isNotEmpty() &&
+                    // We don't want to use the query param in the comparison
+                    $item->children->filter(fn ($item) => $item->href === $parsedUrl['path'])
+                        ->count() > 0
+                );
                 return $item;
             });
+
+        ;
 
         return $navItems->filter(fn (Navigation $item) => $this->process($item));
     }

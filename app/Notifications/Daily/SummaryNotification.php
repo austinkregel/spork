@@ -19,6 +19,7 @@ class SummaryNotification extends Notification
         // Transactions from a period,
         // domain expirations
         public ?array $articles,
+        public ?Forecast $forecast,
     ) {
         //
     }
@@ -35,6 +36,7 @@ class SummaryNotification extends Notification
             'emails.daily.summary',
             [
                 'articles' => $this->articles,
+                'weather' => $this->forecast,
             ]
         );
 

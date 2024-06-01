@@ -11,6 +11,7 @@ use App\Events\Models\Transaction\TransactionDeleted;
 use App\Events\Models\Transaction\TransactionDeleting;
 use App\Events\Models\Transaction\TransactionUpdated;
 use App\Events\Models\Transaction\TransactionUpdating;
+use App\Models\Credential;
 use App\Models\Crud;
 use App\Models\Taggable;
 use App\Models\Traits\ScopeQSearch;
@@ -69,8 +70,8 @@ class Transaction extends Model implements Crud, ModelQuery, Taggable
         return $this->belongsTo(Account::class, 'account_id', 'account_id');
     }
 
-    public function user(): HasManyThrough
+    public function credential(): HasManyThrough
     {
-        return $this->hasManyThrough(User::class, Account::class);
+        return $this->hasManyThrough(Credential::class, Account::class, 'credential_id', 'id', 'account_id', 'account_id');
     }
 }

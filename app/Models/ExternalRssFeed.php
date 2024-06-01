@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Actions\Spork\Domains\ApplyTagToModelAction;
+use App\Actions\Spork\ApplyTagToModelAction;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedCreated;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedCreating;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedDeleted;

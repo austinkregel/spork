@@ -87,16 +87,16 @@
                  id="contextRef"
             >
               <div class="flex flex-col" role="none" >
-                <div class="flex flex-col">
-                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => mark_as_read()">Mark As Read</button>
-                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => mark_move_spam()">Mark & Move Spam</button>
-                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => mark_as_unread()">Mark As Unread</button>
-                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => reply()">Reply</button>
-                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => reply_all()">Reply All</button>
-                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => forward()">Forward</button>
-                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => apply_tag()">Apply Tag</button>
-                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => delete_mail()">Delete</button>
-                  <button class="hover:bg-stone-500 text-left px-4 py-2" @click="() => open_in_new_tab()">Open in a new tab</button>
+                <div class="flex flex-col divide-y divide-stone-700">
+                  <button class="hover:bg-stone-500 text-left px-2 py-1 text-sm" @click="() => mark_as_read()">Mark As Read</button>
+                  <button class="hover:bg-stone-500 text-left px-2 py-1 text-sm" @click="() => mark_move_spam()">Mark & Move Spam</button>
+                  <button class="hover:bg-stone-500 text-left px-2 py-1 text-sm" @click="() => mark_as_unread()">Mark As Unread</button>
+                  <button class="hover:bg-stone-500 text-left px-2 py-1 text-sm" @click="() => reply()">Reply</button>
+                  <button class="hover:bg-stone-500 text-left px-2 py-1 text-sm" @click="() => reply_all()">Reply All</button>
+                  <button class="hover:bg-stone-500 text-left px-2 py-1 text-sm" @click="() => forward()">Forward</button>
+                  <button class="hover:bg-stone-500 text-left px-2 py-1 text-sm" @click="() => apply_tag()">Apply Tag</button>
+                  <button class="hover:bg-stone-500 text-left px-2 py-1 text-sm" @click="() => delete_mail()">Delete</button>
+                  <button class="hover:bg-stone-500 text-left px-2 py-1 text-sm" @click="() => open_in_new_tab()">Open in a new tab</button>
                 </div>
               </div>
             </div>
@@ -225,19 +225,16 @@ const reply_all = async () => {
   loading.value = true;
   closeContextMenu();
   await triggerMailLoading();
-
 }
 const forward = async () => {
   loading.value = true;
   closeContextMenu();
   await triggerMailLoading();
-
 }
 const apply_tag = async () => {
   loading.value = true;
   closeContextMenu();
   await triggerMailLoading();
-
 }
 const delete_mail = async () => {
   loading.value = true;
