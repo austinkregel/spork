@@ -16,7 +16,7 @@
             :class="[type === 'checkbox' ? 'pl-4 pt-4': 'p-0']"
         >
             <input
-                class="py-2 px-3 block shadow-sm sm:text-sm rounded-b-md"
+                class="py-2 px-3 block sm:text-sm rounded-b-md"
                 :class="inputClasses(disabledInput)"
                 :value="modelValue.value"
                 @input="$emit('update:modelValue', {

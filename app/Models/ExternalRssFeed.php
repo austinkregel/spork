@@ -57,6 +57,7 @@ class ExternalRssFeed extends Model implements Crud, Taggable
         return LogOptions::defaults()
             ->logOnly(['uuid', 'url', 'name', 'profile_photo_path'])
             ->useLogName('external-rss-feed')
+            ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
     }
 }

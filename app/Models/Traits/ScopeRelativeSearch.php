@@ -23,6 +23,7 @@ trait ScopeRelativeSearch
                             $query->where('user_id', auth()->id());
                         });
                     } elseif (method_exists($this, 'credential')) {
+                        
                         $query->whereHas('credential', function (Builder $query) {
                             $query->where('user_id', auth()->id());
                         });
@@ -39,7 +40,15 @@ trait ScopeRelativeSearch
                     } elseif (method_exists($this, 'owner')) {
                         $query->where('owner_id', auth()->id())
                             ->where('owner_type', User::class);
-                    } else {
+                    } elseif (method_exists($this, 'participants')) {
+                        $query->whereHas('participants', function (Builder $query) {
+                            $query->where('person_id', auth()->user()->person()->id);
+                        });
+                    } elseif (method_exists($this, 'projects')) {
+                        $query->whereHas('projects.team', function (Builder $query) {
+                            $query->where('user_id', auth()->id());
+                        });
+                    }else {
                         abort(400, 'No user relation found for model');
                     }
                 }

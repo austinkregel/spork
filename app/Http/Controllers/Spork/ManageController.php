@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Spork;
 use App\Services\Development\DescribeTableService;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Spatie\Activitylog\Models\Activity;
 
 class ManageController
 {
@@ -17,6 +18,13 @@ class ManageController
             'description' => [
                 'fillable' => [],
             ],
+            'metrics' => Activity::latest()
+                ->paginate(
+                    request('limit', 15),
+                    ['*'],
+                    'manage_page',
+                    request('manage_page', 1)
+                ),
         ]);
     }
 

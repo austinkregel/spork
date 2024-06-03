@@ -75,6 +75,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
         return LogOptions::defaults()
             ->logOnly(['name', 'vcpu', 'memory', 'disk', 'cost_per_hour', 'internal_url', 'last_ping_at', 'booted_at', 'turned_off_at', 'os'])
             ->useLogName('server')
+            ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
     }
 }

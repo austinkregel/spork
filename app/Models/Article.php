@@ -17,12 +17,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Laravel\Scout\Searchable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Article extends Model implements Crud
 {
     use HasFactory;
+    use Searchable;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
@@ -65,7 +67,7 @@ class Article extends Model implements Crud
         $post = new Article();
         // If the item's GUID is a v4 UUID, we may as well use it as our UUID.
         $post->uuid = $item->getUuidIfExists();
-        $post->external_guid = $item->getExternalId();
+        $post->external_guid = $item->getUuidIfExists() ?? $item->getUrl();
         $post->author_id = $feed->id;
         $post->author_type = get_class($feed);
         $post->headline = $item->getTitle();
@@ -95,6 +97,7 @@ class Article extends Model implements Crud
             ->logOnly(['headline', 'content', 'attachment', 'url'])
             ->useLogName('article')
             ->logFillable()
+            ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
     }
 }

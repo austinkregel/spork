@@ -13,6 +13,7 @@ use App\Events\Models\Message\MessageUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 use Spatie\Tags\HasTags;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
@@ -22,6 +23,7 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 /** @mixin \Eloquent */
 class Message extends Model implements Taggable
 {
+    use Searchable;
     use HasFactory, HasJsonRelationships, HasTags;
 
     public $fillable = [

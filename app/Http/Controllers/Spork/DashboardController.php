@@ -9,16 +9,27 @@ use App\Models\JobBatch;
 use App\Models\Person;
 use App\Models\User;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
     public function __invoke()
     {
-        $person = Person::whereJsonContains('emails', auth()->user()->email)
-            // for now, this is fine, my email base does support this idea, but I know if someone/
-            // wanted to be malicious they could take advantage of this.
-            ->first();
+        $person = auth()->user()->person();
+        $batchJobs = JobBatch::query()
+            ->orderByDesc('created_at')
+            ->paginate(request('job_limit', 10), ['*'], 'job_page', request('job_page', 1));
+
+        $batchJobs->setCollection(
+            Collection::make(array_map(function ($batchJob) {
+                $batchJob->failed_at = \DB::table('failed_jobs')
+                    ->selectRaw('max(failed_at)')
+                    ->whereIn('id', $batchJob->failed_job_ids)
+                    ->value('failed_at');
+                return $batchJob;
+            }, $batchJobs->items()))
+        );
 
         return Inertia::render('Dashboard', [
             'accounts' => auth()->user()->accounts()
@@ -55,9 +66,7 @@ class DashboardController extends Controller
                 ->where('expires_at', '<=', now()->addWeeks(4))
                 ->orderByDesc('expires_at')
                 ->paginate(request('expiring_limit', 15), ['*'], 'expiring_page', request('expiring_page', 1)),
-            'job_batches' => JobBatch::query()
-                ->orderByDesc('created_at')
-                ->paginate(request('job_limit', 10), ['*'], 'job_page', request('job_page', 1)),
+            'job_batches' => $batchJobs,
         ]);
     }
 }

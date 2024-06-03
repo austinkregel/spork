@@ -92,6 +92,7 @@ class User extends Authenticatable implements ModelQuery, Taggable
         return LogOptions::defaults()
             ->logOnly(['name', 'email'])
             ->useLogName('user')
+            ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
     }
 

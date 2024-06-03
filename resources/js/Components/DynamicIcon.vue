@@ -28,6 +28,7 @@ const icons = computed(() => {
       ThreadIcon: activeIconSet.ChatBubbleLeftRightIcon,
       ClipboardIcon: activeIconSet.ClipboardIcon,
       EmailIcon: activeIconSet.EnvelopeIcon,
+      ArrowTopRightOnSquareIcon: activeIconSet.ArrowTopRightOnSquareIcon,
   }
 })
 </script>

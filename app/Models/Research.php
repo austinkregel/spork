@@ -15,6 +15,7 @@ use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Laravel\Scout\Searchable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -22,6 +23,7 @@ class Research extends Model implements Crud
 {
     use HasFactory;
     use LogsActivity;
+    use Searchable;
     use ScopeQSearch;
     use ScopeRelativeSearch;
 
@@ -57,6 +59,7 @@ class Research extends Model implements Crud
         return LogOptions::defaults()
             ->logOnly(['topic', 'notes', 'sources'])
             ->useLogName('research')
+            ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
     }
 }

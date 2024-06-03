@@ -30,7 +30,13 @@ class SshService
         }
 
         //        try {
-        ssh2_auth_pubkey_file($this->connection, $username, $publicKeyFile, $privateKeyFile, $passKey);
+        ssh2_auth_pubkey_file(
+            $this->connection,
+            $username,
+            $publicKeyFile,
+            $privateKeyFile,
+            $passKey
+        );
         //        } catch (\Throwable $e) {
         //            throw new Exception('Public key authentication failed. ' . $this->username . '@' . $this->host . ':' . $this->port);
         //        }
@@ -64,22 +70,30 @@ class SshService
     public function run(Script $script, string $directory = ''): array
     {
         $localFilePath = storage_path('scripts/'.Str::slug($script->name).'_server.sh');
-
+        @mkdir(dirname($localFilePath), 0755, true);
         file_put_contents($localFilePath, $script->script);
 
         // Ensure our .basement folder exists
-        ssh2_exec($this->connection, 'mkdir /tmp/.spork -f');
-        stream_set_blocking($this->connection, true);
+        $exec = ssh2_exec($this->connection, 'mkdir /tmp/.spork -f');
+        stream_set_blocking($exec, true);
 
         // Create a local copy of our script to make sure it runs like we'd expect.
-        ssh2_scp_send($this->connection, $localFilePath, $file = '/tmp/.spork/'.Str::random(32).'.sh');
+        ssh2_scp_send($this->connection, $localFilePath, $file = '/tmp/.spork/'.Str::random(32).'.sh', 0644);
 
         unlink($localFilePath);
-        // Run a command that will probably write to stderr (unless you have a folder named /hom)
-        $stream_out = ssh2_exec($this->connection, 'bash '.escapeshellcmd($file));
+        try {
+            // Run a command that will probably write to stderr (unless you have a folder named /hom)
+            $stream_out = ssh2_exec($this->connection, 'bash ' . escapeshellcmd($file). ' 2>&1');
+            stream_set_blocking($stream_out, true);
 
-        $stream_error = ssh2_fetch_stream($this->connection, SSH2_STREAM_STDERR);
-        ssh2_exec($this->connection, "rm $file -f");
+            $stream_error = ssh2_fetch_stream($stream_out, SSH2_STREAM_STDERR);
+            ssh2_exec($this->connection, "rm $file -f");
+        } catch (\Throwable $e) {
+            return [
+                'stdout' => '',
+                'stderr' => $e->getMessage() . "\n" . $e->getTraceAsString(),
+            ];
+        }
 
         return [
             'stdout' => stream_get_contents($stream_out),

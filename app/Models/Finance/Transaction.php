@@ -20,11 +20,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Laravel\Scout\Searchable;
 use Spatie\Tags\HasTags;
 
 class Transaction extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
+    use Searchable;
     use HasTags;
     use ScopeQSearch;
     use ScopeRelativeSearch;
@@ -71,6 +73,13 @@ class Transaction extends Model implements Crud, ModelQuery, Taggable
 
     public function credential(): HasManyThrough
     {
-        return $this->hasManyThrough(Credential::class, Account::class, 'credential_id', 'id', 'account_id', 'account_id');
+        return $this->hasManyThrough(
+            Credential::class,
+            Account::class,
+            'credential_id',
+            'id',
+            'account_id',
+            'account_id'
+        );
     }
 }

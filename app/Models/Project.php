@@ -112,36 +112,6 @@ class Project extends Model implements Crud, ModelQuery, Taggable
     {
         $credential = $this->credentials()->where('service', $service)->first();
 
-        if (! $credential) {
-            if ($service === Credential::TYPE_SSH) {
-                $randomName = Str::random(16);
-
-                $generatorService = new SshKeyGeneratorService(
-                    privateKeyFile: $privateKeyFile = storage_path('app/keys/'.$randomName.'.key'),
-                    publicKeyFile: $publicKeyFile = storage_path('app/keys/'.$randomName.'.pub'),
-                    passKey: $passKey = ''//''tr::random(16),
-                );
-
-                $credential = $this->credentials()->create([
-                    'service' => Credential::TYPE_SSH,
-                    'type' => Credential::TYPE_SSH,
-                    'name' => 'Forge',
-                    'user_id' => auth()->id(),
-                    'settings' => [
-                        'pub_key' => $generatorService->getPublicKey(),
-                        'pub_key_file' => $publicKeyFile,
-                        'private_key' => $generatorService->getPrivateKey(),
-                        'private_key_file' => $privateKeyFile,
-                        'pass_key' => encrypt($passKey),
-                    ],
-                ]);
-
-                return $credential;
-            }
-
-            throw new \Exception('No credential found for '.$service);
-        }
-
         return $credential;
     }
 
@@ -155,6 +125,7 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         return LogOptions::defaults()
             ->logOnly(['name', 'team_id'])
             ->useLogName('project')
+            ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
     }
 }

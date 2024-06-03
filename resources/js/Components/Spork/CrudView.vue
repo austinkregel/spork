@@ -12,7 +12,13 @@
                 <template #table-top>
                     <div class="relative w-full flex flex-wrap justify-between items-center ">
                         <div class="flex gap-4 items-center">
-                            <input @change="selectAll" :checked="data.length > 0 && selectedItems.length === data.length" type="checkbox">
+                            <input
+                                type="checkbox"
+                                class="h-4 w-4 cursor-pointer focus:ring-stone-500 border-gray-400 dark:bg-stone-200 dark:border-stone-700 rounded checked:bg-red-500 hover:bg-red-600 active:bg-indigo-500 active:checked:bg-indigo-600 hover:checked:active:bg-orange-400 hover:checked:bg-blue-300"
+                                :value="data.length > 0 && selectedItems.length === data.length"
+                                @click="selectAll"
+                            />
+
 
                             <span v-if="selectedItems.length > 0" class="text-sm text-stone-700 dark:text-stone-300">{{ selectedItems.length }} selected</span>
                         </div>
@@ -61,7 +67,12 @@
                 <template #datum="{ datum }">
                     <div class="flex items-center w-full">
                         <div class="w-6 mx-4">
-                            <input type="checkbox" v-model="selectedItems" :value="datum">
+                            <input
+                                type="checkbox"
+                                class="h-3 w-3 cursor-pointer focus:ring-stone-500 border-gray-400 dark:bg-stone-200 dark:border-stone-700 rounded checked:bg-red-500 hover:bg-red-600 active:bg-indigo-500 active:checked:bg-indigo-600 hover:checked:active:bg-orange-400 hover:checked:bg-blue-300"
+                                v-model="selectedItems"
+                                :value="datum"
+                            />
                         </div>
                         <div class="flex-1 dark:text-stone-50 text-black">
                             <slot v-if="datum" class="flex-1" :data="datum" name="data" :open-modal="() => createOpen = true"></slot>
@@ -174,6 +185,7 @@ import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import Button from "@/Components/Button.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import ApplyTagModal from "@/Components/Spork/Molecules/ApplyTagModal.vue";
+import SporkInput from "@/Components/Spork/SporkInput.vue";
 const {
   form,
   title,

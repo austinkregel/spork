@@ -23,11 +23,11 @@ class InboxController
 
     public function show(Message $message)
     {
-        abort_if($message->type !== 'email', 404);
+        abort_if($message->type !== 'email', 405);
 
         $message->load('credential');
 
-        abort_unless($message->credential->user_id === auth()->id(), 404);
+        abort_unless($message->credential->user_id === auth()->id(), 4035);
 
         $message = (new ImapCredentialService($message->credential))->findMessage($message->event_id, true);
         $messageBody = base64_decode($message['body']);

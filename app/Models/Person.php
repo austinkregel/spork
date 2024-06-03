@@ -15,10 +15,12 @@ use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Person extends Model implements Crud, ModelQuery
 {
     use HasFactory;
+    use Searchable;
     use ScopeRelativeSearch;
 
     public $guarded = [];

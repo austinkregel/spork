@@ -60,24 +60,10 @@
                   </div>
                   <div>
                     <h3 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">Domains</h3>
-                    <dl class="mt-5 grid grid-cols-1 gap-5 dark:text-stone-50 text-stone-900">
-                        <div v-for="item in $page.props.project.domains" :key="item.name" class="overflow-hidden rounded-lg bg-white dark:bg-stone-700 p-2  shadow sm:p-4">
-                            <dd class="font-semibold tracking-tight text-stone-900 dark:text-stone-50">
-                                <div class="flex flex-wrap justify-between items-center">
-                                    <div class="flex flex-col">
-                                        <div class="text-xl">
-                                            <Link class="underline" :href="'/domains/'+item.id">{{ item.name }}</Link>
-                                        </div>
-                                    </div>
-                                    <div>
-
-                                    </div>
-                                </div>
-                                <pre class="text-xs">{{ item.records.map(i => i.type).reduce((counts, type) => ({
-                                    ...counts,
-                                    [type]: (counts[type] || 0) + 1
-                                }), {}) }}</pre>
-
+                    <dl class="mt-5 grid grid-cols-2">
+                        <div v-for="item in $page.props.project.domains" :key="item.name" class="overflow-hidden bg-white dark:bg-stone-700 px-2">
+                            <dd class="font-semibold tracking-tight">
+                                <Link class="underline text-xl" :href="'/domains/'+item.id">{{ item.name }}</Link>
                             </dd>
                             <dt class="truncate text-sm font-medium text-stone-500 dark:text-stone-300">{{ item.registered_at }}</dt>
 

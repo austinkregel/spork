@@ -7,6 +7,7 @@
         ref="input"
         :type="type"
     />
+
     <textarea
         v-else
         class="py-1 px-2 border focus:ring-slate-500 focus:border-slate-500 block w-full shadow-sm text-xs border-stone-300 dark:border-stone-700 dark:bg-stone-700 dark:placeholder-stone-500 rounded-md"

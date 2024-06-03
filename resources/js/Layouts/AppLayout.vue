@@ -124,26 +124,28 @@ const logout = () => {
         </TransitionRoot>
 
         <!-- Static sidebar for desktop -->
-        <div class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-10 lg:block lg:w-20 lg:bg-stone-950 lg:pb-4 relative">
-            <Link href="/-/dashboard" class="flex h-16 shrink-0 items-center flex flex-col justify-center">
+        <div class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-10 lg:block lg:w-20 xl:w-48 lg:bg-stone-950 lg:pb-4 relative">
+            <div>
+            <Link href="/-/dashboard" class="flex h-16 shrink-0 items-center xl:items-start xl:pl-4 flex flex-col justify-center">
                 <CpuChipIcon class="h-8 w-8 text-slate-500" />
             </Link>
-            <div class="text-white absolute left-16 z-0 mr-8 -mt-4 bg-stone-700 rounded-full w-6 h-6">
+            </div>
+            <div class="text-white absolute z-50 left-16 xl:left-44 z-0 mr-8 -mt-4 bg-stone-700 rounded-full w-6 h-6">
                 <ChevronDownIcon class="w-6 h-6 text-white -rotate-90" />
             </div>
 
             <nav class="mt-8">
-                <div class="mt-6 w-full flex-1 space-y-1 px-2">
-                    <Link v-for="item in page.props.navigation" :key="item.name" :href="item?.href ?? '#'" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-col items-center rounded-md p-3 text-xs font-medium']" :aria-current="item.current ? 'page' : undefined">
-                        <DynamicIcon :icon-name="item.icon"  :active="item.current"  :class="[item.current ? 'text-white' : 'text-slate-300 group-hover:text-white', 'h-6 w-6']" aria-hidden="true" />
-                        <span class="mt-2">{{ item.name }}</span>
+                <div class="mt-6 w-full flex-1 space-y-1 px-2 flex flex-col">
+                    <Link v-for="item in page.props.navigation" :key="item.name" :href="item?.href ?? '#'" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-wrap gap-2 rounded-md text-xs font-medium px-2 py-1.5']" :aria-current="item.current ? 'page' : undefined">
+                        <DynamicIcon :icon-name="item.icon"  :active="item.current"  :class="[item.current ? 'text-white' : 'text-slate-300 group-hover:text-white', 'h-5 w-5']" aria-hidden="true" />
+                        <span class="text-base">{{ item.name }}</span>
                     </Link>
                 </div>
             </nav>
         </div>
 
-        <div class="lg:pl-20 min-h-screen">
-            <div class="shadow-lg sticky top-0 z-50 flex h-16 shrink-0 items-center gap-x-4 border-b border-stone-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div class="lg:pl-20 xl:pl-48 min-h-screen">
+            <div class="shadow-lg sticky top-0 z-0 flex h-16 shrink-0 items-center gap-x-4 border-b border-stone-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
                 <button type="button" class="-m-2.5 p-2.5 text-stone-700 lg:hidden" @click="sidebarOpen = true">
                     <span class="sr-only">Open sidebar</span>
                     <Bars3Icon class="h-6 w-6" aria-hidden="true" />

@@ -102,6 +102,7 @@ class Credential extends Model implements Crud, ModelQuery
     public $fillable = [
         'name',
         'type',
+        'user_id',
         'service',
         'api_key',
         'secret_key',
@@ -160,7 +161,7 @@ class Credential extends Model implements Crud, ModelQuery
 
     public function getPasskey(): string
     {
-        return decrypt($this->settings['pass_key'] ?? '');
+        return empty($this->settings['pass_key'] ?? '') ? '': decrypt($this->settings['pass_key'] ?? '');
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -18,10 +18,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Account extends Model implements Crud
 {
     use HasFactory;
+    use Searchable;
+    use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
 
@@ -54,5 +59,15 @@ class Account extends Model implements Crud
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('account')
+            ->logFillable()
+            ->dontSubmitEmptyLogs()
+            ->logOnlyDirty();
     }
 }
