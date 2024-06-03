@@ -155,10 +155,10 @@ const logout = () => {
                 <div class="h-6 w-px bg-stone-900/10 lg:hidden" aria-hidden="true" />
 
                 <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                    <form class="relative z-10 flex flex-1" action="#" method="GET">
+                    <form class="relative z-10 flex flex-1" :action="route('search')" method="GET">
                         <label for="search-field" class="sr-only">Search</label>
                         <MagnifyingGlassIcon class="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-stone-400" aria-hidden="true" />
-                        <input id="search-field" class="block h-full w-full border-0 dark:bg-neutral-900 py-0 pl-8 pr-0 text-stone-900 placeholder:text-stone-400 focus:ring-0 sm:text-sm" placeholder="Search..." type="search" name="search" />
+                        <input id="search-field" class="block h-full w-full border-0 dark:bg-neutral-900 py-0 pl-8 pr-0 text-stone-900 dark:text-stone-50 placeholder:text-stone-400 focus:ring-0 sm:text-sm" placeholder="Search..." type="search" name="q" />
                     </form>
                     <div class="flex items-center gap-x-4 lg:gap-x-6">
                         <Link href="/-/postal" class="-m-2.5 p-2.5 text-stone-400 hover:text-stone-500 relative">
