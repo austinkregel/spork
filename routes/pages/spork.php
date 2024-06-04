@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 use App\Actions\Spork\CustomAction;
 use App\Http\Controllers;
+use App\Services\Code;
 use App\Services\Programming\LaravelProgrammingStyle;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Laravel\Scout\Searchable;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('welcome');
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -66,12 +59,49 @@ Route::middleware([
 
     Route::post('/api/projects/{project}/tasks', Controllers\Api\Projects\CreateTaskController::class);
 
+    Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
+});
+
+Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'), 'verified')->group(function () {
+    Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
+    Route::get('/search', function () {
+        $client = new \Meilisearch\Client(
+            config('scout.meilisearch.host'),
+            config('scout.meilisearch.key'),
+        );
+
+        $searchableModels = Code::instancesOf(Searchable::class)->getClasses();
+
+        $result = $client->multiSearch(array_map(function ($model) {
+            return (new \Meilisearch\Contracts\SearchQuery())
+                ->setQuery(request('q'))
+                ->setLimit(4)
+                ->setIndexUid((new $model)->searchableAs());
+        }, $searchableModels));
+
+        return Inertia::render('Search', [
+            'results' => array_values(array_filter($result['results'], fn ($r) => count($r['hits']) > 0)),
+        ]);
+    })->name('search');
+    Route::get('/notifications', fn () => Inertia::render('Notifications'));
+
+    Route::get('/rss-feed', fn () => Inertia::render('RssFeeds/Index', [
+        'feeds' => \App\Models\Article::query()->latest('last_modified')
+            ->with('author.tags')
+            ->paginate()
+            ->items(),
+        'pagination' => \App\Models\Article::query()->latest('last_modified')
+            ->with('author.tags')
+            ->paginate(),
+    ]));
+    Route::get('/batch-jobs', [Controllers\Spork\BatchJobController::class, 'index'])->name('batch-jobs.index');
+    Route::get('/batch-jobs/{batch_job}', [Controllers\Spork\BatchJobController::class, 'show'])->name('batch-jobs.show');
+    Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
+    Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
 
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
-
-    Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
 
     Route::post('project/{project}/deploy', [Controllers\Spork\ProjectsController::class, 'deploy'])->name('project.deploy');
 
@@ -80,16 +110,7 @@ Route::middleware([
 
     Route::post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach'])
         ->name('project.detach');
-});
 
-Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'), 'verified')->group(function () {
-    Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
-
-    Route::get('/notifications', function () {
-        return \Inertia\Inertia::render('Notifications');
-    });
-    Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
-    Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
     Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');
     Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
 
@@ -114,8 +135,8 @@ Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'),
         }
     });
 
-    Route::get('/inbox', [Controllers\Spork\InboxController::class, 'index']);
-    Route::get('/inbox/{message}', [Controllers\Spork\InboxController::class, 'show']);
+    Route::get('/inbox', [Controllers\Spork\MessageController::class, 'index'])->name('inbox');
+    Route::get('/inbox/{message}', [Controllers\Spork\MessageController::class, 'show'])->name('inbox.show');
 
     Route::get('/manage/{link}', [Controllers\Spork\ManageController::class, 'show'])->name('crud.show');
     Route::get('/manage', [Controllers\Spork\ManageController::class, 'index']);
@@ -123,13 +144,15 @@ Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'),
     Route::get('/settings', Controllers\Spork\SettingsController::class);
     Route::get('/tag-manager', Controllers\Spork\TagManagerController::class);
 
-    Route::get('/postal', [Controllers\Spork\MessageController::class, 'index'])->name('postal.index');
-    Route::get('/postal/{thread}', [Controllers\Spork\MessageController::class, 'show'])->name('postal.show');
+    Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
+    Route::get('/postal/{message}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
 
     Route::get('/research', [Controllers\Spork\ResearchController::class, 'index'])->name('research.index');
     Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');
 
     Route::get('/projects/create', [Controllers\Spork\ProjectsController::class, 'create']);
+
+    Route::get('/development', [Controllers\Spork\DevelopmentController::class, 'index'])->name('development.index');
 });
 
 Route::middleware([

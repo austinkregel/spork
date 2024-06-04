@@ -23,7 +23,6 @@ trait ScopeRelativeSearch
                             $query->where('user_id', auth()->id());
                         });
                     } elseif (method_exists($this, 'credential')) {
-                        
                         $query->whereHas('credential', function (Builder $query) {
                             $query->where('user_id', auth()->id());
                         });
@@ -48,7 +47,7 @@ trait ScopeRelativeSearch
                         $query->whereHas('projects.team', function (Builder $query) {
                             $query->where('user_id', auth()->id());
                         });
-                    }else {
+                    } else {
                         abort(400, 'No user relation found for model');
                     }
                 }

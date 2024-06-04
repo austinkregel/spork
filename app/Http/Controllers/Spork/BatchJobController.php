@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
@@ -24,12 +26,12 @@ class BatchJobController extends Controller
                     ->whereIn('uuid', json_decode($batch->failed_job_ids, true))
                     ->orderByDesc('failed_at')
                     ->get()
-                ->map(function ($job) {
-                    $job->parsed_exception = (new Stacktrace)->parse($job->exception);
-                    $job->payload = json_decode($job->payload, true);
+                    ->map(function ($job) {
+                        $job->parsed_exception = (new Stacktrace)->parse($job->exception);
+                        $job->payload = json_decode($job->payload, true);
 
-                    return $job;
-                });
+                        return $job;
+                    });
                 $batch->failed_at = $batch->jobs->max('failed_at');
 
                 return $batch;

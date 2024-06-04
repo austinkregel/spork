@@ -23,9 +23,9 @@ class Research extends Model implements Crud
 {
     use HasFactory;
     use LogsActivity;
-    use Searchable;
     use ScopeQSearch;
     use ScopeRelativeSearch;
+    use Searchable;
 
     public $fillable = ['topic', 'notes', 'sources'];
 

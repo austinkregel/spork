@@ -24,10 +24,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Article extends Model implements Crud
 {
     use HasFactory;
-    use Searchable;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
+    use Searchable;
 
     public $fillable = [
         'uuid',

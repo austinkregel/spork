@@ -24,9 +24,9 @@ class DomainRecord extends Model implements Crud, ModelQuery
 {
     use HasFactory;
     use LogsActivity;
-    use Searchable;
     use ScopeQSearch;
     use ScopeRelativeSearch;
+    use Searchable;
 
     protected $fillable = [
         'name',

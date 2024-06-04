@@ -74,6 +74,7 @@ class AtomFeed extends AbstractFeed
                 $feedItem->url = $post['link']['@attributes']['href'];
             } else {
                 info('no link', ['context' => $post]);
+
                 return $feedItem;
             }
 

@@ -25,10 +25,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Account extends Model implements Crud
 {
     use HasFactory;
-    use Searchable;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
+    use Searchable;
 
     protected $fillable = [
         'account_id',
@@ -60,7 +60,6 @@ class Account extends Model implements Crud
     {
         return $this->hasMany(Transaction::class);
     }
-
 
     public function getActivitylogOptions(): LogOptions
     {

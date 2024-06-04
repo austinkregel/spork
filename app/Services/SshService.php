@@ -83,7 +83,7 @@ class SshService
         unlink($localFilePath);
         try {
             // Run a command that will probably write to stderr (unless you have a folder named /hom)
-            $stream_out = ssh2_exec($this->connection, 'bash ' . escapeshellcmd($file). ' 2>&1');
+            $stream_out = ssh2_exec($this->connection, 'bash '.escapeshellcmd($file).' 2>&1');
             stream_set_blocking($stream_out, true);
 
             $stream_error = ssh2_fetch_stream($stream_out, SSH2_STREAM_STDERR);
@@ -91,7 +91,7 @@ class SshService
         } catch (\Throwable $e) {
             return [
                 'stdout' => '',
-                'stderr' => $e->getMessage() . "\n" . $e->getTraceAsString(),
+                'stderr' => $e->getMessage()."\n".$e->getTraceAsString(),
             ];
         }
 

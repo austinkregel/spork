@@ -15,14 +15,15 @@ use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 //use Laravel\Scout\Searchable;
 
 class ShortCode extends Model implements Crud
 {
-//    use Searchable;
+    //    use Searchable;
     use HasFactory;
-    use ScopeRelativeSearch;
     use ScopeQSearch;
+    use ScopeRelativeSearch;
 
     public $fillable = [
         'short_code',

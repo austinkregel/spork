@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Models\Credential;
@@ -13,10 +15,12 @@ class Initialize extends Command
     protected $signature = 'app:initialize';
 
     protected $description = 'Initialize the application';
+
     public function handle()
     {
         if (Credential::where('type', Credential::TYPE_SSH)->exists()) {
             $this->info('SSH key already exists');
+
             return;
         }
 
@@ -47,7 +51,7 @@ class Initialize extends Command
                 'pub_key_file' => $publicKeyFile,
                 'private_key' => $privateKey,
                 'private_key_file' => $privateKeyFile,
-                'pass_key' => !empty($passKey) ? encrypt($passKey) : '',
+                'pass_key' => ! empty($passKey) ? encrypt($passKey) : '',
             ],
         ]);
     }

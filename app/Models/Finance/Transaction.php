@@ -26,10 +26,10 @@ use Spatie\Tags\HasTags;
 class Transaction extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
-    use Searchable;
     use HasTags;
     use ScopeQSearch;
     use ScopeRelativeSearch;
+    use Searchable;
 
     public $fillable = [
         'name',

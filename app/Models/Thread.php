@@ -21,10 +21,10 @@ use Laravel\Scout\Searchable;
 
 class Thread extends Model implements Crud
 {
-    use Searchable;
     use HasFactory;
     use ScopeQSearch;
     use ScopeRelativeSearch;
+    use Searchable;
 
     public $casts = ['settings' => 'json', 'origin_server_ts' => 'datetime'];
 

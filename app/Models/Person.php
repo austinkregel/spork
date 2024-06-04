@@ -20,8 +20,8 @@ use Laravel\Scout\Searchable;
 class Person extends Model implements Crud, ModelQuery
 {
     use HasFactory;
-    use Searchable;
     use ScopeRelativeSearch;
+    use Searchable;
 
     public $guarded = [];
 

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use Exception;
 use phpseclib3\Crypt\EC;
-use phpseclib3\Crypt\RSA;
 
 class SshKeyGeneratorService
 {
@@ -18,7 +16,7 @@ class SshKeyGeneratorService
     ) {
 
         $key = EC::createKey('ed25519');
-        if (!empty($passKey)) {
+        if (! empty($passKey)) {
             $key->withPassword($passKey);
         }
 

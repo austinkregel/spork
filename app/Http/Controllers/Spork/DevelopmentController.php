@@ -11,7 +11,7 @@ class DevelopmentController
     public function index()
     {
         return Inertia::render('Development/Index', [
-//            'instances' => LaravelProgrammingStyle::instancesOf(CustomAction::class),
+            //            'instances' => LaravelProgrammingStyle::instancesOf(CustomAction::class),
         ]);
     }
 }

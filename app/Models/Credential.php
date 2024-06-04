@@ -161,7 +161,7 @@ class Credential extends Model implements Crud, ModelQuery
 
     public function getPasskey(): string
     {
-        return empty($this->settings['pass_key'] ?? '') ? '': decrypt($this->settings['pass_key'] ?? '');
+        return empty($this->settings['pass_key'] ?? '') ? '' : decrypt($this->settings['pass_key'] ?? '');
     }
 
     public function getActivitylogOptions(): LogOptions

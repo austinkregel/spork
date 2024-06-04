@@ -23,8 +23,8 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 /** @mixin \Eloquent */
 class Message extends Model implements Taggable
 {
-    use Searchable;
     use HasFactory, HasJsonRelationships, HasTags;
+    use Searchable;
 
     public $fillable = [
         'from_person',

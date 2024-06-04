@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Services\Code;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Scout\Searchable;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class BulkScoutImport extends Command
 {
@@ -19,7 +20,7 @@ class BulkScoutImport extends Command
         $searchableModels = Code::instancesOf(Searchable::class)
             ->getClasses();
 
-        foreach($searchableModels as $model) {
+        foreach ($searchableModels as $model) {
             Artisan::call('scout:import', [
                 'model' => $model,
             ]);

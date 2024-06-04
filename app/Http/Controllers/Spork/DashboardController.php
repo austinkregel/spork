@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobBatch;
-use App\Models\Person;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -27,6 +26,7 @@ class DashboardController extends Controller
                     ->selectRaw('max(failed_at)')
                     ->whereIn('id', $batchJob->failed_job_ids)
                     ->value('failed_at');
+
                 return $batchJob;
             }, $batchJobs->items()))
         );
