@@ -30,6 +30,7 @@ class ManageController
 
     public function show($model)
     {
+        $table = (new $model)->getTable();
         $description = (new DescribeTableService())->describe(new $model);
 
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
@@ -47,12 +48,12 @@ class ManageController
         unset($paginator['data']);
 
         return Inertia::render('Manage/Index', [
-            'title' => 'CRUD '.Str::ucfirst(str_replace('_', ' ', Str::ascii((new $model)->getTable(), 'en'))),
+            'title' => 'CRUD '.Str::ucfirst(str_replace('_', ' ', Str::ascii($table, 'en'))),
             'description' => $description,
-            'singular' => Str::singular((new $model)->getTable()),
-            'plural' => Str::plural((new $model)->getTable()),
-            'link' => '/'.(new $model)->getTable(),
-            'apiLink' => '/api/crud/'.(new $model)->getTable(),
+            'singular' => Str::singular($table),
+            'plural' => Str::plural($table),
+            'link' => '/'.$table,
+            'apiLink' => '/api/crud/'.$table,
             'data' => $data,
             'paginator' => $paginator,
         ]);

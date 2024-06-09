@@ -131,13 +131,33 @@ createInertiaApp({
                         only: ['job_batches', 'news']
                     })
                 })
+                .listen('Models.Server.ServerCreated', e => {
+                    router.reload({
+                        only: ['servers', 'data', 'server']
+                    })
+                })
+                .listen('Models.Server.ServerUpdating', e => {
+                    router.reload({
+                        only: ['servers', 'data', 'server']
+                    })
+                })
+                .listen('Models.Server.ServerUpdated', e => {
+                    router.reload({
+                        only: ['servers', 'data', 'server']
+                    })
+                })
+                .listen('Models.Server.ServerDeleted', e => {
+                    router.reload({
+                        only: ['servers', 'data', 'server']
+                    })
+                })
                 .notification((notification) => {
                     playSound('notification');
                     console.log('notification', notification);
                 })
                 .error((error) => {
                     console.error('non-fatal error', error);
-                });
+                })
         }
 
         if (props?.initialPage?.props.auth.user?.person?.id) {
@@ -153,36 +173,6 @@ createInertiaApp({
                 .error((error) => {
                     console.error(error);
                 });
-        }
-        const credentials = props?.initialPage?.props?.auth?.user?.credentials ?? [];
-        if (credentials?.length) {
-            credentials.forEach((credential) => {
-                Echo.private(`App.Models.Credential.${credential.id}`)
-                    .listen('Models.Server.ServerCreated', e => {
-                        router.reload({
-                            only: ['servers', 'data', 'server']
-                        })
-                    })
-                    .listen('Models.Server.ServerUpdating', e => {
-                        router.reload({
-                            only: ['servers', 'data', 'server']
-                        })
-                    })
-                    .listen('Models.Server.ServerUpdated', e => {
-                        router.reload({
-                            only: ['servers', 'data', 'server']
-                        })
-                    })
-                    .listen('Models.Server.ServerDeleted', e => {
-                        router.reload({
-                            only: ['servers', 'data', 'server']
-                        })
-                    })
-
-                    .error((error) => {
-                        console.error('non-fatal error', error);
-                    });
-            });
         }
 
         console.log(props?.initialPage?.props?.auth?.user)

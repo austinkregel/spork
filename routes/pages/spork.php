@@ -64,25 +64,8 @@ Route::middleware([
 
 Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'), 'verified')->group(function () {
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
-    Route::get('/search', function () {
-        $client = new \Meilisearch\Client(
-            config('scout.meilisearch.host'),
-            config('scout.meilisearch.key'),
-        );
-
-        $searchableModels = Code::instancesOf(Searchable::class)->getClasses();
-
-        $result = $client->multiSearch(array_map(function ($model) {
-            return (new \Meilisearch\Contracts\SearchQuery())
-                ->setQuery(request('q'))
-                ->setLimit(4)
-                ->setIndexUid((new $model)->searchableAs());
-        }, $searchableModels));
-
-        return Inertia::render('Search', [
-            'results' => array_values(array_filter($result['results'], fn ($r) => count($r['hits']) > 0)),
-        ]);
-    })->name('search');
+    Route::get('/search', [Controllers\SearchController::class, 'index'])->name('search');
+    Route::get('/search/{index}', [Controllers\SearchController::class, 'show'])->name('search.show');
     Route::get('/notifications', fn () => Inertia::render('Notifications'));
 
     Route::get('/rss-feed', fn () => Inertia::render('RssFeeds/Index', [

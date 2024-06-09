@@ -1,7 +1,7 @@
 <template>
   <AppLayout title="Dashboard">
     <div class="flex flex-wrap gap-4 m-4">
-        <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-3">Recent</div>
+        <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-4">Recent</div>
         <div
             v-for="(topic, i) in research ?? []"
             class="w-64 p-3 border border-stone-200 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-600"

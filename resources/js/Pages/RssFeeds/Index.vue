@@ -1,7 +1,7 @@
 <template>
     <AppLayout title="Dashboard">
         <div class="flex flex-wrap gap-4 m-4">
-            <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-3">Rss Feeds</div>
+            <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-4">Rss Feeds</div>
 
             <div class="grid grid-cols-1 max-w-5xl mx-auto gap-4 ">
                 <div

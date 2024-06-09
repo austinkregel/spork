@@ -11,7 +11,7 @@ use Laravel\Scout\Searchable;
 
 class BulkScoutImport extends Command
 {
-    protected $signature = 'app:bulk-scout-import';
+    protected $signature = 'scout:bulk-import';
 
     protected $description = 'Command description';
 
@@ -23,7 +23,7 @@ class BulkScoutImport extends Command
         foreach ($searchableModels as $model) {
             Artisan::call('scout:import', [
                 'model' => $model,
-            ]);
+            ], $this->output);
         }
     }
 }
