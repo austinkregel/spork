@@ -25,7 +25,7 @@ class MessageController
                     $query->orderBy('originated_at');
                 }, 'participants' => function ($query) {
                     $query->where('name', 'not like', '%bridge bot%');
-                }])
+                }, 'messages.toPerson', 'messages.fromPerson'])
                 ->orderByDesc('updated_at')
                 ->findOrFail($thread),
         ]);

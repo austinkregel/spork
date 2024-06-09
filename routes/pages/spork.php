@@ -66,7 +66,7 @@ Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'),
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
     Route::get('/search', [Controllers\SearchController::class, 'index'])->name('search');
     Route::get('/search/{index}', [Controllers\SearchController::class, 'show'])->name('search.show');
-    Route::get('/notifications', fn () => Inertia::render('Notifications'));
+    Route::get('/notifications', fn () => Inertia::render('Notifications'))->name('notifications');
 
     Route::get('/rss-feed', fn () => Inertia::render('RssFeeds/Index', [
         'feeds' => \App\Models\Article::query()->latest('last_modified')

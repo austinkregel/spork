@@ -58,12 +58,7 @@ class HandleInertiaRequests extends Middleware
                     'conversation_page',
                     request('conversation_page')
                 ) : null,
-            'unread_email_count' => $request->user() ?
-                $request->user()->messages()
-                    ->where('messages.type', 'email')
-                    ->where('seen', false)
-                    ->count()
-                : 0,
+            'unread_email_count' => 0,
             'notifications' => $request->user()?->notifications ?? [],
         ]);
     }

@@ -2,9 +2,16 @@ includes:
     - vendor/larastan/larastan/extension.neon
 
 parameters:
-
+    excludePaths:
+        - resources/
+        - storage/
+        - vendor/
+        - docker/
     paths:
         - app/
+        - database/
+        - tests/
+        - routes/
 
     # Level 9 is the highest level
     level: 5

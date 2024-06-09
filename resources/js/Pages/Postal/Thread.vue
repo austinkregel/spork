@@ -68,11 +68,11 @@
                 </div>
                 <section class="flex-grow bg-gray-300 dark:bg-zinc-900">
                     <article class="px-4 mt-4 text-stone-500 dark:text-stone-200 leading-7 tracking-wider gap-1 flex flex-col">
-                        <div v-for="message in thread.messages" class="flex" :class="message.is_user ? 'justify-end' : 'justify-start'">
+                        <div v-for="message in thread.messages" class="flex flex-col" :class="message.is_user ? 'justify-end' : 'justify-start'">
+                          <div class="-my-1 text-xxs text-black dark:text-stone-400">{{message?.from_person?.name}}</div>
                           <div
                               :class="[message.is_user ? 'text-right bg-blue-600': 'text-left bg-green-500']"
-                              class="px-4 py-2 flex rounded-lg shadow"
-
+                              class="px-2 py-1 flex rounded-lg shadow"
                           >
                             <div v-if="message.html_message" v-html="message.html_message"></div>
                             <div v-else v-text="message.message"></div>

@@ -159,7 +159,7 @@ const logout = () => {
                 <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
                     <Search />
                     <div class="flex items-center gap-x-4 lg:gap-x-6">
-                        <Link href="/-/postal" class="-m-2.5 p-2.5 text-stone-400 hover:text-stone-500 relative">
+                        <Link :href="route('notifications')" class="-m-2.5 p-2.5 text-stone-400 hover:text-stone-500 relative">
                             <span class="sr-only">View notifications</span>
                             <BellIcon class="h-6 w-6" aria-hidden="true" />
                             <span class="bg-red-500 absolute top-0 right-0 rounded-full text-xs text-white py-0.5 px-1">
