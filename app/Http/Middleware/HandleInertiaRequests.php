@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
     {
         if (auth()->check()) {
             auth()->user()->setRelation('person', auth()->user()->person());
+            auth()->user()->load('credentials');
         }
         $navigation = (new ConditionService)->navigation();
 

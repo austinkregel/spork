@@ -46,10 +46,11 @@ class Initialize extends Command
             'type' => Credential::TYPE_SSH,
             'name' => 'SSH',
             'user_id' => User::first()->id,
+            'api_key' => Str::random(32),
             'settings' => [
                 'pub_key' => $publicKey,
                 'pub_key_file' => $publicKeyFile,
-                'private_key' => $privateKey,
+                'private_key' => encrypt($privateKey),
                 'private_key_file' => $privateKeyFile,
                 'pass_key' => ! empty($passKey) ? encrypt($passKey) : '',
             ],

@@ -28,7 +28,17 @@ const appName = window.document.getElementsByTagName('title')[0]?.innerText || '
 window.Spork = {
 
 };
-
+const playSound = (name) => {
+    // glitch-sound
+    // error-sound
+    // success-sound
+    // notification-sound
+    const v = document.getElementById(name+'-sound');
+    v.volume = 0.15;
+    v.currentTime = 0;
+    v.play();
+}
+window.playSound = playSound;
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
@@ -44,7 +54,12 @@ createInertiaApp({
                 components(getters, rootGetters) {
                     return registeredComponents;
                 }
-            }
+            },
+            actions: {
+                playSound(context, name) {
+                    playSound(name);
+                }
+            },
         })
 
         const app = createApp({ render: () => h(App, props) })
@@ -96,6 +111,7 @@ createInertiaApp({
             const userId = props?.initialPage?.props?.auth?.user?.id;
             Echo.private(`App.Models.User.${userId}`)
                 .listen('Models.Message.MessageCreated', (e) => {
+                    playSound('notification');
                     router.reload({
                         only: ['messages', 'unread_email_count'],
                     });
@@ -115,6 +131,10 @@ createInertiaApp({
                         only: ['job_batches', 'news']
                     })
                 })
+                .notification((notification) => {
+                    playSound('notification');
+                    console.log('notification', notification);
+                })
                 .error((error) => {
                     console.error('non-fatal error', error);
                 });
@@ -123,12 +143,49 @@ createInertiaApp({
         if (props?.initialPage?.props.auth.user?.person?.id) {
             Echo.private('App.Models.Person.'+props?.initialPage?.props.auth.user?.person?.id)
                 .listen('message', (data) => {
-                    console.log('Message from server', data)
+                    console.log('Message from server', data);
+                    playSound('notification');
+                    router.reload({
+                        only: ['messages', 'unread_email_count'],
+                    });
+
                 })
                 .error((error) => {
                     console.error(error);
                 });
         }
+        const credentials = props?.initialPage?.props?.auth?.user?.credentials ?? [];
+        if (credentials?.length) {
+            credentials.forEach((credential) => {
+                Echo.private(`App.Models.Credential.${credential.id}`)
+                    .listen('Models.Server.ServerCreated', e => {
+                        router.reload({
+                            only: ['servers', 'data', 'server']
+                        })
+                    })
+                    .listen('Models.Server.ServerUpdating', e => {
+                        router.reload({
+                            only: ['servers', 'data', 'server']
+                        })
+                    })
+                    .listen('Models.Server.ServerUpdated', e => {
+                        router.reload({
+                            only: ['servers', 'data', 'server']
+                        })
+                    })
+                    .listen('Models.Server.ServerDeleted', e => {
+                        router.reload({
+                            only: ['servers', 'data', 'server']
+                        })
+                    })
+
+                    .error((error) => {
+                        console.error('non-fatal error', error);
+                    });
+            });
+        }
+
+        console.log(props?.initialPage?.props?.auth?.user)
 
         return app.mount(el);
     },

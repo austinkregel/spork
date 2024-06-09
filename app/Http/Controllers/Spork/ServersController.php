@@ -12,13 +12,22 @@ class ServersController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Servers', []);
+        $servers = auth()->user()->servers()->paginate(10);
+        return Inertia::render('Servers/Index', [
+            'servers' => $servers->items(),
+            'pagination' => $servers,
+        ]);
     }
 
-    public function show(Server $project)
+    public function show(Server $server)
     {
-        return Inertia::render('Servers', [
-            'project' => $project,
+        $server->load([
+            'tags',
+            'credential',
+            'projects',
+        ]);
+        return Inertia::render('Servers/Show', [
+            'server' => $server,
         ]);
     }
 }

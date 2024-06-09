@@ -111,35 +111,8 @@ class SshService
             'type' => Credential::TYPE_SSH,
         ]))->first();
 
-        if (empty($user) && empty($credential)) {
-            abort(404, 'user does ot exist');
+        if (isset($credential)) {
+            return $credential;
         }
-
-        if (empty($credential)) {
-            $randomName = Str::random(16);
-
-            (new Filesystem)->makeDirectory(storage_path('app/keys'), 0755, true, true);
-
-            $generatorService = new SshKeyGeneratorService(
-                privateKeyFile: $privateKeyFile = storage_path('app/keys/'.$randomName.'.key'),
-                publicKeyFile: $publicKeyFile = storage_path('app/keys/'.$randomName.'.pub'),
-                passKey: $passKey = ''// Str::random(16),
-            );
-
-            return $user->credentials()->create([
-                'service' => Credential::TYPE_SSH,
-                'type' => Credential::TYPE_SSH,
-                'name' => $host.' ssh',
-                'settings' => [
-                    'pub_key' => $generatorService->getPublicKey(),
-                    'pub_key_file' => $publicKeyFile,
-                    'private_key' => $generatorService->getPrivateKey(),
-                    'private_key_file' => $privateKeyFile,
-                    'pass_key' => encrypt($passKey),
-                ],
-            ]);
-        }
-
-        return $credential;
     }
 }

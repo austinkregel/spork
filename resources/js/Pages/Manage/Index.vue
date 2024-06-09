@@ -154,7 +154,7 @@ const log = console.log;
         </div>
       </template>
       <template #data="{ data, openModal }">
-        <div class="w-full grid grid-cols-6 ">
+        <div class="w-full grid grid-cols-6 relative z-0">
           <div class="col-span-5">
             <div class="flex flex-col">
               <div class="text-lg text-left flex items-center gap-2">

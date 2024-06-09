@@ -136,16 +136,17 @@ const logout = () => {
 
             <nav class="mt-8">
                 <div class="mt-6 w-full flex-1 space-y-1 px-2 flex flex-col">
-                    <Link v-for="item in page.props.navigation" :key="item.name" :href="item?.href ?? '#'" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-wrap gap-2 rounded-md text-xs font-medium px-2 py-1.5']" :aria-current="item.current ? 'page' : undefined">
-                        <DynamicIcon :icon-name="item.icon"  :active="item.current"  :class="[item.current ? 'text-white' : 'text-slate-300 group-hover:text-white', 'h-5 w-5']" aria-hidden="true" />
-                        <span class="text-base">{{ item.name }}</span>
+                    <Link v-for="item in page.props.navigation" :key="item.name" :href="item?.href ?? '#'" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-wrap gap-2 rounded-md text-xs font-medium px-2 py-1.5 items-center justify-center xl:justify-start']" :aria-current="item.current ? 'page' : undefined">
+                        <DynamicIcon :icon-name="item.icon"  :active="item.current"  :class="[item.current ? 'text-white' : 'text-slate-300 group-hover:text-white',
+                        'xl:h-5 xl:w-5 w-6 h-6']" aria-hidden="true" />
+                        <span class="text-base hidden xl:block">{{ item.name }}</span>
                     </Link>
                 </div>
             </nav>
         </div>
 
         <div class="lg:pl-20 xl:pl-48 min-h-screen">
-            <div class="shadow-lg sticky top-0 z-0 flex h-16 shrink-0 items-center gap-x-4 border-b border-stone-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+            <div class="shadow-lg sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-stone-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
                 <button type="button" class="-m-2.5 p-2.5 text-stone-700 lg:hidden" @click="sidebarOpen = true">
                     <span class="sr-only">Open sidebar</span>
                     <Bars3Icon class="h-6 w-6" aria-hidden="true" />
@@ -200,5 +201,13 @@ const logout = () => {
         </div>
 
         <global-chat />
+
+        <audio id="glitch-sound" src="/sounds/glitch-in-the-matrix-600.ogg" preload="auto" type="audio/ogg" />
+        <audio id="finished-sound" src="/sounds/just-saying-593.ogg" preload="auto" type="audio/ogg" />
+        <audio id="error-sound" src="/sounds/relentless-572.ogg" preload="auto" type="audio/ogg" />
+        <audio id="notification-sound" src="/sounds/swiftly-610.ogg" preload="auto" type="audio/ogg" />
+        <audio id="success-sound" src="/sounds/i-did-it-message-tone.ogg" preload="auto" type="audio/ogg" />
+        <audio id="achievement-sound" src="/sounds/achievement-message-tone.ogg" preload="auto" type="audio/ogg" />
+
     </div>
 </template>

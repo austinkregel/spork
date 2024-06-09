@@ -121,6 +121,11 @@ class User extends Authenticatable implements ModelQuery, Taggable
         return $this->hasManyThrough(Message::class, Credential::class)->orderByDesc('originated_at');
     }
 
+    public function servers(): HasManyThrough
+    {
+        return $this->hasManyThrough(Server::class, Credential::class);
+    }
+
     public function externalRssFeeds(): MorphMany
     {
         return $this->morphMany(ExternalRssFeed::class, 'owner');

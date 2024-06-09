@@ -1,35 +1,35 @@
 <template>
     <AppLayout title="Dashboard">
         <div class="flex flex-wrap gap-4 m-4">
-            <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-3">Rss Feeds</div>
+            <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-3">Servers</div>
 
-            <div class="grid grid-cols-1 max-w-5xl mx-auto gap-4 ">
+            <div class="grid grid-cols-1 max-w-5xl mx-auto gap-4 w-full">
                 <div
-                    v-for="(topic, i) in feeds ?? []"
+                    v-for="(server, i) in servers ?? []"
                     class="max-h-64 overflow-hidden p-3 border border-stone-200 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-600"
-                    :key="'research-'+i"
+                    :key="'servers-'+i"
                 >
                     <ContextMenu>
-                        <div>
-                            <a target="_blank" :href="topic.url" class="text-xl font-bold underline">{{ topic.headline }}</a>
-                            <div class="overflow-hidden max-h-32">
-                                <div v-html="topic.content"></div>
+                        <div class="flex flex-wrap gap-4 w-full">
+                            <div class="w-12">
+                                <DynamicIcon icon-name="ServerIcon" class="w-12 h-12" />
                             </div>
-                            <div class="flex flex-wrap mt-2 gap-2">
-                                <div v-for="tag in topic.author?.tags" :key="tag.name"
-                                     class="py-1 px-2 rounded-full bg-blue-300 dark:bg-blue-600 text-xs">
-                                    {{ tag.name.en }}
+                            <div class="flex flex-col">
+                                <div class="font-medium text-stone-600 dark:text-stone-300">
+                                    <Link :href="'/-/servers/'+server.id">{{ server.name }}</Link>
                                 </div>
-
-                                <div class="py-1 px-2 rounded-full bg-slate-700 text-xs">{{ date(topic.last_modified)}}</div>
+                                <div class="text-stone-500 dark:text-stone-400">{{ server.ip_address }}</div>
+                            </div>
+                            <div class="flex-grow flex justify-between">
+                                <div></div>
+                                <div>
+                                    <Status :status="server.status" />
+                                </div>
                             </div>
                         </div>
 
                         <template #items>
-                            <Link :href="'/-/research/'+topic.id" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
-                                <ArrowTopRightOnSquareIcon  class="w-4 h-4" />
-                                Open
-                            </Link>
+                            {{server}}
                         </template>
                     </ContextMenu>
                 </div>
@@ -70,11 +70,13 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
 import { Link } from '@inertiajs/vue3'
 import LaravelVuePagination from "@/Components/Spork/LaravelVuePagination.vue";
+import DynamicIcon from "@/Components/DynamicIcon.vue";
+import Status from "@/Components/Spork/Atoms/Status.vue";
 
-const { feeds, pagination } = defineProps({
-    feeds: Array,
+const { servers, pagination } = defineProps({
+    servers: Array,
     pagination: Object,
 })
-const date = (d) => dayjs(d).format('YYYY-MM-DD HH:mm:ss')
+const date = () => {}
 
 </script>

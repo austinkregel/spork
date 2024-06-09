@@ -29,11 +29,9 @@ class FileManagerController
                     'file_path' => base64_encode('/'.$file),
                     'is_directory' => true,
                     'type' => 'folder',
-                    'last_modified' => \Carbon\Carbon::parse($filesystem->lastModified($file)),
                 ],
                 $filesystem->directories()
             ),
-
         ]);
     }
 

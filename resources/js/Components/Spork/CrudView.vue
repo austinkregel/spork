@@ -10,7 +10,7 @@
             </SporkButton>
             <SporkTable :headers="[]" :data="data">
                 <template #table-top>
-                    <div class="relative w-full flex flex-wrap justify-between items-center ">
+                    <div class="relative z-0 w-full flex flex-wrap justify-between items-center ">
                         <div class="flex gap-4 items-center">
                             <input
                                 type="checkbox"
@@ -157,8 +157,8 @@
                     v-model="form[fieldName]"
                     :type="field.type"
                     :autofocus="field?.autofocus ?? false"
-                    :disabledInput="field?.disabled ?? false"
-                    :editableLabel="field?.editableLabel ?? false"
+                    :disabled-input="field?.disabled ?? false"
+                    :editable-label="field?.editableLabel ?? false"
                     :error="hasErrors(fieldName)"
                     :options="field?.options ?? []"
                 >

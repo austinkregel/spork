@@ -451,7 +451,8 @@ export default {
         },
         async attachToProject(type, model) {
             Promise.all(this.resources.map(async (modelId) => {
-                await axios.post('/project/' + this.$page.props.project.id + '/attach', {
+                await axios.post(
+                    route('project.attach', [this.$page.props.project.id]), {
                     resource_type: type,
                     resource_id: modelId,
                 })

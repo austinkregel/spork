@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
@@ -25,6 +26,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
     use HasTags;
+    use HasApiTokens;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
@@ -34,6 +36,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
         'name',
         'vcpu',
         'memory',
+        'status',
         'disk',
         'cost_per_hour',
         'ip_address',

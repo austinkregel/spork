@@ -38,7 +38,7 @@ class FetchResourcesFromCredentials implements ShouldQueue
     {
         $credentials = Credential::query()
             // Matrix credentials are handled in their own way.
-            ->where('service', '!=', 'matrix')
+            ->whereNotIn('service', ['matrix', 'ssh'])
             ->get();
 
         $jobs = $credentials->groupBy('user_id')

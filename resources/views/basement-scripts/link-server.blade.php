@@ -6,7 +6,7 @@
         return str_replace('link.','', url(...$params));
     };
 @endphp#!/bin/bash
-set -ev
+set -exv
 # Steps
 #   1. Setup SSH
 #   2. Get disk size
@@ -30,46 +30,26 @@ export DEBIAN_FRONTEND=noninteractive
 apt_install_prereqs() {
     apt-get install -y curl openssh-client jq
 }
-
-yum_install_prereqs() {
-    curl -sL https://rpm.nodesource.com/setup_12.x | bash -
-
-    yum install curl openssh-client jq
-}
-
-apt_install_node() {
-    apt-get remove -y nodejs
-    curl -sL https://deb.nodesource.com/setup_12.x | bash -
-    apt-get update
-    apt-get install -y nodejs
-}
-yum_install_node() {
-    yum remove node nodejs
-    curl -sL https://rpm.nodesource.com/setup_12.x | bash -
-    yum update
-    yum install nodejs
+update_server() {
+    curl -X PUT -H "Authentication: Bearer $TOKEN" -H 'Content-type: application/json' -H 'Accept: application/json' -d  "$1" {{ route('server.update', [$credential->id]) }} --user-agent "`echo $USER`@`hostname`:installer"
 }
 
 source /etc/lsb-release
 
-if [[ "$DISTRIB_ID" == "Ubuntu" ]];  then
-    apt_install_prereqs
-else
-    yum_install_prereqs
-fi
+apt_install_prereqs
 
 # Creation link
 SERVER_DATA()
 {
     NAME=$(hostname -s | xargs)
-    PUBLIC_IP=$(curl "https://ipinfo.io/ip" | xargs)
-    DISK_SIZE=$(df -h | awk '{print $4}' | head -2 | tail -1 | xargs)
+    PUBLIC_IP={{request()->ip()}}
+    DISK_SIZE=$(df | grep -v run | grep -v sys | awk '{print $2}' | head -1 | tail -1 | xargs)
     MEMORY_KB=$(cat /proc/meminfo | grep memtotal -i | awk '{print $2}')
     MEMORY=$(echo $(($MEMORY_KB / 1024)) | xargs)
     KERNEL=$(uname -r | xargs)
     CPU_THREADS=$(nproc --all  | xargs)
     source /etc/lsb-release
-    cat <<EOF
+    cat {!! '<<EOF' !!}
 {!! json_encode([
     'name' => '$NAME',
     'ip_address' => '$PUBLIC_IP',
@@ -79,11 +59,13 @@ SERVER_DATA()
     'kernel' => '$KERNEL',
     'distro' => '$DISTRIB_ID',
     'threads' => '$CPU_THREADS',
+    'status' => 'provisioning',
+    'server_id' => \Ramsey\Uuid\Uuid::uuid4()->toString(),
 ], JSON_PRETTY_PRINT) !!}
 EOF
 }
 
-SERVER=$(curl -X POST -H 'Authentication: Bearer {{ request()->header('') }}' -H 'Content-type: application/json' -H 'Accept: application/json' -d  "$(SERVER_DATA)" -X POST {{ route('create-device') }})
+SERVER=$(curl -X POST -H 'Content-type: application/json' -H "Authentication: bearer {{ $credential->api_key }}" -H 'Accept: application/json' -d  "$(SERVER_DATA)" -X POST "{{ route('server.create') }}" --user-agent "`echo $USER`@`hostname`:installer")
 
 echo ""
 echo "$SERVER"
@@ -94,7 +76,6 @@ ERRORS=$(echo "$SERVER" | jq -r ".errors")
 if [[ "$MESSAGE" != null ]]; then
     clear
     echo 'Error creating server.'
-    echo $SERVER;
     echo "$(SERVER_DATA)"
     echo "ERRORS: $MESSAGE"
     exit 1;
@@ -106,14 +87,20 @@ if [[ "$ERRORS" != null ]]; then
     echo "ERRORS: $ERRORS"
     exit 1;
 fi
-SERVER=$(echo "$SERVER" | jq -r ".data")
+TOKEN=$(echo "$SERVER" | jq -r ".access_token")
 
 mkdir -p ~/.basement/logs
 
-echo "{ \"token\": \"$(echo "$SERVER" | jq -r ".access_token")\", \"user_id\": \"$(echo "SERVER" | jq -r ".user_id")\" }" > ~/.basement/config.json
+# Is server scoped token, and the server owner's credential_id
+echo "{ \"token\": \"$(echo "$TOKEN")\", \"credential_id\": {{$credential->id}} }" > ~/.basement/config.json
 
-SSH_PUBLIC_KEY=$(echo $SERVER | jq -r '.`ssh_key_public`')
+SSH_PUBLIC_KEY="{{ $credential->getPublicKey() }}"
 
 mkdir -p /root/.ssh
 touch  /root/.ssh/authorized_keys
 echo $SSH_PUBLIC_KEY >> /root/.ssh/authorized_keys
+
+update_server {!! escapeshellarg(json_encode(['status' => 'ssh_ready'])) !!}
+
+# We could install other dependencies here, ssh_ready just means accessible.
+# We still need to do service discovery, and install

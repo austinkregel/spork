@@ -11,7 +11,7 @@
             class="rounded-t-md text-xs leading-loose tracking-wide font-bold py-0 px-4" placeholder="text" type="text"
         />
         <label
-            class="flex dark:bg-stone-600 dark:placeholder-stone-300 rounded-b-md h-10"
+            class="flex dark:bg-stone-600 dark:placeholder-stone-300 rounded-b-md"
             v-if="type !== 'object' && type !== 'select'"
             :class="[type === 'checkbox' ? 'pl-4 pt-4': 'p-0']"
         >
@@ -23,9 +23,21 @@
                     ...modelValue,
                     value: $event.target.value
                 })"
+                v-if="type !== 'textarea'"
                 :type="type"
                 :disabled="disabledInput"
             />
+            <textarea
+                class="py-2 px-3 block sm:text-sm rounded-b-md h-20"
+                :class="inputClasses(disabledInput)"
+                :value="modelValue.value"
+                @input="$emit('update:modelValue', {
+                    ...modelValue,
+                    value: $event.target.value
+                })"
+                v-else
+                :disabled="disabledInput"
+            ></textarea>
 
         </label>
 
