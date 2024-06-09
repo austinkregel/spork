@@ -24,5 +24,5 @@ Broadcast::channel('App.Models.Person.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('App.Models.Credential.{id}', function ($user, $id) {
-    return !empty($user->credentials()->firstWhere('id', $id));
+    return ! empty($user->credentials()->firstWhere('id', $id));
 });

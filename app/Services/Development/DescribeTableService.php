@@ -157,7 +157,7 @@ class DescribeTableService
                     'delete' => auth()->user()->can('delete_'.Str::singular($model->getTable())) || auth()->user()->hasRole('developer'),
                     'delete_any' => auth()->user()->can('delete_any_'.Str::singular($model->getTable())) || auth()->user()->hasRole('developer'),
                 ],
-            ]: []);
+            ] : []);
     }
 
     public function describeTable(string $table): array

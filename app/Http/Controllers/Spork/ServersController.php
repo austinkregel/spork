@@ -13,6 +13,7 @@ class ServersController extends Controller
     public function index()
     {
         $servers = auth()->user()->servers()->paginate(10);
+
         return Inertia::render('Servers/Index', [
             'servers' => $servers->items(),
             'pagination' => $servers,
@@ -26,6 +27,7 @@ class ServersController extends Controller
             'credential',
             'projects',
         ]);
+
         return Inertia::render('Servers/Show', [
             'server' => $server,
         ]);

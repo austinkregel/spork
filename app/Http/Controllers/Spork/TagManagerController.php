@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
-use App\Models\Finance\Transaction;
 use App\Models\Tag;
 use App\Services\Code;
 use Inertia\Inertia;
@@ -40,9 +39,10 @@ class TagManagerController
                 ),
         ]);
     }
+
     public function show(Tag $tag)
     {
-//        dd(collect(Code::instancesOf(HasTags::class)->getClasses())->map(fn ($class) => (new $class)->getTable()));
+        //        dd(collect(Code::instancesOf(HasTags::class)->getClasses())->map(fn ($class) => (new $class)->getTable()));
         return Inertia::render('Tags/Show', [
             'tag' => $tag->loadSum('transactions', 'amount')
                 ->load([

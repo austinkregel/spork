@@ -7,7 +7,6 @@ namespace App\Actions\Spork;
 use App\Contracts\ActionInterface;
 use App\Jobs\FetchResourcesFromCredential;
 use App\Models\Credential;
-use Illuminate\Bus\Batch;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;

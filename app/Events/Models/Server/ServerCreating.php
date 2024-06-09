@@ -19,7 +19,7 @@ class ServerCreating extends AbstractLogicalEvent implements ShouldBroadcastNow
     public function broadcastOn()
     {
         return [
-            new PrivateChannel('App.Models.Credential.' . $this->model->credential_id),
+            new PrivateChannel('App.Models.Credential.'.$this->model->credential_id),
         ];
     }
 }

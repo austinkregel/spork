@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -7,10 +9,7 @@ use App\Http\Requests\StoreServerRequest;
 use App\Models\Credential;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Laravel\Sanctum\NewAccessToken;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class ServerController extends Controller
 {
@@ -23,7 +22,7 @@ class ServerController extends Controller
 
         /** @var NewAccessToken $token */
         $token = $server->createToken(
-            $server->name . ' Access Token',
+            $server->name.' Access Token',
             [
                 'update_server',
                 'delete_server',

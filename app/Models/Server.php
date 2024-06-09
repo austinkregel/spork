@@ -24,9 +24,9 @@ use Spatie\Tags\HasTags;
 
 class Server extends Model implements Crud, ModelQuery, Taggable
 {
+    use HasApiTokens;
     use HasFactory;
     use HasTags;
-    use HasApiTokens;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;

@@ -31,7 +31,7 @@ Route::get('/link/{identifier}', function ($identifier) {
 
 Route::middleware([
     'throttle:api',
-    \App\Http\Middleware\ServerAccessable::class
+    \App\Http\Middleware\ServerAccessable::class,
 
 ])->put('/.server/update/{identifier}', function () {
     /** @var \Laravel\Sanctum\PersonalAccessToken $token */

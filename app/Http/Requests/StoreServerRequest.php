@@ -16,15 +16,15 @@ class StoreServerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if (!$this->hasHeader('Authentication')) {
+        if (! $this->hasHeader('Authentication')) {
             return false;
         }
 
-        if (!$this->hasHeader('User-agent')) {
+        if (! $this->hasHeader('User-agent')) {
             return false;
         }
         // Does the user agent match the pattern (\w|\d)+@(\w|\d)+:installer:
-        preg_match('/^([\w|\d]+)@([\w|\d]+):(installer)$/i', $this->header('User-agent'),$matches);
+        preg_match('/^([\w|\d]+)@([\w|\d]+):(installer)$/i', $this->header('User-agent'), $matches);
 
         if (empty($matches)) {
             return false;
@@ -42,7 +42,7 @@ class StoreServerRequest extends FormRequest
         [$bearer, $token] = explode(' ', $this->header('Authentication'), 2);
         $credential = Credential::firstWhere('api_key', $token);
 
-        if (!$credential) {
+        if (! $credential) {
             return false;
         }
 
@@ -62,6 +62,7 @@ class StoreServerRequest extends FormRequest
     {
         $description = new DescribeTableService();
         $fields = $description->describe(new Server());
+
         return array_reduce($fields['required'], function ($carry, $field) {
             return array_merge($carry, [
                 $field => 'required',

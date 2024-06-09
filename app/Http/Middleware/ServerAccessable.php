@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Models\Server;
@@ -35,6 +37,7 @@ class ServerAccessable
 
         abort_unless($token->tokenable_type === Server::class, 404, 'Server not found');
         $request->merge(['server' => $token->tokenable]);
+
         return $next($request);
     }
 }
