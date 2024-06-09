@@ -100,6 +100,7 @@ Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'),
     Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
 
+    Route::get('/servers', [Controllers\Spork\ServersController::class, 'index'])->name('servers.show');
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
@@ -143,6 +144,7 @@ Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'),
 
     Route::get('/settings', Controllers\Spork\SettingsController::class);
     Route::get('/tag-manager', Controllers\Spork\TagManagerController::class);
+    Route::get('/tag-manager/{tag}', [Controllers\Spork\TagManagerController::class, 'show']);
 
     Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
     Route::get('/postal/{message}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
