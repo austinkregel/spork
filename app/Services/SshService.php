@@ -72,7 +72,7 @@ class SshService
         @mkdir(dirname($localFilePath), 0755, true);
         file_put_contents($localFilePath, $script->script);
 
-        // Ensure our .basement folder exists
+        // Ensure our .spork folder exists
         $exec = ssh2_exec($this->connection, 'mkdir /tmp/.spork -f');
         stream_set_blocking($exec, true);
 

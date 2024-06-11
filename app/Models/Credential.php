@@ -144,7 +144,7 @@ class Credential extends Model implements Crud, ModelQuery
             chmod($publicKeyFile, 0600);
         }
 
-        return $publicKeyFile;
+        return $this->settings['pub_key'] ?? '';
     }
 
     public function getPrivateKey(): string
