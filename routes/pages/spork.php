@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 use App\Actions\Spork\CustomAction;
 use App\Http\Controllers;
-use App\Services\Code;
 use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Scout\Searchable;
 
 Route::middleware([
     'auth:sanctum',

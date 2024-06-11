@@ -19,6 +19,7 @@ class ServerUpdated extends AbstractLogicalEvent implements ShouldBroadcastNow
     public function broadcastOn()
     {
         $this->model->load('credential');
+
         return [
             new PrivateChannel('App.Models.User.'.$this->model->credential->user_id),
         ];
