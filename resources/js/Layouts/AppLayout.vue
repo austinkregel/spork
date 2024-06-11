@@ -126,13 +126,13 @@ const logout = () => {
 
         <!-- Static sidebar for desktop -->
         <div class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-10 lg:block lg:w-20 xl:w-48 lg:bg-stone-950 lg:pb-4 relative">
-            <div>
-            <Link href="/-/dashboard" class="flex h-16 shrink-0 items-center xl:items-start xl:pl-4 flex flex-col justify-center">
-                <CpuChipIcon class="h-8 w-8 text-slate-500" />
-            </Link>
-            </div>
-            <div class="text-white absolute z-50 left-16 xl:left-44 z-0 mr-8 -mt-4 bg-stone-700 rounded-full w-6 h-6">
-                <ChevronDownIcon class="w-6 h-6 text-white -rotate-90" />
+            <div class="mt-8 -mb-4">
+                <Link
+                    :href="route('dashboard')"
+                    class="flex shrink-0 items-center xl:items-start xl:pl-4 flex-wrap"
+                >
+                    <CpuChipIcon class="h-16 w-16 text-slate-500" />
+                </Link>
             </div>
 
             <nav class="mt-8">

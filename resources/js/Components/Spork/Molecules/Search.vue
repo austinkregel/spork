@@ -17,7 +17,7 @@ const searchQuery = ref(search);
             placeholder="Search..."
             type="search"
             name="query"
-            v-model="memes"
+            v-model="searchQuery"
             @keyup.enter="$event.target.form.submit()"
         />
     </form>
