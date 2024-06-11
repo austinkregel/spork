@@ -5,10 +5,7 @@ declare(strict_types=1);
 use App\Models\Credential;
 
 Route::middleware(['web', 'auth:sanctum'])->get('/register-device', function () {
-    $ssh = \App\Services\SshService::factory(
-        request()->ip(),
-        request()->user(),
-    );
+    $ssh = request()->user()->credentials()->where('type', 'ssh')->firstOrFail();
 
     return response()->view('basement-scripts.link-server', [
         'credential' => $ssh,
@@ -27,7 +24,7 @@ Route::get('/link/{identifier}', function ($identifier) {
     ], 200, [
         'Content-type' => 'text/text',
     ]);
-})->middleware('throttle:api')->name('register-device');
+})->middleware('throttle:api')->name('link-device');
 
 Route::middleware([
     'throttle:api',
@@ -75,7 +72,7 @@ Route::post('register-device', function () {
         ->where('is_enabled', true)
         ->firstOrFail();
 
-    $ssh = \App\Services\SshService::factory(request()->ip(), $code->user);
+    $ssh = \App\Services\SshService::factory(request()->ip(), request()->user());
 
     $server = \App\Models\Server::create(array_merge($data, [
         'credential_id' => $ssh->id,

@@ -23,27 +23,6 @@ Route::middleware([
         }
     }
 
-    Route::get('/api/device-code', function () {
-        $code = request()->user()->codes()->firstWhere('is_enabled', true);
-
-        if (empty($code)) {
-            $code = request()->user()->codes()->create([
-                'short_code' => $shortCode = Str::random(),
-                'long_url' => route('create-device', [
-                    'short_code' => $shortCode,
-                ]),
-                'is_enabled' => true,
-                'status' => 301,
-            ]);
-        }
-
-        return [
-            'route' => str_replace('https://', 'http://', route('redirect', [
-                'code' => $code->short_code,
-            ])),
-        ];
-    })->name('setup-device');
-
     Route::post('/api/mail/mark-as-read', Controllers\Api\Mail\MarkAsReadController::class);
     Route::post('/api/mail/mark-as-unread', Controllers\Api\Mail\MarkAsUnreadController::class);
     Route::post('/api/mail/mark-as-spam', Controllers\Api\Mail\MarkAsSpamAndMoveController::class);

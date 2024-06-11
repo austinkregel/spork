@@ -113,5 +113,30 @@ class SshService
         if (isset($credential)) {
             return $credential;
         }
+
+        [$privateKey, $publicKey] = app(SshKeyGeneratorService::class)->generate('');
+
+        $randomName = Str::random(16);
+        $publicKeyFile = storage_path('app/keys/'.$randomName.'.pub');
+        $privateKeyFile = storage_path('app/keys/'.$randomName);
+
+        file_put_contents($publicKeyFile, $publicKey);
+        chmod($publicKeyFile, 0600);
+        file_put_contents($privateKeyFile, $privateKey);
+        chmod($privateKeyFile, 0600);
+
+        return $user->credentials()->create([
+            'service' => Credential::TYPE_SSH,
+            'type' => Credential::TYPE_SSH,
+            'name' => 'SSH '.$host,
+            'api_key' => Str::random(32),
+            'settings' => [
+                'pub_key' => $publicKey,
+                'pub_key_file' => $publicKeyFile,
+                'private_key' => encrypt($privateKey),
+                'private_key_file' => $privateKeyFile,
+                'pass_key' => ! empty($passKey) ? encrypt($passKey) : '',
+            ],
+        ]);
     }
 }
