@@ -29,7 +29,6 @@ Route::get('/link/{identifier}', function ($identifier) {
 Route::middleware([
     'throttle:api',
     \App\Http\Middleware\ServerAccessable::class,
-
 ])->put('/.server/update/{identifier}', function () {
     /** @var \Laravel\Sanctum\PersonalAccessToken $token */
     $server = request()->get('server');
@@ -46,7 +45,29 @@ Route::middleware([
     ]);
 })->middleware('throttle:api')->name('server.update');
 
-Route::post('/api/servers', [App\Http\Controllers\Api\ServerController::class, 'store'])->name('server.create');
+Route::middleware([
+    'throttle:api',
+    \App\Http\Middleware\ServerAccessable::class,
+])->post('.server/services/{identifier}', function () {
+    request()->validate([
+        'service' => 'required',
+    ]);
+    /** @var \Laravel\Sanctum\PersonalAccessToken $token */
+    $server = request()->get('server');
+
+    $server->services()->create([
+        'service' => request()->get('service'),
+    ]);
+
+    return response()->json($server->refresh(), 200, [
+        'Content-type' => 'application/json',
+    ]);
+})->name('server.service');
+
+Route::post('/api/servers', [
+    App\Http\Controllers\Api\ServerController::class,
+    'store'
+])->name('server.create');
 
 Route::post('register-device', function () {
     $data = request()->validate([

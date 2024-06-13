@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Traits;
 
+use App\Models\Finance\Transaction;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,9 +19,11 @@ trait ScopeRelativeSearch
         switch ($string) {
             case 'user':
                 if (auth()->check()) {
-                    if (method_exists($this, 'credentials') && get_class($this) !== Project::class) {
-                        $query->whereHas('credentials', function (Builder $query) {
-                            $query->where('user_id', auth()->id());
+                    if (get_class($this) === Transaction::class) {
+                        $query->whereHas('account', function (Builder $query) {
+                            $query->whereHas('credential', function (Builder $query) {
+                                $query->where('user_id', auth()->id());
+                            });
                         });
                     } elseif (method_exists($this, 'credential')) {
                         $query->whereHas('credential', function (Builder $query) {

@@ -12,6 +12,7 @@
 
                 <div>{{server.credential.name}}</div>
             </div>
+            <div>{{server.services.map(k => k.service)}}</div>
         </div>
     </AppLayout>
 </template>

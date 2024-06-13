@@ -71,7 +71,7 @@ class Transaction extends Model implements Crud, ModelQuery, Taggable
         return $this->belongsTo(Account::class, 'account_id', 'account_id');
     }
 
-    public function credential(): HasManyThrough
+    public function credentials(): HasManyThrough
     {
         return $this->hasManyThrough(
             Credential::class,

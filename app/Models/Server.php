@@ -16,6 +16,7 @@ use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
@@ -30,6 +31,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
+
 
     public $fillable = [
         'server_id',
@@ -59,6 +61,11 @@ class Server extends Model implements Crud, ModelQuery, Taggable
         'updated' => ServerUpdated::class,
     ];
 
+    public $casts = [
+        'turned_off_at' => 'datetime',
+        'booted_at' => 'datetime',
+    ];
+
     public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
@@ -80,5 +87,10 @@ class Server extends Model implements Crud, ModelQuery, Taggable
             ->useLogName('server')
             ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
+    }
+
+    public function services(): HasMany
+    {
+        return $this->hasMany(ServerService::class);
     }
 }

@@ -57,6 +57,7 @@ Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'),
     Route::get('/batch-jobs', [Controllers\Spork\BatchJobController::class, 'index'])->name('batch-jobs.index');
     Route::get('/batch-jobs/{batch_job}', [Controllers\Spork\BatchJobController::class, 'show'])->name('batch-jobs.show');
     Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
+    Route::get('/projects/create', [Controllers\Spork\ProjectsController::class, 'create'])->name('projects.create');
     Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
 
@@ -111,8 +112,6 @@ Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'),
 
     Route::get('/research', [Controllers\Spork\ResearchController::class, 'index'])->name('research.index');
     Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');
-
-    Route::get('/projects/create', [Controllers\Spork\ProjectsController::class, 'create']);
 
     Route::get('/development', [Controllers\Spork\DevelopmentController::class, 'index'])->name('development.index');
 });

@@ -22,10 +22,10 @@ class ServerAccessable
         abort_unless(request()->hasHeader('Authentication'), 401, 'Unauthorized');
         $token = explode(' ', request()->header('Authentication'), 2);
 
-        abort_unless(count($token) === 2, 401, 'Unauthorized');
+        abort_unless(count($token) === 2, 401, 'Unauthorized no token');
         $split = explode('|', $token[1], 2);
 
-        abort_unless(count($split) === 2, 401, 'Unauthorized');
+        abort_unless(count($split) === 2, 401, 'Unauthorized malformed other token');
 
         $hashedToken = hash('sha256', $split[1]);
         $token = PersonalAccessToken::query()->where('token', $hashedToken)->firstOrFail();
@@ -33,7 +33,7 @@ class ServerAccessable
         $tokenable = $token->tokenable;
 
         $intendedCredential = (int) request()->route('identifier');
-        abort_unless($tokenable->credential_id === $intendedCredential, 401, 'Unauthorized');
+        abort_unless($tokenable->credential_id === $intendedCredential, 401, 'Unauthorized, invalid credential');
 
         abort_unless($token->tokenable_type === Server::class, 404, 'Server not found');
         $request->merge(['server' => $token->tokenable]);

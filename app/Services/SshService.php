@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Credential;
+use App\Models\Server;
 use App\Models\Spork\Script;
 use App\Models\User;
 use Exception;
@@ -98,6 +99,30 @@ class SshService
             'stdout' => stream_get_contents($stream_out),
             'stderr' => stream_get_contents($stream_error),
         ];
+    }
+
+    public static function fromServer(Server $server): static
+    {
+        // Try the internal server first, if that doesn't work, we need to go in the front door.
+        try {
+            return new static(
+                $server->internal_ip_address,
+                'root',
+                $server->credential->settings['pub_key_file'],
+                $server->credential->settings['private_key_file'],
+                22,
+                $server->credential->settings['pass_key'] ?? null
+            );
+        } catch (\Throwable $e) {
+            return new static(
+                $server->ip_address,
+                'root',
+                $server->credential->settings['pub_key_file'],
+                $server->credential->settings['private_key_file'],
+                22,
+                $server->credential->settings['pass_key'] ?? null
+            );
+        }
     }
 
     /**

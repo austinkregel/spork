@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Research;
 use App\Models\Task;
+use App\Services\Development\DescribeTableService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -168,6 +169,9 @@ class ProjectsController extends Controller
 
     public function create()
     {
-        return Inertia::render('Projects/Create');
+        $description = (new DescribeTableService)->describe(new Project());
+        return Inertia::render('Projects/Create', [
+            'description' => $description,
+        ]);
     }
 }
