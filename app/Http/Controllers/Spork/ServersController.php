@@ -29,7 +29,7 @@ class ServersController extends Controller
             'tags',
             'credential',
             'projects',
-            'services'
+            'services',
         ]);
 
         return Inertia::render('Servers/Show', [

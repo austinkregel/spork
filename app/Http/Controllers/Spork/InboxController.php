@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use App\Models\Email;
-use App\Models\Message;
 use App\Services\Messaging\ImapCredentialService;
 use Inertia\Inertia;
 

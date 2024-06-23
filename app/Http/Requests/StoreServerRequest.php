@@ -17,38 +17,43 @@ class StoreServerRequest extends FormRequest
     public function authorize(): bool
     {
         if (! $this->hasHeader('Authentication')) {
-            info("no auth header");
+            info('no auth header');
+
             return false;
         }
 
         if (! $this->hasHeader('User-agent')) {
-            info("no user agent header", [
+            info('no user agent header', [
                 'user_agent' => $this->header('User-agent'),
 
             ]);
+
             return false;
         }
         // Does the user agent match the pattern (\w|\d)+@(\w|\d)+:installer:
         preg_match('/^([\w|\d]+)@([\w|\d|\-|\_]+):(installer)$/i', $this->header('User-agent'), $matches);
 
         if (empty($matches)) {
-            info("no matches on installer user agent", [
+            info('no matches on installer user agent', [
                 'user_agent' => $this->header('User-agent'),
             ]);
+
             return false;
         }
         if (count($matches) !== 4) {
-            info("not enough matches with user agent", [
+            info('not enough matches with user agent', [
                 'user_agent' => $this->header('User-agent'),
                 'matches' => $matches,
             ]);
+
             return false;
         }
 
         [$full, $user, $host, $type] = $matches;
 
         if ($type !== 'installer') {
-            info("no not installer type, must beinstaller");
+            info('no not installer type, must beinstaller');
+
             return false;
         }
 
@@ -56,7 +61,8 @@ class StoreServerRequest extends FormRequest
         $credential = Credential::firstWhere('api_key', $token);
 
         if (! $credential) {
-            info("no credential");
+            info('no credential');
+
             return false;
         }
 

@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions\Spork\Servers\Manage;
 
 use App\Actions\Spork\CustomAction;
 use App\Contracts\ActionInterface;
-use App\Models\Domain;
 use App\Models\Server;
 use App\Services\SshService;
-use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
 
 class StopAction extends CustomAction implements ActionInterface

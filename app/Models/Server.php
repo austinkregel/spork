@@ -32,7 +32,6 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     use ScopeQSearch;
     use ScopeRelativeSearch;
 
-
     public $fillable = [
         'server_id',
         'name',

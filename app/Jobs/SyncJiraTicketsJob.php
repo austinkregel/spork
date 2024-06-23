@@ -14,7 +14,7 @@ use JiraRestApi\Issue\Issue;
 
 class SyncJiraTicketsJob implements ShouldQueue
 {
-    use Queueable, Dispatchable;
+    use Dispatchable, Queueable;
 
     public function handle(JiraServiceContract $jiraService): void
     {
