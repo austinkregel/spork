@@ -129,9 +129,9 @@ const logout = () => {
             <div class="mt-8 -mb-4">
                 <Link
                     :href="route('dashboard')"
-                    class="flex shrink-0 items-center xl:items-start xl:pl-4 flex-wrap"
+                    class="flex shrink-0 items-center justify-center lg:justify-start xl:items-start xl:pl-4 flex-wrap"
                 >
-                    <CpuChipIcon class="h-16 w-16 text-slate-500" />
+                    <CpuChipIcon class="h-12 w-12 xl:h-16 xl:w-16 text-slate-500" />
                 </Link>
             </div>
 

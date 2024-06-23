@@ -167,7 +167,7 @@ const headers = computed(() => {
                 },
                 {
                     name: 'Sent At',
-                    accessor: item => date(item.originated_at)
+                    accessor: item => date(item.sent_at)
                 },
                 {
                     name: 'Message ID',

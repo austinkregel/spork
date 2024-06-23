@@ -6,7 +6,7 @@
             <div class="grid grid-cols-1 max-w-5xl mx-auto gap-4 w-full">
                 <div
                     v-for="(server, i) in servers ?? []"
-                    class="max-h-64 overflow-hidden p-3 border border-stone-200 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-600"
+                    class="max-h-64 overflow-hidden p-3 border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-800"
                     :key="'servers-'+i"
                 >
                     <ContextMenu>
@@ -20,6 +20,7 @@
                                 </div>
                                 <div class="text-stone-500 dark:text-stone-400">{{ server.ip_address }}</div>
                             </div>
+                            {{server.services.map(s => s.service).join(', ')}}
                             <div class="flex-grow flex justify-between">
                                 <div></div>
                                 <div>

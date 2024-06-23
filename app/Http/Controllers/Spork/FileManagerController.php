@@ -12,26 +12,30 @@ class FileManagerController
     {
         $filesystem = \Illuminate\Support\Facades\Storage::disk(config('spork.filesystem.default'));
 
+        $path = base64_decode(request()->input('path', base64_encode('')));
+
         return Inertia::render('FileManager', [
-            'files' => array_map(
+            'files' => collect(array_map(
                 fn ($file) => [
                     'name' => basename($file),
                     'file_path' => base64_encode('/'.$file),
+                    'path' => $file,
                     'is_directory' => false,
                     'type' => 'file',
                     'last_modified' => \Carbon\Carbon::parse($filesystem->lastModified($file)),
                 ],
-                $filesystem->files()
-            ),
-            'directories' => array_map(
+                $filesystem->files($path)
+            ))->sortBy('name')->values(),
+            'directories' => collect(array_map(
                 fn ($file) => [
                     'name' => basename($file),
                     'file_path' => base64_encode('/'.$file),
                     'is_directory' => true,
                     'type' => 'folder',
+                    'path' => $file,
                 ],
-                $filesystem->directories()
-            ),
+                $filesystem->directories($path)
+            ))->sortBy('name')->values(),
         ]);
     }
 

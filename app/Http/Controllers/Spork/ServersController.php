@@ -12,7 +12,10 @@ class ServersController extends Controller
 {
     public function index()
     {
-        $servers = auth()->user()->servers()->paginate(10);
+        $servers = auth()->user()
+            ->servers()
+            ->with('tags', 'services')
+            ->paginate(10);
 
         return Inertia::render('Servers/Index', [
             'servers' => $servers->items(),

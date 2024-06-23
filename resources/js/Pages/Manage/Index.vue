@@ -157,10 +157,10 @@ const log = console.log;
         <div class="w-full grid grid-cols-6 relative z-0">
           <div class="col-span-5">
             <div class="flex flex-col">
-              <div class="text-lg text-left flex items-center gap-2">
+              <Link :href="route('manage.show', [plural])" class="text-lg text-left flex items-center gap-2">
                   <img v-if="data?.personal_finance_icon" :src="data?.personal_finance_icon" class="h-5 w-5" />
                 {{ data.name }}
-              </div>
+              </Link>
               <div class="flex flex-col gap-2">
                 <div class="text-xs dark:text-stone-300">
                     {{ possibleDescriptionForData(data) }}

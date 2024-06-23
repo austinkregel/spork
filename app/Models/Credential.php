@@ -186,4 +186,8 @@ class Credential extends Model implements Crud, ModelQuery
     {
         return $this->hasMany(Message::class);
     }
+    public function emails(): HasMany
+    {
+        return $this->hasMany(Email::class);
+    }
 }

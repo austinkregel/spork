@@ -30,7 +30,7 @@
                   <PencilSquareIcon v-if="item.draft" class="w-5 h-5"/>
                 </div>
 
-                <div class="text-xs">{{ formatDate(item.originated_at * 1000) }}</div>
+                <div class="text-xs">{{ formatDate(item.sent_at) }}</div>
               </div>
             </button>
 
