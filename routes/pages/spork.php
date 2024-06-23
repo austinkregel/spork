@@ -100,15 +100,15 @@ Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'),
     Route::get('/inbox', [Controllers\Spork\MessageController::class, 'index'])->name('inbox');
     Route::get('/inbox/{message}', [Controllers\Spork\MessageController::class, 'show'])->name('inbox.show');
 
-    Route::get('/manage/{link}', [Controllers\Spork\ManageController::class, 'show'])->name('crud.show');
-    Route::get('/manage', [Controllers\Spork\ManageController::class, 'index']);
+    Route::get('/manage/{link}', [Controllers\Spork\ManageController::class, 'show'])->name('manage.show');
+    Route::get('/manage', [Controllers\Spork\ManageController::class, 'index'])->name('manage.index');
 
     Route::get('/settings', Controllers\Spork\SettingsController::class);
     Route::get('/tag-manager', Controllers\Spork\TagManagerController::class);
     Route::get('/tag-manager/{tag}', [Controllers\Spork\TagManagerController::class, 'show']);
 
     Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
-    Route::get('/postal/{message}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
+    Route::get('/postal/{email}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
 
     Route::get('/research', [Controllers\Spork\ResearchController::class, 'index'])->name('research.index');
     Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');
