@@ -25,9 +25,7 @@ class TagManagerController
                 'accounts',
                 'domains',
                 'people',
-                'messages' => function ($q) {
-                    $q->where('seen', false);
-                },
+                'messages',
             ])->withSum('transactions', 'amount')
                 ->with(['conditions'])
                 ->orderBy('type')

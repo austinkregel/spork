@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
 
         return array_merge(parent::share($request), [
             'navigation' => $navigation,
-            'current_navigation' => $navigation->where('current', true)->first(),
+            'current_navigation' => $navigation->flatten(1)->where('current', true)->first(),
             'conversations' => auth()->check() ? Thread::query()
                 ->with(['messages', 'messages.fromPerson', 'messages.toPerson'])
                 ->whereHas('participants', function ($query) {

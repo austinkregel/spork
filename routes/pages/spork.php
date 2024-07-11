@@ -39,9 +39,10 @@ Route::middleware([
     Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
 });
 
-Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'), 'verified')->group(function () {
+Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
-    Route::get('/search', [Controllers\SearchController::class, 'index'])->name('search');
+    Route::get('/search', [Controllers\SearchController::class, 'index'])
+        ->name('search');
     Route::get('/search/{index}', [Controllers\SearchController::class, 'show'])->name('search.show');
     Route::get('/notifications', fn () => Inertia::render('Notifications'))->name('notifications');
 
@@ -84,6 +85,7 @@ Route::prefix('-')->middleware('auth:sanctum', config('jetstream.auth_session'),
         $filePath = $data['file'];
         $img = new \Imagick($filePath);
         $img->readImage($filePath);
+
         $img->setImageFormat('jpeg');
         $img->setImageCompressionQuality(90);
         $img->writeImageFile(fopen($filePath.'.jpg', 'w'));

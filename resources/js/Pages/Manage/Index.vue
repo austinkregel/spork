@@ -115,6 +115,11 @@ const possibleDescriptionForData = (data) => {
   ]?.includes(field) && !field.endsWith('_id') && typeof data[field] !== 'boolean')
       .filter(field => data[field]);
 
+  if (description?.fields?.includes('cloudflare_id')) {
+      return data.cloudflare_id
+  }
+
+
   return data[fieldsToUse[0] ?? 0] ?? ''
 }
 const possibleRelations = (data) => {
@@ -229,16 +234,13 @@ const log = console.log;
             <div class="rounded-lg mt-4 p-4 bg-white dark:bg-stone-800 flex flex-col">
                 <div v-for="item in metrics.data" :key="item">
                     <div class="flex flex-col">
-                        <div class="flex flex-wrap gap-2 text-sm items-center">
-                            <div>{{item.log_name}}</div>
+                        <div class="flex flex-wrap gap-2 text-base items-center">
+                            <pre>{{item.log_name}}</pre>
                             <div>{{item.description}}</div>
-                            <div class="text-xs">
-                                {{item.properties?.attributes?.name ?? item.properties?.attributes?.headline}}
-                            </div>
+                            <pre>{{item.properties?.attributes?.name ?? item.properties?.attributes?.headline}}</pre>
                         </div>
                         <div class="text-xs -mt-1 text-black dark:text-stone-200">
                             {{formatDateIso(item.created_at)}}
-
                         </div>
                     </div>
                 </div>

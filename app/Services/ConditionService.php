@@ -72,7 +72,9 @@ class ConditionService
                 return $item;
             });
 
-        return $navItems->filter(fn (Navigation $item) => $this->process($item));
+        return $navItems->filter(fn (Navigation $item) => $this->process($item))
+            ->groupBy('group')
+            ->sortKeys();
     }
 
     public function process(Conditionable $item, array $additionalValueData = [])

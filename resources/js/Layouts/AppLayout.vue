@@ -136,8 +136,9 @@ const logout = () => {
             </div>
 
             <nav class="mt-8">
-                <div class="mt-6 w-full flex-1 space-y-1 px-2 flex flex-col">
-                    <Link v-for="item in page.props.navigation" :key="item.name" :href="item?.href ?? '#'" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-wrap gap-2 rounded-md text-xs font-medium px-2 py-1.5 items-center justify-center xl:justify-start']" :aria-current="item.current ? 'page' : undefined">
+                <div v-for="(group, index) in page.props.navigation" class="mt-6 w-full flex-1 space-y-1 px-2 flex flex-col">
+                    <div class="px-2 text-xs font-semibold text-stone-400 uppercase tracking-wider">{{ index }}</div>
+                    <Link v-for="item in group" :key="item.name" :href="item?.href ?? '#'" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-wrap gap-2 rounded-md text-xs font-medium px-2 py-1.5 items-center justify-center xl:justify-start']" :aria-current="item.current ? 'page' : undefined">
                         <DynamicIcon :icon-name="item.icon"  :active="item.current"  :class="[item.current ? 'text-white' : 'text-slate-300 group-hover:text-white',
                         'xl:h-5 xl:w-5 w-6 h-6']" aria-hidden="true" />
                         <span class="text-base hidden xl:block">{{ item.name }}</span>
@@ -205,6 +206,5 @@ const logout = () => {
         <audio id="notification-sound" src="/sounds/swiftly-610.ogg" preload="auto" type="audio/ogg" />
         <audio id="success-sound" src="/sounds/i-did-it-message-tone.ogg" preload="auto" type="audio/ogg" />
         <audio id="achievement-sound" src="/sounds/achievement-message-tone.ogg" preload="auto" type="audio/ogg" />
-
     </div>
 </template>

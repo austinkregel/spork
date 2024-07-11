@@ -35,6 +35,7 @@ use App\Services\Messaging\ImapCredentialService;
 use App\Services\News\NewsService;
 use App\Services\Registrar\NamecheapService;
 use App\Services\Weather\OpenWeatherService;
+use App\Spork;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
@@ -86,6 +87,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(JiraServiceContract::class, JiraService::class);
         $this->app->alias(Operator::class, 'operator');
         $this->app->bind(PdfParserServiceContract::class, PdfParserService::class);
+        $this->app->singleton(Spork::class, fn () => new Spork());
     }
 
     /**
@@ -99,10 +101,15 @@ class AppServiceProvider extends ServiceProvider
 
     public function bootRoute(): void
     {
+
         Route::macro('domains', function (array $domains, $callback) {
             foreach ($domains as $domain) {
-                Route::domain($domain)->group($callback)->name($domain);
+                Route::domain($domain)
+                    ->name($domain)
+                    ->group($callback);
             }
+
+            return $this;
         });
 
         RateLimiter::for('api', function (Request $request) {

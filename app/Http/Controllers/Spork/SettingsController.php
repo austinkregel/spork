@@ -10,6 +10,8 @@ class SettingsController
 {
     public function __invoke()
     {
+        $path = base_path(request('path'));
+
         // settings are things that can be configured in between requests.
         // They cannot be changed at run time, and might even require a restart of the servers.
         return Inertia::render('Settings/Index', [
@@ -17,7 +19,20 @@ class SettingsController
             'settings' => new class()
             {
             },
-            'notifications' => auth()->user()->notifications,
+            'files' => collect((new \Illuminate\Filesystem\Filesystem())->directories($path))
+                ->map(fn ($directory) => [
+                    'name' => basename($directory),
+                    'file_path' => base64_encode($directory),
+                    'is_directory' => true,
+                ])
+                ->concat(
+                    collect((new \Illuminate\Filesystem\Filesystem())->files($path))
+                        ->map(fn (\SplFileInfo $file) => [
+                            'name' => $file->getFilename(),
+                            'file_path' => base64_encode($file->getPathname()),
+                            'is_directory' => false,
+                        ])
+                ),
 
         ]);
     }
