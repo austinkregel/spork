@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
+use App\Models\Credential;
 use App\Models\Email;
 use App\Services\Messaging\ImapCredentialService;
+use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 
 class InboxController
 {
     public function index()
     {
+        $paginator = Email::query()
+            ->with('from', 'to')
+            ->orderByDesc('sent_at')
+            ->paginate();
+
         return Inertia::render('Postal/Inbox', [
-            'messages' => Email::query()
-                ->with('from', 'to')
-                ->orderByDesc('sent_at')
-                ->paginate(),
+            'messages' => $paginator,
         ]);
     }
 

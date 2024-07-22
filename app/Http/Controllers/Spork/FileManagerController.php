@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
+use Illuminate\Filesystem\Filesystem;
 use Inertia\Inertia;
 
 class FileManagerController
@@ -61,5 +62,24 @@ class FileManagerController
         }
 
         return file_get_contents($decoded);
+    }
+
+    public function update($path)
+    {
+        $decoded = base64_decode($path);
+
+        $filesystem = new Filesystem();
+
+        $content = request()->input('content');
+        $existingFile = $filesystem->get($decoded);
+
+        if ($content === $existingFile) {
+            return response()->json(['message' => 'No changes made']);
+        }
+
+        dd($decoded, $content, $existingFile, request()->all());
+        $filesystem->put($decoded, request()->input('content'));
+
+        return response()->json(['message' => 'File updated']);
     }
 }

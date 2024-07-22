@@ -60,9 +60,7 @@ class TagManagerController
                     'accounts',
                     'domains',
                     'people',
-                    'messages' => function ($q) {
-                        $q->where('seen', false);
-                    },
+                    'messages',
                 ]),
             'type' => Tag::class,
         ]);

@@ -133,5 +133,8 @@ Route::middleware([
     Route::get('/-/logic', Controllers\Spork\LogicController::class);
     Route::post('/api/logic/add-listener-for-event', Controllers\Logic\AddListenerForEventController::class);
     Route::post('/api/logic/remove-listener-for-event', Controllers\Logic\RemoveListenerForEventController::class);
-    Route::get('/api/files/{basepath}', [Controllers\Spork\FileManagerController::class, 'show']);
+    Route::get('/api/files/{basepath}', [Controllers\Spork\FileManagerController::class, 'show'])
+        ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\TrimStrings::class]);
+    Route::put('/api/files/{basepath}', [Controllers\Spork\FileManagerController::class, 'update'])
+        ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\TrimStrings::class]);
 });

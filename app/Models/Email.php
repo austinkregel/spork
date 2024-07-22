@@ -27,6 +27,15 @@ class Email extends Model
         'answered',
         'message',
     ];
+    protected function casts(): array
+    {
+        return [
+            'seen' => 'boolean',
+            'spam' => 'boolean',
+            'answered' => 'boolean',
+            'message' => 'boolean',
+        ];
+    }
 
     public function fromPerson(): BelongsTo
     {

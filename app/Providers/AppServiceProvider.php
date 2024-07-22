@@ -101,14 +101,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function bootRoute(): void
     {
-
         Route::macro('domains', function (array $domains, $callback) {
             foreach ($domains as $domain) {
                 Route::domain($domain)
                     ->name($domain)
                     ->group($callback);
             }
-
             return $this;
         });
 
