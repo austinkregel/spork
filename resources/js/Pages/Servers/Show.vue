@@ -6,8 +6,8 @@
             <div class="grid grid-cols-1 max-w-5xl mx-auto gap-4 w-full">
                 <div>{{server.name}}</div>
                 <div>{{server.status}}</div>
-                <div>{{server.memory}}</div>
-                <div>{{server.vcpu}}</div>
+                <div>{{server.memory}}GB</div>
+                <div>{{server.vcpu}} CPU</div>
                 <div>{{server.os}}</div>
 
                 <div>{{server.credential.name}}</div>

@@ -5,7 +5,7 @@ declare(strict_types=1);
 if (file_exists(base_path('routes/generate-pages.php'))) {
     include_once base_path('routes/generate-pages.php');
 }
-Route::domain('b8b6-24-231-174-107.ngrok-free.app')
+Route::domain('deploy')
 //    ->middleware('throttle:5')
     ->withoutMiddleware(['web'])
     ->group(base_path('routes/pages/deploy.php'));
