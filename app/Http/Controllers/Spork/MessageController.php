@@ -17,10 +17,15 @@ class MessageController
                         $query->where('name', 'not like', '%bridge bot%');
                     },
                 ])
-
+                ->whereHas('participants', function ($query) {
+                    $query->where('person_id', auth()->user()->person()->id);
+                })
                 ->orderByDesc('origin_server_ts')
                 ->paginate(request('limit', 15), ['*'], 'page', 1),
             'thread' => \App\Models\Thread::query()
+                ->whereHas('participants', function ($query) {
+                    $query->where('person_id', auth()->user()->person()->id);
+                })
                 ->with(['messages' => function ($query) {
                     $query->orderBy('originated_at');
                 }, 'participants' => function ($query) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Contracts\ModelQuery;
 use App\Events\Models\Article\ArticleCreated;
 use App\Events\Models\Article\ArticleCreating;
 use App\Events\Models\Article\ArticleDeleted;
@@ -20,9 +21,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Laravel\Scout\Searchable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Tags\HasTags;
 
-class Article extends Model implements Crud
+class Article extends Model implements Crud, ModelQuery, Taggable
 {
+    use HasTags;
     use HasFactory;
     use LogsActivity;
     use ScopeQSearch;

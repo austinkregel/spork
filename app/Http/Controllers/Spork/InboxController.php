@@ -16,6 +16,9 @@ class InboxController
     public function index()
     {
         $paginator = Email::query()
+            ->whereHas('credential', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
             ->with('from', 'to')
             ->orderByDesc('sent_at')
             ->paginate();
