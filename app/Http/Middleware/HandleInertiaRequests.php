@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\Message;
 use App\Models\Thread;
 use App\Services\ConditionService;
 use Illuminate\Http\Request;
@@ -51,7 +52,12 @@ class HandleInertiaRequests extends Middleware
                 ->whereHas('participants', function ($query) {
                     $query->where('person_id', auth()->user()?->person()?->id);
                 })
-                ->orderByDesc('origin_server_ts')
+                ->whereHas('messages')
+                ->orderByDesc(
+                    Message::query()
+                        ->selectRaw('MAX(date(messages.originated_at))')
+                    ->where('thread_id', 'threads.id')
+                )
                 ->paginate(
                     request('conversation_limit'),
                     ['*'],

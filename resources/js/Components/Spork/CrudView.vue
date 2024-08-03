@@ -46,7 +46,7 @@
                                 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
 
-                            <div v-if="filtersOpen" class="absolute z-10 bg-white dark:bg-stone-700 shadow-lg top-0 right-0 mt-14 mr-4 border border-stone-200 dark:border-stone-500 rounded-lg" style="width: 250px;">
+                            <div v-if="filtersOpen" class="absolute z-40 bg-white dark:bg-stone-700 shadow-lg top-0 right-0 mt-14 mr-4 border border-stone-200 dark:border-stone-500 rounded-lg" style="width: 250px;">
                                 <div class="bg-stone-100 dark:bg-stone-800 uppercase py-2 px-2 font-bold text-stone-500 dark:text-stone-400 text-sm rounded-t-lg">
                                     filters
                                 </div>
@@ -323,14 +323,14 @@ const executeActionOrOpenDialog = async () => {
     }
     executing.value = true;
 
-  // await $emit('execute', {
-  //     selectedItems,
-  //     actionToRun,
-  //     next: () => {
-  //         selectedItems.value = [];
-  //         executing.value = false;
-  //     }
-  // })
+  $emit('execute', {
+      selectedItems,
+      actionToRun,
+      next: () => {
+          selectedItems.value = [];
+          executing.value = false;
+      }
+  })
 }
 
 const applyTagModalOpen = ref(false);

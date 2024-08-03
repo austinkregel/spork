@@ -23,7 +23,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class DomainRecord extends Model implements Crud, ModelQuery
 {
     use HasFactory;
-    use LogsActivity;
+//    use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
     use Searchable;

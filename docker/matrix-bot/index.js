@@ -257,6 +257,7 @@ const setupSequlize = async () => {
         primary_address: DataTypes.STRING(255),
         primary_email: DataTypes.STRING(255),
         pronouns: DataTypes.STRING(255),
+        photo_url: DataTypes.STRING(255),
         birthdate: DataTypes.DATE,
         phone_numbers: {
             type: DataTypes.TEXT,
@@ -645,9 +646,6 @@ async function processRoomState(state, {
                     where: {thread_id: event.room_id}
                 });
 
-                if (test) {
-                    continue;
-                }
                 await Threads.update({name: event.content.name}, {
                     where: {thread_id: roomId}
                 });
@@ -715,18 +713,19 @@ async function processRoomState(state, {
                             const id = person.id
                             contentType = data.contentType.split('/')[1];
 
-                            if (!fs.existsSync('./storage/app/' + id + '.' + contentType)) {
-                                const path = './storage/app/' + id + '.' + contentType;
+                            if (!fs.existsSync('./storage/app/public/' + id + '.' + contentType)) {
+                                const path = './storage/app/public/' + id + '.' + contentType;
                                 fs.writeFileSync(path, data.data)
-
-                                await People.update({
-                                    photo_url: path
-                                }, {
-                                    where: {id}
-                                });
                             }
+
+                            await People.update({
+                                photo_url: '/storage/' + id + '.' + contentType
+                            }, {
+                                where: {id}
+                            });
                         } catch (e) {
-                            console.error('Failed to download media line 718', e.message)
+                            // e is an IncomingMessage
+                            console.error('Failed to download media line 718', e.statusCode, e.statusMessage);
                         }
                     }
                 }

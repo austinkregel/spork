@@ -12,6 +12,7 @@ use App\Events\Models\Thread\ThreadUpdated;
 use App\Events\Models\Thread\ThreadUpdating;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -51,6 +52,10 @@ class Thread extends Model implements Crud
 
     public function getHumanTimestampAttribute()
     {
-        return $this->origin_server_ts->diffForHumans(now(), CarbonInterface::DIFF_RELATIVE_TO_NOW, false);
+        $date = $this->messages()
+        ->selectRaw('max(originated_at) as date')
+        ->first();
+
+        return $date ? Carbon::parse($date->date)->diffForHumans(now(), Carbon::DIFF_RELATIVE_TO_NOW) : null;
     }
 }

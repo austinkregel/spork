@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
+use App\Models\Message;
 use Inertia\Inertia;
 
 class MessageController
@@ -20,7 +21,12 @@ class MessageController
                 ->whereHas('participants', function ($query) {
                     $query->where('person_id', auth()->user()->person()->id);
                 })
-                ->orderByDesc('origin_server_ts')
+                ->whereHas("messages")
+                ->orderByDesc(
+                    Message::query()
+                        ->selectRaw('MAX(date(messages.originated_at))')
+                        ->where('thread_id', 'threads.id')
+                )
                 ->paginate(request('limit', 15), ['*'], 'page', 1),
             'thread' => \App\Models\Thread::query()
                 ->whereHas('participants', function ($query) {
@@ -31,7 +37,12 @@ class MessageController
                 }, 'participants' => function ($query) {
                     $query->where('name', 'not like', '%bridge bot%');
                 }, 'messages.toPerson', 'messages.fromPerson'])
-                ->orderByDesc('updated_at')
+                ->whereHas("messages")
+                ->orderByDesc(
+                    Message::query()
+                        ->selectRaw('MAX(date(messages.originated_at))')
+                        ->where('thread_id', 'threads.id')
+                )
                 ->findOrFail($thread),
         ]);
     }
@@ -40,12 +51,17 @@ class MessageController
     {
         return Inertia::render('Postal/Index', [
             'threads' => \App\Models\Thread::query()
+                ->whereHas("messages")
                 ->with([
                     'participants' => function ($query) {
                         $query->where('name', 'not like', '%bridge bot%');
                     },
                 ])
-                ->orderByDesc('origin_server_ts')
+                ->orderByDesc(
+                    Message::query()
+                        ->selectRaw('MAX(date(messages.originated_at))')
+                        ->where('thread_id', 'threads.id')
+                )
                 ->paginate(request('limit', 15), ['*'], 'page', 1),
         ]);
     }

@@ -4,15 +4,8 @@
             <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-4">Server</div>
 
             <div class="grid grid-cols-1 max-w-5xl mx-auto gap-4 w-full">
-                <div>{{server.name}}</div>
-                <div>{{server.status}}</div>
-                <div>{{server.memory}}GB</div>
-                <div>{{server.vcpu}} CPU</div>
-                <div>{{server.os}}</div>
-
-                <div>{{server.credential.name}}</div>
+                <pre>{{server}}</pre>
             </div>
-            <div>{{server.services.map(k => k.service)}}</div>
         </div>
     </AppLayout>
 </template>
@@ -38,4 +31,13 @@ const { server, pagination } = defineProps({
 })
 const date = () => {}
 
+const actions = [
+    'Restart',
+    'Restart service',
+    'Shutdown',
+    'Stop service',
+    'Reconnect',
+    'run command',
+    'update information'
+]
 </script>

@@ -6,7 +6,7 @@
                 <ul class="divide-y divide-stone-200 dark:divide-stone-700">
                     <li v-for="thread in page.props.threads.data" class="p-4 px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
                         <Link :href="route('inbox.show', thread.id)" class="flex flex-col">
-                            <h3 class="text-md font-semibold dark:text-stone-50">{{ thread.participants.map(p => p.name).join(", ") }}</h3>
+                            <h3 class="text-md font-semibold dark:text-stone-50 truncate">{{ thread.participants.map(p => p.name).join(", ") }}</h3>
                             <div class="text-sm truncate dark:text-stone-200">{{ thread.name}}</div>
                         </Link>
                       <div class="flex flex-wrap">
@@ -19,11 +19,12 @@
             <section class="border-l-2 dark:border-stone-800 relative col-span-2 flex flex-col bg-white dark:bg-stone-800 overflow-y-scroll" style="height: calc(100vh);">
                 <div class="sticky z-0 bg-white dark:bg-stone-800 top-0 flex justify-between items-center h-24 border-b-2 dark:border-stone-700 p-4">
                     <div class="flex space-x-4 items-center">
-                        <div class="h-12 w-12 rounded-full overflow-hidden">
-                            <img src="https://placehold.it/60x60" loading="lazy" class="h-full w-full object-cover" />
+                        <div class="isolate flex -space-x-2 overflow-hidden">
+                            <img v-for="(participant, i) in thread.participants.slice(0, 10)" :class="'z-'+i+( i > 0? '0' : '')" class="relative  inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-stone-600"
+                                 :src="participant?.photo_url ?? ('/storage/'+participant.id+'.png')" alt="" />
                         </div>
                         <div class="flex flex-col">
-                            <h3 class="font-semibold text-lg dark:text-stone-50">{{
+                            <h3 class="font-semibold text-lg dark:text-stone-50 truncate">{{
                                 thread.participants.map(particpant =>
                                     particpant.name).join(', ')
                               }}</h3>
@@ -68,15 +69,22 @@
                 </div>
                 <section class="flex-grow bg-gray-300 dark:bg-zinc-900">
                     <article class="px-4 mt-4 text-stone-500 dark:text-stone-200 leading-7 tracking-wider gap-1 flex flex-col">
-                        <div v-for="message in thread.messages" class="flex flex-col" :class="message.is_user ? 'justify-end' : 'justify-start'">
-                          <div class="-my-1 text-xxs text-black dark:text-stone-400">{{message?.from_person?.name}}</div>
-                          <div
-                              :class="[message.is_user ? 'text-right bg-blue-600': 'text-left bg-green-500']"
-                              class="px-2 py-1 flex rounded-lg shadow"
-                          >
-                            <div v-if="message.html_message" v-html="message.html_message"></div>
-                            <div v-else v-text="message.message"></div>
-                          </div>
+                        <div v-for="message in thread.messages" class="w-full flex gap-4 flex-wrap">
+                            <div class="mt-5">
+                                <img :src="message?.from_person?.photo_url ?? ('/storage/'+message.from_person.id+'.png')" alt="" class="h-8 w-8 rounded-full" />
+                            </div>
+
+                            <div>
+                                <div class="-my-1 text-xxs text-black dark:text-stone-400">{{message?.from_person?.name}} -- {{ formatDate(message.originated_at) }}</div>
+                                <div
+                                    :class="[message.is_user ? 'bg-blue-600': ' bg-green-500']"
+                                    class="px-2 py-1 flex rounded-lg shadow"
+                                >
+                                    <div v-if="message.html_message" v-html="message.html_message"></div>
+                                    <div v-else v-text="message.message"></div>
+                                </div>
+
+                            </div>
                         </div>
                     </article>
                 </section>
@@ -142,19 +150,7 @@ const onExecute = async({ actionToRun, selectedItems}) => {
     console.log(e.message, 'error');
   }
 }
-const fetch = async ({ page, limit, ...args }) => {
-  const { data: { data, ...pagination} } = await axios.get(buildUrl(
-      '/api/crud/servers', {
-        page,
-        limit,
-        ...args,
-        include: ['tags',]
-      }
-  ));
-
-  this.data = data;
-  this.pagination = pagination;
-}
+const formatDate = (d) => dayjs(d * 1000).fromNow();
 </script>
 
 <style scoped>
