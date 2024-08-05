@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Spork;
 use App\Http\Controllers\Controller;
 use App\Models\JobBatch;
 use App\Models\User;
+use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
@@ -31,13 +32,19 @@ class DashboardController extends Controller
             }, $batchJobs->items()))
         );
 
+        try {
+            $weatherReport = $person->primary_address ? Arr::first(app(\App\Contracts\Services\WeatherServiceContract::class)->query(
+                $person->primary_address,
+            )) : null;
+        } catch (ConnectException $e) {
+            $weatherReport = null;
+        }
+
         return Inertia::render('Dashboard', [
             'accounts' => auth()->user()->accounts()
                 ->where('accounts.type', 'checking')
                 ->get(),
-            'weather' => $person->primary_address ? Arr::first(app(\App\Contracts\Services\WeatherServiceContract::class)->query(
-                $person->primary_address,
-            )) : null,
+            'weather' => $weatherReport,
             'news' => (\App\Models\Article::query()
                 ->with('externalRssFeed.tags')
                 ->whereHas('externalRssFeed', function ($query) {

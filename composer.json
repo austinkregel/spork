@@ -41,6 +41,7 @@
         "nette/php-generator": "*",
         "php-imap/php-imap": "^5.0",
         "phpseclib/phpseclib": "*",
+        "picqer/php-barcode-generator": "^2.4",
         "pusher/pusher-php-server": "^7.0",
         "smalot/pdfparser": "^2.10",
         "spatie/laravel-activitylog": "^4.8",

@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('assets', function (Blueprint $table) {
-            $table->uuid();
+            $table->id()->startingValue(mt_rand(10000000, 99999999));
             $table->string('name');
             $table->string('type')->nullable();
             $table->string('location')->nullable();
+            $table->string('location_asset_id')->nullable();
             $table->string('description')->nullable();
             $table->dateTime('acquired_at')->nullable();
 

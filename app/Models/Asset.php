@@ -20,7 +20,7 @@ class Asset extends Model implements Crud
     use ScopeRelativeSearch;
 
     protected $fillable = [
-        'uuid',
+        'id',
         'name',
         'type',
         'location',
@@ -35,6 +35,8 @@ class Asset extends Model implements Crud
         'status',
         'condition',
         'meta',
+        'owner_id',
+        'owner_type',
     ];
 
     protected $casts = [
@@ -44,18 +46,6 @@ class Asset extends Model implements Crud
         'returned_at' => 'datetime',
         'meta' => 'array',
     ];
-
-    public static function booted()
-    {
-        static::creating(function ($asset) {
-            $asset->uuid = (string) \Illuminate\Support\Str::uuid();
-
-            if (auth()->check()) {
-                $asset->owner_id = auth()->id();
-                $asset->owner_type = get_class(auth()->user());
-            }
-        });
-    }
 
     public function owner()
     {

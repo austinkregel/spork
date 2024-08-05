@@ -115,6 +115,9 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/research', [Controllers\Spork\ResearchController::class, 'index'])->name('research.index');
     Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');
 
+    Route::get('/assets', [Controllers\Spork\AssetController::class, 'index'])->name('assets.index');
+    Route::get('/labels', [Controllers\Spork\AssetController::class, 'labels'])->name('assets.labels');
+
     Route::get('/development', [Controllers\Spork\DevelopmentController::class, 'index'])->name('development.index');
 });
 
