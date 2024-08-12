@@ -63,7 +63,7 @@ class Article extends Model implements Crud, ModelQuery, Taggable
 
     public static function fromFeedItem(ExternalRssFeed $feed, FeedItem $item): self
     {
-        if ($post = self::firstWhere('external_guid', $item->getExternalId())) {
+        if ($post = self::firstWhere('external_guid', $item->getUuidIfExists())) {
             return $post;
         }
 

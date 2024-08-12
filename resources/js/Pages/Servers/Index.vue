@@ -23,8 +23,17 @@
                             {{server.services.map(s => s.service).join(', ')}}
                             <div class="flex-grow flex justify-between">
                                 <div></div>
-                                <div>
+                                <div class="flex flex-col gap-2">
                                     <Status :status="server.status" />
+
+                                    <div class="flex flex-wrap gap-2">
+                                        <DynamicIcon icon-name="ArrowPathIcon" class="text-white w-5 h-5" data-note="SSH connection test" />
+                                        <DynamicIcon icon-name="SignalSlashIcon" class="text-white w-5 h-5" data-note="No active connection to the server"/>
+                                        <DynamicIcon icon-name="SignalIcon" class="text-white w-5 h-5" data-note="Has active connection to the server"/>
+                                        <DynamicIcon icon-name="PuzzlePieceIcon" class="text-white w-5 h-5" data-note="This can be a button that takes you to install new software"/>
+                                        <DynamicIcon icon-name="CalendarDaysIcon" class="text-white w-5 h-5" data-note="The server crontab under root." />
+                                        <DynamicIcon icon-name="DocumentTextIcon" class="text-white w-5 h-5" data-note="Logs" />
+                                    </div>
                                 </div>
                             </div>
                         </div>

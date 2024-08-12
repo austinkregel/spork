@@ -1,16 +1,18 @@
 <script setup>
 import ContextMenuItem from "@/Components/ContextMenus/ContextMenuItem.vue";
 import hljs from 'highlight.js';
-import Manage from "@/Layouts/Manage.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import FileOrFolder from "@/Components/Spork/FileOrFolder.vue";
 import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
 import {ref, watch} from "vue";
 import CodeEditor from 'simple-code-editor';
 import Button from "@/Components/Button.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
-import { router } from '@inertiajs/vue3';
+import { parse } from 'node-html-parser';
+import Node from "node-html-parser/dist/nodes/node.js";
+import hljsDefineVue from 'highlightjs-vue';
+
+hljsDefineVue(hljs);
 const { title, files } = defineProps({
     title: String,
     files: Array
@@ -28,6 +30,8 @@ watch(selectedContext, (value) => {
 const file = ref('');
 const openFile = ref(false);
 
+const node = ref(null);
+
 const openedFile = async (openedFile, component) => {
 
     console.log('opened file', {...openedFile}, component)
@@ -43,10 +47,50 @@ const openedFile = async (openedFile, component) => {
         file.value = data;
     }
 
+    /**
+     * @param {Node} currentNode
+     * @param currentNode
+     * @returns {{children: {children: *, classes: *, name: *}[], classes: IterableIterator<string>, name: string}}
+     */
+    function parseTheNode(currentNode) {
+        const name = currentNode.rawTagName;
+        const children = currentNode.childNodes.map((node) => {
+            return parseTheNode(node);
+        });
+
+        /**
+         * @var {Node} parentNode
+         * @var {Node[]} childNodes
+         * @var {DOMTokenList} classList
+         */
+        let { parentNode, childNodes, ...rest } = currentNode;
+
+        return {
+            name,
+            children,
+            attr: rest.attributes,
+            // toString(){
+            //     return currentNode.toString();
+            // },
+            // ...rest,
+        };
+    }
+
+    if (openedFile.name.endsWith('.vue')) {
+        const parsed = parse(data);
+        const nodesWeCareAbout = parsed.childNodes.filter((node) => node.nodeType === 1)
+        // When we parse a vue file, we could have a script, style, or template tag, or any combination of them. We need to handle each section separately.
+        const script = nodesWeCareAbout.find((node) => node.rawTagName === 'script');
+        const style = nodesWeCareAbout.find((node) => node.rawTagName === 'style');
+        const template = nodesWeCareAbout.find((node) => node.rawTagName === 'template');
+
+        node.value = parseTheNode(template);
+    }
+
     openFile.value = openedFile;
 }
 const getLanguage = (lang) => {
-    return hljs.getLanguage(lang);
+    return hljs.getLanguage(lang) ?? 'vue';
 }
 const saveFile = () => {
     console.log('saving file', { ... openFile.value }, file.value)
@@ -61,6 +105,14 @@ const saveFile = () => {
 }
 const cancelFile = () => {
     openFile.value = null;
+}
+const recursiveMap = (n) => {
+    return n.children.map((node) => {
+        return {
+            name: node.name,
+            children: node.children?.length > 0 ? recursiveMap(node) : 0,
+        }
+    });
 }
 </script>
 
@@ -113,7 +165,7 @@ const cancelFile = () => {
                     :display-language="true"
                     @lang="getLanguage"
                     height="calc(100vh - 140px)"
-                    :languages="[['php', 'PHP'], ['js', 'JavaScript'], ['html', 'HTML'], ['css', 'CSS'], ['json', 'JSON'], ['yaml', 'yml']]"
+                    :languages="[['php', 'PHP'], ['js', 'JavaScript'],['vue', 'Vue SFC'], ['html', 'HTML'], ['css', 'CSS'], ['json', 'JSON'], ['yaml', 'yml']]"
                 />
             </div>
 

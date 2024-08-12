@@ -56,7 +56,9 @@ class ConditionService
 
         // So we want to filter out any nav items
         $navItems = Navigation::query()
-            ->with('conditions', 'children')
+            ->with(['conditions', 'children' => function ($builder) {
+                $builder->orderBy('order');
+            }])
             ->where('authentication_required', auth()->check())
             ->whereNull('parent_id')
             ->orderBy('order')
@@ -68,6 +70,10 @@ class ConditionService
                     $item->children->filter(fn ($item) => $item->href === $parsedUrl['path'])
                         ->count() > 0
                 );
+
+                if ($item->children->isNotEmpty()) {
+                    $item->children->sortDesc();
+                }
 
                 return $item;
             });

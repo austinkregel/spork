@@ -23,6 +23,7 @@ class Asset extends Model implements Crud
         'id',
         'name',
         'type',
+        'group',
         'location',
         'description',
         'acquired_at',
@@ -47,7 +48,7 @@ class Asset extends Model implements Crud
         'meta' => 'array',
     ];
 
-    public function owner()
+    public function owner(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo();
     }

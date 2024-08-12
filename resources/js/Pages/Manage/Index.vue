@@ -1,17 +1,12 @@
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import Welcome from '@/Components/Welcome.vue';
-import MetricCard from '@/Components/Spork/Atoms/MetricCard.vue';
 import {usePage, Link, router} from '@inertiajs/vue3'
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import DynamicIcon from "@/Components/DynamicIcon.vue";
-import SporkInput from "@/Components/Spork/SporkInput.vue";
 import CrudView from "@/Components/Spork/CrudView.vue";
 import { buildUrl } from '@kbco/query-builder';
 import Manage from "@/Layouts/Manage.vue";
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import MetricApiCard from "@/Components/Spork/Molecules/MetricApiCard.vue";
-const page = usePage()
 const { title, data, description, paginator, link, plural, apiLink, singular, body, metrics } = defineProps({
   data: Array,
   title: String,
