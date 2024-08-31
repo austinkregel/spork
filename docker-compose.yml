@@ -42,8 +42,6 @@ services:
             MYSQL_USER: '${DB_USERNAME}'
             MYSQL_PASSWORD: '${DB_PASSWORD}'
             MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-        ports:
-            - 3306:3306
         volumes:
             - 'sail-mariadb:/var/lib/mysql'
             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
@@ -128,16 +126,16 @@ services:
                 condition: service_healthy
             meilisearch:
                 condition: service_healthy
-    matrix-bot:
-       build:
-           context: ./docker/matrix-bot
-           dockerfile: Dockerfile
-       volumes:
-           - '.:/var/www/html'
-       networks:
-           - sail
-       depends_on:
-           - mariadb
+#    matrix-bot:
+#       build:
+#           context: ./docker/matrix-bot
+#           dockerfile: Dockerfile
+#       volumes:
+#           - '.:/var/www/html'
+#       networks:
+#           - sail
+#       depends_on:
+#           - mariadb
     laravel.websocket:
         image: austinkregel/reforged-websocket:latest
         build:

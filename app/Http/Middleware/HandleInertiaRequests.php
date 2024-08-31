@@ -53,11 +53,7 @@ class HandleInertiaRequests extends Middleware
                     $query->where('person_id', auth()->user()?->person()?->id);
                 })
                 ->whereHas('messages')
-                ->orderByDesc(
-                    Message::query()
-                        ->selectRaw('MAX(date(messages.originated_at))')
-                    ->where('thread_id', 'threads.id')
-                )
+                ->orderByDesc('updated_at')
                 ->paginate(
                     request('conversation_limit'),
                     ['*'],

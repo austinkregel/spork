@@ -14,6 +14,9 @@ class AssetController extends Controller
     {
         return Inertia::render('Assets/Index', [
             'description' => (new DescribeTableService)->describe(new Asset),
+            'assets' => Asset::query()
+                ->with('owner')
+                ->paginate(),
         ]);
     }
 

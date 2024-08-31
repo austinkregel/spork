@@ -8,8 +8,9 @@ import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import Modal from "@/Components/Modal.vue";
 import {router} from "@inertiajs/vue3";
 
-const { description } = defineProps({
-    description: Object
+const { description, assets } = defineProps({
+    description: Object,
+    assets: Object,
 });
 const DynamicFormToFillableArray = function (model) {
     return Object.keys(model).map(key => ({
@@ -100,10 +101,35 @@ const onSave = async (fo, toggle) => {
             v-if="!form && data && data?.data"
             :items="data.data ?? []"
         />
-
-        <div>
-            <code><pre>{{ form }}</pre></code>
-        </div>
+        <SporkTable
+            header="Asset Details"
+            description="Asset details"
+            :headers="[{
+                name: 'ID',
+                accessor: 'id'
+            }, {
+                name: 'Name',
+                accessor: 'name'
+            },
+            {
+                name: 'Location',
+                accessor: 'location'
+            },
+            {
+                name: 'type',
+                accessor: 'type'
+            },
+            {
+                name: 'description',
+                accessor: d => d.description ?? ''
+            },
+            {
+                name: 'Owner',
+                accessor: item => item?.owner?.name
+            }
+            ]"
+            :items="assets.data"
+            />
 
         <Modal :show="form">
             <div class="text-xl flex flex-col justify-between p-4">
@@ -121,10 +147,12 @@ const onSave = async (fo, toggle) => {
                     />
                 </div>
 
-
-                <div class="mt-4">
-                    <SporkButton xsmall plain @click="onSave(form, () => form = null)">
+                <div class="mt-4 gap-2 flex flex-wrap">
+                    <SporkButton xsmall primary @click="onSave(form, () => form = null)">
                         Apply
+                    </SporkButton>
+                    <SporkButton xsmall secondary @click="() => form = null">
+                        Cancel
                     </SporkButton>
                 </div>
             </div>

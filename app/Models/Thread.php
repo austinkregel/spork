@@ -52,10 +52,8 @@ class Thread extends Model implements Crud
 
     public function getHumanTimestampAttribute()
     {
-        $date = $this->messages()
-        ->selectRaw('max(originated_at) as date')
-        ->first();
+        $date = $this->origin_server_ts;
 
-        return $date ? Carbon::parse($date->date)->diffForHumans(now(), Carbon::DIFF_RELATIVE_TO_NOW) : null;
+        return $date ? Carbon::parse($date)->diffForHumans(now(), Carbon::DIFF_RELATIVE_TO_NOW) : null;
     }
 }

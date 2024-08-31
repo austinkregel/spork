@@ -10,10 +10,10 @@ import Button from "@/Components/Button.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import { parse } from 'node-html-parser';
 import Node from "node-html-parser/dist/nodes/node.js";
-import hljsDefineVue from 'highlightjs-vue';
+import * as hljsDefineVue from "highlightjs-vue";
 
 hljsDefineVue(hljs);
-const { title, files } = defineProps({
+hljs.initHighlightingOnLoad();const { title, files } = defineProps({
     title: String,
     files: Array
 });

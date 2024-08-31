@@ -121,6 +121,14 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/development', [Controllers\Spork\DevelopmentController::class, 'index'])->name('development.index');
 });
 
+Route::get('/locations', function () {
+    return view('locations.index', [
+        'locations' => \App\Models\Location::query()
+//        ->where('address','like','%, MI%')
+        ->get(),
+    ]);
+});
+
 Route::middleware([
     'web',
     config('jetstream.auth_session'),
