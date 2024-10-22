@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Models\Credential;
+use App\Models\Crud;
 use App\Models\User;
+use App\Services\Code;
 use App\Services\SshKeyGeneratorService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class Initialize extends Command
 {
@@ -40,12 +43,19 @@ class Initialize extends Command
         chmod($publicKeyFile, 0600);
         file_put_contents($privateKeyFile, $privateKey);
         chmod($privateKeyFile, 0600);
+        /** @var User $user */
+        $user = User::first();
+
+        $user->roles()->create([
+            'name' => 'developer',
+            'guard_name' => 'web'
+        ]);
 
         Credential::create([
             'service' => Credential::TYPE_SSH,
             'type' => Credential::TYPE_SSH,
             'name' => 'SSH',
-            'user_id' => User::first()->id,
+            'user_id' => $user->id,
             'api_key' => Str::random(32),
             'settings' => [
                 'pub_key' => $publicKey,
@@ -55,5 +65,24 @@ class Initialize extends Command
                 'pass_key' => ! empty($passKey) ? encrypt($passKey) : '',
             ],
         ]);
+        $role = Role::findOrCreate('admin');
+
+        $crud = Code::instancesOf(Crud::class);
+
+        $permissions = [
+            'create_',
+            'update_',
+            'delete_',
+            'view_any_',
+            'delete_any_',
+        ];
+
+        foreach ($crud->files as $classCrudInstance) {
+            foreach ($permissions as $permission) {
+                $role->permissions()->create([
+                    'name' => $permission.(new $classCrudInstance)->getTable(),
+                ]);
+            }
+        }
     }
 }

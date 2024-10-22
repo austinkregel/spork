@@ -12,6 +12,7 @@ use App\Contracts\Services\NamecheapServiceContract;
 use App\Contracts\Services\News\NewsServiceContract;
 use App\Contracts\Services\PlaidServiceContract;
 use App\Contracts\Services\WeatherServiceContract;
+use App\Features;
 use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Navigation;
@@ -45,6 +46,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Pennant\Feature;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -90,12 +92,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(Spork::class, fn () => new Spork());
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-
+        foreach (config('spork.features') as $feature => $activate) {
+            if ($activate) {
+                Feature::for(auth()->user())->load($feature);
+            }
+        }
         $this->bootRoute();
     }
 

@@ -36,12 +36,13 @@ class ProjectsController extends Controller
     public function show(Project $project)
     {
         $project->load([
-            'servers.tags',
-            'domains.records',
             'pages.domain',
             'research',
             'credentials',
-            'domains',
+            'deployments.domain',
+            'deployments.server',
+            'deployments.domains',
+            'deployments.servers',
         ]);
 
         return Inertia::render('Projects/Project', [
@@ -119,8 +120,6 @@ class ProjectsController extends Controller
         //    request()
         request()->validate([
             'resource_type' => \Illuminate\Validation\Rule::in([
-                \App\Models\Server::class,
-                \App\Models\Domain::class,
                 \App\Models\Credential::class,
                 \App\Models\Page::class,
                 Research::class,
@@ -151,8 +150,6 @@ class ProjectsController extends Controller
         //    request()
         request()->validate([
             'resource_type' => \Illuminate\Validation\Rule::in([
-                \App\Models\Server::class,
-                \App\Models\Domain::class,
                 \App\Models\Credential::class,
                 \App\Models\Page::class,
                 Research::class,

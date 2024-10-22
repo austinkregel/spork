@@ -49,23 +49,6 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         ];
     }
 
-    public function domains(): MorphToMany
-    {
-        return $this->morphedByMany(
-            Domain::class, 'resource',
-            'project_resources'
-        );
-    }
-
-    public function servers(): MorphToMany
-    {
-        return $this->morphedByMany(
-            Server::class,
-            'resource',
-            'project_resources'
-        );
-    }
-
     public function research(): MorphToMany
     {
         return $this->morphedByMany(
@@ -99,6 +82,11 @@ class Project extends Model implements Crud, ModelQuery, Taggable
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function deployments(): HasMany
+    {
+        return $this->hasMany(Deployment::class);
     }
 
     public function tasks(): HasMany

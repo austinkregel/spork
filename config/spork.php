@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Features;
+
 return [
     'prefix' => '',
     'filesystem' => [
@@ -27,5 +29,15 @@ return [
             ],
             'whitelist' => [],
         ],
+    ],
+
+    'features' => [
+        Features\SporkApp::class => true,
+        Features\LinkShortening::class => true,
+        Features\PetoskeyToday::class => true,
+        Features\Websockets::class => true,
+        Features\Automatic\Crud::class => true,
+        Features\Automatic\GeneratedPages::class => true,
+        Features\Automatic\ServerLinking::class => true,
     ],
 ];

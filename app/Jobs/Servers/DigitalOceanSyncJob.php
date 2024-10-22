@@ -14,7 +14,7 @@ class DigitalOceanSyncJob extends AbstractSyncServerResourceJob
         $servers = $this->service->findAllServers();
 
         foreach ($servers as $server) {
-            $localServer = Server::ownedBy($this->credential)
+            $localServer = Server::query()
                 ->where('server_id', $server['id'])
                 ->first();
 
@@ -32,8 +32,9 @@ class DigitalOceanSyncJob extends AbstractSyncServerResourceJob
                     'disk' => $server['disk'],
                     'cost_per_hour' => $server['cost'],
                 ]);
-                $localServer->ownable_type = get_class($this->credential);
-                $localServer->ownable_id = $this->credential->id;
+//                $localServer->ownable_type = get_class($this->credential);
+//                $localServer->ownable_id = $this->credential->id;
+                $this->credential->servers()->create($localServer->toArray());
             } else {
                 $data = [
                     'name' => $server['name'],
@@ -46,6 +47,7 @@ class DigitalOceanSyncJob extends AbstractSyncServerResourceJob
                     'memory' => $server['memory'],
                     'disk' => $server['disk'],
                     'cost_per_hour' => $server['cost'],
+                    'status' => $server['status'],
                 ];
 
                 foreach ($data as $key => $value) {

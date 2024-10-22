@@ -12,6 +12,7 @@ use App\Events\Models\Credential\CredentialDeleted;
 use App\Events\Models\Credential\CredentialDeleting;
 use App\Events\Models\Credential\CredentialUpdated;
 use App\Events\Models\Credential\CredentialUpdating;
+use App\Models\Contracts\Owner;
 use App\Models\Finance\Account;
 use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Credential extends Model implements Crud, ModelQuery
+class Credential extends Model implements Crud, ModelQuery, Owner
 {
     use HasFactory;
     use HasProjectResource;
@@ -62,7 +63,6 @@ class Credential extends Model implements Crud, ModelQuery
     public const TYPE_DEVELOPMENT = 'development';
 
     public const TYPE_SOURCE = 'source';
-
     public const TYPE_FINANCE = 'finance';
 
     public const TYPE_SSH = 'ssh';

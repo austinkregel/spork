@@ -11,6 +11,7 @@ use App\Events\Models\Server\ServerDeleted;
 use App\Events\Models\Server\ServerDeleting;
 use App\Events\Models\Server\ServerUpdated;
 use App\Events\Models\Server\ServerUpdating;
+use App\Models\Traits\HasOwner;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +29,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     use HasApiTokens;
     use HasFactory;
     use HasTags;
+    use HasOwner;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;

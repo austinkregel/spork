@@ -139,6 +139,18 @@ class ConditionService
     {
         return match ($key) {
             'config' => fn ($field) => config($field),
+            'feature' => function ($field) {
+                $feature = 'App\\Features\\'.implode('\\', array_map('ucfirst', explode('.', $field)));
+
+                if (! class_exists($feature)) {
+                    return dd($feature, 'reported feature does not exist; Likely a naming issue');
+                }
+
+
+                return app()->make($feature)->resolve([
+                    'user' => auth()->user(),
+                ]);
+            },
             default => dd($key, $parameter),
         };
     }

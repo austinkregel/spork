@@ -45,6 +45,10 @@ class FetchResourcesFromCredentials implements ShouldQueue
             ->map(fn (Collection $group) => $group->map(fn ($credential) => new FetchResourcesFromCredential($credential))->toArray())
             ->toArray();
 
+        if (empty($jobs)) {
+            return;
+        }
+
         $batch = $dispatcher->batch($jobs)
             ->name('Updatch Resources From Credentials')
             ->allowFailures()

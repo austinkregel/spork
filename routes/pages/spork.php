@@ -35,6 +35,7 @@ Route::middleware([
     Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
 
     Route::post('/api/projects/{project}/tasks', Controllers\Api\Projects\CreateTaskController::class);
+    Route::post('/api/credentials', [Controllers\Api\CredentialController::class, 'store']);
 
     Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
 });
@@ -46,7 +47,7 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/search/{index}', [Controllers\SearchController::class, 'show'])->name('search.show');
     Route::get('/notifications', fn () => Inertia::render('Notifications'))->name('notifications');
 
-    Route::get('/rss-feed', fn () => Inertia::render('RssFeeds/Index', [
+    Route::get('/rss-feeds', fn () => Inertia::render('RssFeeds/Index', [
         'feeds' => \App\Models\Article::query()->latest('last_modified')
             ->with('author.tags')
             ->paginate()
@@ -57,22 +58,24 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     ]));
     Route::get('/batch-jobs', [Controllers\Spork\BatchJobController::class, 'index'])->name('batch-jobs.index');
     Route::get('/batch-jobs/{batch_job}', [Controllers\Spork\BatchJobController::class, 'show'])->name('batch-jobs.show');
+
     Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
     Route::get('/projects/create', [Controllers\Spork\ProjectsController::class, 'create'])->name('projects.create');
     Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
+    Route::post('project/{project}/attach', [Controllers\Spork\ProjectsController::class, 'attach'])->name('project.attach');
+    Route::post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach'])->name('project.detach');
+
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
 
     Route::get('/servers', [Controllers\Spork\ServersController::class, 'index'])->name('servers.show');
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
+    Route::get('/domains', [Controllers\Spork\DomainsController::class, '__invoke'])->name('domains.show');
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
-    Route::post('project/{project}/deploy', [Controllers\Spork\ProjectsController::class, 'deploy'])->name('project.deploy');
+    Route::post('deployment/{deployment}/detach', [Controllers\Spork\DeploymentController::class, 'detach'])->name('deployment.detach');
+    Route::post('deployment/{deployment}/attach', [Controllers\Spork\DeploymentController::class, 'attach'])->name('deployment.attach');
+    Route::post('deployment/{project}/deploy', [Controllers\Spork\DeploymentController::class, 'deploy'])->name('project.deploy');
 
-    Route::post('project/{project}/attach', [Controllers\Spork\ProjectsController::class, 'attach'])
-        ->name('project.attach');
-
-    Route::post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach'])
-        ->name('project.detach');
 
     Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');
     Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
@@ -118,7 +121,6 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/assets', [Controllers\Spork\AssetController::class, 'index'])->name('assets.index');
     Route::get('/labels', [Controllers\Spork\AssetController::class, 'labels'])->name('assets.labels');
 
-    Route::get('/development', [Controllers\Spork\DevelopmentController::class, 'index'])->name('development.index');
 });
 
 Route::get('/locations', function () {
@@ -140,6 +142,7 @@ Route::middleware([
     Route::post('/api/uninstall', Controllers\UninstallNewProvider::class);
     Route::post('/api/enable', Controllers\EnableProviderController::class);
     Route::post('/api/disable', Controllers\DisableProviderController::class);
+    Route::get('/-/development', [Controllers\Spork\DevelopmentController::class, 'index'])->name('development.index');
 
     Route::get('/-/logic', Controllers\Spork\LogicController::class);
     Route::post('/api/logic/add-listener-for-event', Controllers\Logic\AddListenerForEventController::class);
@@ -148,4 +151,8 @@ Route::middleware([
         ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\TrimStrings::class]);
     Route::put('/api/files/{basepath}', [Controllers\Spork\FileManagerController::class, 'update'])
         ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\TrimStrings::class]);
+
+    Route::get('/api/uuid', function () {
+        return response()->json(['uuid' => \Ramsey\Uuid\Uuid::uuid4()->toString()]);
+    })->name('spork.uuid');
 });

@@ -17,7 +17,7 @@ class ServersController extends Controller
             ->with('tags', 'services')
             ->paginate(10);
 
-        return Inertia::render('Servers/Index', [
+        return Inertia::render('Infrastructure/Index', [
             'servers' => $servers->items(),
             'pagination' => $servers,
         ]);
@@ -32,7 +32,7 @@ class ServersController extends Controller
             'services',
         ]);
 
-        return Inertia::render('Servers/Show', [
+        return Inertia::render('Infrastructure/Show', [
             'server' => $server,
         ]);
     }

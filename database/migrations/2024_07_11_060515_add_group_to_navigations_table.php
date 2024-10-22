@@ -22,15 +22,20 @@ return new class extends Migration
             'order' => 0,
             'authentication_required' => true,
         ]);
-        \App\Models\Navigation::create([
+        $project = \App\Models\Navigation::create([
             'name' => 'Projects',
             'icon' => 'ClipboardIcon',
             'href' => '/-/projects',
             'order' => 1,
             'authentication_required' => true,
         ]);
+        $project->conditions()->create([
+            'parameter' => 'feature:projects',
+            'comparator' => 'EQUALS',
+            'value' => '1',
+        ]);
 
-        \App\Models\Navigation::create([
+        $email = \App\Models\Navigation::create([
             'name' => 'Email',
             'icon' => 'EnvelopeOpenIcon',
             'href' => '/-/inbox',
@@ -38,8 +43,13 @@ return new class extends Migration
             'authentication_required' => true,
             'group' => 'communication',
         ]);
+        $email->conditions()->create([
+            'parameter' => 'feature:communication.email',
+            'comparator' => 'EQUALS',
+            'value' => '1',
+        ]);
 
-        \App\Models\Navigation::create([
+        $messaging = \App\Models\Navigation::create([
             'name' => 'Messaging',
             'icon' => 'ChatBubbleLeftRightIcon',
             'href' => '/-/postal',
@@ -47,7 +57,11 @@ return new class extends Migration
             'authentication_required' => true,
             'group' => 'communication',
         ]);
-
+        $messaging->conditions()->create([
+            'parameter' => 'feature:communication.messaging',
+            'comparator' => 'EQUALS',
+            'value' => '1',
+        ]);
 
         /** @var \App\Models\Navigation $crudNav */
         $crudNav = \App\Models\Navigation::create([
@@ -58,6 +72,11 @@ return new class extends Migration
             'group' => 'core',
             'authentication_required' => true,
         ]);
+        $crudNav->conditions()->create([
+            'parameter' => 'feature:automatic.crud',
+            'comparator' => 'EQUALS',
+            'value' => '1',
+        ]);
 
         $models = \App\Services\Code::instancesOf(\App\Models\Crud::class);
 
@@ -65,6 +84,8 @@ return new class extends Migration
             $models->getClasses(),
             fn ($class) => in_array(\App\Models\Crud::class, class_implements($class))
         ));
+
+        asort($crudClasses);
 
         foreach ($crudClasses as $index => $class) {
             \App\Models\Navigation::create([
@@ -123,7 +144,7 @@ return new class extends Migration
             'authentication_required' => false,
         ]);
 
-        \App\Models\Navigation::create([
+        $banking = \App\Models\Navigation::create([
             'name' => 'Banking',
             'icon' => 'WalletIcon',
             'href' => '/-/banking',
@@ -131,7 +152,12 @@ return new class extends Migration
             'authentication_required' => true,
             'group' => 'tools',
         ]);
-        \App\Models\Navigation::create([
+        $banking->conditions()->create([
+            'parameter' => 'feature:banking',
+            'comparator' => 'EQUALS',
+            'value' => '1',
+        ]);
+        $feeds = \App\Models\Navigation::create([
             'name' => 'Rss Feeds',
             'icon' => 'RssIcon',
             'href' => '/-/',
@@ -139,21 +165,40 @@ return new class extends Migration
             'authentication_required' => true,
             'group' => 'tools',
         ]);
-        \App\Models\Navigation::create([
-            'name' => 'Servers',
+        $feeds->conditions()->create([
+            'parameter' => 'feature:feeds',
+            'comparator' => 'EQUALS',
+            'value' => '1',
+        ]);
+
+        $infrastructure = \App\Models\Navigation::create([
+            'name' => 'Infrastructure',
             'icon' => 'ServerIcon',
             'href' => '/-/',
             'order' => 6,
             'authentication_required' => true,
             'group' => 'tools',
         ]);
-        \App\Models\Navigation::create([
+
+        $infrastructure->conditions()->create([
+            'parameter' => 'feature:App\\Features\\InfrastructureManagement',
+            'comparator' => 'EQUALS',
+            'value' => '1',
+        ]);
+
+        $fileManager = \App\Models\Navigation::create([
             'name' => 'File Manager',
             'icon' => 'ServerIcon',
             'href' => '/-/',
             'order' => 6,
             'authentication_required' => true,
             'group' => 'tools',
+        ]);
+
+        $fileManager->conditions()->create([
+            'parameter' => 'feature:App\\Features\\FileManager',
+            'comparator' => 'EQUALS',
+            'value' => '1',
         ]);
     }
 

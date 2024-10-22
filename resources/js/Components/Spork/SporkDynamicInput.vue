@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full flex flex-col divide-y divide-stone-700 dark:divide-stone-800">
+    <div class="w-full relative flex flex-col divide-y divide-stone-700 dark:divide-stone-800">
         <input
             :value="modelValue.name"
             @input="$emit('update:modelValue', {
@@ -56,11 +56,20 @@
         <div v-if="errors" class="flex flex-col">
             <div v-for="error in errors" :key="error" class="text-red-500 dark:text-red-400 px-4 text-xs py-1"> {{ error }}</div>
         </div>
+
+        <div class="absolute top-0 right-0 mt-8 mr-10" v-if="modelValue?.name === 'uuid'">
+            <button @click="fillUuid" class="border py-0.5 px-1 rounded-lg text-xs tracking-wider font-bold" >
+                Fill
+            </button>
+        </div>
+
     </div>
 </template>
 
 <script setup>
 import SporkSelect from "@/Components/Spork/SporkSelect.vue";
+
+const $emit = defineEmits(['update:modelValue']);
 
 const {
   modelValue,
@@ -112,5 +121,18 @@ const inputClasses = (disabled) => {
 
   return baseClasses;
 };
+
+const fillUuid = () => {
+    axios.get(route('spork.uuid'))
+        .then(({ data }) => {
+            $emit('update:modelValue', {
+                ...modelValue,
+                value: data.uuid
+            });
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
 </script>
 

@@ -5,9 +5,14 @@
                 {{ title }}
             </div>
 
-            <SporkButton @click="openCreateModal">
+            <SporkButton @click="openCreateModal" v-if="singular !== 'credential'">
                 Create New {{ singular }}
             </SporkButton>
+
+            <SporkButton @click="openCredentialModal" v-else-if="singular === 'credential'">
+                Create New {{ singular }}
+            </SporkButton>
+
             <SporkTable :headers="[]" :data="data">
                 <template #table-top>
                     <div class="relative z-0 w-full flex flex-wrap justify-between items-center ">
@@ -19,8 +24,13 @@
                                 @click="selectAll"
                             />
 
+                            <span v-if="selectedItems.length > 0" class="text-sm text-stone-700 dark:text-stone-300">
+                                {{ selectedItems.length }} selected
 
-                            <span v-if="selectedItems.length > 0" class="text-sm text-stone-700 dark:text-stone-300">{{ selectedItems.length }} selected</span>
+                                <button class="underline pl-2" click="">
+                                    select everything
+                                </button>
+                            </span>
                         </div>
 
                         <div class="flex items-center gap-4">
@@ -142,7 +152,7 @@
         :show="applyTagModalOpen && actionToRun && actionToRun.slug === 'apply-tag'"
         :type="description.model"
         @close="() => applyTagModalOpen = false"
-        :identifiers="selectedItems.map((item) => item.id)"
+        :identifiers="selectedItems"
         :name="description.name"
     >
     </ApplyTagModal>
@@ -172,13 +182,92 @@
             </div>
         </div>
     </Modal>
+
+    <Modal :show="credentialModal">
+        <div class="flex flex-col justify-between p-4">
+            <div class="flex justify-end">
+                <button @click="credentialModal = false">
+                    <DynamicIcon icon-name="XMarkIcon" class="w-6 h-6" />
+                </button>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div>
+                    <div class="text-base px-3">
+                        Credential Name
+                    </div>
+                    <SporkInput
+                        name="credential"
+                        v-model="valuesToSend.name"
+                        class="px-3 mt-2"
+                    />
+                </div>
+                <div>
+                    <div class="text-base px-3">
+                        Credential Type
+                    </div>
+                    <SporkSelect v-model="credentialType">
+                        <template #options>
+                            <option value="development">Development</option>
+                            <option value="server">Servers</option>
+                            <option value="domain">Domain</option>
+                            <option value="registrar">Registrar</option>
+                            <option value="finance">Finance</option>
+                            <option value="ssh">SSH</option>
+                            <option value="email">Email</option>
+                            <option value="source">Source</option>
+                        </template>
+                    </SporkSelect>
+
+                    <div v-if="errors?.type" class="text-red-500 dark:text-red-400 px-3 text-xs">
+                        {{errors?.type?.join(', ')}}
+                    </div>
+                </div>
+                <div>
+                    <div class="text-base px-3">
+                        Service
+                    </div>
+                    <SporkSelect v-model="credentialService">
+                        <template #options>
+                            <option value="cloudflare">Cloudflare (global)</option>
+                            <option value="namecheap">Namecheap (global)</option>
+                            <option value="enom">Tucows/Enom (global)</option>
+
+                            <option value="digitalocean">DigitalOcean</option>
+
+                            <option value="imap">IMAP Email</option>
+                            <option value="http_api">HTTP API</option>
+                        </template>
+                    </SporkSelect>
+
+                    <div v-if="errors?.type" class="text-red-500 dark:text-red-400 px-3 text-xs">
+                        {{errors?.type?.join(', ')}}
+                    </div>
+                </div>
+
+                <div v-for="(fieldMapping, i) in credentialForm">
+                    <SporkDynamicInput
+                        v-model="credentialForm[i]"
+                        :error="hasErrors(fieldMapping.name)"
+                        :disabled-input="false"
+                    />
+
+                </div>
+                <pre>{{ errors }}</pre>
+                <div>
+                    <SporkButton type="submit" @click.prevent="saveCredentialType">
+                        Save
+                    </SporkButton>
+                </div>
+            </div>
+        </div>
+    </Modal>
 </template>
 
 <script setup>
 import {ref, computed, watch} from 'vue';
 import { PlayIcon, ArrowPathIcon } from "@heroicons/vue/24/outline";
 import SporkButton from './SporkButton.vue';
-import { router, Link } from '@inertiajs/vue3';
+import {router, Link, useForm, usePage} from '@inertiajs/vue3';
 import SporkTable from "@/Components/Spork/SporkTable.vue";
 import Modal from "@/Components/Modal.vue";
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
@@ -186,6 +275,7 @@ import Button from "@/Components/Button.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import ApplyTagModal from "@/Components/Spork/Molecules/ApplyTagModal.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
+import SporkSelect from "@/Components/Spork/SporkSelect.vue";
 const {
   form,
   title,
@@ -259,13 +349,61 @@ const actionToRun = ref(null);
 const searchQuery = ref(localStorage.getItem('searchQuery') ? localStorage.getItem('searchQuery') : '');
 const debounceSearch = ref(null);
 const executing = ref(false);
-
+const credentialModal = ref(false);
 const selectedTagToApply = ref(null);
+
+const fieldMappings = {
+    namecheap: [
+        'api_user',
+        'username',
+        'client_ip',
+        'access_token',
+    ],
+    cloudflare: [
+        'email',
+        'account_id',
+        'api_key',
+    ],
+    enom: ['uid','pw'],
+    digitalocean: [
+        'api_key',
+    ],
+    imap: [
+        'username',
+        'password',
+        'host',
+        'port',
+        'encryption',
+    ],
+    http_api: [
+        'url',
+        'body',
+    ]
+}
+
 const openCreateModal = () => {
     $emit('clearForm');
     createOpen.value = true;
 }
+const page = usePage();
+const errors = page.props?.errorBags?.default;
+const credentialService = ref(null);
+const credentialType = ref(null);
+
+const credentialForm = ref(null);
+const valuesToSend = useForm({
+    name: '',
+    type: '',
+    service: '',
+    api_key: '',
+    secret_key: '',
+    access_token: '',
+    refresh_token: '',
+    settings: {},
+})
+
 watch(
+    // This watches for a selected action, so we can set up the form if there are any needed fields
     () => actionToRun.value,
     (newVal) => {
         if (newVal?.fields) {
@@ -278,6 +416,22 @@ watch(
         }
     }
 )
+watch(
+    () => credentialService.value,
+    (newVal) => {
+
+        if (!(newVal in fieldMappings)) {
+            throw new Error(newVal + " does not exist in the field mappings" )
+        }
+
+        credentialForm.value = fieldMappings[newVal].map(fieldName => ({
+            name: fieldName,
+            value: '',
+        }))
+        valuesToSend.name = newVal;
+    }
+)
+
 const hasPreviousPage = computed(() => {
   return paginator.prev_page_url !== null;
 });
@@ -285,23 +439,50 @@ const hasPreviousPage = computed(() => {
 const hasNextPage = computed(() => {
   return paginator.next_page_url !== null;
 });
-const total = computed(() => {
-  return paginator.total;
-})
+const total = computed(() => paginator.total)
 const currentPage = computed(() => {
   return paginator.current_page;
 });
-const lastPage = computed(() => {
-  return Math.max(paginator.total / paginator.per_page, 1);
-});
+const lastPage = computed(() => Math.max(paginator.total / paginator.per_page, 1));
 
+const saveCredentialType = () => {
+    if (!credentialForm?.value) {
+        return;
+    }
 
+    const credentials = [...credentialForm.value].reduce((carry, input) => ({
+        ...carry,
+        [input.name]: input.value,
+    }), {});
+
+    // Since our actual credentials objects treat some parts of the credential as a property on the object, and others as a property in the settings
+    // we need to adjust what we send to account for that.
+    for (let key in credentials) {
+        if (key in valuesToSend) {
+            valuesToSend[key] = credentials[key];
+            delete credentials[key];
+        }
+    }
+
+    valuesToSend.type = credentialType.value;
+    valuesToSend.service = credentialService.value;
+
+    valuesToSend.settings = {
+        ...(valuesToSend.settings ? valuesToSend.settings : {}),
+        ...credentials,
+    };
+
+    valuesToSend.post('/api/credentials')
+    // router.reload({
+    //     only: ['data', 'paginator']
+    // })
+};
 const hasErrors = (error) => {
-  if (!form.errors) {
+  if (!errors) {
     return '';
   }
 
-  return form.errors[error];
+  return errors[error];
 };
 const selectAll = (event) => {
   if (event.target.checked) {
@@ -309,9 +490,6 @@ const selectAll = (event) => {
   } else {
     selectedItems.value = [];
   }
-}
-const clearSearch = () => {
-  searchQuery.value = '';
 }
 const close = () => {
   createOpen.value = false;
@@ -365,4 +543,8 @@ const applyTag = async () => {
 //
 //     }, 400);
 // }
+
+const openCredentialModal = () => {
+    credentialModal.value = true;
+}
 </script>
