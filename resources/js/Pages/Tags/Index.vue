@@ -55,16 +55,26 @@ const deleteCondition= () => {}
     <div>
       <div class="text-2xl my-8 mx-4">Tags and how they're used in your app</div>
 
-      <div class="gap-4 grid grid-cols-1 lg:grid-cols-2 mx-4">
-        <div v-for="tag in data" class="flex flex-wrap justify-between border border-slate-600 rounded-lg py-2">
-            <div class="flex flex-wrap gap-2 items-center my-2 mx-6">
-                <WalletIcon class="w-6 h-6 text-blue-400" v-if="tag.type === 'finance'"/>
-                <ServerIcon class="w-6 h-6 text-amber-200" v-else-if="tag.type === 'server'"/>
-                <BoltIcon class="w-6 h-6 text-green-500" v-else-if="tag.type === 'automatic'" />
-                <TagIcon class="w-6 h-6 text-green-400" v-else />
-                <Link :href="'/-/tag-manager/' + tag.id" class="text-xl">{{ tag.name?.en }}</Link>
+      <div class="gap-4 grid grid-cols-1 lg:grid-cols-3 mx-4">
+        <div v-for="tag in data" class="flex flex-col justify-between border border-slate-600 rounded-lg py-2">
+            <div class="flex flex-wrap gap-2 items-center my-2 w-full">
+                <span class="ml-6">
+                    <WalletIcon class="w-6 h-6 text-blue-400" v-if="tag.type === 'finance'"/>
+                    <ServerIcon class="w-6 h-6 text-amber-200" v-else-if="tag.type === 'server'"/>
+                    <BoltIcon class="w-6 h-6 text-green-500" v-else-if="tag.type === 'automatic'" />
+                    <TagIcon class="w-6 h-6 text-green-400" v-else />
+                </span>
+
+                <Link :href="'/-/tag-manager/' + tag.id" class="text-xl underline flex flex-wrap justify-between flex-grow items-center hover:text-stone-300">
+                    <div>
+                        {{ tag.name?.en }}
+                    </div>
+                    <div class="flex flex-grow text-right justify-end mr-6">
+                        <DynamicIcon icon-name="ChevronRightIcon" class="w-5 h-5" />
+                    </div>
+                </Link>
             </div>
-            <div class="w-1/2 flex justify-end items-center gap-4 my-2 mx-6 text-xs">
+            <div class="flex gap-4 my-2 mx-6 text-xs">
                 <div class="flex items-center gap-2">
                     <ServerIcon class="w-5 h-5" />
                     {{ tag.servers_count }}

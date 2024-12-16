@@ -22,6 +22,10 @@ class ServerCreating extends AbstractLogicalEvent implements ShouldBroadcastNow
         $this->model->load('credential');
         $credential = Credential::find($this->model->credential_id);
 
+        if (empty($credential)) {
+            return [];
+        }
+
         return [
             new PrivateChannel('App.Models.User.'.$credential->user_id),
         ];

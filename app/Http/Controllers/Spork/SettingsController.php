@@ -17,6 +17,8 @@ class SettingsController
         $path = config_path('app.php');
         // settings are things that can be configured in between requests.
         // They cannot be changed at run time, and might even require a restart of the servers.
+        // They are editable here as a convenience, but should be committed to version control
+        // and use the respective environment variables and not the actual secrets.
         return Inertia::render('Settings/Index', [
             'title' => 'Settings',
             'settings' => new class([

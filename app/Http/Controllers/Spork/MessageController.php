@@ -19,16 +19,12 @@ class MessageController
                     $query->where('person_id', auth()->user()->person()->id);
                 })
                 ->with(['messages' => function ($query) {
-                    $query->orderBy('originated_at');
+                    $query->orderByDesc('originated_at');
                 }, 'participants' => function ($query) {
                     $query->where('name', 'not like', '%bridge bot%');
                 }, 'messages.toPerson', 'messages.fromPerson'])
                 ->whereHas("messages")
-                ->orderByDesc(
-                    Message::query()
-                        ->selectRaw('MAX(date(messages.originated_at))')
-                        ->where('thread_id', 'threads.id')
-                )
+                ->orderBy('origin_server_ts')
                 ->findOrFail($thread),
         ]);
     }
@@ -47,17 +43,16 @@ class MessageController
             ->addSelect(
                 [
                     'latest_message_at' => Message::query()
-                    ->selectRaw('MAX(date(messages.originated_at))')
-                    ->whereColumn('thread_id', 'threads.id')]
+                        ->selectRaw('MAX(date(messages.originated_at))')
+                        ->whereColumn('thread_id', 'threads.id')
+                ]
             )
             ->with([
                 'participants' => function ($query) {
                     $query->where('name', 'not like', '%bridge bot%');
                 },
             ])
-            ->orderByDesc(
-                'latest_message_at',
-            )
+            ->orderByDesc('origin_server_ts')
             ->paginate(request('limit', 15), ['*'], 'page', 1);
     }
 }

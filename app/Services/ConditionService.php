@@ -23,6 +23,7 @@ use App\Services\Condition\LessThanOperator;
 use App\Services\Condition\LessThanOrEqualToOperator;
 use App\Services\Condition\StartsWithOperator;
 use Illuminate\Support\Arr;
+use Laravel\Pennant\Feature;
 
 class ConditionService
 {
@@ -139,10 +140,18 @@ class ConditionService
     {
         return match ($key) {
             'config' => fn ($field) => config($field),
-            'feature' => function ($field) {
-                $feature = 'App\\Features\\'.implode('\\', array_map('ucfirst', explode('.', $field)));
+            'feature' => function ($field) use ($parameter) {
+                $featuresThatMatchField = array_filter(Feature::defined(), fn ($defined) => str_ends_with($defined, implode('\\', array_map('ucfirst', explode('.', $field)))));
+                $feature = Arr::first($featuresThatMatchField);
+
+                if (empty($feature)) {
+                    dd(Feature::defined(), $field, $featuresThatMatchField, $feature, $parameter, implode('\\', array_map('ucfirst', explode('.', $field))));
+                }
 
                 if (! class_exists($feature)) {
+
+                    dd(Feature::defined(), $field, $parameter, implode('\\', array_map('ucfirst', explode('.', $field))));
+
                     return dd($feature, 'reported feature does not exist; Likely a naming issue');
                 }
 

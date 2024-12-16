@@ -35,20 +35,18 @@ class StoreCredentialRequest extends FormRequest
                 'required',
                 'string',
                 Rule::in([
-                    Credential::TYPE_DOMAIN,
                     Credential::TYPE_REGISTRAR,
-
+                    Credential::TYPE_DOMAIN,
+                    Credential::TYPE_SERVER,
+                    Credential::TYPE_DEVELOPMENT,
+                    Credential::TYPE_FINANCE,
+                    Credential::TYPE_EMAIL,
                 ]),
             ],
             'service' => [
                 'required',
                 'string',
-                Rule::in([
-                    Credential::CLOUDFLARE,
-                    Credential::DIGITAL_OCEAN,
-                    Credential::NAMECHEAP,
-                    Credential::GITHUB_SOURCE
-                ]),
+                Rule::in(Credential::ALL_SERVER_PROVIDERS),
             ],
             'api_key' => 'nullable',
             'secret_key' => 'nullable',

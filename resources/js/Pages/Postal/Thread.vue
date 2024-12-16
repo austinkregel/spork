@@ -2,7 +2,7 @@
     <AppLayout title="Dashboard">
         <!-- component -->
         <main class="grid grid-cols-3 overflow-hidden">
-            <section class="flex flex-col pt-3 bg-stone-50 dark:bg-stone-900  overflow-y-scroll" style="height: calc(100vh);">
+            <section class="flex flex-col pt-3 bg-stone-50 dark:bg-stone-900  overflow-y-scroll" style="height: calc(100vh - 65px);">
                 <ul class="divide-y divide-stone-200 dark:divide-stone-700">
                     <li v-for="thread in page.props.threads.data" class="p-4 px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
                         <Link :href="route('inbox.show', thread.id)" class="flex flex-col">
@@ -16,7 +16,7 @@
                     </li>
                 </ul>
             </section>
-            <section class="border-l-2 dark:border-stone-800 relative col-span-2 flex flex-col bg-white dark:bg-stone-800 overflow-y-scroll" style="height: calc(100vh);">
+            <section class="relative border-l-2 dark:border-stone-800 relative col-span-2 flex flex-col bg-white dark:bg-stone-800 overflow-y-scroll" style="height: calc(100vh - 65px);">
                 <div class="sticky z-0 bg-white dark:bg-stone-800 top-0 flex justify-between items-center h-24 border-b-2 dark:border-stone-700 p-4">
                     <div class="flex space-x-4 items-center">
                         <div class="isolate flex -space-x-2 overflow-hidden">
@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <section class="flex-grow bg-gray-300 dark:bg-zinc-900">
-                    <article class="px-4 mt-4 text-stone-500 dark:text-stone-200 leading-7 tracking-wider gap-1 flex flex-col">
+                    <article class="px-4 mt-4 text-stone-500 dark:text-stone-50 leading-7 tracking-wider gap-1 flex flex-col-reverse">
                         <div v-for="message in thread.messages" class="w-full flex gap-4 flex-wrap">
                             <div class="mt-5">
                                 <img :src="message?.from_person?.photo_url ?? ('/storage/'+message.from_person.id+'.png')" alt="" class="h-8 w-8 rounded-full" />
@@ -77,10 +77,12 @@
                             <div>
                                 <div class="-my-1 text-xxs text-black dark:text-stone-400">{{message?.from_person?.name}} -- {{ formatDate(message.originated_at) }}</div>
                                 <div
-                                    :class="[message.is_user ? 'bg-blue-600': ' bg-green-500']"
+                                    :class="[message.is_user ? 'bg-blue-600': ' bg-green-600']"
                                     class="px-2 py-1 flex rounded-lg shadow"
                                 >
-                                    <div v-if="message.html_message" v-html="message.html_message"></div>
+                                    <img v-if="message.thumbnail_url || message.message?.startsWith('https://tenor.com')" :src="message.thumbnail_url ?? message.message" :alt="message.message" class="w-64"/>
+                                    <div v-else-if="message.html_message" v-html="message.html_message"></div>
+                                    <div v-else-if="message.thumbnail_url">{{message.thumbnail_url}}</div>
                                     <div v-else v-text="message.message"></div>
                                 </div>
 

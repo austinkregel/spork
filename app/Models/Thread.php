@@ -27,6 +27,8 @@ class Thread extends Model implements Crud
     use ScopeRelativeSearch;
     use Searchable;
 
+    public $guarded = [];
+
     public $casts = ['settings' => 'json', 'origin_server_ts' => 'datetime'];
 
     public $appends = ['human_timestamp'];

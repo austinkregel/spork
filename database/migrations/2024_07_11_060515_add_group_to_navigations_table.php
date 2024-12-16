@@ -38,7 +38,7 @@ return new class extends Migration
         $email = \App\Models\Navigation::create([
             'name' => 'Email',
             'icon' => 'EnvelopeOpenIcon',
-            'href' => '/-/inbox',
+            'href' => '/-/postal',
             'order' => 9,
             'authentication_required' => true,
             'group' => 'communication',
@@ -52,7 +52,7 @@ return new class extends Migration
         $messaging = \App\Models\Navigation::create([
             'name' => 'Messaging',
             'icon' => 'ChatBubbleLeftRightIcon',
-            'href' => '/-/postal',
+            'href' => '/-/inbox',
             'order' => 10,
             'authentication_required' => true,
             'group' => 'communication',
@@ -160,7 +160,7 @@ return new class extends Migration
         $feeds = \App\Models\Navigation::create([
             'name' => 'Rss Feeds',
             'icon' => 'RssIcon',
-            'href' => '/-/',
+            'href' => '/-/rss-feeds',
             'order' => 6,
             'authentication_required' => true,
             'group' => 'tools',
@@ -174,7 +174,7 @@ return new class extends Migration
         $infrastructure = \App\Models\Navigation::create([
             'name' => 'Infrastructure',
             'icon' => 'ServerIcon',
-            'href' => '/-/',
+            'href' => '/-/servers',
             'order' => 6,
             'authentication_required' => true,
             'group' => 'tools',
@@ -189,7 +189,7 @@ return new class extends Migration
         $fileManager = \App\Models\Navigation::create([
             'name' => 'File Manager',
             'icon' => 'ServerIcon',
-            'href' => '/-/',
+            'href' => '/-/file-manager',
             'order' => 6,
             'authentication_required' => true,
             'group' => 'tools',

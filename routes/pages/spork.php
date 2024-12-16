@@ -78,6 +78,7 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
 
 
     Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');
+    Route::get('/budget/{budget}', [Controllers\Spork\BudgetController::class, 'show'])->name('budget.show');
     Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
 
     Route::get('kvm', function () {
@@ -120,17 +121,7 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
 
     Route::get('/assets', [Controllers\Spork\AssetController::class, 'index'])->name('assets.index');
     Route::get('/labels', [Controllers\Spork\AssetController::class, 'labels'])->name('assets.labels');
-
 });
-
-Route::get('/locations', function () {
-    return view('locations.index', [
-        'locations' => \App\Models\Location::query()
-//        ->where('address','like','%, MI%')
-        ->get(),
-    ]);
-});
-
 Route::middleware([
     'web',
     config('jetstream.auth_session'),
@@ -155,4 +146,10 @@ Route::middleware([
     Route::get('/api/uuid', function () {
         return response()->json(['uuid' => \Ramsey\Uuid\Uuid::uuid4()->toString()]);
     })->name('spork.uuid');
+
+    Route::get('/locations', function () {
+        return view('locations.index', [
+            'locations' => \App\Models\Location::query()->get(),
+        ]);
+    });
 });

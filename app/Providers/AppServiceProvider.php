@@ -38,6 +38,7 @@ use App\Services\Registrar\NamecheapService;
 use App\Services\Weather\OpenWeatherService;
 use App\Spork;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;

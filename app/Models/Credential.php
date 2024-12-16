@@ -35,6 +35,7 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public const DIGITAL_OCEAN = 'digital-ocean';
 
     public const CLOUDFLARE = 'cloudflare';
+    public const TYPE_MATRIX = 'matrix';
 
     public const NAMECHEAP = 'namecheap';
 
@@ -51,6 +52,7 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public const AWS_ROUTE_53 = 'aws-route53';
 
     public const GITHUB_SOURCE = 'github';
+    public const IMAP = 'imap';
 
     public const FORGE_DEVELOPMENT = 'forge';
 
@@ -78,9 +80,10 @@ class Credential extends Model implements Crud, ModelQuery, Owner
         self::GO_DADDY,
         self::GOOGLE_DOMAINS,
         self::AWS_ROUTE_53,
+        self::TYPE_EMAIL,
     ];
 
-    public const ALL_SERVER_PROVIDERS = [self::DIGITAL_OCEAN, self::OVH_CLOUD, self::VULTR, self::LINODE];
+    public const ALL_SERVER_PROVIDERS = [self::DIGITAL_OCEAN, self::OVH_CLOUD, self::VULTR, self::LINODE, self::IMAP];
 
     public const ALL_REGISTRAR_PROVIDERS = [
         self::OVH_CLOUD,
@@ -126,7 +129,7 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     protected function casts(): array
     {
         return [
-            'settings' => 'json',
+            'settings' => 'array',
         ];
     }
 

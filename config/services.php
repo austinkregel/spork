@@ -29,5 +29,9 @@ return [
         'client_secret' => env('LARAVEL_PASSPORT_CLIENT_SECRET'),
         'redirect' => env('LARAVEL_PASSPORT_REDIRECT'),
         'host' => env('LARAVEL_PASSPORT_HOST')
+    ],
+
+    'matrix' => [
+        'url' => env('MATRIX_HOST'),
     ]
 ];

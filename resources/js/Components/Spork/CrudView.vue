@@ -200,6 +200,10 @@
                         v-model="valuesToSend.name"
                         class="px-3 mt-2"
                     />
+
+                    <div v-if="errors?.name" class="text-red-500 dark:text-red-400 px-3 text-xs">
+                        {{valuesToSend.errors?.name}}
+                    </div>
                 </div>
                 <div>
                     <div class="text-base px-3">
@@ -219,7 +223,7 @@
                     </SporkSelect>
 
                     <div v-if="errors?.type" class="text-red-500 dark:text-red-400 px-3 text-xs">
-                        {{errors?.type?.join(', ')}}
+                        {{valuesToSend.errors?.type}}
                     </div>
                 </div>
                 <div>
@@ -239,8 +243,8 @@
                         </template>
                     </SporkSelect>
 
-                    <div v-if="errors?.type" class="text-red-500 dark:text-red-400 px-3 text-xs">
-                        {{errors?.type?.join(', ')}}
+                    <div v-if="valuesToSend.errors?.service" class="text-red-500 dark:text-red-400 px-3 text-xs">
+                        {{valuesToSend.errors?.service}}
                     </div>
                 </div>
 
@@ -252,7 +256,7 @@
                     />
 
                 </div>
-                <pre>{{ errors }}</pre>
+                <pre>{{ valuesToSend.errors }}</pre>
                 <div>
                     <SporkButton type="submit" @click.prevent="saveCredentialType">
                         Save
@@ -386,7 +390,6 @@ const openCreateModal = () => {
     createOpen.value = true;
 }
 const page = usePage();
-const errors = page.props?.errorBags?.default;
 const credentialService = ref(null);
 const credentialType = ref(null);
 
@@ -401,6 +404,8 @@ const valuesToSend = useForm({
     refresh_token: '',
     settings: {},
 })
+
+const errors = valuesToSend?.errors ?? []
 
 watch(
     // This watches for a selected action, so we can set up the form if there are any needed fields
