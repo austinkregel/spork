@@ -518,7 +518,7 @@ class MatrixClientSyncRepository
                 $thread->update(['origin_server_ts' => Carbon::createFromFormat('U', round($event['origin_server_ts']/ 1000))]);
             }
 
-            if (empty($person->photo_url)) {
+            if (empty($person->photo_url) && !empty($event['content']['avatar_url'])) {
                 try {
                     $person->photo_url = $this->downloadMedia($credential, $event['content']['avatar_url']);
                     $person->save();

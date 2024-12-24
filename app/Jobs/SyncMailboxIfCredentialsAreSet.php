@@ -89,10 +89,8 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
                     $trackedMessage->save();
                 }
             }
-
-            info('Processed '.$i.'/'.count($messages));
         }
-
+        info('Finished syncing mailbox');
     }
 
     protected function getPersonFromEmail(array $message)
@@ -150,7 +148,6 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
 
         if (empty($person)) {
             $person = Person::first();
-            info('This thing from email: '.$fromEmail);
 
             $person->update([
                 'emails' => array_values(array_unique(array_merge($person->emails, [strtolower($fromEmail)]))),

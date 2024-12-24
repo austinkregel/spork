@@ -40,10 +40,11 @@ Route::middleware([
     Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
 });
 
+Route::redirect('/', '/flight/login');
+
 Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
-    Route::get('/search', [Controllers\SearchController::class, 'index'])
-        ->name('search');
+    Route::get('/search', [Controllers\SearchController::class, 'index'])->name('search');
     Route::get('/search/{index}', [Controllers\SearchController::class, 'show'])->name('search.show');
     Route::get('/notifications', fn () => Inertia::render('Notifications'))->name('notifications');
 
@@ -61,6 +62,7 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
 
     Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
     Route::get('/projects/create', [Controllers\Spork\ProjectsController::class, 'create'])->name('projects.create');
+    Route::post('projects', [Controllers\Spork\ProjectsController::class, 'store'])->name('projects.store');
     Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
     Route::post('project/{project}/attach', [Controllers\Spork\ProjectsController::class, 'attach'])->name('project.attach');
     Route::post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach'])->name('project.detach');
@@ -105,6 +107,8 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
 
     Route::get('/inbox', [Controllers\Spork\MessageController::class, 'index'])->name('inbox');
     Route::get('/inbox/{message}', [Controllers\Spork\MessageController::class, 'show'])->name('inbox.show');
+    Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
+    Route::get('/postal/{email}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
 
     Route::get('/manage/{link}', [Controllers\Spork\ManageController::class, 'show'])->name('manage.show');
     Route::get('/manage', [Controllers\Spork\ManageController::class, 'index'])->name('manage.index');
@@ -113,8 +117,6 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/tag-manager', Controllers\Spork\TagManagerController::class);
     Route::get('/tag-manager/{tag}', [Controllers\Spork\TagManagerController::class, 'show']);
 
-    Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
-    Route::get('/postal/{email}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
 
     Route::get('/research', [Controllers\Spork\ResearchController::class, 'index'])->name('research.index');
     Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');

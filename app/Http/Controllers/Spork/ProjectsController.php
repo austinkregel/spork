@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProjectRequest;
 use App\Models\Project;
 use App\Models\Research;
 use App\Models\Task;
@@ -18,8 +19,7 @@ class ProjectsController extends Controller
     {
         $model = \App\Models\Project::class;
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
-        $paginator = $model::query()
-            ->where('team_id', auth()->user()->current_team_id)
+        $paginator = auth()->user()->personalProjects()
             ->paginate(request('limit', 15), ['*'], 'page', request('page', 1));
 
         $data = $paginator->items();
@@ -171,5 +171,14 @@ class ProjectsController extends Controller
         return Inertia::render('Projects/Create', [
             'description' => $description,
         ]);
+    }
+
+    public function store(StoreProjectRequest $request)
+    {
+        $project = new Project;
+        $project->forceFill($request->all());
+        $project->save();
+
+        return redirect()->route('projects.show', $project);
     }
 }

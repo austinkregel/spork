@@ -4,10 +4,27 @@ declare(strict_types=1);
 
 use Laravel\Pennant\Feature;
 
+Route::redirect('/login', '/flight/login');
+
 if (Feature::driver('array')->active(\App\Features\Automatic\GeneratedPages::class)) {
-    if (file_exists(base_path('routes/generate-pages.php'))) {
-        include_once base_path('routes/generate-pages.php');
-    }
+    \App\Models\Deployment::query()
+        ->with([
+            'project',
+            'domains',
+            'servers',
+        ])
+        ->get()
+        ->map(function (\App\Models\Deployment $deployment) {
+            foreach ($deployment->domains as $domain) {
+                Route::middleware('web')
+                    ->domain($domain->domain)
+                    ->get('{part?}/{part2?}/{part3?}/{part4?}', function () use ($deployment) {
+                        return view('deploy', [
+                            'deployment' => $deployment,
+                        ]);
+                    });
+            }
+        });
 }
 
 if (Feature::driver('array')->active(\App\Features\Automatic\ServerLinking::class)) {

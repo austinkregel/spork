@@ -175,8 +175,6 @@ createInertiaApp({
                 });
         }
 
-        console.log(props?.initialPage?.props?.auth?.user)
-
         return app.mount(el);
     },
     progress: {

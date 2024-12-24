@@ -70,7 +70,7 @@ class Message extends Model implements Taggable
 
     public function getIsUserAttribute()
     {
-        return auth()->id() === $this->from_person;
+        return auth()->user()?->person()?->id === $this->from_person;
     }
 
     public function credential(): BelongsTo

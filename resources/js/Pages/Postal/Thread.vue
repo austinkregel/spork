@@ -6,17 +6,17 @@
                 <ul class="divide-y divide-stone-200 dark:divide-stone-700">
                     <li v-for="thread in page.props.threads.data" class="p-4 px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
                         <Link :href="route('inbox.show', thread.id)" class="flex flex-col">
-                            <h3 class="text-md font-semibold dark:text-stone-50 truncate">{{ thread.participants.map(p => p.name).join(", ") }}</h3>
-                            <div class="text-sm truncate dark:text-stone-200">{{ thread.name}}</div>
+                            <h3 class="text-lg font-semibold dark:text-stone-50 truncate">{{ thread.name}}</h3>
+                            <div class="text-sm truncate dark:text-stone-200">{{ thread.participants.map(p => p.name).join(", ") }}</div>
                         </Link>
-                      <div class="flex flex-wrap">
+                      <div class="flex flex-wrap pt-1">
                         <div class="text-md italic text-stone-400 dark:text-stone-200">{{ thread.description }}</div>
-                        <p class="text-md text-stone-400">{{ thread.human_timestamp}}</p>
+                        <p class="text-sm text-stone-400">{{ thread.human_timestamp}}</p>
                       </div>
                     </li>
                 </ul>
             </section>
-            <section class="relative border-l-2 dark:border-stone-800 relative col-span-2 flex flex-col bg-white dark:bg-stone-800 overflow-y-scroll" style="height: calc(100vh - 65px);">
+            <section class="relative border-l-2 dark:border-stone-800 col-span-2 flex flex-col bg-white dark:bg-stone-800 overflow-y-scroll" style="height: calc(100vh - 65px);">
                 <div class="sticky z-0 bg-white dark:bg-stone-800 top-0 flex justify-between items-center h-24 border-b-2 dark:border-stone-700 p-4">
                     <div class="flex space-x-4 items-center">
                         <div class="isolate flex -space-x-2 overflow-hidden">
@@ -77,15 +77,14 @@
                             <div>
                                 <div class="-my-1 text-xxs text-black dark:text-stone-400">{{message?.from_person?.name}} -- {{ formatDate(message.originated_at) }}</div>
                                 <div
-                                    :class="[message.is_user ? 'bg-blue-600': ' bg-green-600']"
+                                    :class="[message.is_user ? 'bg-indigo-600': ' bg-blue-600']"
                                     class="px-2 py-1 flex rounded-lg shadow"
                                 >
                                     <img v-if="message.thumbnail_url || message.message?.startsWith('https://tenor.com')" :src="message.thumbnail_url ?? message.message" :alt="message.message" class="w-64"/>
                                     <div v-else-if="message.html_message" v-html="message.html_message"></div>
                                     <div v-else-if="message.thumbnail_url">{{message.thumbnail_url}}</div>
-                                    <div v-else v-text="message.message"></div>
+                                    <Markdown v-else :source="message.message" class="prose dark:prose-invert"></Markdown>
                                 </div>
-
                             </div>
                         </div>
                     </article>
@@ -115,6 +114,8 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
+import Markdown from 'vue3-markdown-it';
+
 
 const page = usePage();
 

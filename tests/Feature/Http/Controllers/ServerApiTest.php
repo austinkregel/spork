@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Features\Automatic\ServerLinking;
 use App\Models\Credential;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Pennant\Feature;
 use Tests\TestCase;
 
 class ServerApiTest extends TestCase
@@ -14,14 +16,17 @@ class ServerApiTest extends TestCase
 
     public function testServerThrowsValidationError()
     {
-        $user = User::factory()->create();
+        $user = $this->createUserWithPermissions([
+            'create_server',
+        ]);
         $credential = Credential::factory()->create([
             'user_id' => $user->id,
             'api_key' => 'credential_api_key',
         ]);
 
-        $response = $this->actingAs($user)->post('http://pending.download/api/servers', [], [
-            'Accept' => 'application/json',
+        $response = $this->actingAs($user)
+            ->postJson(route('server.create'), [], [
+                'Accept' => 'application/json',
             'Authentication' => 'Bearer '.$credential->api_key,
             'Content-Type' => 'application/json',
             'User-Agent' => 'root@system:installer',
@@ -31,25 +36,28 @@ class ServerApiTest extends TestCase
     }
     public function testServerCreateSuccessful()
     {
-        $user = User::factory()->create();
+        Feature::activateForEveryone(ServerLinking::class);
+        $user = $this->createUserWithPermissions([
+            'create_server',
+        ]);
         $credential = Credential::factory()->create([
             'user_id' => $user->id,
             'api_key' => 'credential_api_key',
         ]);
 
         $response = $this->actingAs($user)
-        ->postJson('http://pending.download/api/servers', [
-            'server_id' => 'falef',
-            'name' => 'falef',
-            'ip_address' => '127.0.0.1',
-            'port' => 22,
-            'status' => 'provisioning'
-        ], [
-            'Accept' => 'application/json',
-            'Authentication' => 'Bearer '.$credential->api_key,
-            'Content-Type' => 'application/json',
-            'User-Agent' => 'root@system:installer',
-        ]);
+            ->postJson(route('server.create'), [
+                'server_id' => 'falef',
+                'name' => 'falef',
+                'ip_address' => '127.0.0.1',
+                'port' => 22,
+                'status' => 'provisioning'
+            ], [
+                'Accept' => 'application/json',
+                'Authentication' => 'Bearer '.$credential->api_key,
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'root@system:installer',
+            ]);
 
         $response->assertStatus(200);
 

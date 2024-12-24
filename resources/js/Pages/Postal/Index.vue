@@ -4,16 +4,16 @@
         <main class="flex w-full h-full min-h-screen shadow-lg justify">
             <section class="flex flex-col bg-stone-50 dark:bg-stone-900 w-1/3 h-full min-h-screen overflow-y-scroll">
                 <ul>
-                    <li v-for="thread in page.props.threads.data" class="py-4 border-b text-white px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
-                        <Link :href="route('inbox.show',  [thread.id])" class="flex flex-col">
-                            <h3 class="text-md font-semibold dark:text-stone-50">{{ thread.participants.map(p => p.name).join(", ") }}</h3>
-                            <div class="text-sm truncate">{{ thread.name}}</div>
-                        </Link>
-                      <div class="flex flex-wrap">
-                        <div class="text-md italic text-stone-400">{{ thread.description }}</div>
-                        <p class="text-md text-stone-400">{{ thread.human_timestamp}}</p>
-                      </div>
-                    </li>
+                  <li v-for="thread in page.props.threads.data" class="p-4 px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
+                    <Link :href="route('inbox.show', thread.id)" class="flex flex-col">
+                      <h3 class="text-lg font-semibold dark:text-stone-50 truncate">{{ thread.name}}</h3>
+                      <div class="text-sm truncate dark:text-stone-200">{{ thread.participants.map(p => p.name).join(", ") }}</div>
+                    </Link>
+                    <div class="flex flex-wrap pt-1">
+                      <div class="text-md italic text-stone-400 dark:text-stone-200">{{ thread.description }}</div>
+                      <p class="text-sm text-stone-400">{{ thread.human_timestamp}}</p>
+                    </div>
+                  </li>
                 </ul>
             </section>
             <section class="w-2/3 px-4 flex flex-col bg-white dark:bg-stone-800 min-h-screen h-full">

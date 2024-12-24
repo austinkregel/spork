@@ -47,7 +47,7 @@ class ManageController
 
         unset($paginator['data']);
 
-        return Inertia::render('Manage/Index', [
+        return Inertia::render('Manage/List', [
             'title' => 'CRUD '.Str::ucfirst(str_replace('_', ' ', Str::ascii($table, 'en'))),
             'description' => $description,
             'singular' => Str::singular($table),

@@ -128,56 +128,86 @@ const log = console.log;
 <template>
   <Manage
       :title="title"
-      sub-title="Manage"
+      :sub-title="'Manage'"
       home="/-/manage"
   >
-    <div>
-        <div class="grid grid-cols-6 gap-4">
-            <MetricApiCard url="/api/crud/people?action=count&filter[relative]=user" title="people" />
-            <MetricApiCard url="/api/crud/credentials?action=count&filter[relative]=user" title="credentials" />
-            <MetricApiCard url="/api/crud/external_rss_feeds?action=count&filter[relative]=user" title="rss feeds" />
-            <MetricApiCard url="/api/crud/accounts?action=count&filter[relative]=user" title="accounts" />
-            <MetricApiCard url="/api/crud/pages?action=count" title="pages" />
-            <MetricApiCard url="/api/crud/projects?action=count&filter[relative]=user" title="projects" />
-            <MetricApiCard url="/api/crud/threads?action=count&filter[relative]=user" title="threads" />
-            <MetricApiCard url="/api/crud/navigations?action=count" title="navigations" />
-            <MetricApiCard url="/api/crud/domains?action=count&filter[relative]=user" title="domains" />
-            <MetricApiCard url="/api/crud/transactions?action=count&filter[relative]=user" title="transactions" />
-            <MetricApiCard url="/api/crud/research?action=count&filter[relative]=user" title="research" />
-            <MetricApiCard url="/api/crud/scripts?action=count&filter[relative]=user" title="scripts" />
+    <!-- We need to figure out a better way to get the crud actions. -->
+    <crud-view
+        :form="form"
+        :singular="singular"
+        :plural="plural"
+        :description="description"
+        @destroy="onDelete"
+        @destroy-many="onDeleteMany"
+        @index="fetchData"
+        @execute="onExecute"
+        @save="onSave"
+        @clear-form="() => { form = FillableArrayToDynamicForm(description.fillable); }"
+        :api-link="apiLink"
+        :data="data"
+        :paginator="paginator"
+    >
+      <template #modal-title>
+        <div>
+          Upsert {{ singular }}
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div class="rounded-lg mt-4 p-4 bg-white dark:bg-stone-800 flex flex-col">
-                <div v-for="item in metrics.data" :key="item">
-                    <div class="flex flex-col">
-                        <div class="flex flex-wrap gap-2 text-base items-center">
-                          <pre class="truncate"><span class="text-sm pr-4">{{item.log_name}}</span><span class="text-sm pr-4">{{item.description}}</span>{{item.properties?.attributes?.name ?? item.properties?.attributes?.headline}}
-                            </pre>
-                        </div>
-                        <div class="text-xs -mt-1 text-black dark:text-stone-200">
-                            {{formatDateIso(item.created_at)}}
-                        </div>
-                    </div>
+      </template>
+      <template #data="{ data, openModal }">
+        <div class="w-full grid grid-cols-6 relative z-0">
+          <div class="col-span-5">
+            <div class="flex flex-col">
+              <Link :href="route('manage.show', [plural])" class="text-lg text-left flex items-center gap-2">
+                  <img v-if="data?.personal_finance_icon" :src="data?.personal_finance_icon" class="h-5 w-5" />
+                {{ data.name }}
+              </Link>
+              <div class="flex flex-col gap-2">
+                <div class="text-xs dark:text-stone-300">
+                    {{ possibleDescriptionForData(data) }}
                 </div>
+                  <div class="text-xs dark:text-blue-50 flex flex-wrap gap-2">
+                      <div v-for="tag in data?.tags" :key="tag.name"
+                           class="py-1 px-2 rounded-full bg-blue-300 dark:bg-blue-600"
+                           :class="colors(tag.type)"
+                      >
+                          {{ tag.name.en }}
+                      </div>
+                  </div>
+              </div>
             </div>
-            <div class="rounded-lg mt-4 p-4 bg-white dark:bg-stone-800 flex flex-col">
-                <div v-for="item in metrics.data" :key="item">
-                    <div class="flex flex-col">
-                        <div class="flex flex-wrap gap-2 text-sm items-center">
-                            <div>{{item.log_name}}</div>
-                            <div>{{item.description}}</div>
-                            <div class="text-xs">
-                                {{item.properties?.attributes?.name ?? item.properties?.attributes?.headline}}
-                            </div>
-                        </div>
-                        <div class="text-xs -mt-1 text-black dark:text-stone-200">
-                            {{formatDateIso(item.created_at)}}
+          </div>
+          <div class="col-span-1 flex gap-4 items-center justify-end px-4">
+              <button @click="(e) => { form = (DynamicFormToFillableArray(data)); openModal(); }">
+                  <DynamicIcon icon-name="PencilIcon" class="h-5 w-5 fill-current text-green-400" />
+              </button>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
+              <button @click="() => onDelete(data)">
+                  <DynamicIcon icon-name="TrashIcon" class="h-5 w-5 fill-current text-red-400" />
+              </button>
+          </div>
         </div>
-    </div>
+
+      </template>
+      <template #no-data>
+        <div class="w-full p-4 italic text-center px-4 dark:text-white">No {{ singular }} data</div>
+      </template>
+
+      <template #form="{ openModal }">
+        <div class="flex flex-col -mt-4">
+          <div v-for="(field, i) in form">
+              <SporkDynamicInput
+                  :key="i+'.form-value'"
+                  v-model="form[i]"
+                  v-if="description.types[field.name]"
+                  :type="description.types[field.name].type ?? 'text'"
+                  :disabled-input="!description.fillable.includes(field.name)"
+                  :editable-label="false"
+                  :errors="errors?.[field.name]"
+                  class="mt-4"
+              />
+          </div>
+        </div>
+      </template>
+
+    </crud-view>
   </Manage>
 </template>

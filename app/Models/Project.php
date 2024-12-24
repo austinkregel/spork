@@ -79,9 +79,9 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         );
     }
 
-    public function team(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(User::class);
     }
 
     public function deployments(): HasMany
