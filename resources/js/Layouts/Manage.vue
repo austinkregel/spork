@@ -9,7 +9,7 @@ const { description, home, subTitle } = defineProps({
   home: String,
   description: Object,
 })
-const availablePages = computed(() => page.props.current_navigation?.children?.length > 0 ? page.props.current_navigation?.children : page.props.current_navigation?.parent?.children)
+const availablePages = computed(() => page.props.subnavigation)
 
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 </script>

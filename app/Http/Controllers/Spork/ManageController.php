@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
+use App\Models\Crud;
+use App\Services\Code;
 use App\Services\Development\DescribeTableService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Spatie\Activitylog\Models\Activity;
@@ -13,6 +16,8 @@ class ManageController
 {
     public function index()
     {
+        Inertia::share('subnavigation', $this->navigation());
+
         return Inertia::render('Manage/Index', [
             'title' => 'Dynamic CRUD',
             'description' => [
@@ -30,6 +35,9 @@ class ManageController
 
     public function show($model)
     {
+        Inertia::share('subnavigation', $navigation = $this->navigation());
+        $model = $navigation->firstWhere('slug', $model)['class'];
+
         $table = (new $model)->getTable();
         $description = (new DescribeTableService())->describe(new $model);
 
@@ -57,5 +65,22 @@ class ManageController
             'data' => $data,
             'paginator' => $paginator,
         ]);
+    }
+
+    protected function navigation(): Collection
+    {
+        $crudModels = Collection::make(Code::instancesOf(Crud::class)
+            ->getClasses());
+
+        return $crudModels->map(function ($class) {
+            $tableName = (new $class)->getTable();
+            return [
+                'name' => Str::ucfirst(str_replace('_', ' ', Str::ascii($tableName, 'en'))),
+                'href' => '/-/manage/'.$slug = Str::slug(Str::singular($tableName)),
+                'icon' => ucfirst(Str::singular(Str::camel($tableName))).'Icon',
+                'slug' => $slug,
+                'class' => $class,
+            ];
+        });
     }
 }

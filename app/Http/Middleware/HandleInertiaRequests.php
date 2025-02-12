@@ -39,10 +39,11 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         if (auth()->check()) {
-            auth()->user()->setRelation('person', auth()->user()->person());
-            auth()->user()->load('credentials');
+            auth()->user()->setRelation('person', cache()->rememberForever(auth()->user()->email.'.related-person', fn () => auth()->user()->person()));
+//            auth()->user()->load('credentials');
         }
-        $navigation = (new ConditionService)->navigation();
+
+        $navigation = cache()->remember('navigation-for-'.$request->user()?->id, now()->addDay(), fn () => (new ConditionService)->navigation());
 
         return array_merge(parent::share($request), [
             'navigation' => $navigation,
@@ -50,7 +51,7 @@ class HandleInertiaRequests extends Middleware
             'conversations' => auth()->check() ? Thread::query()
                 ->with(['messages', 'messages.fromPerson', 'messages.toPerson'])
                 ->whereHas('participants', function ($query) {
-                    $query->where('person_id', auth()->user()?->person()?->id);
+                    $query->where('person_id', auth()->user()?->person?->id);
                 })
                 ->whereHas('messages')
                 ->orderByDesc('updated_at')
@@ -61,7 +62,16 @@ class HandleInertiaRequests extends Middleware
                     request('conversation_page')
                 ) : null,
             'unread_email_count' => 0,
-            'notifications' => $request->user()?->notifications ?? [],
+            'notifications' => $request->user()
+                    ?->notifications()
+                    ?->whereNull('read_at')
+                    ?->orderByDesc('created_at')
+                    ?->limit(10)
+                    ?->get()?? [],
+            'notification_count' => $request->user()
+                    ?->notifications()
+                    ?->whereNull('read_at')
+                    ?->count()?? [],
         ]);
     }
 }

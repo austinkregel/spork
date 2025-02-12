@@ -140,6 +140,12 @@ class User extends Authenticatable implements ModelQuery, Taggable
 
     public function person()
     {
+        return $this->belongsTo(Person::class, 'email', 'primary_email');
+
+        if (empty($this->email)) {
+            return null;
+        }
+
         return Person::whereJsonContains('emails', $this->email)
             // for now, this is fine, my email base does support this idea, but I know if someone/
             // wanted to be malicious they could take advantage of this.

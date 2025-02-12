@@ -16,7 +16,7 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
-        $person = auth()->user()->person();
+        $person = auth()->user()->person;
         $batchJobs = JobBatch::query()
             ->orderByDesc('created_at')
             ->paginate(request('job_limit', 10), ['*'], 'job_page', request('job_page', 1));

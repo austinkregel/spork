@@ -1,16 +1,24 @@
 <script setup>
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
-import { computed } from "vue";
+import {computed, ref} from "vue";
 import { usePage, Link, router } from '@inertiajs/vue3';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import LinkAccount from "@/Components/Spork/Finance/LinkAccount.vue";
 import SporkTable from "@/Components/Spork/Atoms/SporkTable.vue";
 import {buildUrl} from "@kbco/query-builder";
+import SporkSelect from "@/Components/Spork/SporkSelect.vue";
+import Graph from "@/Components/Graph.vue";
 const page = usePage();
 dayjs.extend(utc);
 const accounts = computed(() => page.props.accounts)
+
+const { stats } = defineProps([
+    'stats'
+])
+
+const graphs = page.props.graphs
 
 const transactionHeaders = [
     {
@@ -39,6 +47,18 @@ const filterUrl = (field, value) => {
     })
 }
 
+const labels = computed(() => {
+  return graphs.labels
+});
+
+const pinnedTags = ref([]);
+const addTag = (tag) => {
+    pinnedTags.value.push(tag);
+}
+const removeTag = (tag) => {
+    pinnedTags.value = pinnedTags.value.filter(t => t !== tag);
+}
+
 </script>
 
 <template>
@@ -49,12 +69,74 @@ const filterUrl = (field, value) => {
         <span class="text-xs">Link your account, and tag your transactions</span>
       </div>
 
+      <div class="flex flex-wrap m-4 gap-4">
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="col-span-1 md:col-span-3">
+            <div v-if="graphs" class="bg-stone-100 dark:bg-stone-800 p-4 rounded-lg shadow">
+              <Graph :labels="labels" :datasets="graphs.datasets" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 p-4 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-800 rounded-lg shadow">
+            <div class="font-semibold text-stone-600 dark:text-stone-300 dark:text-stone-300">
+              Total Income
+            </div>
+            <div class="text-4xl text-stone-800 dark:text-stone-100">
+              ${{stats.total_income.current.toLocaleString() }}
+            </div>
+
+            <div>
+              ${{ stats.total_income.previous.toLocaleString() }} last month
+            </div>
+          </div>
+          <div class="flex flex-col gap-2 p-4 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-800 rounded-lg shadow">
+            <div class="font-semibold text-stone-600 dark:text-stone-300 dark:text-stone-300">
+              Total Expenses
+            </div>
+            <div class="text-4xl text-stone-800 dark:text-stone-100">
+              ${{stats.total_expenses.current.toLocaleString() }}
+            </div>
+
+            <div>
+              ${{stats.total_expenses.previous.toLocaleString() }} last month
+            </div>
+          </div>
+          <div class="flex flex-col gap-2 p-4 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-800 rounded-lg shadow">
+            <div class="font-semibold text-stone-600 dark:text-stone-300 dark:text-stone-300">
+              Food Expenses
+            </div>
+            <div class="text-4xl text-stone-800 dark:text-stone-100">
+              ${{stats.other.current.toLocaleString() }}
+            </div>
+
+            <div>
+              ${{stats.other.previous.toLocaleString() }} last month
+            </div>
+          </div>
+
+
+
+        </div>
+        <div class="w-1/4">
+          <SporkSelect>
+            <template #options>
+              <option value="YTD">YTD</option>
+              <option value="MTD">MTD</option>
+              <option value="WTD">WTD</option>
+              <option value="1 day">1 day</option>
+              <option value="7 days">7 days</option>
+              <option value="30 days">30 days</option>
+            </template>
+          </SporkSelect>
+        </div>
+      </div>
+
       <div class="px-4 ">
         <LinkAccount :accounts="accounts" />
       </div>
       <SporkTable
         :headers="transactionHeaders"
-        :items="page.props.transactions.data"
+        :items="page?.props?.transactions?.data ?? []"
         header="All your transactions"
         description="Transactions"
       >
