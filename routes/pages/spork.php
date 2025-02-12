@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Actions\Spork\CustomAction;
 use App\Http\Controllers;
 use App\Services\Programming\LaravelProgrammingStyle;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -47,6 +48,12 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/search', [Controllers\SearchController::class, 'index'])->name('search');
     Route::get('/search/{index}', [Controllers\SearchController::class, 'show'])->name('search.show');
     Route::get('/notifications', fn () => Inertia::render('Notifications'))->name('notifications');
+    Route::put('/notifications/{notification:uuid}/mark-as-read', function (Request $request, $notification) {
+        $notification = $request->user()->notifications()->where('id', $notification)->first();
+        $notification->markAsRead();
+        return response('', 204);
+    });
+
 
     Route::get('/rss-feeds', fn () => Inertia::render('RssFeeds/Index', [
         'feeds' => \App\Models\Article::query()->latest('last_modified')
@@ -80,7 +87,8 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
 
 
     Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');
-    Route::get('/budget/{budget}', [Controllers\Spork\BudgetController::class, 'show'])->name('budget.show');
+    Route::get('/banking/budgets', [Controllers\Spork\BankingController::class, 'budgets'])->name('banking.budgets');
+
     Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
 
     Route::get('kvm', function () {
@@ -110,7 +118,7 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
     Route::get('/postal/{email}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
 
-    Route::get('/manage/{link}', [Controllers\Spork\ManageController::class, 'show'])->name('manage.show');
+    Route::get('/manage/{slug}', [Controllers\Spork\ManageController::class, 'show'])->name('manage.show');
     Route::get('/manage', [Controllers\Spork\ManageController::class, 'index'])->name('manage.index');
 
     Route::get('/settings', Controllers\Spork\SettingsController::class);
