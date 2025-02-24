@@ -1,11 +1,13 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import {Head, Link, router} from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import FileOrFolder from "@/old-spork/Development/FileOrFolder.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
+import SporkSelect from "@/Components/Spork/SporkSelect.vue";
+import ContextMenuLink from "@/Components/ContextMenus/ContextMenuLink.vue";
 
-defineProps({
+const { filesystems, selectedFilesystem } = defineProps({
     directories: {
         type: Array,
         default: () => [],
@@ -14,6 +16,14 @@ defineProps({
         type: Array,
         default: () => [],
     },
+  filesystems: {
+    type: Array,
+    default: () => [],
+  },
+  selectedFilesystem: {
+    type: String,
+    default: 'local',
+  }
 });
 const openFile = (file) => console.log('opening file', file)
 
@@ -27,8 +37,8 @@ const toPathLink = (path) => btoa(breadcrumbs.slice(0, breadcrumbs.indexOf(path)
 
 <template>
 
-    <AppLayout title="Dashboard">
-        <div class="max-w-7xl mx-auto flex flex-col gap-8">
+    <AppLayout title="File Manager">
+        <div class="max-w-7xl mx-auto flex flex-col gap-8 px-4">
             <div class="flex gap-2 mt-8">
                 <div class="flex items-center">
                     <Link :href="route('file-manager.index')" class="text-stone-400">File Manager</Link>
@@ -41,16 +51,19 @@ const toPathLink = (path) => btoa(breadcrumbs.slice(0, breadcrumbs.indexOf(path)
 
                     <DynamicIcon v-if="(breadcrumbs.length - 1) !== i" icon-name="ChevronRightIcon" class="w-4 h-4 text-stone-400 stroke-current" />
                 </div>
+              <SporkSelect :model-value="selectedFilesystem" @input="value => router.post(route('file-manager.update-default'), { value: value.target.value })" label="Filesystem">
+                <template #options>
+                  <option v-for="filesystem in filesystems" :value="filesystem">{{ filesystem }}</option>
+                </template>
+              </SporkSelect>
             </div>
             <div class="flex flex-wrap lg:grid-cols-4 gap-2">
-
-
                 <div v-for="(topic, i) in directories">
-                    <Link :href="'/-/file-manager?path='+topic.file_path" class="flex flex-col items-center w-20 h-20 border border-stone-600 truncate">
+                    <Link :href="'/-/file-manager?path='+topic.file_path" class="flex flex-col text-left items-center justify-start w-20 h-20 border border-stone-600 truncate">
                         <div class="pt-2">
                             <DynamicIcon icon-name="FolderIcon" class="w-12 h-12 text-stone-400 stroke-current" />
                         </div>
-                        <div class="text-xs overflow-ellipsis max-w-full">{{ topic.name }}</div>
+                        <div class="text-xs overflow-ellipsis max-w-full text-left">{{ topic.name }}</div>
                     </Link>
                 </div>
             </div>
@@ -60,7 +73,7 @@ const toPathLink = (path) => btoa(breadcrumbs.slice(0, breadcrumbs.indexOf(path)
                         <div class="flex items-center border border-stone-600 truncate gap-2 px-2">
                             <DynamicIcon icon-name="DocumentIcon" class="w-4 h-4 text-stone-400 stroke-current" />
 
-                            <div class=" overflow-ellipsis max-w-full">{{ topic.name }}</div>
+                            <div class=" overflow-ellipsis max-w-full text-left">{{ topic.name }}</div>
                         </div>
                     </div>
                     <template #items>
@@ -69,6 +82,11 @@ const toPathLink = (path) => btoa(breadcrumbs.slice(0, breadcrumbs.indexOf(path)
                                 <DynamicIcon icon-name="DownloadIcon" class="w-4 h-4 text-stone-400 stroke-current" />
                                 <span>Download</span>
                             </div>
+
+                          <ContextMenuLink :href="route('development.index', {
+                              'path': path,
+                              'filesystem': selectedFilesystem
+                          })">Development</ContextMenuLink>
                         </div>
                     </template>
                 </ContextMenu>

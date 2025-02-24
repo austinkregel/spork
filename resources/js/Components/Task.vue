@@ -93,7 +93,7 @@ import {
     UserPlusIcon
 } from "@heroicons/vue/24/outline/index.js";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
-import ContextMenuItem from "@/Components/ContextMenus/ContextMenuItem.vue";
+import ContextMenuItem from "@/Components/ContextMenus/ContextMenuButton.vue";
 
 const { task } = defineProps({
     task: {

@@ -110,7 +110,7 @@ createInertiaApp({
         if (props?.initialPage?.props?.auth?.user?.id) {
             const userId = props?.initialPage?.props?.auth?.user?.id;
             Echo.private(`App.Models.User.${userId}`)
-                .listen('Models.Message.MessageCreated', (e) => {
+                .listen('Models.Message.EmailCreated', (e) => {
                     playSound('notification');
                     router.reload({
                         only: ['messages', 'unread_email_count'],

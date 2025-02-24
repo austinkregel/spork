@@ -23,7 +23,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
-class Article extends Model implements Crud, ModelQuery, Taggable
+class Article extends Model implements ModelQuery, Taggable
 {
     use HasTags;
     use HasFactory;

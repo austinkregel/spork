@@ -34,13 +34,11 @@ const asyncFind = async (query) => {
     }
 }
 const applyTags = async () => {
-    // console.log('Applying', [...identifiers],  tagToApply?.v/alue ? [...tagToApply?.value] : []);
     await Promise.all(identifiers.map(async (identifier) => {
         return await axios.post(`/api/crud/${name}/${identifier}/tags`, {
             tags: [...tagToApply.value].map((tag) => tag.id)
         })
     }));
-    // console.log('Applyed', identifiers, [...tagToApply.value]);
 }
 const clearAll= () => {
     tagToApply.value = null;

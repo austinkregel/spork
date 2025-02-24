@@ -46,6 +46,7 @@ class BankingController
                 'transactions' => fn ($query) => $query->whereIn('account_id', $accounts->pluck('account_id'))
                     ->where('date', '>=', $startDate)
                     ->where('date', '<=', $endDate)
+                    ->where('name', 'not like', '%transfer%')
                     ->select(['amount', 'date']),
             ])
             ->get()
@@ -156,11 +157,15 @@ class BankingController
             ])
             ->allowedIncludes(['account', 'tags'])
             ->allowedSorts(['name', 'amount', 'date'])
+            ->where('name', 'not like', '%transfer%')
             ->whereIn('account_id', request()->user()
                 ->accounts()
                 ->with('credential')
                 ->get()->pluck('account_id'))
-            ->with('tags')
+            ->with([
+                'tags' => fn ($query) => $query->where('type', 'automatic'),
+                'account'
+            ])
             ->orderByDesc('date')
             ->paginate();
     }

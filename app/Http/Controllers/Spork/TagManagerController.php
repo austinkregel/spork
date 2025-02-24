@@ -14,23 +14,11 @@ class TagManagerController
     public function __invoke()
     {
         return Inertia::render('Tags/Index', [
-            'tags' => \App\Models\Tag::withCount([
-                'conditions',
-                'articles',
-                'feeds',
-                'servers',
-                'transactions',
-                'projects',
-                'budgets',
-                'accounts',
-                'domains',
-                'people',
-                'messages',
-            ])->withSum('transactions', 'amount')
+            'tags' => \App\Models\Tag::withSum('transactions', 'amount')
                 ->with(['conditions'])
                 ->orderBy('type')
                 ->paginate(
-                    request('limit', 30),
+                    request('limit', 1000),
                     ['*'],
                     'page',
                     request('page')

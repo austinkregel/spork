@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Events\Models\Email\EmailCreated;
+use App\Events\Models\Email\EmailCreating;
+use App\Events\Models\Email\EmailDeleted;
+use App\Events\Models\Email\EmailDeleting;
+use App\Events\Models\Email\EmailUpdated;
+use App\Events\Models\Email\EmailUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,6 +33,15 @@ class Email extends Model
         'answered',
         'message',
     ];
+    public $dispatchesEvents = [
+        'created' => EmailCreated::class,
+        'creating' => EmailCreating::class,
+        'deleting' => EmailDeleting::class,
+        'deleted' => EmailDeleted::class,
+        'updating' => EmailUpdating::class,
+        'updated' => EmailUpdated::class,
+    ];
+
     protected function casts(): array
     {
         return [

@@ -21,19 +21,23 @@ class BatchJobController extends Controller
 
         $paginator = new LengthAwarePaginator(
             array_map(function ($batch) {
-                $batch->jobs = \DB::table('failed_jobs')
-                    ->select('*')
-                    ->whereIn('uuid', json_decode($batch->failed_job_ids, true))
-                    ->orderByDesc('failed_at')
-                    ->get()
-                    ->map(function ($job) {
-                        $job->parsed_exception = (new Stacktrace)->parse($job->exception);
-                        $job->payload = json_decode($job->payload, true);
+                $failedJobs = json_decode($batch->failed_job_ids, true);
 
-                        return $job;
-                    });
-                $batch->failed_at = $batch->jobs->max('failed_at');
+                if (count($failedJobs) > 0) {
+                    $batch->jobs = \DB::table('failed_jobs')
+                        ->select('*')
+                        ->whereIn('uuid',)
+                        ->orderByDesc('failed_at')
+                        ->get()
+                        ->map(function ($job) {
+                            $job->parsed_exception = (new Stacktrace)->parse($job->exception);
+                            $job->payload = json_decode($job->payload, true);
 
+                            return $job;
+                        });
+
+                    $batch->failed_at = $batch->jobs->max('failed_at');
+                }
                 return $batch;
             }, $batches->items()),
             $batches->total(),

@@ -33,7 +33,7 @@ const deleteCondition = (index, condition) => {
 const parameters = [
     // New Email
     {
-        value: 'email.from',
+        value: 'email.from_email',
         name: "Email Sender"
     },
     {
@@ -55,7 +55,7 @@ const parameters = [
     },
     // Recent article
     {
-        "value": "article.title",
+        "value": "article.headline",
         "name": "Article Title"
     },
 ];

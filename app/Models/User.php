@@ -41,7 +41,6 @@ class User extends Authenticatable implements ModelQuery, Taggable
     use HasRoles;
     use HasPermissions;
     use HasTags;
-    use HasTeams;
     use LogsActivity;
     use Notifiable;
     use ScopeQSearch;

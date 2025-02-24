@@ -134,7 +134,7 @@ onMounted(() => {
                         <div class="flex flex-wrap gap-1">
                             <span v-if="batch.total_jobs === batch.failed_jobs" class="text-red-300">Failed</span>
                             <span v-else-if="batch.pending_jobs > 0" class="text-yellow-300">Processing {{ round(((batch.total_jobs - batch.pending_jobs) / batch.total_jobs) * 100)}}</span>
-                            <span v-else-if="batch.failed_at !== null" class="text-red-600">Failed at {{ dateFormat(batch.failed_at)}}</span>
+                            <span v-else-if="batch.failed_at !== null" class="text-red-600">Failed at {{ batch.failed_at ? dateFormat(batch.failed_at): '' }}</span>
                             <span v-else-if="batch.finished_at !== null" class="text-green-400">{{ dateFormat(batch.finished_at) }}</span>
                         </div>
                     </div>

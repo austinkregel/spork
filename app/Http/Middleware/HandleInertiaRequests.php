@@ -38,29 +38,11 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        if (auth()->check()) {
-            auth()->user()->setRelation('person', cache()->rememberForever(auth()->user()->email.'.related-person', fn () => auth()->user()->person()));
-//            auth()->user()->load('credentials');
-        }
-
         $navigation = cache()->remember('navigation-for-'.$request->user()?->id, now()->addDay(), fn () => (new ConditionService)->navigation());
 
         return array_merge(parent::share($request), [
             'navigation' => $navigation,
             'current_navigation' => $navigation->flatten(1)->where('current', true)->first(),
-            'conversations' => auth()->check() ? Thread::query()
-                ->with(['messages', 'messages.fromPerson', 'messages.toPerson'])
-                ->whereHas('participants', function ($query) {
-                    $query->where('person_id', auth()->user()?->person?->id);
-                })
-                ->whereHas('messages')
-                ->orderByDesc('updated_at')
-                ->paginate(
-                    request('conversation_limit'),
-                    ['*'],
-                    'conversation_page',
-                    request('conversation_page')
-                ) : null,
             'unread_email_count' => 0,
             'notifications' => $request->user()
                     ?->notifications()
@@ -71,7 +53,7 @@ class HandleInertiaRequests extends Middleware
             'notification_count' => $request->user()
                     ?->notifications()
                     ?->whereNull('read_at')
-                    ?->count()?? [],
+                    ?->count() ?? [],
         ]);
     }
 }

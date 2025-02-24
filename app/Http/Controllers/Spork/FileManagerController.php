@@ -6,12 +6,13 @@ namespace App\Http\Controllers\Spork;
 
 use Illuminate\Filesystem\Filesystem;
 use Inertia\Inertia;
+use Winter\LaravelConfigWriter\ArrayFile;
 
 class FileManagerController
 {
     public function __invoke()
     {
-        $filesystem = \Illuminate\Support\Facades\Storage::disk(config('spork.filesystem.default'));
+        $filesystem = \Illuminate\Support\Facades\Storage::disk($selectedFilesystem = config('spork.filesystem.default'));
 
         $path = base64_decode(request()->input('path', base64_encode('')));
 
@@ -37,31 +38,47 @@ class FileManagerController
                 ],
                 $filesystem->directories($path)
             ))->sortBy('name')->values(),
+            'filesystems' => collect(config('filesystems.disks'))->keys(),
+            'selectedFilesystem' => $selectedFilesystem,
         ]);
+    }
+
+    public function updateFileManager()
+    {
+        $config = ArrayFile::open(config_path('spork.php'));
+
+        $config->set('filesystem.default', request()->input('value'))->write();
+
+        return Inertia::location(route('file-manager.index'));
     }
 
     public function show($path)
     {
         $decoded = base64_decode($path);
+        $filesystem = \Illuminate\Support\Facades\Storage::disk($selectedFilesystem = config('spork.filesystem.default'));
 
-        if (is_dir($decoded)) {
-            return collect((new \Illuminate\Filesystem\Filesystem())->directories($decoded))
+        $exists = $filesystem->exists($decoded);
+
+
+
+        if ($exists && !$contents = $filesystem->get($decoded)) {
+            return collect($filesystem->directories($decoded))
                 ->map(fn ($directory) => [
                     'name' => basename($directory),
                     'file_path' => base64_encode($directory),
                     'is_directory' => true,
                 ])
                 ->concat(
-                    collect((new \Illuminate\Filesystem\Filesystem())->files($decoded))
-                        ->map(fn (\SplFileInfo $file) => [
-                            'name' => $file->getFilename(),
-                            'file_path' => base64_encode($file->getPathname()),
+                    collect($filesystem->files($decoded))
+                        ->map(fn ($file) => [
+                            'name' => $file,
+                            'file_path' => base64_encode($file),
                             'is_directory' => false,
                         ])
                 );
         }
 
-        return file_get_contents($decoded);
+        return $contents;
     }
 
     public function update($path)

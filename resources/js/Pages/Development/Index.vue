@@ -1,5 +1,5 @@
 <script setup>
-import ContextMenuItem from "@/Components/ContextMenus/ContextMenuItem.vue";
+import ContextMenuItem from "@/Components/ContextMenus/ContextMenuButton.vue";
 import hljs from 'highlight.js';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import FileOrFolder from "@/Components/Spork/FileOrFolder.vue";

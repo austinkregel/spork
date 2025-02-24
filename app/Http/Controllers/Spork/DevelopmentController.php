@@ -4,30 +4,34 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class DevelopmentController
 {
     public function index()
     {
-        $path = base_path(request('path'));
+        $path = request('path', '');
+        $decoded = base64_decode($path);
+        $disk = request()->get('filesystem', config('spork.filesystem.default'));
+
 
         return Inertia::render('Development/Index', [
             'title' => 'Settings',
             'settings' => new class()
             {
             },
-            'files' => collect((new \Illuminate\Filesystem\Filesystem())->directories($path))
+            'files' => collect(Storage::disk($disk)->directories($decoded))
                 ->map(fn ($directory) => [
                     'name' => basename($directory),
                     'file_path' => base64_encode($directory),
                     'is_directory' => true,
                 ])
                 ->concat(
-                    collect((new \Illuminate\Filesystem\Filesystem())->files($path))
-                        ->map(fn (\SplFileInfo $file) => [
-                            'name' => $file->getFilename(),
-                            'file_path' => base64_encode($file->getPathname()),
+                    collect(Storage::disk($disk)->files($decoded))
+                        ->map(fn ($file) => [
+                            'name' => $file,
+                            'file_path' => base64_encode($file),
                             'is_directory' => false,
                         ])
                 ),

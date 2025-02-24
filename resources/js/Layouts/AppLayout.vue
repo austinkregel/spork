@@ -37,7 +37,7 @@ import NotificationBody from "@/Components/NotificationBody.vue";
 import ApplicationNavigation from "@/Components/ApplicationNavigation.vue";
 import ApplicationUserNavigation from "@/Components/ApplicationUserNavigation.vue";
 const page = usePage()
-const { navigation, current_navigation } = defineProps({
+const { current_navigation } = defineProps({
     title: String,
     navigation: Array,
     subNavigation: Array,
@@ -73,8 +73,6 @@ const user = computed(() => page.props.auth.user);
                 <slot/>
             </main>
         </div>
-
-        <global-chat />
 
         <audio id="glitch-sound" src="/sounds/glitch-in-the-matrix-600.ogg" preload="auto" type="audio/ogg" />
         <audio id="finished-sound" src="/sounds/just-saying-593.ogg" preload="auto" type="audio/ogg" />

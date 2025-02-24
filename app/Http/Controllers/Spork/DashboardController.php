@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Spork;
 use App\Http\Controllers\Controller;
 use App\Models\JobBatch;
 use App\Models\User;
+use Carbon\Carbon;
 use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -18,15 +19,34 @@ class DashboardController extends Controller
     {
         $person = auth()->user()->person;
         $batchJobs = JobBatch::query()
-            ->orderByDesc('created_at')
+            ->orderByDesc('finished_at')
             ->paginate(request('job_limit', 10), ['*'], 'job_page', request('job_page', 1));
 
+        $failedJobIds = array_reduce(
+            $batchJobs->items(),
+            fn ($carry, $item) => array_merge($carry, $item->failed_job_ids),
+            []
+        );
+
+        $failedJobs = \DB::table('failed_jobs')
+            ->whereIn('uuid', $failedJobIds)
+            ->get()
+            ->reduce(function ($carry, $item) {
+                $carry[$item->uuid] = $item;
+
+                return $carry;
+            }, []);
+
         $batchJobs->setCollection(
-            Collection::make(array_map(function ($batchJob) {
-                $batchJob->failed_at = \DB::table('failed_jobs')
-                    ->selectRaw('max(failed_at)')
-                    ->whereIn('id', $batchJob->failed_job_ids)
-                    ->value('failed_at');
+            Collection::make(array_map(function ($batchJob) use ($failedJobs){
+                $failedJobsForBatch = collect(array_map(
+                    fn ($id) => $failedJobs[$id],
+                    $batchJob->failed_job_ids
+                ));
+
+                $latestFailedJob = $failedJobsForBatch->max('failed_at');
+
+                $batchJob->failed_at = $latestFailedJob ? Carbon::parse($latestFailedJob)->unix() : null;
 
                 return $batchJob;
             }, $batchJobs->items()))

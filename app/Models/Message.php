@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Events\Models\Message\MessageCreated;
-use App\Events\Models\Message\MessageCreating;
-use App\Events\Models\Message\MessageDeleted;
+use App\Events\Models\Message\EmailCreated;
+use App\Events\Models\Message\EmailCreating;
+use App\Events\Models\Message\EmailDeleted;
 use App\Events\Models\Message\MessageDeleting;
-use App\Events\Models\Message\MessageUpdated;
-use App\Events\Models\Message\MessageUpdating;
+use App\Events\Models\Message\EmailUpdated;
+use App\Events\Models\Message\EmailUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -49,12 +49,12 @@ class Message extends Model implements Taggable
     public $appends = ['is_user'];
 
     public $dispatchesEvents = [
-        'created' => MessageCreated::class,
-        'creating' => MessageCreating::class,
+        'created' => EmailCreated::class,
+        'creating' => EmailCreating::class,
         'deleting' => MessageDeleting::class,
-        'deleted' => MessageDeleted::class,
-        'updating' => MessageUpdating::class,
-        'updated' => MessageUpdated::class,
+        'deleted' => EmailDeleted::class,
+        'updating' => EmailUpdating::class,
+        'updated' => EmailUpdated::class,
     ];
 
     protected function casts(): array

@@ -30,7 +30,7 @@ const form = ref({
 
 const events = [
   'App\\Events\\Models\\Finance\\TransactionCreated',
-  'App\\Events\\Models\\MessageCreated',
+  'App\\Events\\Models\\EmailCreated',
 
   'App\\Events\\Finance\\BudgetSpendExceededLimit',
   'App\\Events\\Finance\\BudgetReset',
@@ -55,7 +55,7 @@ const deleteCondition= () => {}
     <div>
       <div class="text-2xl my-8 mx-4">Tags and how they're used in your app</div>
 
-      <div class="gap-4 grid grid-cols-1 lg:grid-cols-3 mx-4">
+      <div class="gap-4 flex flex-wrap mx-4">
         <div v-for="tag in data" class="flex flex-col justify-between border border-slate-600 rounded-lg py-2">
             <div class="flex flex-wrap gap-2 items-center my-2 w-full">
                 <span class="ml-6">
@@ -69,32 +69,10 @@ const deleteCondition= () => {}
                     <div>
                         {{ tag.name?.en }}
                     </div>
-                    <div class="flex flex-grow text-right justify-end mr-6">
+                    <div class="flex flex-grow text-right justify-end mx-4">
                         <DynamicIcon icon-name="ChevronRightIcon" class="w-5 h-5" />
                     </div>
                 </Link>
-            </div>
-            <div class="flex gap-4 my-2 mx-6 text-xs">
-                <div class="flex items-center gap-2">
-                    <ServerIcon class="w-5 h-5" />
-                    {{ tag.servers_count }}
-                </div>
-                <div class="flex items-center gap-2">
-                    <LinkIcon class="w-5 h-5" />
-                    {{ tag.domains_count }}
-                </div>
-                <div class="flex items-center gap-2">
-                    <UserIcon class="w-5 h-5" />
-                    {{ tag.people_count }}
-                </div>
-                <div class="flex items-center gap-2">
-                    <WalletIcon class="w-5 h-5" />
-                    ${{ round(tag.transactions_sum_amount).toLocaleString() }}
-                </div>
-                <div class="flex items-center gap-2">
-                    <DynamicIcon icon-name="EmailIcon" class="w-5 h-5" />
-                    {{ tag.messages_count }}
-                </div>
             </div>
         </div>
       </div>

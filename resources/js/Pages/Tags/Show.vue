@@ -29,7 +29,7 @@ const form = ref({
 
 const events = [
   'App\\Events\\Models\\Finance\\TransactionCreated',
-  'App\\Events\\Models\\MessageCreated',
+  'App\\Events\\Models\\EmailCreated',
 
   'App\\Events\\Finance\\BudgetSpendExceededLimit',
   'App\\Events\\Finance\\BudgetReset',

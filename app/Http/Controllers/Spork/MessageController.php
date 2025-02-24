@@ -16,7 +16,7 @@ class MessageController
             'threads' => $this->getPaginatedThreads(),
             'thread' => \App\Models\Thread::query()
                 ->whereHas('participants', function ($query) {
-                    $query->where('person_id', auth()->user()->person()->id);
+                    $query->where('person_id', auth()->user()->person->id);
                 })
                 ->with(['messages' => function ($query) {
                     $query->orderByDesc('originated_at');
