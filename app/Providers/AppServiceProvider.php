@@ -47,7 +47,6 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Laravel\Pennant\Feature;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -95,11 +94,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        foreach (config('spork.features') as $feature => $activate) {
-            if ($activate) {
-                Feature::for(auth()->user())->load($feature);
-            }
-        }
         $this->bootRoute();
     }
 
