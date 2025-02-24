@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Route;
 if (! function_exists('developerRoute')) {
     function developerRoute($name, $model)
     {
-        cache()->rememberForever($name, fn () => $model);
-
         Route::prefix('crud')->group(function () use ($name) {
             Route::get($name, [\App\Http\Controllers\Spork\LocalAdminController::class, 'index'])->name($name.'.index');
 
