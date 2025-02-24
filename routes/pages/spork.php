@@ -90,6 +90,7 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/banking/budgets', [Controllers\Spork\BankingController::class, 'budgets'])->name('banking.budgets');
 
     Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
+    Route::post('/file-manager/default', [Controllers\Spork\FileManagerController::class, 'updateFileManager'])->name('file-manager.update-default');
 
     Route::get('kvm', function () {
         $vmName = 'ubuntu22.04';
