@@ -20,7 +20,7 @@ class BankingController
             ->with('credential')
             ->get();
 
-        $dateRange = match (request()->get('range', 'mtd')) {
+        $dateRange = match ($selectedRange = strtolower(request()->get('range', 'MTD'))) {
             'mtd' => [now()->startOfMonth(), now()],
             'ytd' => [now()->startOfYear(), now()],
             'all' => [now()->subYears(10), now()],
@@ -73,19 +73,25 @@ class BankingController
                 'labels' => $labels,
                 'datasets' => $graphData
             ],
+            'selected_range' => $selectedRange,
             'transactions' => $this->queryBuilder(),
             'stats' => [
                 'total_income' => [
                     'current' => Tag::where('name->en', 'credit/income')
-                        ->with(['transactions' => fn ($query) => $query->where('date', '>=', $lastMonth)
-                            ->where('date', '<=', $lastMonth->copy()->endOfMonth())
-                            ->select(['amount'])])
+                        ->with([
+                            'transactions' => fn ($query) => $query->where('date', '>=', $lastMonth)
+                                ->where('date', '<=', $lastMonth->copy()->endOfMonth())
+                                ->select(['amount'])
+                        ])
                         ->get()
                         ->reduce(fn ($carry, Tag $tag) => $carry + abs($tag->transactions->sum('amount')), 0),
                     'previous' => Tag::where('name->en', 'credit/income')
-                        ->with(['transactions' => fn ($query) => $query->where('date', '>=', $beforeLastMonth)
-                            ->where('date', '<=', $beforeLastMonth->copy()->endOfMonth())
-                            ->select(['amount'])])
+                        ->with([
+                            'transactions' => fn ($query) =>
+                                $query->where('date', '>=', $beforeLastMonth)
+                                ->where('date', '<=', $beforeLastMonth->copy()->endOfMonth())
+                                ->select(['amount'])
+                        ])
                         ->get()
                         ->reduce(fn ($carry, Tag $tag) => $carry + abs($tag->transactions->sum('amount')), 0),
                 ],
@@ -111,7 +117,8 @@ class BankingController
                         'Supermarkets and Groceries',
                         'Restaurants',
                     ])
-                        ->with(['transactions' => fn ($query) => $query->where('date', '>=', $lastMonth)
+                        ->with(['transactions' => fn ($query) => $query
+                            ->where('date', '>=', $lastMonth)
                             ->where('date', '<=', $lastMonth->copy()->endOfMonth())
                             ->select(['amount'])])
                         ->get()
@@ -123,7 +130,8 @@ class BankingController
                         'Supermarkets and Groceries',
                         'Restaurants',
                     ])
-                        ->with(['transactions' => fn ($query) => $query->where('date', '>=', $beforeLastMonth)
+                        ->with(['transactions' => fn ($query) => $query
+                            ->where('date', '>=', $beforeLastMonth)
                             ->where('date', '<=', $beforeLastMonth->copy()->endOfMonth())
                             ->select(['amount'])])
                         ->get()
@@ -154,6 +162,7 @@ class BankingController
                     $builder->whereHas('tags', fn ($query) => $query->where('name', 'like', '%'.$name.'%'));
                 }),
                 AllowedFilter::partial('date'),
+                AllowedFilter::callback('range', fn () => null),
             ])
             ->allowedIncludes(['account', 'tags'])
             ->allowedSorts(['name', 'amount', 'date'])

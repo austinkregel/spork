@@ -15,8 +15,9 @@ const page = usePage();
 dayjs.extend(utc);
 const accounts = computed(() => page.props.accounts)
 
-const { stats } = defineProps([
-    'stats'
+const { stats, selected_range } = defineProps([
+    'stats',
+    'selected_range'
 ])
 
 const graphs = page.props.graphs
@@ -46,6 +47,12 @@ const filterUrl = (field, value) => {
             [field]: value
         }
     })
+}
+
+const rangeUrl = (field, value) => {
+  return buildUrl('/-/banking', {
+    [field]: value
+  })
 }
 
 const labels = computed(() => {
@@ -117,14 +124,14 @@ const removeTag = (tag) => {
               </div>
             </div>
             <div class="w-1/4">
-            <SporkSelect>
+            <SporkSelect :model-value="selected_range" @update:model-value="router.get(rangeUrl('range', $event))">
               <template #options>
                 <option value="YTD">YTD</option>
                 <option value="MTD">MTD</option>
                 <option value="WTD">WTD</option>
-                <option value="1 day">1 day</option>
-                <option value="7 days">7 days</option>
-                <option value="30 days">30 days</option>
+                <option value="1d">1 day</option>
+                <option value="7d">7 days</option>
+                <option value="30d">30 days</option>
               </template>
             </SporkSelect>
           </div>

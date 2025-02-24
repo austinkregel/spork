@@ -43,7 +43,7 @@ trait ScopeRelativeSearch
                             ->where('owner_type', User::class);
                     } elseif (method_exists($this, 'participants')) {
                         $query->whereHas('participants', function (Builder $query) {
-                            $query->where('person_id', auth()->user()->person()->id);
+                            $query->where('person_id', auth()->user()->person->id);
                         });
                     } elseif (method_exists($this, 'projects')) {
                         $query->whereHas('projects.team', function (Builder $query) {

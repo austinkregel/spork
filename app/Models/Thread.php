@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
 
-class Thread extends Model
+class Thread extends Model implements Crud
 {
     use HasFactory;
     use ScopeQSearch;
