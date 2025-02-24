@@ -12,6 +12,16 @@ return [
             'password' => env('FTP_PASSWORD'),
             'root' => env('FTP_ROOT_DIRECTORY'),
         ],
+        'local' => [
+            'driver' => 'local',
+            'root' => base_path(),
+        ],
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
     ],
 
 ];
