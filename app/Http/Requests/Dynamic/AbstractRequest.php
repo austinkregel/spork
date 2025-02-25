@@ -18,7 +18,8 @@ class AbstractRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $route = str_replace('api/crud/', '', $this->path());
+        preg_match('/crud\/(?<model>[^\/]+)/', $this->path(), $matches);
+        $route = $matches['model'] ?? null;
 
         $modelsBySingular = array_reduce(
             Code::instancesOf(Crud::class)->getClasses(),

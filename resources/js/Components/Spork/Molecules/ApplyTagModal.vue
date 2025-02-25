@@ -21,7 +21,7 @@ const {
 const $emit = defineEmits(['close', 'save', 'open']);
 
 const tags = ref([]);
-const tagToApply = ref(null);
+const tagsToApply = ref(null);
 const loading = ref(false);
 const search= ref('');
 const asyncFind = async (query) => {
@@ -34,14 +34,21 @@ const asyncFind = async (query) => {
     }
 }
 const applyTags = async () => {
+  console.log({identifiers, tagToApply: tagsToApply.value});
+  if (identifiers.length === 0) {
+    console.log('No identifiers to apply tags to', {... tagsToApply.value});
+    return;
+  }
+
+  console.log({identifiers, tagToApply: tagsToApply.value});
     await Promise.all(identifiers.map(async (identifier) => {
-        return await axios.post(`/api/crud/${name}/${identifier}/tags`, {
-            tags: [...tagToApply.value].map((tag) => tag.id)
+        return await axios.post(`/api/crud/${name}/${identifier.id}/tags`, {
+            tags: [...tagsToApply.value].map((tag) => tag.id)
         })
     }));
 }
 const clearAll= () => {
-    tagToApply.value = null;
+    tagsToApply.value = null;
     search.value = '';
 }
 const close = () => $emit('close');
@@ -68,7 +75,7 @@ const close = () => $emit('close');
 
                 <div>
                     <Multiselect
-                        v-model="tagToApply"
+                        v-model="tagsToApply"
                         id="ajax"
                         label="name"
                         track-by="code"
@@ -95,8 +102,8 @@ const close = () => $emit('close');
                         </template>
 
                         <template #tag="{ option, remove }">
-                        <span class="custom__tag"><span>{{ option.name?.en }}</span>
-                        <span class="custom__remove" @click="remove(option)">❌</span></span>
+                          <span class="custom__tag"><span>{{ option.name?.en }}</span>
+                          <span class="custom__remove" @click="remove(option)">❌</span></span>
                         </template>
 
                         <template #no-result>
@@ -110,7 +117,7 @@ const close = () => $emit('close');
                         Close
                     </SporkButton>
                     <SporkButton @click="applyTags" primary medium type="button">
-                        Apply Tag<span v-if="tagToApply?.length > 0"></span>
+                        Apply Tag<span v-if="tagsToApply?.length > 0">s</span>
                     </SporkButton>
                 </div>
             </div>
