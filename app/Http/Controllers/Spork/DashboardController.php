@@ -19,7 +19,7 @@ class DashboardController extends Controller
     {
         $person = auth()->user()->person;
         $batchJobs = JobBatch::query()
-            ->orderByDesc('finished_at')
+            ->orderByDesc('created_at')
             ->paginate(request('job_limit', 10), ['*'], 'job_page', request('job_page', 1));
 
         $failedJobIds = array_reduce(
