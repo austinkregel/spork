@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Events\Models\Message\EmailCreated;
-use App\Events\Models\Message\EmailCreating;
-use App\Events\Models\Message\EmailDeleted;
+use App\Events\Models\Message\MessageCreated;
+use App\Events\Models\Message\MessageCreating;
+use App\Events\Models\Message\MessageDeleted;
 use App\Events\Models\Message\MessageDeleting;
-use App\Events\Models\Message\EmailUpdated;
-use App\Events\Models\Message\EmailUpdating;
+use App\Events\Models\Message\MessageUpdated;
+use App\Events\Models\Message\MessageUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -49,12 +49,12 @@ class Message extends Model implements Taggable
     public $appends = ['is_user'];
 
     public $dispatchesEvents = [
-        'created' => EmailCreated::class,
-        'creating' => EmailCreating::class,
+        'created' => MessageCreated::class,
+        'creating' => MessageCreating::class,
         'deleting' => MessageDeleting::class,
-        'deleted' => EmailDeleted::class,
-        'updating' => EmailUpdating::class,
-        'updated' => EmailUpdated::class,
+        'deleted' => MessageDeleted::class,
+        'updating' => MessageUpdating::class,
+        'updated' => MessageUpdated::class,
     ];
 
     protected function casts(): array
@@ -70,7 +70,7 @@ class Message extends Model implements Taggable
 
     public function getIsUserAttribute()
     {
-        return in_array($this->from_email, auth()->user()?->person?->emails);
+        return in_array($this->from_email, auth()->user()?->person?->emails ?? []);
     }
 
     public function credential(): BelongsTo

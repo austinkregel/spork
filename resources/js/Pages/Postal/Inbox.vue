@@ -20,7 +20,6 @@
                 <div class="w-full text-left text-sm">{{ item.subject }}</div>
                 <div class="w-full text-left text-xs text-stone-400 overflow-hidden tracking-wide">{{item.from_email}}</div>
               <div class="flex justify-between">
-
                 <div class="flex gap-2 items-center">
                   <EyeSlashIcon v-if="!item.seen" class="w-5 h-5"/>
                   <EyeIcon v-if="item.seen" class="w-5 h-5 text-stone-400 dark:text-stone-500"/>
@@ -32,6 +31,7 @@
 
                 <div class="text-xs">{{ formatDate(item.sent_at) }}</div>
               </div>
+              <pre>{{item.tags}}</pre>
             </button>
 
             <div class="flex flex-wrap w-full justify-between">

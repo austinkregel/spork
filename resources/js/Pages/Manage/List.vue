@@ -24,6 +24,7 @@ const FillableArrayToDynamicForm = function (fillable) {
   return fillable.map(value => ({
     value: '',
     name: value,
+    type: 'text'
   }));
 }
 

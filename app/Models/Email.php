@@ -13,11 +13,12 @@ use App\Events\Models\Email\EmailUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Tags\HasTags;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 class Email extends Model
 {
-    use HasFactory, HasJsonRelationships;
+    use HasFactory, HasJsonRelationships, HasTags;
 
     protected $fillable = [
         'email_id',

@@ -102,7 +102,7 @@ class User extends Authenticatable implements ModelQuery, Taggable
             ->logOnlyDirty();
     }
 
-    public function codes(): HasMany
+    public function shortCodes(): HasMany
     {
         return $this->hasMany(ShortCode::class);
     }
@@ -127,6 +127,11 @@ class User extends Authenticatable implements ModelQuery, Taggable
         return $this->hasManyThrough(Message::class, Credential::class)->orderByDesc('originated_at');
     }
 
+    public function emails(): HasManyThrough
+    {
+        return $this->hasManyThrough(Email::class, Credential::class)->orderByDesc('originated_at');
+    }
+
     public function servers(): HasManyThrough
     {
         return $this->hasManyThrough(Server::class, Credential::class);
@@ -140,14 +145,10 @@ class User extends Authenticatable implements ModelQuery, Taggable
     public function person()
     {
         return $this->belongsTo(Person::class, 'email', 'primary_email');
+    }
 
-        if (empty($this->email)) {
-            return null;
-        }
-
-        return Person::whereJsonContains('emails', $this->email)
-            // for now, this is fine, my email base does support this idea, but I know if someone/
-            // wanted to be malicious they could take advantage of this.
-            ->first();
+    public function budgets()
+    {
+        return $this->hasMany(Finance\Budget::class);
     }
 }

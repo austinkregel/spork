@@ -24,7 +24,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
-class Server extends Model implements ModelQuery, Taggable
+class Server extends Model implements ModelQuery, Taggable, Crud
 {
     use HasApiTokens;
     use HasFactory;

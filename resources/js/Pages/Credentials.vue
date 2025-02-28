@@ -98,8 +98,6 @@
                                         <label for="account_id" class="block text-sm font-medium">SSH Public Key</label>
                                         <spork-input ref="public_key" @change="onFileUploadForPublicKey" type="file" name="account_id" id="account_id" />
                                     </div>
-
-
                                 </div>
                             </div>
                         </template>

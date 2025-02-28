@@ -25,7 +25,6 @@ class Thread extends Model implements Crud
     use HasFactory;
     use ScopeQSearch;
     use ScopeRelativeSearch;
-    use Searchable;
 
     public $guarded = [];
 

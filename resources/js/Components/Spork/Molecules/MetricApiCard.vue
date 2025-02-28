@@ -1,6 +1,7 @@
 <script setup>
 import MetricCard from "@/Components/Spork/Atoms/MetricCard.vue";
 import {onMounted, ref} from "vue";
+import {router} from "@inertiajs/vue3";
 
 const { url, title } = defineProps({
     url: String,

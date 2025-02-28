@@ -1,6 +1,9 @@
 <template>
   <AppLayout title="Dashboard">
     <div class="flex flex-wrap gap-4 m-4">
+      <SporkButton primary @click="() => show = true">
+        Start Research
+      </SporkButton>
         <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-4">Recent</div>
         <div
             v-for="(topic, i) in research ?? []"
@@ -53,6 +56,36 @@
                 </template>
             </ContextMenu>
         </div>
+
+      <div v-if="research.length === 0" class="px-4 text-stone-500 dark:text-stone-400">
+        No research started yet
+      </div>
+
+      <Modal :show="show">
+        <div class="text-xl flex flex-col justify-between p-4">
+          <div v-for="(field, i) in form">
+            <SporkDynamicInput
+                :key="i+'.form-value'"
+                :autofocus="i === 1"
+                v-model="form[i]"
+                :type="form[i].type"
+                :disabled-input="false"
+                :editable-label="false"
+                :errors="errors?.[field.name]"
+                class="mt-4"
+            />
+          </div>
+
+          <div class="mt-4 gap-2 flex flex-wrap">
+            <SporkButton xsmall primary @click="onSave(form, () => show = false)">
+              Apply
+            </SporkButton>
+            <SporkButton xsmall secondary @click="() => show = false">
+              Cancel
+            </SporkButton>
+          </div>
+        </div>
+      </Modal>
     </div>
   </AppLayout>
 </template>
@@ -68,6 +101,11 @@ import {
 import AppLayout from "@/Layouts/AppLayout.vue";
 import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
 import { Link } from '@inertiajs/vue3'
+import Modal from "@/Components/Modal.vue";
+import SporkButton from "@/Components/Spork/SporkButton.vue";
+import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
+import {ref} from "vue";
+import { router } from '@inertiajs/vue3';
 
 const { research } = defineProps({
   research: Array,
@@ -87,4 +125,20 @@ const duplicateFeature = () => {
 };
 const date = () => {}
 
+const onSave = async () => {
+  const body = form.value.reduce((a, b) => ({ ...a, [b.name]: b.value }), {});
+  await axios.post('/api/crud/research', body)
+  router.reload({
+    only: ['research']
+  })
+}
+
+const show = ref(false)
+const errors = ref({})
+
+const form = ref([
+  { name: 'topic', value: '', type: 'text' },
+  { name: 'notes', value: '', type: 'text' },
+  { name: 'sources', value: [], type: 'array' },
+])
 </script>

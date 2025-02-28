@@ -63,6 +63,8 @@ const deleteCondition= () => {}
                     <ServerIcon class="w-6 h-6 text-amber-200" v-else-if="tag.type === 'server'"/>
                     <BoltIcon class="w-6 h-6 text-green-500" v-else-if="tag.type === 'automatic'" />
                     <TagIcon class="w-6 h-6 text-green-400" v-else />
+
+                  <pre>{{ tag.taggables_count }}</pre>
                 </span>
 
                 <Link :href="'/-/tag-manager/' + tag.id" class="text-xl underline flex flex-wrap justify-between flex-grow items-center hover:text-stone-300">
