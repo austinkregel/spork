@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use App\Models\Crud;
+use App\Models\User;
 use App\Services\Code;
 use App\Services\Development\DescribeTableService;
 use Illuminate\Support\Collection;
@@ -16,20 +17,33 @@ class ManageController
 {
     public function index()
     {
-        Inertia::share('subnavigation', $this->navigation());
+        Inertia::share('subnavigation', $navigation = $this->navigation());
+
+        $user = request()->user();
 
         return Inertia::render('Manage/Index', [
             'title' => 'Dynamic CRUD',
-            'description' => [
-                'fillable' => [],
-            ],
-            'metrics' => Activity::latest()
+            'activity' => Activity::latest()
                 ->paginate(
                     request('limit', 15),
                     ['*'],
                     'manage_page',
                     request('manage_page', 1)
                 ),
+            'metrics' => [
+                'Projects' => $user->personalProjects()->count(),
+                'Short codes' => $user->shortCodes()->count(),
+                'Credentials' => $user->credentials()->count(),
+                'Domains' => $user->domains()->count(),
+                'Accounts' => $user->accounts()->count(),
+                'Messages' => $user->messages()->count(),
+                'Emails' => $user->emails()->count(),
+                'Servers' => $user->servers()->count(),
+                'External Rss Feeds' => $user->externalRssFeeds()->count(),
+                'Person' => $user->person()->count(),
+                'budgets' => $user->budgets()->count(),
+                'Tags' => $user->tags()->count(),
+            ],
         ]);
     }
 
