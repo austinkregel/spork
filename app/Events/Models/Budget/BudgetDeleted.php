@@ -11,6 +11,5 @@ class BudgetDeleted extends AbstractLogicalEvent
 {
     public function __construct(
         public Budget $model,
-    ) {
-    }
+    ) {}
 }

@@ -11,6 +11,5 @@ class DomainAnalyticsDeleted extends AbstractLogicalEvent
 {
     public function __construct(
         public DomainAnalytics $model,
-    ) {
-    }
+    ) {}
 }

@@ -6,8 +6,6 @@ namespace App\Services;
 
 use App\Contracts\Conditionable;
 use App\Models\Condition;
-use App\Models\Navigation;
-use App\Models\Tag;
 use App\Services\Condition\AbstractLogicalOperator;
 use App\Services\Condition\ArrayContainsValueOperator;
 use App\Services\Condition\ContainsValueOperator;
@@ -53,8 +51,7 @@ class ConditionService
 
     public function __construct(
         protected LoggerInterface $logger,
-    ) {
-    }
+    ) {}
 
     public function process(Conditionable $item, array $additionalValueData = []): bool
     {
@@ -78,6 +75,7 @@ class ConditionService
 
             if ($passesCondition && ! $item->must_all_conditions_pass) {
                 $this->logCondition($condition, $passesCondition, $value);
+
                 return true;
             }
 

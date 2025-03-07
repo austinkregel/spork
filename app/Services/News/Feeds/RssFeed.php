@@ -43,7 +43,7 @@ class RssFeed extends AbstractFeed
     {
         try {
             return array_map(function ($post) {
-                $feedItem = new FeedItem();
+                $feedItem = new FeedItem;
                 $feedItem->id = (string) ($post->guid ?? Str::uuid());
                 $feedItem->setTitle($post->title);
                 $feedItem->setPublishedAt($post->pubDate);

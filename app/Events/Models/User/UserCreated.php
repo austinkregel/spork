@@ -11,6 +11,5 @@ class UserCreated extends AbstractLogicalEvent
 {
     public function __construct(
         public User $model,
-    ) {
-    }
+    ) {}
 }

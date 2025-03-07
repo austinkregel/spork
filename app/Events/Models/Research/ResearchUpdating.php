@@ -11,6 +11,5 @@ class ResearchUpdating extends AbstractLogicalEvent
 {
     public function __construct(
         public Research $model,
-    ) {
-    }
+    ) {}
 }

@@ -19,12 +19,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -36,10 +34,10 @@ class User extends Authenticatable implements ModelQuery, Taggable
 {
     use HasApiTokens;
     use HasFactory;
+    use HasPermissions;
     use HasProfilePhoto;
     use HasProjectResource;
     use HasRoles;
-    use HasPermissions;
     use HasTags;
     use LogsActivity;
     use Notifiable;
@@ -88,6 +86,7 @@ class User extends Authenticatable implements ModelQuery, Taggable
             'email_verified_at' => 'datetime',
         ];
     }
+
     public function personalProjects(): HasMany
     {
         return $this->hasMany(Project::class);

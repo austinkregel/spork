@@ -23,14 +23,13 @@ class OperationJob implements ShouldQueue
     public function __construct(
         /** @var Operation|ServerAction $operation */
         protected Operation $operation
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {
         try {
             if (! method_exists($this->operation, 'run')) {
-                throw new OperationCanceledException();
+                throw new OperationCanceledException;
             }
 
             App::call([$this->operation, 'run']);

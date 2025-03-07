@@ -19,7 +19,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testHandleSuccess(): void
+    public function test_handle_success(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -52,7 +52,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame($tag->id, $tags->first()->id);
     }
 
-    public function testHandleSuccessNotApplyBecauseTransactionIsFilteredOut(): void
+    public function test_handle_success_not_apply_because_transaction_is_filtered_out(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -99,7 +99,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertCount(0, $tags);
     }
 
-    public function testHandleSuccessNotApplyBecauseTransactionIsNotGettingDoubleTagged(): void
+    public function test_handle_success_not_apply_because_transaction_is_not_getting_double_tagged(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -152,7 +152,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame($tag->id, $tags->first()->id);
     }
 
-    public function testHandleSuccessLastAttachTag(): void
+    public function test_handle_success_last_attach_tag(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -203,7 +203,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame($tag->id, $tags->first()->id);
     }
 
-    public function testHandleSuccessAttachTagWithRelationInConditional(): void
+    public function test_handle_success_attach_tag_with_relation_in_conditional(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -254,7 +254,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame($tag->id, $tags->first()->id);
     }
 
-    public function testHandleSuccessAttachTagWhereAmountGreaterThan(): void
+    public function test_handle_success_attach_tag_where_amount_greater_than(): void
     {
         $user = User::factory()->create();
         $credential = Credential::factory()->create([
@@ -346,7 +346,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame('debit/expense', $tags->last()->name);
     }
 
-    public function testHandleSuccessAttachTagWithAllConditionsPassSetToFalse(): void
+    public function test_handle_success_attach_tag_with_all_conditions_pass_set_to_false(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([

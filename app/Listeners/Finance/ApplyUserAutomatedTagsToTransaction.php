@@ -19,9 +19,7 @@ class ApplyUserAutomatedTagsToTransaction implements ShouldQueue
      */
     public function __construct(
         protected LoggerInterface $logger,
-    )
-    {
-    }
+    ) {}
 
     /**
      * Handle the event.

@@ -11,6 +11,5 @@ class TaskDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public Task $model,
-    ) {
-    }
+    ) {}
 }

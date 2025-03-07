@@ -23,8 +23,7 @@ class UploadAssetsToStorageJob implements ShouldQueue
         public Server $server,
         public Domain $domain,
         public Project $project
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {
@@ -35,7 +34,7 @@ class UploadAssetsToStorageJob implements ShouldQueue
 
         // Create a temporary zip file
         $zipPath = sys_get_temp_dir().'/assets.zip';
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
         // Add the compiled assets to the zip file

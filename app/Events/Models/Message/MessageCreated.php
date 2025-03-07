@@ -13,8 +13,7 @@ class MessageCreated extends AbstractLogicalEvent implements ShouldBroadcast
 {
     public function __construct(
         public Message $model,
-    ) {
-    }
+    ) {}
 
     public function broadcastOn(): array
     {

@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
 use App\Models\Asset;
 use App\Services\Development\DescribeTableService;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class AssetController extends Controller
@@ -20,8 +21,5 @@ class AssetController extends Controller
         ]);
     }
 
-    public function labels()
-    {
-
-    }
+    public function labels() {}
 }

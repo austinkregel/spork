@@ -21,7 +21,7 @@ class PdfReaderService extends Parser
         }
 
         // Create destination object.
-        $document = new Document();
+        $document = new Document;
         $this->objects = [];
 
         foreach ($data as $id => $structure) {

@@ -55,7 +55,7 @@ class BankingController
                 $data = [
                     'label' => $tag->name,
                     'data' => $tag->transactions?->reduce(fn ($carry, $transaction) => array_merge($carry, [
-                        $transaction->date->format('Y-m-d') => $transaction->amount + ($carry[$transaction->date->format('Y-m-d')] ?? 0)
+                        $transaction->date->format('Y-m-d') => $transaction->amount + ($carry[$transaction->date->format('Y-m-d')] ?? 0),
                     ]), []),
                 ];
 
@@ -65,13 +65,12 @@ class BankingController
         $lastMonth = now()->startOfMonth()->addHours(5);
         $beforeLastMonth = now()->startOfMonth()->subMonth()->addHours(5);
 
-
         return Inertia::render('Banking/Index', [
             'title' => 'Banking ',
             'accounts' => $accounts,
             'graphs' => [
                 'labels' => $labels,
-                'datasets' => $graphData
+                'datasets' => $graphData,
             ],
             'selected_range' => $selectedRange,
             'transactions' => $this->queryBuilder(),
@@ -81,16 +80,15 @@ class BankingController
                         ->with([
                             'transactions' => fn ($query) => $query->where('date', '>=', $lastMonth)
                                 ->where('date', '<=', $lastMonth->copy()->endOfMonth())
-                                ->select(['amount'])
+                                ->select(['amount']),
                         ])
                         ->get()
                         ->reduce(fn ($carry, Tag $tag) => $carry + abs($tag->transactions->sum('amount')), 0),
                     'previous' => Tag::where('name->en', 'credit/income')
                         ->with([
-                            'transactions' => fn ($query) =>
-                                $query->where('date', '>=', $beforeLastMonth)
+                            'transactions' => fn ($query) => $query->where('date', '>=', $beforeLastMonth)
                                 ->where('date', '<=', $beforeLastMonth->copy()->endOfMonth())
-                                ->select(['amount'])
+                                ->select(['amount']),
                         ])
                         ->get()
                         ->reduce(fn ($carry, Tag $tag) => $carry + abs($tag->transactions->sum('amount')), 0),
@@ -137,9 +135,10 @@ class BankingController
                         ->get()
                         ->reduce(fn ($carry, Tag $tag) => $carry + $tag->transactions->sum('amount'), 0),
                 ],
-            ]
+            ],
         ]);
     }
+
     public function budgets()
     {
         return Inertia::render('Banking/Index', [
@@ -151,7 +150,6 @@ class BankingController
             'transactions' => $this->queryBuilder(),
         ]);
     }
-
 
     protected function queryBuilder()
     {
@@ -173,7 +171,7 @@ class BankingController
                 ->get()->pluck('account_id'))
             ->with([
                 'tags' => fn ($query) => $query->where('type', 'automatic'),
-                'account'
+                'account',
             ])
             ->orderByDesc('date')
             ->paginate();

@@ -11,6 +11,5 @@ class ResearchDeleted extends AbstractLogicalEvent
 {
     public function __construct(
         public Research $model,
-    ) {
-    }
+    ) {}
 }

@@ -11,6 +11,5 @@ class PageUpdated extends AbstractLogicalEvent
 {
     public function __construct(
         public Page $model,
-    ) {
-    }
+    ) {}
 }

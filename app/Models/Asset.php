@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -14,10 +15,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Asset extends Model implements Crud
 {
     use HasFactory;
-    use SoftDeletes;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
+    use SoftDeletes;
 
     protected $fillable = [
         'id',

@@ -13,7 +13,6 @@ class DigitalOceanSyncJob extends AbstractSyncServerResourceJob
         // this means all servers need to respond with the keys.
         $servers = $this->service->findAllServers();
 
-
         foreach ($servers as $server) {
             $localServer = Server::query()
                 ->where('server_id', $server['id'])
@@ -34,8 +33,8 @@ class DigitalOceanSyncJob extends AbstractSyncServerResourceJob
                     'cost_per_hour' => $server['cost'],
                     'credential_id' => $this->credential->id,
                 ]);
-//                $localServer->ownable_type = get_class($this->credential);
-//                $localServer->ownable_id = $this->credential->id;
+                //                $localServer->ownable_type = get_class($this->credential);
+                //                $localServer->ownable_id = $this->credential->id;
                 $this->credential->servers()->create($localServer->toArray());
             } else {
                 $data = [

@@ -17,6 +17,5 @@ abstract class CustomAction
         public string $name = 'Set Namecheap DNS',
         public string $slug = 'custom-action',
         public array $models = [],
-    ) {
-    }
+    ) {}
 }

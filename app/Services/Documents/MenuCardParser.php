@@ -82,7 +82,7 @@ class MenuCardParser
         } catch (\Exception $e) {
             if ($e->getMessage() === 'Secured pdf file are currently not supported.' && $recursionCounter < 3) {
                 // We can actually use pdftk to decrypt the file and then re-run the extraction.
-                $pdf = new Pdf();
+                $pdf = new Pdf;
                 $pdf->addFile($filename, null, '')->saveAs($filename);
 
                 return $this->parserService->getPdfTextFromFile($filename);

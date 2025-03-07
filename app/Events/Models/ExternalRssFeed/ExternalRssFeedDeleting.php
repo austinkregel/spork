@@ -11,6 +11,5 @@ class ExternalRssFeedDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public ExternalRssFeed $model,
-    ) {
-    }
+    ) {}
 }

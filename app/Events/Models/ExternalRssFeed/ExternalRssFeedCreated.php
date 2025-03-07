@@ -11,6 +11,5 @@ class ExternalRssFeedCreated extends AbstractLogicalEvent
 {
     public function __construct(
         public ExternalRssFeed $model,
-    ) {
-    }
+    ) {}
 }

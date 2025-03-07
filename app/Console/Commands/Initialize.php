@@ -49,7 +49,7 @@ class Initialize extends Command
 
         $user->roles()->create([
             'name' => 'developer',
-            'guard_name' => 'web'
+            'guard_name' => 'web',
         ]);
 
         Credential::create([
@@ -77,13 +77,12 @@ class Initialize extends Command
             'view_any_',
             'delete_any_',
         ];
-//
-//        foreach ($crud->files as $classCrudInstance) {
-//            foreach ($permissions as $permission) {
-//                $role->permissions()->create([
-//                    'name' => $permission.(new $classCrudInstance)->getTable(),
-//                ]);
-//            }
-//        }
+        foreach ($crud->files as $classCrudInstance) {
+            foreach ($permissions as $permission) {
+                $role->permissions()->create([
+                    'name' => $permission.(new $classCrudInstance)->getTable(),
+                ]);
+            }
+        }
     }
 }

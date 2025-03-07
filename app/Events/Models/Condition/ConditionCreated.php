@@ -11,6 +11,5 @@ class ConditionCreated extends AbstractLogicalEvent
 {
     public function __construct(
         public Condition $model,
-    ) {
-    }
+    ) {}
 }

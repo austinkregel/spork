@@ -11,6 +11,6 @@ class CancelingOperation extends Operation
 {
     public function run()
     {
-        throw new OperationCanceledException();
+        throw new OperationCanceledException;
     }
 }

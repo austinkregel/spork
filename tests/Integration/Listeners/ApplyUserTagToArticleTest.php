@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Integration\Listeners;
 
 use App\Events\Models\Article\ArticleCreated;
@@ -8,7 +10,6 @@ use App\Models\Article;
 use App\Models\ExternalRssFeed;
 use App\Models\Tag;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Psr\Log\LoggerInterface;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ final class ApplyUserTagToArticleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testBasicConditionWillBeAppliedToArticle()
+    public function test_basic_condition_will_be_applied_to_article()
     {
         $user = User::factory()->createQuietly();
 
@@ -29,7 +30,7 @@ final class ApplyUserTagToArticleTest extends TestCase
             'type' => 'automatic',
             'slug' => [
                 'en' => 'news',
-            ]
+            ],
         ]);
 
         $tag->conditions()->create([
@@ -69,7 +70,7 @@ final class ApplyUserTagToArticleTest extends TestCase
         $this->assertTrue($article->tags()->where('id', $tag->id)->exists());
     }
 
-    public function testBasicMultipleConditionWillBeAppliedToArticle()
+    public function test_basic_multiple_condition_will_be_applied_to_article()
     {
         $user = User::factory()->createQuietly();
 
@@ -82,7 +83,7 @@ final class ApplyUserTagToArticleTest extends TestCase
             'slug' => [
                 'en' => 'news',
             ],
-            'must_all_conditions_pass' => true
+            'must_all_conditions_pass' => true,
         ]);
 
         $tag->conditions()->create([
@@ -127,7 +128,7 @@ final class ApplyUserTagToArticleTest extends TestCase
         $this->assertTrue($article->tags()->where('id', $tag->id)->exists());
     }
 
-    public function testWeDontNeedAllConditionToPassForTagToBeAppliedToArticle()
+    public function test_we_dont_need_all_condition_to_pass_for_tag_to_be_applied_to_article()
     {
         $user = User::factory()->createQuietly();
 
@@ -140,7 +141,7 @@ final class ApplyUserTagToArticleTest extends TestCase
             'slug' => [
                 'en' => 'news',
             ],
-            'must_all_conditions_pass' => false
+            'must_all_conditions_pass' => false,
         ]);
 
         $tag->conditions()->create([

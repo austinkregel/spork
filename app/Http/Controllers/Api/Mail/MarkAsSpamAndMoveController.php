@@ -8,8 +8,5 @@ use App\Http\Controllers\Controller;
 
 class MarkAsSpamAndMoveController extends Controller
 {
-    public function __invoke()
-    {
-
-    }
+    public function __invoke() {}
 }

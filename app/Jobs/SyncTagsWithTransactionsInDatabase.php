@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Models\Finance\Transaction;
@@ -21,7 +23,7 @@ class SyncTagsWithTransactionsInDatabase implements ShouldQueue
                 ->paginate(100, ['*'], 'page', $page++);
 
             foreach ($paginator as $transaction) {
-                $conditionService = new ConditionService();
+                $conditionService = new ConditionService;
 
                 $tagsToApply = $tags->filter(fn (Tag $tag) => $conditionService->process($tag, [
                     'transaction' => $transaction,

@@ -15,6 +15,6 @@ class ArrayContainsValueOperator extends AbstractLogicalOperator
             $needle = $tmpNeedle;
         }
 
-        return (new ContainsValueOperator())->compute(haystack: $haystack, needle: $needle);
+        return (new ContainsValueOperator)->compute(haystack: $haystack, needle: $needle);
     }
 }

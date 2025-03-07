@@ -79,7 +79,7 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
                         'proxied_through_cloudflare' => $dnsRecord['proxied_through_cloudflare'],
                     ]);
 
-                    if (!$localDomain->wasRecentlyCreated) {
+                    if (! $localDomain->wasRecentlyCreated) {
                         $localDomain->update([
                             'ttl' => $dnsRecord['ttl'],
                             'value' => $dnsRecord['content'],

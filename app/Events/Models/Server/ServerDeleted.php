@@ -13,8 +13,7 @@ class ServerDeleted extends AbstractLogicalEvent implements ShouldBroadcastNow
 {
     public function __construct(
         public Server $model,
-    ) {
-    }
+    ) {}
 
     public function broadcastOn()
     {

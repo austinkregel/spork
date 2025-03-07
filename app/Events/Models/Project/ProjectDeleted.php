@@ -11,6 +11,5 @@ class ProjectDeleted extends AbstractLogicalEvent
 {
     public function __construct(
         public Project $model,
-    ) {
-    }
+    ) {}
 }

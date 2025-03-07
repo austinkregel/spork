@@ -5,13 +5,8 @@ declare(strict_types=1);
 namespace App\Listeners\Article;
 
 use App\Events\Models\Article\ArticleCreated;
-use App\Events\Models\Email\EmailCreated;
-use App\Events\Models\Transaction\TransactionCreated;
 use App\Models\Article;
-use App\Models\Email;
 use App\Models\ExternalRssFeed;
-use App\Models\Finance\Account;
-use App\Models\Finance\Transaction;
 use App\Models\Tag;
 use App\Models\User;
 use App\Services\ConditionService;
@@ -25,8 +20,7 @@ class ApplyUserAutomatedTagsToArticle implements ShouldQueue
      */
     public function __construct(
         protected LoggerInterface $logger,
-    ) {
-    }
+    ) {}
 
     /**
      * Handle the event.

@@ -62,7 +62,7 @@ class AtomFeed extends AbstractFeed
                 dd(54, $post);
             }
 
-            $feedItem = new FeedItem();
+            $feedItem = new FeedItem;
             $feedItem->id = (string) $post['id'];
             $feedItem->title = $post['title'] ?? null;
             $feedItem->content = $post['content'] ?? null;

@@ -32,7 +32,7 @@ class OpenWeatherService implements WeatherServiceContract
         );
 
         $currentTime = now()->roundHour()->format('Y-m-d H:i');
-        $forecast = new Forecast();
+        $forecast = new Forecast;
         $forecast->updated_at = Carbon::parse($weather->dt, 'UTC')->setTimezone('America/Detroit')->format('Y-m-d H:i');
         $forecast->condition = $weather->weather[0]->description;
         $forecast->condition_url = sprintf('https://openweathermap.org/img/wn/%s.png', $weather->weather[0]->icon);

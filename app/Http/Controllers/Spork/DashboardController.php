@@ -38,7 +38,7 @@ class DashboardController extends Controller
             }, []);
 
         $batchJobs->setCollection(
-            Collection::make(array_map(function ($batchJob) use ($failedJobs){
+            Collection::make(array_map(function ($batchJob) use ($failedJobs) {
                 $failedJobsForBatch = collect(array_map(
                     fn ($id) => $failedJobs[$id],
                     $batchJob->failed_job_ids

@@ -24,8 +24,7 @@ class NameServerVerificationJob implements ShouldQueue
         public string $host,
         public array $expectedServers,
         public bool $relaunchDnsCheckAfterDelay = false,
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the job.

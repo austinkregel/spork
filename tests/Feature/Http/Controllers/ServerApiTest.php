@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Credential;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,7 +12,7 @@ class ServerApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testServerThrowsValidationError()
+    public function test_server_throws_validation_error()
     {
         $user = $this->createUserWithPermissions([
             'create_server',
@@ -25,14 +25,15 @@ class ServerApiTest extends TestCase
         $response = $this->actingAs($user)
             ->postJson(route('server.create'), [], [
                 'Accept' => 'application/json',
-            'Authentication' => 'Bearer '.$credential->api_key,
-            'Content-Type' => 'application/json',
-            'User-Agent' => 'root@system:installer',
-        ]);
+                'Authentication' => 'Bearer '.$credential->api_key,
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'root@system:installer',
+            ]);
 
         $response->assertStatus(422);
     }
-    public function testServerCreateSuccessful()
+
+    public function test_server_create_successful()
     {
         $user = $this->createUserWithPermissions([
             'create_server',
@@ -48,7 +49,7 @@ class ServerApiTest extends TestCase
                 'name' => 'falef',
                 'ip_address' => '127.0.0.1',
                 'port' => 22,
-                'status' => 'provisioning'
+                'status' => 'provisioning',
             ], [
                 'Accept' => 'application/json',
                 'Authentication' => 'Bearer '.$credential->api_key,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Models\Credential;
@@ -17,46 +19,53 @@ class MatrixClientSyncRepository
     protected $keys = [];
 
     protected $default_key = null;
+
     protected $master_key = null;
+
     protected $self_sign_key = null;
+
     protected $signing_user = null;
+
     protected $megolm_backup = null;
 
     protected $client = null;
+
     protected $breadcrumbs = null;
+
     protected $dms = null;
+
     protected $notification_settings = null;
 
     public function __destruct()
     {
-//        file_put_contents(storage_path('app/matrix-sync.json'), json_encode([
-//            'devices' => $this->devices,
-//            'keys' => $this->keys,
-//            'default_key' => $this->default_key,
-//            'master_key' => $this->master_key,
-//            'self_sign_key' => $this->self_sign_key,
-//            'signing_user' => $this->signing_user,
-//            'megolm_backup' => $this->megolm_backup,
-//            'client' => $this->client,
-//            'notification_settings' => $this->notification_settings,
-//        ], JSON_PRETTY_PRINT));
+        //        file_put_contents(storage_path('app/matrix-sync.json'), json_encode([
+        //            'devices' => $this->devices,
+        //            'keys' => $this->keys,
+        //            'default_key' => $this->default_key,
+        //            'master_key' => $this->master_key,
+        //            'self_sign_key' => $this->self_sign_key,
+        //            'signing_user' => $this->signing_user,
+        //            'megolm_backup' => $this->megolm_backup,
+        //            'client' => $this->client,
+        //            'notification_settings' => $this->notification_settings,
+        //        ], JSON_PRETTY_PRINT));
     }
 
     public function __construct()
     {
-//        if (file_exists(storage_path('app/matrix-sync.json'))) {
-//            $contents = json_decode(file_get_contents(storage_path('app/matrix-sync.json')), true);
-//
-//            $this->devices = $contents['devices'];
-//            $this->keys = $contents['keys'];
-//            $this->default_key = $contents['default_key'];
-//            $this->master_key = $contents['master_key'];
-//            $this->self_sign_key = $contents['self_sign_key'];
-//            $this->signing_user = $contents['signing_user'];
-//            $this->megolm_backup = $contents['megolm_backup'];
-//            $this->client = $contents['client'];
-//            $this->notification_settings = $contents['notification_settings'];
-//        }
+        //        if (file_exists(storage_path('app/matrix-sync.json'))) {
+        //            $contents = json_decode(file_get_contents(storage_path('app/matrix-sync.json')), true);
+        //
+        //            $this->devices = $contents['devices'];
+        //            $this->keys = $contents['keys'];
+        //            $this->default_key = $contents['default_key'];
+        //            $this->master_key = $contents['master_key'];
+        //            $this->self_sign_key = $contents['self_sign_key'];
+        //            $this->signing_user = $contents['signing_user'];
+        //            $this->megolm_backup = $contents['megolm_backup'];
+        //            $this->client = $contents['client'];
+        //            $this->notification_settings = $contents['notification_settings'];
+        //        }
     }
 
     public function process(array $sync, Credential $credential, User $user): void
@@ -73,6 +82,7 @@ class MatrixClientSyncRepository
         }
 
     }
+
     public function processRoom($roomId, array $room, $credential, $user): void
     {
         $events = array_merge(
@@ -80,7 +90,7 @@ class MatrixClientSyncRepository
             $room['timeline']['events']
         );
         foreach ($events as $event) {
-            switch($event['type']) {
+            switch ($event['type']) {
                 case 'm.room.create':
                     $this->processCreateEvent($roomId, $event);
                     break;
@@ -110,7 +120,7 @@ class MatrixClientSyncRepository
                                 'algorithm' => $event['content']['algorithm'],
                                 'rotation_period_ms' => $event['content']['rotation_period_ms'] ?? null,
                             ],
-                        )
+                        ),
                     ]);
                     break;
                 case 'm.room.encrypted':
@@ -118,7 +128,7 @@ class MatrixClientSyncRepository
                     break;
                 case 'm.reaction': // @todo
                 case 'm.sticker':
-                    case 'm.room.avatar':
+                case 'm.room.avatar':
                     $this->ignored($event);
                     break;
                 case 'm.room.redaction': // @todo
@@ -140,7 +150,7 @@ class MatrixClientSyncRepository
                     if (empty($message)) {
                         $sender = $this->findOrCreatePerson($event['sender']);
 
-                        if (!isset($event['content']['body'])) {
+                        if (! isset($event['content']['body'])) {
                             if ($event['unsigned']['redacted_because']) {
                                 $message = Message::firstWhere('event_id', $event['unsigned']['redacted_because']['redacts']);
 
@@ -148,7 +158,6 @@ class MatrixClientSyncRepository
                                     $this->ignored($event);
                                     break;
                                 }
-
 
                                 $message->update([
                                     'message' => 'Message redacted',
@@ -161,17 +170,17 @@ class MatrixClientSyncRepository
 
                         $thread->messages()->forceCreate(array_merge(
                             isset($event['content']['info']) && isset($event['content']['info']['thumbnail_url']) ? [
-                                'thumbnail_url' => $this->downloadMedia($credential, $event['content']['info']['thumbnail_url'])
+                                'thumbnail_url' => $this->downloadMedia($credential, $event['content']['info']['thumbnail_url']),
                             ] : [],
                             isset($event['content']['settings']) ? [
-                                'settings' => $event['content']['settings']
+                                'settings' => $event['content']['settings'],
                             ] : [],
                             [
                                 'from_person' => $sender->id,
                                 'to_person' => $user->id,
                                 'thread_id' => $thread->id,
                                 'type' => $event['type'],
-                                'originated_at' => Carbon::createFromFormat('U', round($event['origin_server_ts']/ 1000)),
+                                'originated_at' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000)),
                                 'message' => $event['content']['body'],
                                 'event_id' => $event['event_id'],
                                 'html_message' => isset($event['content']['format_body']) ? $event['content']['format_body'] : null,
@@ -179,8 +188,8 @@ class MatrixClientSyncRepository
                                 'is_decrypted' => true,
                             ]
                         ));
-                        if (Carbon::createFromFormat('U', round($event['origin_server_ts']/ 1000))->isAfter($thread->origin_server_ts)) {
-                            $thread->update(['origin_server_ts' => Carbon::createFromFormat('U', round($event['origin_server_ts']/ 1000))]);
+                        if (Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))->isAfter($thread->origin_server_ts)) {
+                            $thread->update(['origin_server_ts' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))]);
                         }
                     }
 
@@ -200,7 +209,7 @@ class MatrixClientSyncRepository
                 case 'com.beeper.rooms.note_to_self':
                 case 'com.beeper.support_chat':
                 case 'fi.mau.dummy.portal_created':
-                case 'com.beeper.message_send_status';
+                case 'com.beeper.message_send_status':
                 case 'com.beeper.feed':
                 case 'org.matrix.msc2716.marker':
                 case 'org.matrix.msc3401.call.member':
@@ -216,7 +225,7 @@ class MatrixClientSyncRepository
                             [
                                 'thread_id' => $roomId,
                                 'name' => $event['content']['name'],
-                                'origin_server_ts' => Carbon::now()
+                                'origin_server_ts' => Carbon::now(),
                             ]
                         );
                         break;
@@ -231,24 +240,26 @@ class MatrixClientSyncRepository
 
     public function processEvent(array $event): void
     {
-        if (!isset($event['type'])) {
+        if (! isset($event['type'])) {
             return;
         }
         if (str_starts_with($event['type'], 'io.element.matrix_client_information.')) {
             $this->processMatrixClientEvent($event);
+
             return;
         }
 
         if (str_starts_with($event['type'], 'org.matrix.msc3890.local_notification_settings.')) {
             $this->handleLocalNotificationSettings($event);
+
             return;
         }
 
         if (str_starts_with($event['type'], 'm.secret_storage.key.')) {
             $this->processSecretStorageKey($event);
+
             return;
         }
-
 
         // Direct match names
         switch ($event['type']) {
@@ -296,7 +307,7 @@ class MatrixClientSyncRepository
 
         $context = $event['content'];
 
-        if (!isset($this->devices[$deviceId])) {
+        if (! isset($this->devices[$deviceId])) {
             $this->devices[$deviceId] = [];
         }
 
@@ -309,7 +320,7 @@ class MatrixClientSyncRepository
 
         $context = $event['content'];
 
-        if (!isset($this->devices[$deviceId])) {
+        if (! isset($this->devices[$deviceId])) {
             $this->devices[$deviceId] = [];
         }
 
@@ -320,7 +331,7 @@ class MatrixClientSyncRepository
     {
         $key = $this->extractDeviceIdFromEvent($event);
 
-        if (!isset($this->keys[$key])) {
+        if (! isset($this->keys[$key])) {
             $this->keys[$key] = [];
         }
 
@@ -331,11 +342,11 @@ class MatrixClientSyncRepository
     {
         $deviceId = $this->extractDeviceIdFromEvent($event);
 
-        if (!isset($this->devices[$deviceId])) {
+        if (! isset($this->devices[$deviceId])) {
             $this->devices[$deviceId] = [];
         }
         $context = [
-            'recent_emoji' => array_map(fn ($emoji) => $emoji['0']  ,$event['content']['recent_emoji']),
+            'recent_emoji' => array_map(fn ($emoji) => $emoji['0'], $event['content']['recent_emoji']),
         ];
 
         $this->devices[$deviceId] = array_merge($this->devices[$deviceId], $context);
@@ -360,7 +371,7 @@ class MatrixClientSyncRepository
 
     protected function processCrossSigningSelfSigning(array $event)
     {
-        if (!isset($this->self_sign_key)) {
+        if (! isset($this->self_sign_key)) {
             $this->self_sign_key = [];
         }
 
@@ -372,7 +383,7 @@ class MatrixClientSyncRepository
 
     protected function processCrossSigningUserSigning(array $event)
     {
-        if (!isset($this->signing_user)) {
+        if (! isset($this->signing_user)) {
             $this->signing_user = [];
         }
         $this->signing_user = array_merge(
@@ -383,7 +394,7 @@ class MatrixClientSyncRepository
 
     protected function processMegolmBackup(array $event)
     {
-        if (!isset($this->megolm_backup)) {
+        if (! isset($this->megolm_backup)) {
             $this->megolm_backup = [];
         }
         $this->megolm_backup = array_merge(
@@ -411,6 +422,7 @@ class MatrixClientSyncRepository
     {
         $this->dms = $event['content'];
     }
+
     protected function extractDeviceIdFromEvent(array $event)
     {
         $parts = explode('.', $event['type']);
@@ -445,14 +457,14 @@ class MatrixClientSyncRepository
         try {
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $credential->access_token,
-            ])->get($credential->settings['matrix_server'] . sprintf('/_matrix/client/v1/media/thumbnail/%s?timeout_ms=500&width=64&height=64', $mxcUrl))->body();
+                'Authorization' => 'Bearer '.$credential->access_token,
+            ])->get($credential->settings['matrix_server'].sprintf('/_matrix/client/v1/media/thumbnail/%s?timeout_ms=500&width=64&height=64', $mxcUrl))->body();
 
-            file_put_contents($path = storage_path('app/public/' . $key), $response);
+            file_put_contents($path = storage_path('app/public/'.$key), $response);
 
             return '/storage/'.$key;
         } catch (\Throwable $e) {
-            return null;
+            return;
         }
     }
 
@@ -460,7 +472,7 @@ class MatrixClientSyncRepository
     {
         $person = Person::whereJsonContains('identifiers', $identifier)->first();
 
-        if (!$person) {
+        if (! $person) {
             $person = Person::create([
                 'name' => $identifier,
                 'identifiers' => json_encode([$identifier]),
@@ -473,7 +485,7 @@ class MatrixClientSyncRepository
 
     protected function getMatrixUserName()
     {
-        return '@' . env('MATRIX_USERNAME') . ':' . parse_url(env('MATRIX_HOST'), PHP_URL_HOST);
+        return '@'.env('MATRIX_USERNAME').':'.parse_url(env('MATRIX_HOST'), PHP_URL_HOST);
     }
 
     protected function processCreateEvent(string $roomId, mixed $event): void
@@ -482,7 +494,7 @@ class MatrixClientSyncRepository
             ['thread_id' => $roomId],
             [
                 'name' => $roomId,
-                'origin_server_ts' => Carbon::createFromFormat('U', round($event['origin_server_ts']/1000) )
+                'origin_server_ts' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000)),
             ]
         );
     }
@@ -492,7 +504,7 @@ class MatrixClientSyncRepository
         $people = Person::whereJsonContains('identifiers', $event['sender'])->get();
 
         if ($people->isEmpty()) {
-             Person::create([
+            Person::create([
                 'name' => $event['content']['displayname'] ?? $event['sender'],
                 'identifiers' => [$event['sender']],
                 'user_id' => 1, // @todo
@@ -505,20 +517,20 @@ class MatrixClientSyncRepository
             /** @var Thread $thread */
             $thread = Thread::firstOrCreate(
                 ['thread_id' => $id],
-                ['name' => $id, 'origin_server_ts' => Carbon::createFromFormat('U', round($event['origin_server_ts']/ 1000)) ]
+                ['name' => $id, 'origin_server_ts' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))]
             );
 
             if ($thread->participants()->firstWhere('person_id', $person->id)) {
                 continue;
             }
 
-            $thread->participants()->attach($person->id, ['joined_at' => Carbon::createFromFormat('U', round($event['origin_server_ts']/ 1000))]);
+            $thread->participants()->attach($person->id, ['joined_at' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))]);
 
-            if (Carbon::createFromFormat('U', round($event['origin_server_ts']/ 1000))->isAfter($thread->origin_server_ts)) {
-                $thread->update(['origin_server_ts' => Carbon::createFromFormat('U', round($event['origin_server_ts']/ 1000))]);
+            if (Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))->isAfter($thread->origin_server_ts)) {
+                $thread->update(['origin_server_ts' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))]);
             }
 
-            if (empty($person->photo_url) && !empty($event['content']['avatar_url'])) {
+            if (empty($person->photo_url) && ! empty($event['content']['avatar_url'])) {
                 try {
                     $person->photo_url = $this->downloadMedia($credential, $event['content']['avatar_url']);
                     $person->save();

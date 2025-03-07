@@ -24,8 +24,7 @@ class SetupCloudflareDns implements ShouldQueue
         public Domain $domain,
         public Credential $cloudflareDns,
         public Credential $registrar,
-    ) {
-    }
+    ) {}
 
     public function handle(DomainServiceFactory $factory): void
     {
@@ -45,7 +44,7 @@ class SetupCloudflareDns implements ShouldQueue
             }
         } while ($domainPaginator->hasMorePages());
 
-        /// Create domain if not exists
+        // / Create domain if not exists
         $servers = $service->createDomain($this->domain->name);
 
         // Update the NS with registrar if not already set..

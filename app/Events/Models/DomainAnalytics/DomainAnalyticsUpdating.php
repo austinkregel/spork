@@ -11,6 +11,5 @@ class DomainAnalyticsUpdating extends AbstractLogicalEvent
 {
     public function __construct(
         public DomainAnalytics $model,
-    ) {
-    }
+    ) {}
 }

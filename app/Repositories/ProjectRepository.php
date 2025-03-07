@@ -13,8 +13,7 @@ class ProjectRepository
 {
     public function __construct(
         protected JiraServiceContract $jira
-    ) {
-    }
+    ) {}
 
     public function createJiraProject(JiraProject $jiraProject, $page = 1): Project
     {

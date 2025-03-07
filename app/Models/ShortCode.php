@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-//use Laravel\Scout\Searchable;
+// use Laravel\Scout\Searchable;
 
 class ShortCode extends Model implements Crud
 {
@@ -53,7 +53,5 @@ class ShortCode extends Model implements Crud
         return $this->belongsTo(User::class);
     }
 
-    public function generate(string $link)
-    {
-    }
+    public function generate(string $link) {}
 }

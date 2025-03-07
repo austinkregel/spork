@@ -11,6 +11,5 @@ class ArticleDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public Article $model,
-    ) {
-    }
+    ) {}
 }

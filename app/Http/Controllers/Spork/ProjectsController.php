@@ -166,7 +166,7 @@ class ProjectsController extends Controller
 
     public function create()
     {
-        $description = (new DescribeTableService)->describe(new Project());
+        $description = (new DescribeTableService)->describe(new Project);
 
         return Inertia::render('Projects/Create', [
             'description' => $description,

@@ -11,6 +11,5 @@ class MessageDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public Message $model,
-    ) {
-    }
+    ) {}
 }

@@ -10,8 +10,7 @@ class MatrixClient
 {
     public function __construct(
         protected string $homeserver = 'beeper.com',
-    ) {
-    }
+    ) {}
 
     public function discover()
     {

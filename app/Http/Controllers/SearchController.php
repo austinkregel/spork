@@ -26,7 +26,7 @@ class SearchController extends Controller
         $searchableModels = Code::instancesOf(Searchable::class)->getClasses();
 
         $result = $client->multiSearch(array_map(function ($model) {
-            return (new SearchQuery())
+            return (new SearchQuery)
                 ->setQuery(request('query'))
                 ->setLimit(4)
                 ->setIndexUid((new $model)->searchableAs());

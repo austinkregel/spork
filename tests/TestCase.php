@@ -26,6 +26,7 @@ abstract class TestCase extends BaseTestCase
         $reflection = new \ReflectionClass($object);
         $property = $reflection->getProperty($property);
         $property->setAccessible(true);
+
         return $property->getValue($object);
     }
 
@@ -33,6 +34,7 @@ abstract class TestCase extends BaseTestCase
     {
         $user = User::factory()->create();
         $user->assignRole($role);
+
         return $user;
     }
 
@@ -43,6 +45,7 @@ abstract class TestCase extends BaseTestCase
         foreach ($permissions as $permission) {
             $user->givePermissionTo(Permission::firstOrCreate(['name' => $permission]));
         }
+
         return $user;
     }
 }

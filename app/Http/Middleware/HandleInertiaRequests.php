@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Models\Message;
-use App\Models\Thread;
-use App\Services\ConditionService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -41,15 +38,15 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'unread_email_count' => 0,
             'notifications' => $request->user()
-                    ?->notifications()
-                    ?->whereNull('read_at')
-                    ?->orderByDesc('created_at')
-                    ?->limit(10)
-                    ?->get()?? [],
+                ?->notifications()
+                ?->whereNull('read_at')
+                ?->orderByDesc('created_at')
+                ?->limit(10)
+                ?->get() ?? [],
             'notification_count' => $request->user()
-                    ?->notifications()
-                    ?->whereNull('read_at')
-                    ?->count() ?? [],
+                ?->notifications()
+                ?->whereNull('read_at')
+                ?->count() ?? [],
         ]);
     }
 }

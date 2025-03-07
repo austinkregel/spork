@@ -11,6 +11,5 @@ class TagCreated extends AbstractLogicalEvent
 {
     public function __construct(
         public Tag $model,
-    ) {
-    }
+    ) {}
 }

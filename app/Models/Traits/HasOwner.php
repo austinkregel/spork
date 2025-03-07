@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Traits;
 
 use App\Models\Contracts\Owner;
@@ -113,4 +115,3 @@ trait HasOwner
             ->where('ownable_id', $owner->{$owner->getKeyName()});
     }
 }
-

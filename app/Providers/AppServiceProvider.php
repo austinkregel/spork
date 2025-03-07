@@ -12,7 +12,6 @@ use App\Contracts\Services\NamecheapServiceContract;
 use App\Contracts\Services\News\NewsServiceContract;
 use App\Contracts\Services\PlaidServiceContract;
 use App\Contracts\Services\WeatherServiceContract;
-use App\Features;
 use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Navigation;
@@ -38,7 +37,6 @@ use App\Services\Registrar\NamecheapService;
 use App\Services\Weather\OpenWeatherService;
 use App\Spork;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -89,7 +87,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(JiraServiceContract::class, JiraService::class);
         $this->app->alias(Operator::class, 'operator');
         $this->app->bind(PdfParserServiceContract::class, PdfParserService::class);
-        $this->app->singleton(Spork::class, fn () => new Spork());
+        $this->app->singleton(Spork::class, fn () => new Spork);
     }
 
     public function boot(): void
@@ -105,6 +103,7 @@ class AppServiceProvider extends ServiceProvider
                     ->name($domain)
                     ->group($callback);
             }
+
             return $this;
         });
 

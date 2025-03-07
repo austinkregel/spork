@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Messaging;
 
 use App\Models\Credential;
@@ -36,7 +38,7 @@ class MatrixLoginWithPassword extends Command
                 'device_id' => $response['device_id'],
                 'home_server' => $response['home_server'],
                 'matrix_server' => $response['well_known']['m.homeserver']['base_url'],
-            ]
+            ],
         ]);
 
     }

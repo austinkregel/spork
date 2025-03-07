@@ -29,7 +29,7 @@ class CrudControllerTest extends TestCase
         return $this->user;
     }
 
-    public function testBasicTestSuccess(): void
+    public function test_basic_test_success(): void
     {
         $this->actingAsUser();
         Project::factory()->create([
@@ -45,7 +45,7 @@ class CrudControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testCreateTestSuccess(): void
+    public function test_create_test_success(): void
     {
         $this->actingAsUser();
         Project::factory()->create([
@@ -63,7 +63,7 @@ class CrudControllerTest extends TestCase
         $response->assertStatus(201);
     }
 
-    public function testUpdateTestSuccess(): void
+    public function test_update_test_success(): void
     {
         $this->actingAsUser();
         $project = Project::factory()->create([
@@ -84,7 +84,7 @@ class CrudControllerTest extends TestCase
         $response->assertJsonFragment(['name' => 'Austin Kregel']);
     }
 
-    public function testUpdatePatchTestSuccess(): void
+    public function test_update_patch_test_success(): void
     {
         $this->actingAsUser();
         $project = Project::factory()->create([
@@ -105,7 +105,7 @@ class CrudControllerTest extends TestCase
         $response->assertJsonFragment(['name' => 'Austin Kregel']);
     }
 
-    public function testDeleteTestSuccess(): void
+    public function test_delete_test_success(): void
     {
         $this->actingAsUser();
         $project = Project::factory()->create([
@@ -124,7 +124,7 @@ class CrudControllerTest extends TestCase
         $this->assertDatabaseMissing('projects', $project2->toArray());
     }
 
-    public function testShowTestSuccess(): void
+    public function test_show_test_success(): void
     {
         $this->actingAsUser();
         $project = Project::factory()->create([

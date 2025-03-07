@@ -22,8 +22,7 @@ class SyncPlaidTransactionsJob implements ShouldQueue
 
     public function __construct(
         protected Credential $accessToken
-    ) {
-    }
+    ) {}
 
     public function handle(PlaidServiceContract $plaid): void
     {

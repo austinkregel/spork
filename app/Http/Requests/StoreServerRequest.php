@@ -80,8 +80,8 @@ class StoreServerRequest extends FormRequest
      */
     public function rules(): array
     {
-        $description = new DescribeTableService();
-        $fields = $description->describe(new Server());
+        $description = new DescribeTableService;
+        $fields = $description->describe(new Server);
 
         return array_reduce($fields['required'], function ($carry, $field) {
             return array_merge($carry, [

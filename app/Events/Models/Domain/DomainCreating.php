@@ -11,6 +11,5 @@ class DomainCreating extends AbstractLogicalEvent
 {
     public function __construct(
         public Domain $model,
-    ) {
-    }
+    ) {}
 }

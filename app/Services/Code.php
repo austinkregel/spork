@@ -174,62 +174,62 @@ class Code
 
     public static function instancesOf(string $desiredParentClass): static
     {
-            // Classes known to composer in array form
-            $traits = [];
-            $classes = [];
-            $interfaces = [];
+        // Classes known to composer in array form
+        $traits = [];
+        $classes = [];
+        $interfaces = [];
 
-            foreach (static::composerMappedClasses() as $className => $filePath) {
-                $filePath = realpath($filePath);
+        foreach (static::composerMappedClasses() as $className => $filePath) {
+            $filePath = realpath($filePath);
 
-                if ($filePath === false) {
+            if ($filePath === false) {
+                continue;
+            }
+
+            if (stripos($className, 'reflection') !== false) {
+                // The class has reflection in the name, generally speaking, I'd like to avoid those...
+                continue;
+            }
+            if (stripos($className, 'abstract') !== false) {
+                // The class has reflection in the name, generally speaking, I'd like to avoid those...
+                continue;
+            }
+
+            $vendorParts = explode('/vendor/', $filePath);
+
+            if (str_contains($filePath, 'vendor/')) {
+                $possibleVendor = explode('/', $vendorParts[1], 2)[0];
+
+                if (! empty(config('spork.code.settings.blacklist')) && in_array($possibleVendor, config('spork.code.settings.blacklist'))) {
                     continue;
                 }
 
-                if (stripos($className, 'reflection') !== false) {
-                    // The class has reflection in the name, generally speaking, I'd like to avoid those...
+                if (! empty(config('spork.code.settings.whitelist')) && ! in_array($possibleVendor, config('spork.code.settings.whitelist'))) {
                     continue;
-                }
-                if (stripos($className, 'abstract') !== false) {
-                    // The class has reflection in the name, generally speaking, I'd like to avoid those...
-                    continue;
-                }
-
-                $vendorParts = explode('/vendor/', $filePath);
-
-                if (str_contains($filePath, 'vendor/')) {
-                    $possibleVendor = explode('/', $vendorParts[1], 2)[0];
-
-                    if (! empty(config('spork.code.settings.blacklist')) && in_array($possibleVendor, config('spork.code.settings.blacklist'))) {
-                        continue;
-                    }
-
-                    if (! empty(config('spork.code.settings.whitelist')) && ! in_array($possibleVendor, config('spork.code.settings.whitelist'))) {
-                        continue;
-                    }
-                }
-
-                try {
-                    if (interface_exists($className)) {
-                        $interfaces[] = $className;
-                    } elseif (class_exists($className)) {
-                        $classes[] = $className;
-                    } elseif (trait_exists($className)) {
-                        $traits[] = $className;
-                    }
-                } catch (\Throwable|\Error|\ErrorException|ErrorException|\ReflectionException|\Whoops\Exception\ErrorException|\Symfony\Component\ErrorHandler\Error\FatalError|FatalError $e) {
-                    // Missing classes based on my experience so far.
                 }
             }
 
-            $possibleInstances = match (true) {
-                interface_exists($desiredParentClass) => array_values(array_filter(array_merge($interfaces, $classes), fn ($declaredClass) => isset(class_implements($declaredClass)[$desiredParentClass]))),
-                class_exists($desiredParentClass) => array_values(array_filter($classes, fn ($declaredClass) => is_subclass_of($declaredClass, $desiredParentClass))),
-                trait_exists($desiredParentClass) => array_values(array_filter(array_merge($traits, $classes), fn ($declaredClass) => in_array($desiredParentClass, trait_uses_recursive($declaredClass)))),
-                default => dd($desiredParentClass),
-            };
+            try {
+                if (interface_exists($className)) {
+                    $interfaces[] = $className;
+                } elseif (class_exists($className)) {
+                    $classes[] = $className;
+                } elseif (trait_exists($className)) {
+                    $traits[] = $className;
+                }
+            } catch (\Throwable|\Error|\ErrorException|ErrorException|\ReflectionException|\Whoops\Exception\ErrorException|\Symfony\Component\ErrorHandler\Error\FatalError|FatalError $e) {
+                // Missing classes based on my experience so far.
+            }
+        }
 
-            return new static($possibleInstances);
+        $possibleInstances = match (true) {
+            interface_exists($desiredParentClass) => array_values(array_filter(array_merge($interfaces, $classes), fn ($declaredClass) => isset(class_implements($declaredClass)[$desiredParentClass]))),
+            class_exists($desiredParentClass) => array_values(array_filter($classes, fn ($declaredClass) => is_subclass_of($declaredClass, $desiredParentClass))),
+            trait_exists($desiredParentClass) => array_values(array_filter(array_merge($traits, $classes), fn ($declaredClass) => in_array($desiredParentClass, trait_uses_recursive($declaredClass)))),
+            default => dd($desiredParentClass),
+        };
+
+        return new static($possibleInstances);
     }
 
     public function import(string|array $fqns): static
@@ -548,7 +548,7 @@ class Code
         $preLocation = array_slice($lines, 0, $location + 1);
         $postLocation = array_slice($lines, $location + 1, count($lines));
 
-        $filesystem = new Filesystem();
+        $filesystem = new Filesystem;
         $filesystem->makeDirectory(storage_path('tmp'), 0755, true, true);
         // How can we validate the file, like make sure there aren't any parsing errors or obvious exceptions.
         $path = storage_path('tmp/'.Str::random(16));

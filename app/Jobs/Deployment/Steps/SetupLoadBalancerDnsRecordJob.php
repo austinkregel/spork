@@ -25,8 +25,7 @@ class SetupLoadBalancerDnsRecordJob implements ShouldQueue
         public Server $server,
         public Domain $domain,
         public Project $project
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {

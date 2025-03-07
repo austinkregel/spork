@@ -11,6 +11,5 @@ class EmailCreating extends AbstractLogicalEvent
 {
     public function __construct(
         public Email $model,
-    ) {
-    }
+    ) {}
 }

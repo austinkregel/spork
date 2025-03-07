@@ -16,8 +16,7 @@ class VerifyDnsValue implements ShouldQueue
         public string $type,
         public string|array $expectedValue,
         protected bool $relaunchDnsCheckAfterDelay = false,
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {

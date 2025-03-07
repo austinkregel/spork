@@ -31,6 +31,6 @@ class StartAction extends CustomAction implements ActionInterface
             ->whereIn('id', $request->input('items'))
             ->get();
 
-        /// Hmm can't exactly ssh to turn these things on...
+        // / Hmm can't exactly ssh to turn these things on...
     }
 }

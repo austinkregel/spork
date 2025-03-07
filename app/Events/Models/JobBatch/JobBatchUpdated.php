@@ -14,8 +14,7 @@ class JobBatchUpdated extends AbstractLogicalEvent implements ShouldBroadcast
 {
     public function __construct(
         public JobBatch $batch
-    ) {
-    }
+    ) {}
 
     public function broadcastOn(): array
     {

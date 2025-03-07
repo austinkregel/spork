@@ -13,8 +13,7 @@ class AccountUpdated extends AbstractLogicalEvent implements ShouldBroadcast
 {
     public function __construct(
         public Account $model,
-    ) {
-    }
+    ) {}
 
     public function broadcastOn(): array
     {

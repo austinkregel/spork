@@ -14,12 +14,11 @@ abstract class DomainName
 {
     public array $attributes = [];
 
-    public abstract function attributesToVendor(): mixed;
+    abstract public function attributesToVendor(): mixed;
 
-    public abstract function setVendorModel(mixed $vendorModel): array;
+    abstract public function setVendorModel(mixed $vendorModel): array;
 
-    public abstract function setAttributes(array $attributes): DomainName;
-
+    abstract public function setAttributes(array $attributes): DomainName;
 }
 class TucowsEnomService implements NamecheapServiceContract
 {
@@ -27,8 +26,7 @@ class TucowsEnomService implements NamecheapServiceContract
 
     public function __construct(
         public Credential $credential
-    ) {
-    }
+    ) {}
 
     public function getDomains(int $limit = 10, int $page = 1): LengthAwarePaginator
     {

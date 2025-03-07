@@ -59,9 +59,7 @@ class FileManagerController
 
         $exists = $filesystem->exists($decoded);
 
-
-
-        if ($exists && !$contents = $filesystem->get($decoded)) {
+        if ($exists && ! $contents = $filesystem->get($decoded)) {
             return collect($filesystem->directories($decoded))
                 ->map(fn ($directory) => [
                     'name' => basename($directory),
@@ -85,7 +83,7 @@ class FileManagerController
     {
         $decoded = base64_decode($path);
 
-        $filesystem = new Filesystem();
+        $filesystem = new Filesystem;
 
         $content = request()->input('content');
         $existingFile = $filesystem->get($decoded);

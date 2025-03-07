@@ -6,7 +6,6 @@ namespace App\Http\Requests\Dynamic;
 
 use App\Models\Crud;
 use App\Services\Code;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 
 class UpdateRequest extends AbstractRequest

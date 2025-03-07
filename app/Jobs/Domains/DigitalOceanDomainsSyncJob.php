@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Domains;
 
 use App\Models\Credential;
@@ -7,7 +9,7 @@ use App\Models\Domain;
 use App\Services\Factories\DomainServiceFactory;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-class DigitalOceanDomainsSyncJob  extends AbstractSyncDomainResource
+class DigitalOceanDomainsSyncJob extends AbstractSyncDomainResource
 {
     public function handle(DomainServiceFactory $serviceFactory): void
     {

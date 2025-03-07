@@ -45,7 +45,7 @@ class RdfFeed extends AbstractFeed
         $feedItems = [];
 
         foreach ($this->element->item as $post) {
-            $feedItem = new FeedItem();
+            $feedItem = new FeedItem;
             $feedItem->id = (string) ($post->guid ?? $post->link ?? '');
 
             $feedItem->setTitle($post->title);

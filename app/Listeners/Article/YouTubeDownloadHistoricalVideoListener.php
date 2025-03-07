@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners\Article;
 
 use App\Events\Models\Article\ArticleCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class YouTubeDownloadHistoricalVideoListener
 {
@@ -24,7 +24,7 @@ class YouTubeDownloadHistoricalVideoListener
         $hasItems = $event->model->externalRssFeed->tagsWithType('auto')->count() > 0;
 
         if ($hasItems > 0) {
-            return ;
+            return;
         }
 
         // We want to

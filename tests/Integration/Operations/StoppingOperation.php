@@ -11,6 +11,6 @@ class StoppingOperation extends Operation
 {
     public function run()
     {
-        throw new OperationStoppedException();
+        throw new OperationStoppedException;
     }
 }

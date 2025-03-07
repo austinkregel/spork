@@ -9,10 +9,7 @@ use App\Models\User;
 use App\Policies\AbstractPolicy;
 use App\Services\Code;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -44,14 +41,14 @@ class BuildPermissions extends Command
 
         foreach ($searchableModels as $model) {
             foreach ($permissions as $permission) {
-                $modelPermissions[] = $permission . $model::MODEL_PERMISSION_NAME;
+                $modelPermissions[] = $permission.$model::MODEL_PERMISSION_NAME;
             }
         }
         $models = Code::instancesOf(Crud::class)->getClasses();
 
         foreach ($permissions as $permission) {
             foreach ($models as $crudModel) {
-                $modelPermissions[] = $permission . Str::singular((new $crudModel)->getTable());
+                $modelPermissions[] = $permission.Str::singular((new $crudModel)->getTable());
             }
         }
 

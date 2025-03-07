@@ -28,8 +28,7 @@ class FetchResourcesFromCredentials implements ShouldQueue
      * @return void
      */
     public function __construct(
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the job.

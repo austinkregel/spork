@@ -34,6 +34,7 @@ class Email extends Model
         'answered',
         'message',
     ];
+
     public $dispatchesEvents = [
         'created' => EmailCreated::class,
         'creating' => EmailCreating::class,

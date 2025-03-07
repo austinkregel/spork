@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Dynamic;
 
-
 use App\Models\Crud;
 use App\Services\Code;
 use Illuminate\Support\Str;

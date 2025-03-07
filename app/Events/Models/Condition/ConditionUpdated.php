@@ -11,6 +11,5 @@ class ConditionUpdated extends AbstractLogicalEvent
 {
     public function __construct(
         public Condition $model,
-    ) {
-    }
+    ) {}
 }

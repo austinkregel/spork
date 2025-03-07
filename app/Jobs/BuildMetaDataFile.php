@@ -49,10 +49,9 @@ class BuildMetaDataFile implements ShouldQueue
 
             $newFile = str_replace('/media/Downloads', '', $this->path);
 
-
             $metaPath = storage_path('meta'.str_replace('.'.$extension, '.json', $newFile));
 
-            if (!file_exists((new Filesystem)->dirname($metaPath))) {
+            if (! file_exists((new Filesystem)->dirname($metaPath))) {
                 (new Filesystem)
                     ->makeDirectory((new Filesystem)->dirname($metaPath), 0755, true);
             }
@@ -60,8 +59,8 @@ class BuildMetaDataFile implements ShouldQueue
             $media = new Media(
                 $this->path,
                 false,
-                array_values(array_filter($data['media']['track'], fn($track) => $track['@type'] === 'Audio')),
-                array_values(array_filter($data['media']['track'], fn($track) => $track['@type'] === 'Text')),
+                array_values(array_filter($data['media']['track'], fn ($track) => $track['@type'] === 'Audio')),
+                array_values(array_filter($data['media']['track'], fn ($track) => $track['@type'] === 'Text')),
             );
 
             $data['name'] = $name;

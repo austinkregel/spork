@@ -20,8 +20,7 @@ class PageUpdated extends AbstractLogicalEvent
      */
     public function __construct(
         public Page $page
-    ) {
-    }
+    ) {}
 
     /**
      * Get the channels the event should broadcast on.

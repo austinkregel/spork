@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Requests\Messages;
 
 use App\Models\Email;
-use App\Models\Message;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MailOwnerRequest extends FormRequest

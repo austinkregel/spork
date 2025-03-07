@@ -11,6 +11,5 @@ class PageCreated extends AbstractLogicalEvent
 {
     public function __construct(
         public Page $model,
-    ) {
-    }
+    ) {}
 }

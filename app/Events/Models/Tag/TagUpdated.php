@@ -11,6 +11,5 @@ class TagUpdated extends AbstractLogicalEvent
 {
     public function __construct(
         public Tag $model,
-    ) {
-    }
+    ) {}
 }

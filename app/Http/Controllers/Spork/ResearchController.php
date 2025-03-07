@@ -22,6 +22,4 @@ class ResearchController
             'topic' => $research,
         ]);
     }
-
-
 }

@@ -23,7 +23,7 @@ class MessageController
                 }, 'participants' => function ($query) {
                     $query->where('name', 'not like', '%bridge bot%');
                 }, 'messages.toPerson', 'messages.fromPerson'])
-                ->whereHas("messages")
+                ->whereHas('messages')
                 ->orderBy('origin_server_ts')
                 ->findOrFail($thread),
         ]);
@@ -39,12 +39,12 @@ class MessageController
     protected function getPaginatedThreads(): LengthAwarePaginator
     {
         return \App\Models\Thread::query()
-            ->whereHas("messages")
+            ->whereHas('messages')
             ->addSelect(
                 [
                     'latest_message_at' => Message::query()
                         ->selectRaw('MAX(date(messages.originated_at))')
-                        ->whereColumn('thread_id', 'threads.id')
+                        ->whereColumn('thread_id', 'threads.id'),
                 ]
             )
             ->with([

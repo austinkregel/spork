@@ -13,8 +13,7 @@ class EmailCreated extends AbstractLogicalEvent implements ShouldBroadcast
 {
     public function __construct(
         public Email $model,
-    ) {
-    }
+    ) {}
 
     public function broadcastOn(): array
     {

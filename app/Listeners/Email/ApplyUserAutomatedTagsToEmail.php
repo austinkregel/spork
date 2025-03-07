@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Listeners\Email;
 
 use App\Events\Models\Email\EmailCreated;
-use App\Events\Models\Transaction\TransactionCreated;
 use App\Models\Email;
-use App\Models\Finance\Account;
-use App\Models\Finance\Transaction;
 use App\Models\Tag;
 use App\Services\ConditionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,9 +18,7 @@ class ApplyUserAutomatedTagsToEmail implements ShouldQueue
      */
     public function __construct(
         protected LoggerInterface $logger,
-    )
-    {
-    }
+    ) {}
 
     /**
      * Handle the event.

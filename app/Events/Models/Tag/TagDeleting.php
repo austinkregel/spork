@@ -11,6 +11,5 @@ class TagDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public Tag $model,
-    ) {
-    }
+    ) {}
 }

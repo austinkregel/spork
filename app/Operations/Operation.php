@@ -36,7 +36,7 @@ abstract class Operation extends Model
      */
     public function stop()
     {
-        throw new OperationStoppedException();
+        throw new OperationStoppedException;
     }
 
     /**
@@ -44,7 +44,7 @@ abstract class Operation extends Model
      */
     public function cancel()
     {
-        throw new OperationCanceledException();
+        throw new OperationCanceledException;
     }
 
     /**

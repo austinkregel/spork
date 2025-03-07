@@ -11,6 +11,5 @@ class ShortCodeUpdating extends AbstractLogicalEvent
 {
     public function __construct(
         public ShortCode $model,
-    ) {
-    }
+    ) {}
 }

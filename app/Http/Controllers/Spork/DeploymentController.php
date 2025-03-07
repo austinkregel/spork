@@ -1,16 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
-use App\Models\Credential;
 use App\Models\Deployment;
 use App\Models\Domain;
 use App\Models\Project;
-use App\Models\Research;
 use App\Models\Server;
-use App\Models\Taggable;
-use App\Models\Task;
 use Illuminate\Http\Request;
 
 class DeploymentController extends Controller
@@ -87,7 +85,6 @@ class DeploymentController extends Controller
             'deployment_id' => $deployment->id,
             'settings' => $this->filterSettingsForResource(request()->get('resource_type'), request()->get('resource_id')),
         ]);
-
 
     }
 

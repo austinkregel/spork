@@ -27,6 +27,7 @@ class TagManagerController
         $tagsWithCounts = array_map(
             function (Tag $tag) {
                 $tag->setAttribute('taggables_count', $tag->tagged()->count());
+
                 return $tag;
             },
             $tags->items()

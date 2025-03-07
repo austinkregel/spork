@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Contracts\Repositories\CredentialRepositoryContract;
 use App\Models\Credential;
-use App\Models\Thread;
 use App\Repositories\MatrixClientSyncRepository;
-use App\Services\Messaging\MatrixClient;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Http;
@@ -15,9 +15,7 @@ class MatrixSyncJob implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Execute the job.
@@ -32,9 +30,9 @@ class MatrixSyncJob implements ShouldQueue
 
             $rooms = Http::withHeaders([
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $credential->access_token,
+                'Authorization' => 'Bearer '.$credential->access_token,
             ])
-                ->get($credential->settings['matrix_server'] . '/_matrix/client/v3/sync', [
+                ->get($credential->settings['matrix_server'].'/_matrix/client/v3/sync', [
                     'since' => $nextBatch,
                     'timeout' => 30000,
                     'full_state' => 'true',

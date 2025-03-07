@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Spork;
 
-use App\Models\Credential;
 use App\Models\Email;
 use App\Services\Messaging\ImapCredentialService;
-use Carbon\Carbon;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 
 class InboxController

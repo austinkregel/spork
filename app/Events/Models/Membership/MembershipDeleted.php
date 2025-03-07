@@ -11,6 +11,5 @@ class MembershipDeleted extends AbstractLogicalEvent
 {
     public function __construct(
         public Membership $model,
-    ) {
-    }
+    ) {}
 }

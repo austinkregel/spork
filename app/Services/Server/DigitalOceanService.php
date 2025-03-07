@@ -29,7 +29,7 @@ class DigitalOceanService implements DigitalOceanServiceContract
 
         $this->digitalOcean->authenticate($credential->api_key);
 
-        $this->serverFilter = new DigitalOceanServerFilter();
+        $this->serverFilter = new DigitalOceanServerFilter;
     }
 
     public function createServer(array $config): array
@@ -125,7 +125,7 @@ class DigitalOceanService implements DigitalOceanServiceContract
             return $domain->toArray();
         }, $items);
 
-        if (!empty($type)) {
+        if (! empty($type)) {
             $domains = array_filter($domains, function ($domain) use ($type) {
                 return $domain['type'] === $type;
             });

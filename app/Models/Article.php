@@ -25,8 +25,8 @@ use Spatie\Tags\HasTags;
 
 class Article extends Model implements ModelQuery, Taggable
 {
-    use HasTags;
     use HasFactory;
+    use HasTags;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
@@ -67,7 +67,7 @@ class Article extends Model implements ModelQuery, Taggable
             return $post;
         }
 
-        $post = new Article();
+        $post = new Article;
         // If the item's GUID is a v4 UUID, we may as well use it as our UUID.
         $post->uuid = $item->getUuidIfExists();
         $post->external_guid = $item->getUuidIfExists() ?? $item->getUrl();

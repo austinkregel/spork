@@ -35,6 +35,7 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public const DIGITAL_OCEAN = 'digital-ocean';
 
     public const CLOUDFLARE = 'cloudflare';
+
     public const TYPE_MATRIX = 'matrix';
 
     public const NAMECHEAP = 'namecheap';
@@ -52,6 +53,7 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public const AWS_ROUTE_53 = 'aws-route53';
 
     public const GITHUB_SOURCE = 'github';
+
     public const IMAP = 'imap';
 
     public const FORGE_DEVELOPMENT = 'forge';
@@ -65,6 +67,7 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public const TYPE_DEVELOPMENT = 'development';
 
     public const TYPE_SOURCE = 'source';
+
     public const TYPE_FINANCE = 'finance';
 
     public const TYPE_SSH = 'ssh';

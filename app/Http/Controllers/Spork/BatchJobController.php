@@ -26,7 +26,7 @@ class BatchJobController extends Controller
                 if (count($failedJobs) > 0) {
                     $batch->jobs = \DB::table('failed_jobs')
                         ->select('*')
-                        ->whereIn('uuid',)
+                        ->whereIn('uuid')
                         ->orderByDesc('failed_at')
                         ->get()
                         ->map(function ($job) {
@@ -38,6 +38,7 @@ class BatchJobController extends Controller
 
                     $batch->failed_at = $batch->jobs->max('failed_at');
                 }
+
                 return $batch;
             }, $batches->items()),
             $batches->total(),

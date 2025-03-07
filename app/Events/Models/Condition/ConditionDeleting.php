@@ -11,6 +11,5 @@ class ConditionDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public Condition $model,
-    ) {
-    }
+    ) {}
 }

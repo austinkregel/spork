@@ -41,7 +41,7 @@ class LibraryMetaDataScan extends Command
             // ebooks
             'pdf',
             'epub',
-            //video
+            // video
             'mp4',
             'mkv',
             'm4v',
@@ -169,8 +169,7 @@ class LibraryMetaDataScan extends Command
             'peer',
         ];
 
-        $this->recursivelyFindFiles('/media/Shows', $supportedTypes, $blacklistedTypes, function (\SplFileInfo $file, $err, $out) {
-        });
+        $this->recursivelyFindFiles('/media/Shows', $supportedTypes, $blacklistedTypes, function (\SplFileInfo $file, $err, $out) {});
     }
 
     protected function recursivelyFindFiles(string $directory, array &$supportedTypes, array &$blacklistedTypes, Closure $callback)

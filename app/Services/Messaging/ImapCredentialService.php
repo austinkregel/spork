@@ -15,8 +15,7 @@ class ImapCredentialService implements ImapServiceContract
 {
     public function __construct(
         protected Credential $credential
-    ) {
-    }
+    ) {}
 
     public function findAllMailboxes(): Collection
     {
@@ -92,6 +91,7 @@ class ImapCredentialService implements ImapServiceContract
             ->values()
             ->tap(fn () => imap_close($inbox));
     }
+
     public function findAllUnseen(string $mailbox): Collection
     {
         return collect(imap_search($inbox = imap_open(

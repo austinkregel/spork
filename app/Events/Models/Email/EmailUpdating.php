@@ -11,6 +11,5 @@ class EmailUpdating extends AbstractLogicalEvent
 {
     public function __construct(
         public Email $model,
-    ) {
-    }
+    ) {}
 }

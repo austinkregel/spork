@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use App\Models\Crud;
-use App\Models\User;
 use App\Services\Code;
 use App\Services\Development\DescribeTableService;
 use Illuminate\Support\Collection;
@@ -53,7 +52,7 @@ class ManageController
         $model = $navigation->firstWhere('slug', $model)['class'];
 
         $table = (new $model)->getTable();
-        $description = (new DescribeTableService())->describe(new $model);
+        $description = (new DescribeTableService)->describe(new $model);
 
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
         $paginator = $model::query()
@@ -88,6 +87,7 @@ class ManageController
 
         return $crudModels->map(function ($class) {
             $tableName = (new $class)->getTable();
+
             return [
                 'name' => Str::ucfirst(str_replace('_', ' ', Str::ascii($tableName, 'en'))),
                 'href' => '/-/manage/'.$slug = Str::slug(Str::singular($tableName)),

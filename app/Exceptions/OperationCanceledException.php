@@ -6,6 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class OperationCanceledException extends RuntimeException
-{
-}
+class OperationCanceledException extends RuntimeException {}

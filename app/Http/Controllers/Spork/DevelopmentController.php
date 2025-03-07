@@ -15,12 +15,9 @@ class DevelopmentController
         $decoded = base64_decode($path);
         $disk = request()->get('filesystem', config('spork.filesystem.default'));
 
-
         return Inertia::render('Development/Index', [
             'title' => 'Settings',
-            'settings' => new class()
-            {
-            },
+            'settings' => new class {},
             'files' => collect(Storage::disk($disk)->directories($decoded))
                 ->map(fn ($directory) => [
                     'name' => basename($directory),
