@@ -27,6 +27,8 @@ class ViewRequest extends AbstractRequest
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasPermissionTo('view_'.$singular);
+        $id = $this->route()->parameter($route);
+
+        return $user->hasPermissionTo('view_'.$singular.'.'.$id);
     }
 }
