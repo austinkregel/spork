@@ -32,7 +32,7 @@ Route::middleware([
 ])->put('/.server/update/{identifier}', function () {
     /** @var \Laravel\Sanctum\PersonalAccessToken $token */
     $server = request()->get('server');
-    $descriptor = new \App\Services\Development\DescribeTableService();
+    $descriptor = new \App\Services\Development\DescribeTableService;
 
     $description = $descriptor->describe($server);
 
@@ -66,7 +66,7 @@ Route::middleware([
 
 Route::post('/api/servers', [
     App\Http\Controllers\Api\ServerController::class,
-    'store'
+    'store',
 ])->name('server.create');
 
 Route::post('register-device', function () {

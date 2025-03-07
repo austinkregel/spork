@@ -57,9 +57,9 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::put('/notifications/{notification:uuid}/mark-as-read', function (Request $request, $notification) {
         $notification = $request->user()->notifications()->where('id', $notification)->first();
         $notification->markAsRead();
+
         return response('', 204);
     });
-
 
     Route::get('/rss-feeds', fn () => Inertia::render('RssFeeds/Index', [
         'feeds' => \App\Models\Article::query()->latest('last_modified')
@@ -89,7 +89,6 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::post('deployment/{deployment}/detach', [Controllers\Spork\DeploymentController::class, 'detach'])->name('deployment.detach');
     Route::post('deployment/{deployment}/attach', [Controllers\Spork\DeploymentController::class, 'attach'])->name('deployment.attach');
     Route::post('deployment/{project}/deploy', [Controllers\Spork\DeploymentController::class, 'deploy'])->name('project.deploy');
-
 
     Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');
     Route::get('/banking/budgets', [Controllers\Spork\BankingController::class, 'budgets'])->name('banking.budgets');
@@ -130,7 +129,6 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/settings', Controllers\Spork\SettingsController::class);
     Route::get('/tag-manager', Controllers\Spork\TagManagerController::class);
     Route::get('/tag-manager/{tag}', [Controllers\Spork\TagManagerController::class, 'show']);
-
 
     Route::get('/research', [Controllers\Spork\ResearchController::class, 'index'])->name('research.index');
     Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');

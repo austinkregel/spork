@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'prefix' => env('FLIGHT_URL_PREFIX', '/flight'),
     'login_redirect' => env('FLIGHT_LOGIN', '/login'),
