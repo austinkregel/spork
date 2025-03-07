@@ -26,7 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web([
             \App\Http\Middleware\HandleInertiaRequests::class,
-            \App\Http\Middleware\EnableFeatureFlags::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
