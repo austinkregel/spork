@@ -107,7 +107,7 @@ const form = reactive(task);
 
 const createTask = ref(false);
 
-watch(task, (newVal, oldValue) => {
+watch(() => task, (newVal, oldValue) => {
     const task = Object.assign({}, newVal);
 
     axios.put('/api/crud/tasks/' + task.id, task)
