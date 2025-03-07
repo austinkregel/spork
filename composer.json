@@ -52,7 +52,7 @@
         "spatie/laravel-tags": "^4.6",
         "staudenmeir/eloquent-json-relations": "^1.11",
         "tightenco/ziggy": "^2.0",
-        "toin0u/digitalocean-v2": "^4.9",
+        "toin0u/digitalocean-v2": "^5.0",
         "winter/laravel-config-writer": "^1.1"
     },
     "require-dev": {
