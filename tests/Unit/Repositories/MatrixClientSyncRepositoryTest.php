@@ -291,7 +291,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
 
     public function test_process_event_breadcrumbs()
     {
-        $this->testProcessEventWebSettings();
+        $this->test_process_event_web_settings();
         $this->repository->processEvent([
             'type' => 'im.vector.setting.breadcrumbs',
             'content' => ['test' => 'test'],
@@ -311,7 +311,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
 
     public function test_process_event_direct()
     {
-        $this->testProcessEventWebSettings();
+        $this->test_process_event_web_settings();
         $this->repository->processEvent([
             'type' => 'm.direct',
             'content' => [
