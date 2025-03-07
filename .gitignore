@@ -23,6 +23,7 @@ storage/*.bin
 public/css/
 public/js/
 public/vendor/
+public/sounds/
 storage/debugbar/
 storage/meta/
 storage/zerotier/
