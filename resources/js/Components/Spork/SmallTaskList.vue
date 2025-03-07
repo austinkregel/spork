@@ -30,8 +30,4 @@ const { tasks, name } = defineProps({
         default: () => []
     }
 })
-
-watch(tasks, (newVal, oldValue) => {
-
-})
 </script>
