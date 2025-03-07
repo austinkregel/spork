@@ -12,8 +12,7 @@ class MoveJiraTicketIfApplicableListener implements ShouldQueue
 {
     public function __construct(
         protected JiraServiceContract $jiraService
-    ) {
-    }
+    ) {}
 
     public function handle(TaskUpdated $updatedTask): void
     {

@@ -9,10 +9,7 @@ use Illuminate\Http\Request;
 
 class RunActionController extends Controller
 {
-    public function __construct()
-    {
-
-    }
+    public function __construct() {}
 
     public function __invoke(Request $request, $action)
     {

@@ -11,6 +11,5 @@ class ThreadDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public Thread $model,
-    ) {
-    }
+    ) {}
 }

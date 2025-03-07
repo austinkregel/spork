@@ -11,6 +11,5 @@ class PageDeleted extends AbstractLogicalEvent
 {
     public function __construct(
         public Page $model,
-    ) {
-    }
+    ) {}
 }

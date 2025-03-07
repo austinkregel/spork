@@ -11,6 +11,5 @@ class CredentialUpdated extends AbstractLogicalEvent
 {
     public function __construct(
         public Credential $model,
-    ) {
-    }
+    ) {}
 }

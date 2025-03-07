@@ -11,8 +11,7 @@ class WeatherGovApiService implements WeatherServiceContract
 {
     public function __construct(
         protected GeocodingServiceContract $geocodingService
-    ) {
-    }
+    ) {}
 
     public function query(string $address): array
     {

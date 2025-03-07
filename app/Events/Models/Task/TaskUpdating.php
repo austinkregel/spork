@@ -11,6 +11,5 @@ class TaskUpdating extends AbstractLogicalEvent
 {
     public function __construct(
         public Task $model,
-    ) {
-    }
+    ) {}
 }

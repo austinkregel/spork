@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Api\Mail;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Messages\MailOwnerRequest;
-use App\Models\Message;
+use App\Models\Email;
 use App\Services\Messaging\ImapFactoryService;
 
 class MarkAsUnreadController extends Controller
@@ -17,12 +17,12 @@ class MarkAsUnreadController extends Controller
             'id' => 'integer',
         ]);
 
-        $message = Message::query()
+        $message = Email::query()
             ->with('credential')
             ->findOrFail($request->get('id'));
 
         $service = $factoryService->make($message->credential);
-        $service->markAsUnread($message->event_id);
+        $service->markAsUnread($message->email_id);
         $message->update([
             'seen' => false,
         ]);

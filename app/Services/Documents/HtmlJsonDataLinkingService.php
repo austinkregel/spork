@@ -10,8 +10,7 @@ class HtmlJsonDataLinkingService
 {
     public function __construct(
         protected Client $client,
-    ) {
-    }
+    ) {}
 
     public function fetchDataLink(string $url)
     {
@@ -19,7 +18,7 @@ class HtmlJsonDataLinkingService
 
         $content = $page->getBody()->getContents();
 
-        $dom = new \DOMDocument();
+        $dom = new \DOMDocument;
         $dom->loadHTML($content, LIBXML_NOERROR);
         libxml_use_internal_errors(true);
         $linkedDataSets = [];

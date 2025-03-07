@@ -11,6 +11,5 @@ class MembershipUpdating extends AbstractLogicalEvent
 {
     public function __construct(
         public Membership $model,
-    ) {
-    }
+    ) {}
 }

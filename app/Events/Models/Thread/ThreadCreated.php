@@ -11,6 +11,5 @@ class ThreadCreated extends AbstractLogicalEvent
 {
     public function __construct(
         public Thread $model,
-    ) {
-    }
+    ) {}
 }

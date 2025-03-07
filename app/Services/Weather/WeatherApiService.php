@@ -31,7 +31,7 @@ class WeatherApiService implements WeatherServiceContract
 
         $forecasts = [];
         foreach ($weather->forecast->forecastday as $forecastday) {
-            $forecast = new Forecast();
+            $forecast = new Forecast;
             $forecast->address = $address;
 
             $hourForecast = $forecastday->hour[$key];

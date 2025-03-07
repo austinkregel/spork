@@ -23,10 +23,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Tags\HasTags;
 
@@ -34,11 +34,11 @@ class User extends Authenticatable implements ModelQuery, Taggable
 {
     use HasApiTokens;
     use HasFactory;
+    use HasPermissions;
     use HasProfilePhoto;
     use HasProjectResource;
     use HasRoles;
     use HasTags;
-    use HasTeams;
     use LogsActivity;
     use Notifiable;
     use ScopeQSearch;
@@ -87,15 +87,21 @@ class User extends Authenticatable implements ModelQuery, Taggable
         ];
     }
 
+    public function personalProjects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly(['name', 'email'])
             ->useLogName('user')
+            ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
     }
 
-    public function codes(): HasMany
+    public function shortCodes(): HasMany
     {
         return $this->hasMany(ShortCode::class);
     }
@@ -120,6 +126,16 @@ class User extends Authenticatable implements ModelQuery, Taggable
         return $this->hasManyThrough(Message::class, Credential::class)->orderByDesc('originated_at');
     }
 
+    public function emails(): HasManyThrough
+    {
+        return $this->hasManyThrough(Email::class, Credential::class)->orderByDesc('originated_at');
+    }
+
+    public function servers(): HasManyThrough
+    {
+        return $this->hasManyThrough(Server::class, Credential::class);
+    }
+
     public function externalRssFeeds(): MorphMany
     {
         return $this->morphMany(ExternalRssFeed::class, 'owner');
@@ -127,9 +143,11 @@ class User extends Authenticatable implements ModelQuery, Taggable
 
     public function person()
     {
-        return Person::whereJsonContains('emails', $this->email)
-            // for now, this is fine, my email base does support this idea, but I know if someone/
-            // wanted to be malicious they could take advantage of this.
-            ->first();
+        return $this->hasOne(Person::class);
+    }
+
+    public function budgets()
+    {
+        return $this->hasMany(Finance\Budget::class);
     }
 }

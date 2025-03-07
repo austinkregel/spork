@@ -6,6 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class OperationStoppedException extends RuntimeException
-{
-}
+class OperationStoppedException extends RuntimeException {}

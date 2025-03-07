@@ -19,8 +19,7 @@ class DnsVerificationSuccessful extends Notification
         public string $host,
         public string $type,
         public string|array $expectedValue,
-    ) {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.

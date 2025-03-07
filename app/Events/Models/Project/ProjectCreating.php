@@ -11,6 +11,5 @@ class ProjectCreating extends AbstractLogicalEvent
 {
     public function __construct(
         public Project $model,
-    ) {
-    }
+    ) {}
 }

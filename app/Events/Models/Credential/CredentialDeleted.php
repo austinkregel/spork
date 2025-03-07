@@ -11,6 +11,5 @@ class CredentialDeleted extends AbstractLogicalEvent
 {
     public function __construct(
         public Credential $model,
-    ) {
-    }
+    ) {}
 }

@@ -136,7 +136,7 @@ class JiraService implements JiraServiceContract
                 return strtolower($status->name) === strtolower($data['status']);
             }));
 
-            $transition = new Transition();
+            $transition = new Transition;
             $transition->transition = [
                 'name' => $status->name,
                 'id' => $status->id,

@@ -6,8 +6,6 @@ namespace App\Services;
 
 use App\Contracts\Conditionable;
 use App\Models\Condition;
-use App\Models\Navigation;
-use App\Models\Tag;
 use App\Services\Condition\AbstractLogicalOperator;
 use App\Services\Condition\ArrayContainsValueOperator;
 use App\Services\Condition\ContainsValueOperator;
@@ -23,6 +21,7 @@ use App\Services\Condition\LessThanOperator;
 use App\Services\Condition\LessThanOrEqualToOperator;
 use App\Services\Condition\StartsWithOperator;
 use Illuminate\Support\Arr;
+use Psr\Log\LoggerInterface;
 
 class ConditionService
 {
@@ -50,32 +49,18 @@ class ConditionService
         'HAS_ROLE' => HasRoleOperator::class,
     ];
 
-    public function navigation()
-    {
-        // So we want to filter out any nav items
-        $navItems = Navigation::query()
-            ->with('conditions', 'children')
-            ->where('authentication_required', auth()->check())
-            ->whereNull('parent_id')
-            ->orderBy('order')
-            ->get()
-            ->map(function (Navigation $item) {
-                $item->current = $item->href === request()->getRequestUri() || ($item->children->isNotEmpty() && $item->children->filter(fn ($item) => $item->href === request()->getRequestUri())->count() > 0);
+    public function __construct(
+        protected LoggerInterface $logger,
+    ) {}
 
-                return $item;
-            });
-
-        return $navItems->filter(fn (Navigation $item) => $this->process($item));
-    }
-
-    public function process(Conditionable $item, array $additionalValueData = [])
+    public function process(Conditionable $item, array $additionalValueData = []): bool
     {
         if ($item->conditions->count() === 0) {
             return true;
         }
 
         $returnedValue = true;
-        /** @var Tag $condition */
+        /** @var Condition $condition */
         foreach ($item->conditions as $condition) {
             $comparator = static::AVAILABLE_CONDITIONS[$condition->comparator];
             /** @var AbstractLogicalOperator $instance */
@@ -85,10 +70,12 @@ class ConditionService
                 // Looking for the condition value
                 $condition->value,
                 // inside the parameter's interpolated value.
-                $this->processParameter($condition->parameter, $additionalValueData),
+                $value = $this->processParameter($condition->parameter, $additionalValueData),
             );
 
             if ($passesCondition && ! $item->must_all_conditions_pass) {
+                $this->logCondition($condition, $passesCondition, $value);
+
                 return true;
             }
 
@@ -96,8 +83,17 @@ class ConditionService
                 $returnedValue = false;
             }
         }
+        $this->logCondition($condition, $passesCondition, $value);
 
         return $returnedValue;
+    }
+
+    protected function logCondition(Condition $condition, bool $passesCondition, $value)
+    {
+        $this->logger->info("Condition: {$condition->parameter} {$condition->comparator} {$condition->value}", [
+            'passes_condition' => $passesCondition,
+            'value' => $value,
+        ]);
     }
 
     protected function processParameter(string $parameter, array $additionalData)
@@ -112,7 +108,7 @@ class ConditionService
         }
 
         if ($parameter === 'user') {
-            return auth()->user();
+            return auth()->user() ?? null;
         }
 
         // This can be an single dimensions, or a multidimensional array

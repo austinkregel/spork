@@ -37,7 +37,7 @@ class RdfFeed extends AbstractFeed
 
     public function getName(): string
     {
-        return $this->element->title;
+        return (string) $this->element->title ?? '';
     }
 
     public function getData(): array
@@ -45,8 +45,8 @@ class RdfFeed extends AbstractFeed
         $feedItems = [];
 
         foreach ($this->element->item as $post) {
-            $feedItem = new FeedItem();
-            $feedItem->id = $post->guid ?? $post->link;
+            $feedItem = new FeedItem;
+            $feedItem->id = (string) ($post->guid ?? $post->link ?? '');
 
             $feedItem->setTitle($post->title);
             // This bit could be too specific for other rdf feeds :sweat_smile:

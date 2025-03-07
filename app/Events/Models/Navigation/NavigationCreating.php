@@ -11,6 +11,5 @@ class NavigationCreating extends AbstractLogicalEvent
 {
     public function __construct(
         public Navigation $model,
-    ) {
-    }
+    ) {}
 }

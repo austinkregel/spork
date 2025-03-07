@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('servers', function (Blueprint $table) {
             $table->id();
-            //Service server id
+            // Service server id
             $table->string('server_id')->index();
             $table->foreignIdFor(\App\Models\Credential::class)->nullable();
             $table->string('name');

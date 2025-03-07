@@ -53,7 +53,7 @@ class OperationTest extends TestCase
     {
         $this->expectException(OperationStoppedException::class);
 
-        $operation = new ExampleOperation();
+        $operation = new ExampleOperation;
 
         $operation->stop();
     }
@@ -63,7 +63,7 @@ class OperationTest extends TestCase
     {
         $this->expectException(OperationCanceledException::class);
 
-        $operation = new ExampleOperation();
+        $operation = new ExampleOperation;
 
         $operation->cancel();
     }

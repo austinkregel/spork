@@ -11,6 +11,5 @@ class ProjectUpdated extends AbstractLogicalEvent
 {
     public function __construct(
         public Project $model,
-    ) {
-    }
+    ) {}
 }

@@ -8,8 +8,5 @@ use App\Http\Controllers\Controller;
 
 class ForwardMessageController extends Controller
 {
-    public function __invoke()
-    {
-
-    }
+    public function __invoke() {}
 }

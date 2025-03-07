@@ -201,7 +201,7 @@ class LaravelProgrammingStyle extends Code
                         $newNamespaceObject->add($function);
                     }
 
-                    $file = new PhpFile();
+                    $file = new PhpFile;
                     $file->setStrictTypes($phpFile->hasStrictTypes());
                     $file->addNamespace($newNamespaceObject);
 
@@ -427,6 +427,10 @@ class LaravelProgrammingStyle extends Code
                 // Laravel puts all listeners inside of a closure.
                 $listenerInformation = (new \Laravel\SerializableClosure\Support\ReflectionClosure($listener))->getUseVariables();
                 if (empty($listenerInformation['listener'])) {
+                    continue;
+                }
+
+                if (is_array($listenerInformation['listener'])) {
                     continue;
                 }
 

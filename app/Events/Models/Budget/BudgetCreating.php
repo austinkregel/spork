@@ -11,6 +11,5 @@ class BudgetCreating extends AbstractLogicalEvent
 {
     public function __construct(
         public Budget $model,
-    ) {
-    }
+    ) {}
 }

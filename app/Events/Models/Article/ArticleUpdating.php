@@ -11,6 +11,5 @@ class ArticleUpdating extends AbstractLogicalEvent
 {
     public function __construct(
         public Article $model,
-    ) {
-    }
+    ) {}
 }

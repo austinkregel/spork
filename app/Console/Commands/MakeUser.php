@@ -28,7 +28,7 @@ class MakeUser extends Command
      */
     public function handle(): void
     {
-        $action = new CreateNewUser();
+        $action = new CreateNewUser;
 
         $action->create([
             'name' => $this->ask('What is your name?'),

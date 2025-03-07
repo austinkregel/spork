@@ -4,6 +4,4 @@ declare(strict_types=1);
 
 namespace App\Events;
 
-class ExampleEvent extends AbstractLogicalEvent
-{
-}
+class ExampleEvent extends AbstractLogicalEvent {}

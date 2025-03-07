@@ -11,6 +11,5 @@ class TransactionCreating extends AbstractLogicalEvent
 {
     public function __construct(
         public Transaction $model,
-    ) {
-    }
+    ) {}
 }

@@ -12,11 +12,7 @@ class ResearchController
     public function index()
     {
         return Inertia::render('Research/Dashboard', [
-            'research' => request()->user()->projects()
-                ->with('research')
-                ->get()
-                ->map(fn ($project) => $project->research)
-                ->flatten(),
+            'research' => Research::all(),
         ]);
     }
 

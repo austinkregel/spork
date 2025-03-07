@@ -28,9 +28,7 @@ class RunDeployment implements ShouldQueue
 {
     use Batchable, DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public Project $project)
-    {
-    }
+    public function __construct(public Project $project) {}
 
     public function handle(): void
     {

@@ -11,6 +11,5 @@ class ResearchCreated extends AbstractLogicalEvent
 {
     public function __construct(
         public Research $model,
-    ) {
-    }
+    ) {}
 }

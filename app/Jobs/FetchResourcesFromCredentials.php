@@ -28,8 +28,7 @@ class FetchResourcesFromCredentials implements ShouldQueue
      * @return void
      */
     public function __construct(
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the job.
@@ -38,12 +37,16 @@ class FetchResourcesFromCredentials implements ShouldQueue
     {
         $credentials = Credential::query()
             // Matrix credentials are handled in their own way.
-            ->where('service', '!=', 'matrix')
+            ->whereNotIn('service', ['matrix', 'ssh'])
             ->get();
 
         $jobs = $credentials->groupBy('user_id')
             ->map(fn (Collection $group) => $group->map(fn ($credential) => new FetchResourcesFromCredential($credential))->toArray())
             ->toArray();
+
+        if (empty($jobs)) {
+            return;
+        }
 
         $batch = $dispatcher->batch($jobs)
             ->name('Updatch Resources From Credentials')

@@ -11,6 +11,5 @@ class DomainUpdated extends AbstractLogicalEvent
 {
     public function __construct(
         public Domain $model,
-    ) {
-    }
+    ) {}
 }

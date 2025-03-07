@@ -11,6 +11,5 @@ class PersonUpdating extends AbstractLogicalEvent
 {
     public function __construct(
         public Person $model,
-    ) {
-    }
+    ) {}
 }

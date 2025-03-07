@@ -10,15 +10,16 @@ use App\Models\Finance\Transaction;
 use App\Models\Tag;
 use App\Services\ConditionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Psr\Log\LoggerInterface;
 
 class ApplyUserAutomatedTagsToTransaction implements ShouldQueue
 {
     /**
      * Create the event listener.
      */
-    public function __construct()
-    {
-    }
+    public function __construct(
+        protected LoggerInterface $logger,
+    ) {}
 
     /**
      * Handle the event.
@@ -42,7 +43,7 @@ class ApplyUserAutomatedTagsToTransaction implements ShouldQueue
 
         $tags = $user->tags()->with('conditions')->where('type', 'automatic')->get();
 
-        $conditionService = new ConditionService();
+        $conditionService = new ConditionService($this->logger);
 
         $tagsToApply = $tags->filter(fn (Tag $tag) => $conditionService->process($tag, [
             'transaction' => $transaction,

@@ -71,7 +71,7 @@ class AdminController extends Controller
 
     public function email()
     {
-        $imapService = new ImapService();
+        $imapService = new ImapService;
 
         dd($imapService->findAllFromDate(now()->subDay()));
 
@@ -80,4 +80,6 @@ class AdminController extends Controller
             'mail' => '',
         ]);
     }
+
+    public function index() {}
 }

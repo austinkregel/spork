@@ -11,6 +11,5 @@ class UserDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public User $model,
-    ) {
-    }
+    ) {}
 }

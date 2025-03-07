@@ -29,7 +29,7 @@ class OperationJobTest extends TestCase
     /** @test */
     public function it_can_hold_an_operation(): void
     {
-        $operation = new ExampleOperation();
+        $operation = new ExampleOperation;
 
         $operationJob = new OperationJob($operation);
 
@@ -39,7 +39,7 @@ class OperationJobTest extends TestCase
     /** @test */
     public function handle_successfully_runs_operation(): void
     {
-        $operation = new ExampleOperation();
+        $operation = new ExampleOperation;
         $operation->should_run_at = Carbon::now();
         $operation->save();
 
@@ -58,7 +58,7 @@ class OperationJobTest extends TestCase
     /** @test */
     public function handle_successfully_binds_dependencies(): void
     {
-        $operation = new DependantOperation();
+        $operation = new DependantOperation;
         $operation->should_run_at = Carbon::now();
 
         $operationJob = new OperationJob($operation);
@@ -71,11 +71,11 @@ class OperationJobTest extends TestCase
     /** @test */
     public function it_has_the_proper_display_name(): void
     {
-        $exampleOperation = new ExampleOperation();
+        $exampleOperation = new ExampleOperation;
         $exampleOperationJob = new OperationJob($exampleOperation);
         $this->assertSame(ExampleOperation::class, $exampleOperationJob->displayName());
 
-        $anotherOperation = new AnotherOperation();
+        $anotherOperation = new AnotherOperation;
         $anotherOperationJob = new OperationJob($anotherOperation);
         $this->assertSame(AnotherOperation::class, $anotherOperationJob->displayName());
     }
@@ -83,7 +83,7 @@ class OperationJobTest extends TestCase
     /** @test */
     public function it_has_the_proper_tags(): void
     {
-        $exampleOperation = new ExampleOperation();
+        $exampleOperation = new ExampleOperation;
         $exampleOperation->id = 123;
         $exampleOperationJob = new OperationJob($exampleOperation);
         $expectedExampleTags = [
@@ -92,7 +92,7 @@ class OperationJobTest extends TestCase
         ];
         $this->assertSame($expectedExampleTags, $exampleOperationJob->tags());
 
-        $anotherOperation = new AnotherOperation();
+        $anotherOperation = new AnotherOperation;
         $anotherOperation->id = 456;
         $anotherOperationJob = new OperationJob($anotherOperation);
         $expectedAnotherTags = [
@@ -105,7 +105,7 @@ class OperationJobTest extends TestCase
     /** @test */
     public function it_uses_custom_tags_from_operation_instead_of_default_tags(): void
     {
-        $taggedOperation = new TaggedOperation();
+        $taggedOperation = new TaggedOperation;
         $taggedOperation->id = 123;
         $taggedOperationJob = new OperationJob($taggedOperation);
 

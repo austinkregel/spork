@@ -16,8 +16,7 @@ class NamecheapService implements NamecheapServiceContract
 
     public function __construct(
         public Credential $credential
-    ) {
-    }
+    ) {}
 
     public function getDomains(int $limit = 10, int $page = 1): LengthAwarePaginator
     {

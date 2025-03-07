@@ -11,6 +11,5 @@ class ScriptDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public Script $model,
-    ) {
-    }
+    ) {}
 }

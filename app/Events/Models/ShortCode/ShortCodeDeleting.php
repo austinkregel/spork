@@ -11,6 +11,5 @@ class ShortCodeDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public ShortCode $model,
-    ) {
-    }
+    ) {}
 }

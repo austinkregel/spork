@@ -19,10 +19,11 @@ jobs:
           touch storage/logs/crontab.log
           touch storage/logs/horizon.log
           touch database/database.sqlite
-          npm install
           cp .env.ci .env
+          docker run --rm --pull=always -v "$(pwd)":/var/www/html -w /var/www/html austinkregel/base:latest bash -c "composer install"
           ./bin/sail up -d
-          npm run build
+          ./bin/sail npm install
+          ./bin/sail npm run build
       - name: Run tests
         run: |
           ./bin/sail art key:generate

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Messages;
 
-use App\Models\Message;
+use App\Models\Email;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MailOwnerRequest extends FormRequest
@@ -12,7 +12,7 @@ class MailOwnerRequest extends FormRequest
     public function authorize(): bool
     {
         $messageId = $this->get('id');
-        $message = Message::findOrFail($messageId);
+        $message = Email::findOrFail($messageId);
 
         return $this->user()->credentials()->where('id', $message->credential_id)->exists();
     }

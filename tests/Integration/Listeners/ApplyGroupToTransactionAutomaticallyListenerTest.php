@@ -19,7 +19,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testHandleSuccess(): void
+    public function test_handle_success(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -41,7 +41,9 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
             'name' => 'bill',
         ]);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction();
+        $handler = new ApplyUserAutomatedTagsToTransaction(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
@@ -50,7 +52,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame($tag->id, $tags->first()->id);
     }
 
-    public function testHandleSuccessNotApplyBecauseTransactionIsFilteredOut(): void
+    public function test_handle_success_not_apply_because_transaction_is_filtered_out(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -78,7 +80,18 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
             'value' => $transaction->name,
         ]);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction();
+        $handler = new ApplyUserAutomatedTagsToTransaction(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
+        $logger->shouldReceive('info')
+            ->once()
+            ->with(
+                'Condition: transaction.name NOT_EQUAL '.$transaction->name,
+                [
+                    'passes_condition' => false,
+                    'value' => $transaction->name,
+                ]
+            );
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
@@ -86,7 +99,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertCount(0, $tags);
     }
 
-    public function testHandleSuccessNotApplyBecauseTransactionIsNotGettingDoubleTagged(): void
+    public function test_handle_success_not_apply_because_transaction_is_not_getting_double_tagged(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -118,7 +131,19 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $tags = $transaction->tags()->get();
         $this->assertCount(1, $tags);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction();
+        $handler = new ApplyUserAutomatedTagsToTransaction(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
+
+        $logger->shouldReceive('info')
+            ->once()
+            ->with(
+                'Condition: transaction.name EQUALS '.$transaction->name,
+                [
+                    'passes_condition' => true,
+                    'value' => $transaction->name,
+                ]
+            );
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
@@ -127,7 +152,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame($tag->id, $tags->first()->id);
     }
 
-    public function testHandleSuccessLastAttachTag(): void
+    public function test_handle_success_last_attach_tag(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -157,7 +182,19 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
 
         $transaction->tags()->attach($tag->id);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction();
+        $handler = new ApplyUserAutomatedTagsToTransaction(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
+
+        $logger->shouldReceive('info')
+            ->once()
+            ->with(
+                'Condition: transaction.name EQUALS '.$transaction->name,
+                [
+                    'passes_condition' => true,
+                    'value' => $transaction->name,
+                ]
+            );
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
@@ -166,7 +203,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame($tag->id, $tags->first()->id);
     }
 
-    public function testHandleSuccessAttachTagWithRelationInConditional(): void
+    public function test_handle_success_attach_tag_with_relation_in_conditional(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -197,7 +234,18 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
             'value' => 'Business',
         ]);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction();
+        $handler = new ApplyUserAutomatedTagsToTransaction(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
+        $logger->shouldReceive('info')
+            ->once()
+            ->with(
+                'Condition: account.name LIKE Business',
+                [
+                    'passes_condition' => true,
+                    'value' => 'Business Account #3810',
+                ]
+            );
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
         $this->assertCount(1, $user->tags()->get());
@@ -206,7 +254,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame($tag->id, $tags->first()->id);
     }
 
-    public function testHandleSuccessAttachTagWhereAmountGreaterThan(): void
+    public function test_handle_success_attach_tag_where_amount_greater_than(): void
     {
         $user = User::factory()->create();
         $credential = Credential::factory()->create([
@@ -226,7 +274,69 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
             'amount' => 9.99,
         ]);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction();
+        $handler = new ApplyUserAutomatedTagsToTransaction(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.name LIKE netflix', [
+                'passes_condition' => true,
+                'value' => 'Netflix',
+            ]);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.name LIKE game store', [
+                'passes_condition' => false,
+                'value' => 'Netflix',
+            ]);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.category.name EQUALS Car Dealers and Leasing', [
+                'passes_condition' => false,
+                'value' => null,
+            ]);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.category.name EQUALS Government Departments and Agencies', [
+                'passes_condition' => false,
+                'value' => null,
+            ]);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.category.name EQUALS Fast Food', [
+                'passes_condition' => false,
+                'value' => null,
+            ]);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.name LIKE fee', [
+                'passes_condition' => false,
+                'value' => 'Netflix',
+            ]);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.name STARTS_WITH PWP*', [
+                'passes_condition' => false,
+                'value' => 'Netflix',
+            ]);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.name LIKE transfer', [
+                'passes_condition' => false,
+                'value' => 'Netflix',
+            ]);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.amount GREATER_THAN 0', [
+                'passes_condition' => false,
+                'value' => 9.99,
+            ]);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.amount LESS_THAN 0', [
+                'passes_condition' => true,
+                'value' => 9.99,
+            ]);
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 
@@ -236,7 +346,7 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $this->assertSame('debit/expense', $tags->last()->name);
     }
 
-    public function testHandleSuccessAttachTagWithAllConditionsPassSetToFalse(): void
+    public function test_handle_success_attach_tag_with_all_conditions_pass_set_to_false(): void
     {
         $user = User::factory()->createQuietly();
         $credential = Credential::factory()->create([
@@ -272,7 +382,18 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
             'value' => 'Netflix',
         ]);
 
-        $handler = new ApplyUserAutomatedTagsToTransaction();
+        $handler = new ApplyUserAutomatedTagsToTransaction(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
+        $logger->shouldReceive('info')
+            ->once()
+            ->with(
+                'Condition: transaction.name LIKE Netflix',
+                [
+                    'passes_condition' => true,
+                    'value' => 'Netflix',
+                ]
+            );
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 

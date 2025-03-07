@@ -11,6 +11,5 @@ class TransactionDeleting extends AbstractLogicalEvent
 {
     public function __construct(
         public Transaction $model,
-    ) {
-    }
+    ) {}
 }

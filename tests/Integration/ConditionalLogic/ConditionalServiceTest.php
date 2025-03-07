@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Integration\ConditionalLogic;
 
-use App\Models\User;
+use App\Models\Tag;
 use App\Services\ConditionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,70 +13,78 @@ class ConditionalServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testWeShowLoginRouteWhenUnauthenticated(): void
+    public function test_if_no_conditions_will_pass(): void
     {
-        $service = new ConditionService();
+        $service = new ConditionService(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
 
-        $navigation = $service->navigation();
+        $tag = Tag::factory()->create([
+            'name' => [
+                'en' => 'test',
+            ],
+        ]);
 
-        $this->assertCount(1, $navigation);
-
-        $items = $navigation->toArray();
-
-        $this->assertCount(1, $items);
-
-        $login = $items[0];
-
-        $this->assertSame('Login', $login['name']);
-        $this->assertSame('/login', $login['href']);
+        $this->assertTrue($service->process($tag, ['name' => 'test']));
     }
 
-    public function testWeShowDashboardRoutesWhenLoggedIn(): void
+    public function test_will_be_falsy_with_false_condition(): void
     {
-        $service = new ConditionService();
-        $user = User::factory()->create();
-        auth()->login($user);
+        $service = new ConditionService(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
 
-        $navigation = $service->navigation();
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.name EQUALS test', [
+                'passes_condition' => false,
+                'value' => null,
+            ]);
 
-        $items = $navigation->toArray();
+        $tag = Tag::factory()->create([
+            'name' => [
+                'en' => 'test',
+            ],
+        ]);
 
-        //        $this->assertCount(8, $items);
+        $tag->conditions()->create([
+            'parameter' => 'transaction.name',
+            'comparator' => 'EQUALS',
+            'value' => 'test',
+        ]);
 
-        $this->assertSame([
-            0 => 'Dashboard',
-            1 => 'Projects',
-            2 => 'Banking',
-            3 => 'CRUD',
-            5 => 'Tags',
-            6 => 'Email',
-            7 => 'Settings',
-        ], array_map(fn ($item) => $item['name'], $items));
+        $this->assertFalse($service->process($tag, ['name' => 'test']));
     }
 
-    public function testWeShowLogicRouteWhenLoggedInAndLocal(): void
+    public function test_will_be_falsy_with_false_condition_but_when_data_is_set_we_log_value_correctly(): void
     {
-        config(['app.env' => 'local']);
+        $service = new ConditionService(
+            $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
+        );
 
-        $service = new ConditionService();
-        $user = User::factory()->create();
-        auth()->login($user);
+        $logger->shouldReceive('info')
+            ->once()
+            ->with('Condition: transaction.name EQUALS test', [
+                'passes_condition' => false,
+                'value' => 'Netflix',
+            ]);
 
-        $navigation = $service->navigation();
+        $tag = Tag::factory()->create([
+            'name' => [
+                'en' => 'test',
+            ],
+        ]);
 
-        $items = $navigation->toArray();
+        $tag->conditions()->create([
+            'parameter' => 'transaction.name',
+            'comparator' => 'EQUALS',
+            'value' => 'test',
+        ]);
 
-        $this->assertCount(8, $items);
-
-        $this->assertSame([
-            0 => 'Dashboard',
-            1 => 'Projects',
-            2 => 'Banking',
-            3 => 'CRUD',
-            4 => 'Logic',
-            5 => 'Tags',
-            6 => 'Email',
-            7 => 'Settings',
-        ], array_map(fn ($item) => $item['name'], $items));
+        $this->assertFalse($service->process($tag, [
+            'transaction' => [
+                'name' => 'Netflix',
+            ],
+        ]));
     }
 }

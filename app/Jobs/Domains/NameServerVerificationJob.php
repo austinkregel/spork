@@ -24,8 +24,7 @@ class NameServerVerificationJob implements ShouldQueue
         public string $host,
         public array $expectedServers,
         public bool $relaunchDnsCheckAfterDelay = false,
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the job.
@@ -37,7 +36,7 @@ class NameServerVerificationJob implements ShouldQueue
         $diff1 = array_diff($value, $this->expectedServers);
         $diff2 = array_diff($this->expectedServers, $value);
 
-        // The Name Servers should be whatever cloudflare tells us they should be.
+        // The Name Infrastructure should be whatever cloudflare tells us they should be.
         // We want to ensure that only the records from cloudflare are used.
         if ($this->relaunchDnsCheckAfterDelay && (! empty($diff1) || ! empty($diff2))) {
             dispatch(new static($this->host, $this->expectedServers))->delay(5 * 60);

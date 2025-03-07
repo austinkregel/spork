@@ -11,6 +11,5 @@ class ScriptUpdating extends AbstractLogicalEvent
 {
     public function __construct(
         public Script $model,
-    ) {
-    }
+    ) {}
 }

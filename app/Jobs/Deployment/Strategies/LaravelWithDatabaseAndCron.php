@@ -28,8 +28,7 @@ class LaravelWithDatabaseAndCron implements ShouldQueue
         protected string $domain,
         protected int $server,
         protected Credential $credential
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the job.
