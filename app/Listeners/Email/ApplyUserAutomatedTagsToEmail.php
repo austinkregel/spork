@@ -12,13 +12,16 @@ use App\Models\Finance\Transaction;
 use App\Models\Tag;
 use App\Services\ConditionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Psr\Log\LoggerInterface;
 
 class ApplyUserAutomatedTagsToEmail implements ShouldQueue
 {
     /**
      * Create the event listener.
      */
-    public function __construct()
+    public function __construct(
+        protected LoggerInterface $logger,
+    )
     {
     }
 
@@ -40,9 +43,14 @@ class ApplyUserAutomatedTagsToEmail implements ShouldQueue
             return;
         }
 
-        $tags = $user->tags()->with('conditions')->whereIn('type', ['automatic', 'info'])->get();
+        $tags = $user->tags()
+            ->with('conditions')
+            ->whereHas('conditions')
+            ->get();
 
-        $conditionService = new ConditionService();
+        $conditionService = new ConditionService(
+            $this->logger,
+        );
 
         $tagsToApply = $tags->filter(fn (Tag $tag) => $conditionService->process($tag, [
             'email' => $email,

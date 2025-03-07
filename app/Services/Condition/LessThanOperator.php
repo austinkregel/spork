@@ -33,7 +33,8 @@ class LessThanOperator extends AbstractLogicalOperator
         }
 
         if (is_null($valueFromParameter)) {
-            dd($valueFromCondition, $valueFromParameter);
+            // Can a value be less than null?
+            return false;
         }
 
         if (! is_numeric($valueFromParameter)) {

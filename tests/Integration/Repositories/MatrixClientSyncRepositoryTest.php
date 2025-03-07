@@ -2,6 +2,8 @@
 
 namespace Integration\Repositories;
 
+use App\Events\Models\User\UserCreated;
+use App\Listeners\CreatePersonForNewUserListener;
 use App\Models\Credential;
 use App\Models\Person;
 use App\Models\User;
@@ -488,12 +490,13 @@ class MatrixClientSyncRepositoryTest extends TestCase
             ]
         ), true);
 
+        $user = User::factory()->create();
         /** @var Credential $credential */
         $credential = Credential::factory()->create([
-            'user_id' => User::factory()->create()->id,
+            'user_id' => $user->id,
         ]);
-        $user = $credential->user;
-        $person = $user->person();
+
+        $person = $user->person;
         $person->identifiers = ['@test:fake.tools'];
         $person->save();
 

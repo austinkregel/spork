@@ -19,7 +19,7 @@ class InboxController
             ->whereHas('credential', function ($query) {
                 $query->where('user_id', auth()->id());
             })
-            ->with('from', 'to')
+            ->with(['from', 'to', 'tags'])
             ->orderByDesc('sent_at')
             ->paginate();
 

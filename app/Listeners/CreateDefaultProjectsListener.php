@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Listeners;
 
 use App\Events\Models\User\UserCreated;
+use App\Models\Project;
 
 class CreateDefaultProjectsListener
 {
@@ -26,10 +27,10 @@ class CreateDefaultProjectsListener
         $user = $userEvent->model;
 
         foreach (static::DEFAULT_PROJECT_NAMES as $name) {
-            $user->projects()->create([
+            /** @var Project $project */
+            $project = $user->projects()->create([
                 'name' => $name,
                 'settings' => [],
-                'team_id' => $user->teams()->first()->id ?? 1,
             ]);
         }
     }

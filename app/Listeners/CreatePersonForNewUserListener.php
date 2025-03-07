@@ -16,6 +16,7 @@ class CreatePersonForNewUserListener
         $person->user_id = $user->id;
         $person->name = $user->name;
         $person->emails = [$user->email];
+        $person->primary_email = $user->email;
         $person->names = [$user->name];
         $person->save();
     }

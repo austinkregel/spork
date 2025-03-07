@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Features\Automatic\ServerLinking;
 use App\Models\Credential;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Pennant\Feature;
 use Tests\TestCase;
 
 class ServerApiTest extends TestCase
@@ -36,7 +34,6 @@ class ServerApiTest extends TestCase
     }
     public function testServerCreateSuccessful()
     {
-        Feature::activateForEveryone(ServerLinking::class);
         $user = $this->createUserWithPermissions([
             'create_server',
         ]);

@@ -38,11 +38,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $navigation = cache()->remember('navigation-for-'.$request->user()?->id, now()->addDay(), fn () => (new ConditionService)->navigation());
-
         return array_merge(parent::share($request), [
-            'navigation' => $navigation,
-            'current_navigation' => $navigation->flatten(1)->where('current', true)->first(),
             'unread_email_count' => 0,
             'notifications' => $request->user()
                     ?->notifications()

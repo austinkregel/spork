@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Http\Controllers;
+namespace Tests\Feature\Http\Controllers;
 
 use App;
 use App\Models\Project;
@@ -23,7 +23,7 @@ class CrudControllerTest extends TestCase
             Role::create(['name' => 'developer']);
         }
 
-        $this->actingAs($this->user = App\Models\User::factory()->withPersonalTeam()->create());
+        $this->actingAs($this->user = App\Models\User::factory()->create());
         $this->user->assignRole('developer');
 
         return $this->user;
@@ -34,7 +34,11 @@ class CrudControllerTest extends TestCase
         $this->actingAsUser();
         Project::factory()->create([
             'name' => 'github@austinkregel.com',
-            'team_id' => $this->user->currentTeam->id,
+        ]);
+
+        $this->user->permissions()->create([
+            'name' => 'view_any_project',
+            'guard_name' => 'web',
         ]);
         $response = $this->get('http://spork.localhost/api/crud/projects');
 
@@ -46,12 +50,14 @@ class CrudControllerTest extends TestCase
         $this->actingAsUser();
         Project::factory()->create([
             'name' => 'github@austinkregel.com',
-            'team_id' => $this->user->currentTeam->id,
+        ]);
+        $this->user->permissions()->create([
+            'name' => 'create_project',
+            'guard_name' => 'web',
         ]);
         $response = $this
             ->post('http://spork.localhost/api/crud/projects', [
                 'name' => 'Austin',
-                'team_id' => $this->user->currentTeam->id,
             ]);
 
         $response->assertStatus(201);
@@ -64,6 +70,10 @@ class CrudControllerTest extends TestCase
             'name' => 'github@austinkregel.com',
         ]);
 
+        $this->user->permissions()->create([
+            'name' => 'update_project.'.$project->id,
+            'guard_name' => 'web',
+        ]);
         $response = $this
             ->put('http://spork.localhost/api/crud/projects/'.$project->id, [
                 'name' => 'Austin Kregel',
@@ -81,6 +91,10 @@ class CrudControllerTest extends TestCase
             'name' => 'github@austinkregel.com',
         ]);
 
+        $this->user->permissions()->create([
+            'name' => 'update_project.'.$project->id,
+            'guard_name' => 'web',
+        ]);
         $response = $this
             ->patch('http://spork.localhost/api/crud/projects/'.$project->id, [
                 'name' => 'Austin Kregel',
@@ -98,7 +112,10 @@ class CrudControllerTest extends TestCase
             'name' => 'github@austinkregel.com',
         ]);
         $project2 = Project::factory()->create();
-
+        $this->user->permissions()->create([
+            'name' => 'delete_project.'.$project2->id,
+            'guard_name' => 'web',
+        ]);
         $response = $this
             ->delete('http://spork.localhost/api/crud/projects/'.$project2->id);
 
@@ -112,12 +129,11 @@ class CrudControllerTest extends TestCase
         $this->actingAsUser();
         $project = Project::factory()->create([
             'name' => 'github@austinkregel.com',
-            'team_id' => $this->user->currentTeam->id,
         ]);
 
         $this->user->permissions()->create([
-            'name' => 'view_project',
-            'guard_name' => 'verified',
+            'name' => 'view_project.'.$project->id,
+            'guard_name' => 'web',
         ]);
 
         $response = $this

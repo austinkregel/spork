@@ -144,7 +144,7 @@ class User extends Authenticatable implements ModelQuery, Taggable
 
     public function person()
     {
-        return $this->belongsTo(Person::class, 'email', 'primary_email');
+        return $this->hasOne(Person::class);
     }
 
     public function budgets()

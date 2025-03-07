@@ -43,6 +43,7 @@ class Initialize extends Command
         chmod($publicKeyFile, 0600);
         file_put_contents($privateKeyFile, $privateKey);
         chmod($privateKeyFile, 0600);
+
         /** @var User $user */
         $user = User::first();
 
@@ -76,13 +77,13 @@ class Initialize extends Command
             'view_any_',
             'delete_any_',
         ];
-
-        foreach ($crud->files as $classCrudInstance) {
-            foreach ($permissions as $permission) {
-                $role->permissions()->create([
-                    'name' => $permission.(new $classCrudInstance)->getTable(),
-                ]);
-            }
-        }
+//
+//        foreach ($crud->files as $classCrudInstance) {
+//            foreach ($permissions as $permission) {
+//                $role->permissions()->create([
+//                    'name' => $permission.(new $classCrudInstance)->getTable(),
+//                ]);
+//            }
+//        }
     }
 }

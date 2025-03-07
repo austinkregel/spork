@@ -32,9 +32,7 @@ class AbstractRequest extends FormRequest
         /** @var User $user */
         $user = auth()->user();
 
-        $permissions = $user->getAllPermissions()->map(fn ($permission) => $permission->name);
-
-        return $permissions->contains('view_any_'.$singular);
+        return $user->hasPermissionTo('view_any_'.$singular);
     }
 
     /**
