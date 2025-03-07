@@ -14,6 +14,12 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
+    if (\Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures()) {
+        Route::delete('/user', [\Laravel\Jetstream\Http\Controllers\Inertia\CurrentUserController::class, 'destroy'])
+            ->name('current-user.destroy');
+    }
+
     $instances = LaravelProgrammingStyle::instancesOf(CustomAction::class);
 
     foreach ($instances->constructorProperty('slug') as $file => $classAndSlug) {
@@ -78,7 +84,6 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
 
     Route::get('/servers', [Controllers\Spork\ServersController::class, 'index'])->name('servers.show');
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
-    Route::get('/domains', [Controllers\Spork\DomainsController::class, '__invoke'])->name('domains.show');
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
     Route::post('deployment/{deployment}/detach', [Controllers\Spork\DeploymentController::class, 'detach'])->name('deployment.detach');
