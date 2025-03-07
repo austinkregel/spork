@@ -20,3 +20,9 @@ yarn-error.log
 /*.log
 /*.pid
 storage/*.bin
+public/css/
+public/js/
+public/vendor/
+storage/debugbar/
+storage/meta/
+storage/zerotier/
