@@ -30,7 +30,7 @@ services:
 
     mariadb:
         container_name: mariadb
-        image: 'mariadb:10'
+        image: 'mariadb:11'
         environment:
             MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
             MYSQL_ROOT_HOST: '%'
