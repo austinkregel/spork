@@ -9,7 +9,7 @@ if [ ! -f vendor/bin/sail ]; then
         --pull=always \
         -v "$(pwd)":/var/www/html \
         -w /var/www/html \
-        austinkregel/base:latest \
+        ghcr.io/austinkregel/base:8.2 \
         bash -c "composer install"
 fi
 
