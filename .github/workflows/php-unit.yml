@@ -48,6 +48,13 @@ jobs:
           touch database/database.sqlite
           cp .env.ci .env
           ./bin/sail up -d
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
       - name: Run tests
         run: |
           ./bin/sail art key:generate
