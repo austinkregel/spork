@@ -29,6 +29,6 @@ jobs:
         with:
           context: ./docker/base
           push: true
-          tags: austinkregel/base:${{ matrix.php_version }}-${{ github.sha }}
+          tags: austinkregel/base:${{ matrix.php_version }}
           build-args: |
             PHP_VERSION: ${{ matrix.php_version }}
