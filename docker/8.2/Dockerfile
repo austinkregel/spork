@@ -5,7 +5,7 @@ ADD . /var/www/html
 
 RUN apt update && apt install --fix-missing
 # For Meta data/media information spelunking.
-RUN apt install mediainfo ffmpeg cron screen -y
+RUN apt install cron -y
 
 COPY basecron /etc/cron.d/basecron
 # Give execution rights on the cron job
