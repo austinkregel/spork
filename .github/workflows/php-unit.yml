@@ -12,6 +12,27 @@ jobs:
         run: |
           git submodule init
           git submodule update --remote --merge
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /var/lib/docker
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+      - name: Cache npm packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      - name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
       - name: Install dependencies
         run: |
           sudo apt update && sudo apt remove mysql* -y
