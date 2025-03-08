@@ -9,6 +9,8 @@ use App\Events\Models\Budget\BudgetOverspent;
 use App\Listeners\Finance\CheckBudgetOverspend;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
+use App\Models\Finance\Account;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -66,8 +68,11 @@ class CheckBudgetOverspendTest extends TestCase
     {
         Event::fake([BudgetOverspent::class]);
 
-        $budget = Budget::factory()->create(['amount' => 100]);
-        $transaction = Transaction::factory()->create(['amount' => 150]);
+        $user = User::factory()->create();
+        $credential = Credential::factory()->create(['user_id' => $user->id]);
+        $account = Account::factory()->create(['credential_id' => $credential->id]);
+        $budget = Budget::factory()->create(['amount' => 100, 'user_id' => $user->id]);
+        $transaction = Transaction::factory()->create(['amount' => 150, 'account_id' => $account->id]);
         $transaction->tags()->attach($budget->tags->pluck('id')->toArray());
 
         $event = new TransactionCreated($transaction);
