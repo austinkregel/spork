@@ -28,7 +28,7 @@ RUN apt-get update \
 
 RUN apt-get install -y php${PHP_VERSION}-cli php${PHP_VERSION}-dev \
        php${PHP_VERSION}-sqlite3 php${PHP_VERSION}-gd php${PHP_VERSION}-imagick \
-       php${PHP_VERSION}-curl \
+       php${PHP_VERSION}-curl php${PHP_VERSION}-dom php${PHP_VERSION}-tokenizer \
        php${PHP_VERSION}-xml php${PHP_VERSION}-zip php${PHP_VERSION}-bcmath php${PHP_VERSION}-soap \
        php${PHP_VERSION}-intl php${PHP_VERSION}-readline \
        php${PHP_VERSION}-ldap php${PHP_VERSION}-ssh2 \
