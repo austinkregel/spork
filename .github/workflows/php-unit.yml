@@ -28,8 +28,6 @@ jobs:
           touch database/database.sqlite
           cp .env.ci .env
           ./bin/sail up -d
-          ./bin/sail npm install
-          ./bin/sail npm run build
       - name: Run tests
         run: |
           ./bin/sail art key:generate
