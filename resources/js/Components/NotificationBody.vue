@@ -1,8 +1,9 @@
 <script setup>
 import { computed } from 'vue'
 import { NewspaperIcon } from "@heroicons/vue/20/solid";
-import moment from "moment-timezone";
 import {router} from "@inertiajs/vue3";
+import dayjs from "dayjs";
+
 const { notification } = defineProps({
   notification: Object
 })
@@ -12,7 +13,7 @@ const notificationText = computed(() => {
 })
 
 const date = computed(() => {
-  return moment(notification.created_at).format("YYYY-MM-DD")
+  return dayjs(notification.created_at).format("YYYY-MM-DD")
 })
 
 const markAsRead = () => {
