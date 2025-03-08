@@ -1,4 +1,4 @@
-FROM austinkregel/base:latest
+FROM ghcr.io/austinkregel/base:8.2
 
 WORKDIR /var/www/html
 ADD . /var/www/html
