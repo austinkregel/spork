@@ -2,11 +2,11 @@ FROM ubuntu:24.04
 
 # Thanks to the Laravel team for Laravel Sail, which this is all based on.
 LABEL maintainer="Austin Kregel"
-ARG WWWGROUP=1000
 ARG NODE_VERSION=20
 ARG POSTGRES_VERSION=15
 ARG PHP_VERSION=8.2
 ENV PHP_VERSION=${PHP_VERSION:-8.2}
+ARG WWWGROUP
 
 WORKDIR /var/www/html
 
@@ -14,6 +14,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TZ=UTC
 ENV SUPERVISOR_PHP_COMMAND="/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan serve --host=0.0.0.0 --port=80"
 ENV SUPERVISOR_PHP_USER="sail"
+ENV WWWGROUP=${WWWGROUP:-1000}
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
