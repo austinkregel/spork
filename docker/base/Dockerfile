@@ -2,7 +2,7 @@ FROM ubuntu:24.04
 
 # Thanks to the Laravel team for Laravel Sail, which this is all based on.
 LABEL maintainer="Austin Kregel"
-ARG WWWGROUP
+ARG WWWGROUP=1000
 ARG NODE_VERSION=20
 ARG POSTGRES_VERSION=15
 ARG PHP_VERSION=8.2
