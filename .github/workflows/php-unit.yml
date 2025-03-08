@@ -42,7 +42,6 @@ jobs:
             ${{ runner.os }}-composer-
       - name: Install dependencies
         run: |
-          sudo apt update && sudo apt remove mysql* -y
           touch storage/logs/laravel.log
           touch storage/logs/crontab.log
           touch storage/logs/horizon.log
