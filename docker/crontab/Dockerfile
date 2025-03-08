@@ -1,4 +1,4 @@
-FROM austinkregel/base:latest
+FROM ghcr.io/austinkregel/base:latest
 
 COPY php.ini /etc/php/8.2/cli/conf.d/99-sail.ini
 
