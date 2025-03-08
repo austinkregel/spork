@@ -1,7 +1,6 @@
 <script setup>
 import {Head, Link, router} from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import FileOrFolder from "@/old-spork/Development/FileOrFolder.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
 import SporkSelect from "@/Components/Spork/SporkSelect.vue";
