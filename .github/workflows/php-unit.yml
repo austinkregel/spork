@@ -19,11 +19,15 @@ jobs:
         run: |
           git submodule init
           git submodule update --remote --merge
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
           path: /var/lib/docker
-          key: ${{ runner.os }}-docker-${{ github.sha }}
+          key: ${{ runner.os }}-docker-${{ steps.extract_branch.outputs.branch }}
           restore-keys: |
             ${{ runner.os }}-docker-
       - name: Cache npm packages
