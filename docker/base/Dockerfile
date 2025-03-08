@@ -33,7 +33,7 @@ RUN apt-get install -y php${PHP_VERSION}-cli php${PHP_VERSION}-dev \
        php${PHP_VERSION}-intl php${PHP_VERSION}-readline \
        php${PHP_VERSION}-ldap php${PHP_VERSION}-ssh2 \
        php${PHP_VERSION}-msgpack php${PHP_VERSION}-igbinary php${PHP_VERSION}-redis \
-       php${PHP_VERSION}-memcached php${PHP_VERSION}-pcov php${PHP_VERSION}-xdebug
+       php${PHP_VERSION}-memcached php${PHP_VERSION}-pcov php${PHP_VERSION}-xdebug php${PHP_VERSION}-imap
 
  RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
     && apt-get update \
