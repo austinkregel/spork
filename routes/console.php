@@ -15,6 +15,7 @@ Schedule::job(FetchResourcesFromCredentials::class)->hourly();
 Schedule::job(BuildSummaryNotificationJob::class)->dailyAt('13:00');
 Schedule::command('operations:queue')->everyFiveMinutes();
 Schedule::job(MatrixSyncJob::class)->everyFiveMinutes();
+Schedule::command('telescope:prune')->daily();
 
 Artisan::command('update:all-feeds', function () {
     UpdateAllFeeds::dispatch();
