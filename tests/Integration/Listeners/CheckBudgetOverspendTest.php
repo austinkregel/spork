@@ -7,13 +7,18 @@ namespace Tests\Integration\Listeners;
 use App\Events\Models\Transaction\TransactionCreated;
 use App\Events\Models\Budget\BudgetOverspent;
 use App\Listeners\Finance\CheckBudgetOverspend;
+use App\Models\Credential;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
 use App\Models\Finance\Account;
+use App\Models\Tag;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
+use function Symfony\Component\String\b;
 
 class CheckBudgetOverspendTest extends TestCase
 {
@@ -67,13 +72,33 @@ class CheckBudgetOverspendTest extends TestCase
     public function testFireBudgetOverspentEventIfBudgetIsOverspent()
     {
         Event::fake([BudgetOverspent::class]);
+        Carbon::setTestNow(
+            Carbon::parse('2025-01-20')
+        );
 
         $user = User::factory()->create();
+
+        $tag = Tag::factory()->create([
+            'name' => [
+                'en' => 'Food',
+            ],
+        ]);
         $credential = Credential::factory()->create(['user_id' => $user->id]);
         $account = Account::factory()->create(['credential_id' => $credential->id]);
-        $budget = Budget::factory()->create(['amount' => 100, 'user_id' => $user->id]);
-        $transaction = Transaction::factory()->create(['amount' => 150, 'account_id' => $account->id]);
-        $transaction->tags()->attach($budget->tags->pluck('id')->toArray());
+        $budget = Budget::factory()->create([
+            'amount' => 100,
+            'user_id' => $user->id,
+            'frequency' => 'monthly',
+            'started_at' => now()->subYears(5)->addMonths(3),
+            'interval' => 1,
+        ]);
+        $transaction = Transaction::factory()->create([
+            'date' => '2025-01-19',
+            'amount' => 150,
+            'account_id' => $account->account_id
+        ]);
+        $transaction->tags()->sync($tag->id);
+        $budget->tags()->sync($tag->id);
 
         $event = new TransactionCreated($transaction);
 

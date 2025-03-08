@@ -19,9 +19,12 @@ class CheckBudgetOverspend implements ShouldQueue
     public function handle(TransactionCreated $event): void
     {
         $transaction = $event->model;
+        $transaction->load(['account.credential.user', 'tags']);
 
         // Check if the transaction matches any defined budget
-        $budgets = Budget::where('user_id', $transaction->account->credential->user_id)->get();
+        $budgets = Budget::with('tags')
+            ->where('user_id', $transaction->account->credential->user_id)
+            ->get();
 
         foreach ($budgets as $budget) {
             $tags = $budget->tags->pluck('id')->toArray();
