@@ -31,7 +31,7 @@ RUN apt-get install -y php${PHP_VERSION}-cli php${PHP_VERSION}-dev \
        php${PHP_VERSION}-curl php${PHP_VERSION}-dom php${PHP_VERSION}-tokenizer \
        php${PHP_VERSION}-xml php${PHP_VERSION}-zip php${PHP_VERSION}-bcmath php${PHP_VERSION}-soap \
        php${PHP_VERSION}-intl php${PHP_VERSION}-readline \
-       php${PHP_VERSION}-ldap php${PHP_VERSION}-ssh2 \
+       php${PHP_VERSION}-ldap php${PHP_VERSION}-ssh2 php${PHP_VERSION}-mysql \
        php${PHP_VERSION}-msgpack php${PHP_VERSION}-igbinary php${PHP_VERSION}-redis \
        php${PHP_VERSION}-memcached php${PHP_VERSION}-pcov php${PHP_VERSION}-xdebug php${PHP_VERSION}-imap php${PHP_VERSION}-mbstring
 
