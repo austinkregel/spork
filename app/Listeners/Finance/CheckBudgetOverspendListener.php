@@ -11,7 +11,7 @@ use App\Models\Finance\Transaction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
 
-class CheckBudgetOverspend implements ShouldQueue
+class CheckBudgetOverspendListener implements ShouldQueue
 {
     /**
      * Handle the event.

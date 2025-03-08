@@ -6,7 +6,7 @@ namespace Tests\Integration\Listeners;
 
 use App\Events\Models\Transaction\TransactionCreated;
 use App\Events\Models\Budget\BudgetOverspentEvent;
-use App\Listeners\Finance\CheckBudgetOverspend;
+use App\Listeners\Finance\CheckBudgetOverspendListener;
 use App\Models\Credential;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
@@ -31,7 +31,7 @@ class CheckBudgetOverspendTest extends TestCase
         $transaction = Transaction::factory()->create();
         $event = new TransactionCreated($transaction);
 
-        $listener = new CheckBudgetOverspend();
+        $listener = new CheckBudgetOverspendListener();
         $listener->handle($event);
 
         Event::assertNotDispatched(BudgetOverspentEvent::class);
@@ -47,7 +47,7 @@ class CheckBudgetOverspendTest extends TestCase
 
         $event = new TransactionCreated($transaction);
 
-        $listener = new CheckBudgetOverspend();
+        $listener = new CheckBudgetOverspendListener();
         $listener->handle($event);
 
         Event::assertNotDispatched(BudgetOverspentEvent::class);
@@ -63,7 +63,7 @@ class CheckBudgetOverspendTest extends TestCase
 
         $event = new TransactionCreated($transaction);
 
-        $listener = new CheckBudgetOverspend();
+        $listener = new CheckBudgetOverspendListener();
         $listener->handle($event);
 
         Event::assertNotDispatched(BudgetOverspentEvent::class);
@@ -102,7 +102,7 @@ class CheckBudgetOverspendTest extends TestCase
 
         $event = new TransactionCreated($transaction);
 
-        $listener = new CheckBudgetOverspend();
+        $listener = new CheckBudgetOverspendListener();
         $listener->handle($event);
 
         Event::assertDispatched(BudgetOverspentEvent::class);
