@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Listeners\Finance;
 
 use App\Events\Models\Transaction\TransactionCreated;
-use App\Events\Models\Budget\BudgetOverspent;
+use App\Events\Models\Budget\BudgetOverspentEvent;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -42,7 +42,7 @@ class CheckBudgetOverspend implements ShouldQueue
 
                 // Fire the BudgetOverspent event if the budget is overspent
                 if ($spendAmount > $budget->amount) {
-                    event(new BudgetOverspent($budget, $transaction));
+                    event(new BudgetOverspentEvent($budget, $transaction));
                 }
             }
         }

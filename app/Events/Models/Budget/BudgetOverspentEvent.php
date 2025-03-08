@@ -7,7 +7,7 @@ namespace App\Events\Models\Budget;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
 
-class BudgetOverspent
+class BudgetOverspentEvent
 {
     public Budget $budget;
     public Transaction $transaction;
