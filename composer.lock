@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b413d9218548d95b13061f419f581ff",
+    "content-hash": "b3da8059cfdc6b0198e26c71647794a0",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -9176,32 +9176,32 @@
         },
         {
             "name": "spatie/laravel-query-builder",
-            "version": "5.8.1",
+            "version": "6.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-query-builder.git",
-                "reference": "caa8467fa9e127ba7ea9e0aac93c71324365bae2"
+                "reference": "465d9b7364590c9ae3ee3738ff8a293e685dd588"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-query-builder/zipball/caa8467fa9e127ba7ea9e0aac93c71324365bae2",
-                "reference": "caa8467fa9e127ba7ea9e0aac93c71324365bae2",
+                "url": "https://api.github.com/repos/spatie/laravel-query-builder/zipball/465d9b7364590c9ae3ee3738ff8a293e685dd588",
+                "reference": "465d9b7364590c9ae3ee3738ff8a293e685dd588",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "^10.0|^11.0",
-                "illuminate/http": "^10.0|^11.0",
-                "illuminate/support": "^10.0|^11.0",
+                "illuminate/database": "^10.0|^11.0|^12.0",
+                "illuminate/http": "^10.0|^11.0|^12.0",
+                "illuminate/support": "^10.0|^11.0|^12.0",
                 "php": "^8.2",
                 "spatie/laravel-package-tools": "^1.11"
             },
             "require-dev": {
                 "ext-json": "*",
                 "mockery/mockery": "^1.4",
-                "orchestra/testbench": "^7.0|^8.0",
-                "pestphp/pest": "^2.0",
-                "spatie/invade": "^2.0",
-                "spatie/laravel-ray": "^1.28"
+                "orchestra/testbench": "^7.0|^8.0|^10.0",
+                "pestphp/pest": "^2.0|^3.7",
+                "phpunit/phpunit": "^10.0|^11.5.3",
+                "spatie/invade": "^2.0"
             },
             "type": "library",
             "extra": {
@@ -9245,7 +9245,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2024-05-10T08:19:35+00:00"
+            "time": "2025-02-19T07:14:53+00:00"
         },
         {
             "name": "spatie/laravel-tags",
@@ -15119,5 +15119,5 @@
         "ext-ssh2": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
