@@ -14,6 +14,10 @@ class LessThanOperator extends AbstractLogicalOperator
             return false;
         }
 
+        if (is_numeric($valueFromCondition) && is_numeric($valueFromParameter)) {
+            return $valueFromCondition < $valueFromParameter;
+        }
+
         if (is_string($valueFromCondition) && is_string($valueFromParameter)) {
             if (strtotime($valueFromCondition) && strtotime($valueFromParameter)) {
                 // we're dealing with a date, or date time.
