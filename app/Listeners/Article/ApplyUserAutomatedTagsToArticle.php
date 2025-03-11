@@ -39,10 +39,7 @@ class ApplyUserAutomatedTagsToArticle implements ShouldQueue
             return;
         }
 
-        $tags = $user->tags()
-            ->with('conditions')
-            ->whereHas('conditions')
-            ->get();
+        $tags = $user->tags()->with('conditions')->where('type', 'automatic')->get();
 
         $conditionService = new ConditionService($this->logger);
 
