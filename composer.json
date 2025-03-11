@@ -48,7 +48,7 @@
         "spatie/laravel-feed": "^4.4",
         "spatie/laravel-ignition": "^2.4",
         "spatie/laravel-permission": "^6.2",
-        "spatie/laravel-query-builder": "^5.8",
+        "spatie/laravel-query-builder": "^6.3",
         "spatie/laravel-tags": "^4.6",
         "staudenmeir/eloquent-json-relations": "^1.11",
         "tightenco/ziggy": "^2.0",
