@@ -27,7 +27,7 @@
         "@kbco/query-builder": "^0.0.4",
         "@meforma/vue-toaster": "^1.3.0",
         "dayjs": "^1.11.9",
-        "drawflow": "^0.0.59",
+        "drawflow": "^0.0.60",
         "highlight.js": "^11.10.0",
         "highlightjs-vue": "^1.0.0",
         "node-html-parser": "^6.1.13",
