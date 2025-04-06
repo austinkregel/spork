@@ -2555,16 +2555,16 @@
         },
         {
             "name": "laravel/forge-sdk",
-            "version": "v3.21.1",
+            "version": "v3.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/forge-sdk.git",
-                "reference": "ed8f4f707b3fbfd2420f552214c760ba46369240"
+                "reference": "cd528208efaea42e1083696a2c08df3b4b4c61eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/forge-sdk/zipball/ed8f4f707b3fbfd2420f552214c760ba46369240",
-                "reference": "ed8f4f707b3fbfd2420f552214c760ba46369240",
+                "url": "https://api.github.com/repos/laravel/forge-sdk/zipball/cd528208efaea42e1083696a2c08df3b4b4c61eb",
+                "reference": "cd528208efaea42e1083696a2c08df3b4b4c61eb",
                 "shasum": ""
             },
             "require": {
@@ -2625,7 +2625,7 @@
                 "issues": "https://github.com/laravel/forge-sdk/issues",
                 "source": "https://github.com/laravel/forge-sdk"
             },
-            "time": "2025-01-24T12:08:19+00:00"
+            "time": "2025-03-30T09:22:15+00:00"
         },
         {
             "name": "laravel/fortify",
