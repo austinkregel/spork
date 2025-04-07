@@ -22,7 +22,6 @@
         "inertiajs/inertia-laravel": "^2.0",
         "kregel/exception-probe": "^1.0",
         "kregel/laravel-flight": "^1.0",
-        "laravel/forge-sdk": "^3.13",
         "laravel/framework": "^11.7",
         "laravel/horizon": "^5.22",
         "laravel/jetstream": "^5.0",

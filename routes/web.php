@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 Route::redirect('/login', '/flight/login');
 
-Route::domain('pending.download')
+Route::domain('echo.kregel.dev')
 //    ->middleware('throttle:5')
     ->withoutMiddleware(['web'])
     ->group(base_path('routes/pages/deploy.php'));

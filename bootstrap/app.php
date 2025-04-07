@@ -30,6 +30,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->throttleApi();
         $middleware->statefulApi();
+        $middleware->alias([
+            'server_auth' => \App\Http\Middleware\ServerAccessable::class,
+        ]);
 
         $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, \App\Http\Middleware\TrustProxies::class);
     })

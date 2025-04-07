@@ -82,8 +82,15 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
 
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
 
-    Route::get('/servers', [Controllers\Spork\ServersController::class, 'index'])->name('servers.show');
+    Route::get('/servers', [Controllers\Spork\ServersController::class, 'index'])->name('servers.index');
     Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
+    Route::get('/servers/{server}/console', [Controllers\Spork\ServersController::class, 'console'])->name('servers.console');
+    Route::get('/servers/{server}/keys', [Controllers\Spork\ServersController::class, 'keys'])->name('servers.keys');
+    Route::get('/servers/{server}/workers', [Controllers\Spork\ServersController::class, 'workers'])->name('servers.workers');
+    Route::get('/servers/{server}/crontab', [Controllers\Spork\ServersController::class, 'crontab'])->name('servers.crontab');
+    Route::get('/servers/{server}/logs', [Controllers\Spork\ServersController::class, 'logs'])->name('servers.logs');
+
+
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
     Route::post('deployment/{deployment}/detach', [Controllers\Spork\DeploymentController::class, 'detach'])->name('deployment.detach');

@@ -44,7 +44,7 @@ final class ApplyUserTagToArticleTest extends TestCase
             'owner_type' => User::class,
         ]);
 
-        $article = Article::factory()->create([
+        $article = Article::factory()->createQuietly([
             'headline' => 'This is a news article',
             'author_id' => $externalRss->id,
             'author_type' => ExternalRssFeed::class,
@@ -102,7 +102,7 @@ final class ApplyUserTagToArticleTest extends TestCase
             'owner_type' => User::class,
         ]);
 
-        $article = Article::factory()->create([
+        $article = Article::factory()->createQuietly([
             'headline' => 'This is a news article',
             'content' => 'This is a new news article',
             'author_id' => $externalRss->id,
@@ -160,7 +160,7 @@ final class ApplyUserTagToArticleTest extends TestCase
             'owner_type' => User::class,
         ]);
 
-        $article = Article::factory()->create([
+        $article = Article::factory()->createQuietly([
             'headline' => 'This is a news article',
             'content' => 'This is a new news article',
             'author_id' => $externalRss->id,

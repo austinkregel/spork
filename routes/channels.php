@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Broadcast;
-
+use App\Models\User;
+use App\Models\Server;
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -26,3 +27,14 @@ Broadcast::channel('App.Models.Person.{id}', function ($user, $id) {
 Broadcast::channel('App.Models.Credential.{id}', function ($user, $id) {
     return ! empty($user->credentials()->firstWhere('id', $id));
 });
+Broadcast::channel('App.Models.Server.{id}', function (User|Server $user, $id) {
+    if (get_class($user) === Server::class) {
+        return $user->id === (int) $id;
+    }
+
+    return ! empty($user->servers()->firstWhere('servers.id', $id));
+},
+    [
+        'guards' => ['web', 'sanctum'],
+    ]
+);

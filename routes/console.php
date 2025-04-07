@@ -14,7 +14,7 @@ Schedule::job(UpdateAllFeeds::class)->everyFifteenMinutes();
 Schedule::job(FetchResourcesFromCredentials::class)->hourly();
 Schedule::job(BuildSummaryNotificationJob::class)->dailyAt('13:00');
 Schedule::command('operations:queue')->everyFiveMinutes();
-Schedule::job(MatrixSyncJob::class)->everyFiveMinutes();
+Schedule::job(MatrixSyncJob::class)->everyMinute();
 
 Artisan::command('update:all-feeds', function () {
     UpdateAllFeeds::dispatch();
@@ -29,7 +29,7 @@ Artisan::command('sync:jira-tickets', function () {
     SyncJiraTicketsJob::dispatch();
 })->describe('Sync Jira tickets');
 Artisan::command('sync:matrix', function () {
-    MatrixSyncJob::dispatch();
+    MatrixSyncJob::dispatchSync();
 })->describe('Sync Matrix');
 Artisan::command('sync:transaction-tags', function () {
     dispatch_sync(new \App\Jobs\SyncTagsWithTransactionsInDatabase);
