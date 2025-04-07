@@ -18,7 +18,6 @@ use App\Services\ActionFilter;
 use App\Services\Code;
 use App\Services\Development\DescribeTableService;
 use Exception;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Spatie\QueryBuilder\AllowedFilter as Filter;
@@ -26,7 +25,6 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class LocalAdminController extends Controller
 {
-    use AuthorizesRequests;
 
     public function fields(IndexRequest $request)
     {
