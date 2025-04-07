@@ -139,7 +139,7 @@ class DescribeTableService
                                 },
                             ], $field->Default ? [
                                 'value' => $field->Default,
-                        ] : [],
+                            ] : [],
                                 isset($possibleLimit) ? [
                                     'max-length' => $possibleLimit[0],
                                 ] : [],
@@ -150,7 +150,7 @@ class DescribeTableService
                 'required' => $mapField(array_filter($description, fn ($query) => $query->Null === 'NO' && $query->Extra !== 'auto_increment')),
             ], $model instanceof Taggable ? [
                 'tags' => Tag::query()->whereNull('type')->orWhere('type', Str::singular($model->getTable()))->get(),
-        ] : [],
+            ] : [],
                 auth()->check() ? [
                     'permissions' => [
                         'create' => auth()->user()->can('create_'.Str::singular($model->getTable())) || auth()->user()->hasRole('developer'),
