@@ -47,7 +47,7 @@ class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
     protected function casts(): array
     {
         return [
-            'name' => 'json'
+            'name' => 'json',
         ];
     }
 

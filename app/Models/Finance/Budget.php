@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Finance;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\Budget\BudgetCreated;
 use App\Events\Models\Budget\BudgetCreating;
 use App\Events\Models\Budget\BudgetDeleted;
@@ -18,6 +17,7 @@ use App\Models\Traits\ScopeRelativeSearch;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Tags\HasTags;
 
 class Budget extends Model implements Crud, Taggable

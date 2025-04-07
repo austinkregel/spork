@@ -40,7 +40,7 @@ class Thread extends Model implements Crud
     protected function casts(): array
     {
         return [
-            'settings' => 'json', 'origin_server_ts' => 'datetime'
+            'settings' => 'json', 'origin_server_ts' => 'datetime',
         ];
     }
 

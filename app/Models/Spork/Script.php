@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Spork;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Observers\ApplyCredentialsObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Events\Models\Script\ScriptCreated;
 use App\Events\Models\Script\ScriptCreating;
 use App\Events\Models\Script\ScriptDeleted;
@@ -17,8 +14,11 @@ use App\Models\Crud;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use App\Models\User;
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[ObservedBy([ApplyCredentialsObserver::class])]
 class Script extends Model implements Crud

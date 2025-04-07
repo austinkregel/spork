@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Observers\ApplyCredentialsObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Contracts\ModelQuery;
 use App\Events\Models\User\UserCreated;
 use App\Events\Models\User\UserCreating;
@@ -18,9 +15,12 @@ use App\Models\Finance\Account;
 use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;

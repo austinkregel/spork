@@ -25,7 +25,6 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class LocalAdminController extends Controller
 {
-
     public function fields(IndexRequest $request)
     {
         return response()->json((new DescribeTableService)->describe($this->getModel($request)));
