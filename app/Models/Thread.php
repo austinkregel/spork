@@ -26,8 +26,6 @@ class Thread extends Model implements Crud
 
     public $guarded = [];
 
-    public $casts = ['settings' => 'json', 'origin_server_ts' => 'datetime'];
-
     public $appends = ['human_timestamp'];
 
     public $dispatchesEvents = [
@@ -38,6 +36,13 @@ class Thread extends Model implements Crud
         'updating' => ThreadUpdating::class,
         'updated' => ThreadUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'settings' => 'json', 'origin_server_ts' => 'datetime'
+        ];
+    }
 
     public function messages(): HasMany
     {

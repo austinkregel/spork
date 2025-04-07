@@ -65,10 +65,13 @@ class Server extends Model implements Crud, ModelQuery, Taggable
         'updated' => ServerUpdated::class,
     ];
 
-    public $casts = [
-        'turned_off_at' => 'datetime',
-        'booted_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'turned_off_at' => 'datetime',
+            'booted_at' => 'datetime',
+        ];
+    }
 
     public function credential(): BelongsTo
     {

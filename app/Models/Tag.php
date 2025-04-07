@@ -35,8 +35,6 @@ class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
 
     public $fillable = ['name', 'slug', 'must_all_conditions_pass', 'type', 'order_column'];
 
-    public $casts = ['name' => 'json'];
-
     public $dispatchesEvents = [
         'created' => TagCreated::class,
         'creating' => TagCreating::class,
@@ -45,6 +43,13 @@ class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
         'updating' => TagUpdating::class,
         'updated' => TagUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'name' => 'json'
+        ];
+    }
 
     // all related models, regardless of type
     public function tagged(): Builder

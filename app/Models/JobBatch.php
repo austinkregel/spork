@@ -26,12 +26,15 @@ class JobBatch extends Model
         'finished_at',
     ];
 
-    protected $casts = [
-        'failed_job_ids' => 'json',
-    ];
-
     public $dispatchesEvents = [
         'created' => \App\Events\Models\JobBatch\JobBatchCreated::class,
         'updated' => \App\Events\Models\JobBatch\JobBatchUpdated::class,
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'failed_job_ids' => 'json',
+        ];
+    }
 }
