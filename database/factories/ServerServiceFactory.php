@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ServerServiceFactory extends Factory
 {
-    protected $model = ServerService::class;
-
     public function definition(): array
     {
         return [
