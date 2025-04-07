@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Page\PageCreated;
 use App\Events\Models\Page\PageCreating;
@@ -18,6 +20,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Page extends Model implements Crud, ModelQuery
 {
     use HasFactory;

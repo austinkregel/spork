@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Contracts\ModelQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Jetstream\Events\TeamCreated;
@@ -11,6 +13,7 @@ use Laravel\Jetstream\Events\TeamDeleted;
 use Laravel\Jetstream\Events\TeamUpdated;
 use Laravel\Jetstream\Team as JetstreamTeam;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Team extends JetstreamTeam implements ModelQuery
 {
     use HasFactory;

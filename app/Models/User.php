@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Contracts\ModelQuery;
 use App\Events\Models\User\UserCreated;
 use App\Events\Models\User\UserCreating;
@@ -30,6 +32,7 @@ use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Tags\HasTags;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class User extends Authenticatable implements ModelQuery, Taggable
 {
     use HasApiTokens;

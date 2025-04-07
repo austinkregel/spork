@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Actions\Spork\SyncDataFromCredential;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Credential\CredentialCreated;
@@ -24,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Credential extends Model implements Crud, ModelQuery, Owner
 {
     use HasFactory;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Events\Models\Research\ResearchCreated;
 use App\Events\Models\Research\ResearchCreating;
 use App\Events\Models\Research\ResearchDeleted;
@@ -19,6 +21,7 @@ use Laravel\Scout\Searchable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Research extends Model implements Crud
 {
     use HasFactory;

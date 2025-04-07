@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Contracts\Conditionable;
 use App\Events\Models\Navigation\NavigationCreated;
 use App\Events\Models\Navigation\NavigationCreating;
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Navigation extends Model implements Conditionable, Crud
 {
     use HasConditions;

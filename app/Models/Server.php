@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Contracts\ModelQuery;
 use App\Events\Models\Server\ServerCreated;
 use App\Events\Models\Server\ServerCreating;
@@ -24,6 +26,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Server extends Model implements Crud, ModelQuery, Taggable
 {
     use HasApiTokens;
