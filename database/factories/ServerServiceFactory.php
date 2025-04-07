@@ -14,9 +14,9 @@ class ServerServiceFactory extends Factory
     public function definition(): array
     {
         return [
-            'service' => $this->faker->word,
-            'version' => $this->faker->word,
-            'status' => $this->faker->word,
+            'service' => $this->faker->word(),
+            'version' => $this->faker->word(),
+            'status' => $this->faker->word(),
             'settings' => [],
         ];
     }
