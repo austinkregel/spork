@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Spork;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Observers\ApplyCredentialsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Events\Models\Script\ScriptCreated;
@@ -42,7 +43,7 @@ class Script extends Model implements Crud
         'updated' => ScriptUpdated::class,
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

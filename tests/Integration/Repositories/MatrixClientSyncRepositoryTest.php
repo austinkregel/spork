@@ -22,7 +22,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->repository = new MatrixClientSyncRepository;
     }
 
-    public function test_process_room()
+    public function test_process_room(): void
     {
         $this->assertDatabaseEmpty('threads');
         $this->assertDatabaseEmpty('people');

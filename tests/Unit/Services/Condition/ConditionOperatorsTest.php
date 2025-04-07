@@ -28,7 +28,7 @@ class ConditionOperatorsTest extends TestCase
     /**
      * @dataProvider conditionOperatorsProvider
      */
-    public function test_condition_operators(AbstractLogicalOperator $operator, $needle, $haystack, $expected)
+    public function test_condition_operators(AbstractLogicalOperator $operator, $needle, $haystack, $expected): void
     {
         $this->assertEquals($expected, $operator->compute($needle, $haystack));
     }

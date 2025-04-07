@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Finance;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Events\Models\Budget\BudgetCreated;
 use App\Events\Models\Budget\BudgetCreating;
 use App\Events\Models\Budget\BudgetDeleted;
@@ -46,7 +47,7 @@ class Budget extends Model implements Crud, Taggable
         'updated' => BudgetUpdated::class,
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

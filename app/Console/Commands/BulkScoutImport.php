@@ -15,7 +15,7 @@ class BulkScoutImport extends Command
 
     protected $description = 'Command description';
 
-    public function handle()
+    public function handle(): void
     {
         $searchableModels = Code::instancesOf(Searchable::class)
             ->getClasses();

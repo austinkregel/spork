@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use App\Observers\ApplyCredentialsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -59,7 +60,7 @@ class Person extends Model implements Crud, ModelQuery
         $query->where('name', 'like', '%'.$string.'%');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

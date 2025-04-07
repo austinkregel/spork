@@ -22,7 +22,7 @@ class CheckBudgetOverspendTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_handle_transaction_created_event()
+    public function test_handle_transaction_created_event(): void
     {
         Event::fake([BudgetOverspentEvent::class]);
 
@@ -35,7 +35,7 @@ class CheckBudgetOverspendTest extends TestCase
         Event::assertNotDispatched(BudgetOverspentEvent::class);
     }
 
-    public function test_check_if_transaction_matches_any_defined_budget()
+    public function test_check_if_transaction_matches_any_defined_budget(): void
     {
         Event::fake([BudgetOverspentEvent::class]);
 
@@ -51,7 +51,7 @@ class CheckBudgetOverspendTest extends TestCase
         Event::assertNotDispatched(BudgetOverspentEvent::class);
     }
 
-    public function test_calculate_spend_amount_since_start_of_defined_period()
+    public function test_calculate_spend_amount_since_start_of_defined_period(): void
     {
         Event::fake([BudgetOverspentEvent::class]);
 
@@ -67,7 +67,7 @@ class CheckBudgetOverspendTest extends TestCase
         Event::assertNotDispatched(BudgetOverspentEvent::class);
     }
 
-    public function test_fire_budget_overspent_event_if_budget_is_overspent()
+    public function test_fire_budget_overspent_event_if_budget_is_overspent(): void
     {
         Event::fake([BudgetOverspentEvent::class]);
         Carbon::setTestNow(

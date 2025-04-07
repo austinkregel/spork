@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Observers\ApplyCredentialsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Contracts\ModelQuery;
@@ -144,12 +145,12 @@ class User extends Authenticatable implements ModelQuery, Taggable
         return $this->morphMany(ExternalRssFeed::class, 'owner');
     }
 
-    public function person()
+    public function person(): HasOne
     {
         return $this->hasOne(Person::class);
     }
 
-    public function budgets()
+    public function budgets(): HasMany
     {
         return $this->hasMany(Finance\Budget::class);
     }
