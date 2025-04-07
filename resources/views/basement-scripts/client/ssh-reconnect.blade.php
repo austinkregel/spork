@@ -1,4 +1,4 @@
-#!/bin/bash
+{{ '#!/usr/bin/env bash' }}
 set -exv
 source "\$HOME/.spork/config.env"
 SSH_PUBLIC_KEY="{{ $credential->getPublicKey() }}"

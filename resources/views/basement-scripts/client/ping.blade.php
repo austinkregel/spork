@@ -1,4 +1,4 @@
-#!/bin/bash
+{{ '#!/usr/bin/env bash' }}
 set -exv
 source "\$HOME/.spork/config.env"
 DATA=\$(echo '{"last_ping_at": "'\$(date -u +"%Y-%m-%d %H:%M:%S")'"}')

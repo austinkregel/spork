@@ -1,4 +1,4 @@
-#!/bin/bash
+{{ '#!/usr/bin/env bash' }}
 set -exv
 source "\$HOME/.spork/config.env"
 DATA=\$(echo '{"turned_off_at": "'\$(date -u +"%Y-%m-%d %H:%M:%S")'"}')

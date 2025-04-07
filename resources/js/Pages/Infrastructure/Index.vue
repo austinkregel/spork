@@ -3,6 +3,31 @@
         <div class="flex flex-wrap gap-4 m-4">
             <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-4">Servers</div>
 
+          <div class="w-full">
+            <SporkButton primary :icon="ServerIcon" class="fill-current" @click="() => openLinkServer = true">
+              <span>Link Server via SSH</span>
+            </SporkButton>
+
+            <div class="bg-amber-200 dark:bg-stone-950 p-4">
+              <div class="mt-4 flex gap-4 flex-col" v-if="openLinkServer">
+                <div class="font-medium text-stone-600 dark:text-stone-300">
+                  Add this public key to the server's authorized_keys file to link the server.
+                </div>
+                <SporkInput
+                    type="textarea"
+                    :model-value="sshCredential?.settings?.pub_key ?? ''"
+                    class="w-full max-w-2xl"
+                />
+
+                <div>
+                  <SporkButton secondary :icon="XMarkIcon" @click="() => openLinkServer = false">
+                    <span>Cancel</span>
+                  </SporkButton>
+                </div>
+              </div>
+
+            </div>
+          </div>
             <div class="grid grid-cols-1 max-w-5xl mx-auto gap-4 w-full">
                 <div
                     v-for="(server, i) in servers ?? []"
@@ -70,11 +95,11 @@
 
 <script setup>
 import {
-    TrashIcon,
-    ArrowTopRightOnSquareIcon ,
-    DocumentDuplicateIcon,
-    PencilIcon,
-    UserPlusIcon
+  TrashIcon,
+  ArrowTopRightOnSquareIcon,
+  DocumentDuplicateIcon,
+  PencilIcon,
+  UserPlusIcon, ServerIcon, XMarkIcon
 } from '@heroicons/vue/24/outline';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
@@ -82,11 +107,16 @@ import { Link } from '@inertiajs/vue3'
 import LaravelVuePagination from "@/Components/Spork/LaravelVuePagination.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import Status from "@/Components/Spork/Atoms/Status.vue";
+import SporkButton from "@/Components/Spork/SporkButton.vue";
+import { ref } from 'vue';
+import SporkInput from "@/Components/Spork/SporkInput.vue";
 
-const { servers, pagination } = defineProps({
+const { servers, pagination, sshCredential } = defineProps({
     servers: Array,
     pagination: Object,
+    sshCredential: Object,
 })
 const date = () => {}
 
+const openLinkServer = ref(false);
 </script>

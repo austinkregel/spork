@@ -13,4 +13,9 @@ use Illuminate\Queue\SerializesModels;
 abstract class AbstractLogicalEvent implements LogicalEvent
 {
     use Dispatchable, InteractsWithQueue,  InteractsWithSockets, SerializesModels;
+
+    public function broadcastAs(): string
+    {
+        return static::class;
+    }
 }

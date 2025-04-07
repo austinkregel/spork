@@ -19,7 +19,8 @@ class MessageController
                     $query->where('person_id', auth()->user()->person->id);
                 })
                 ->with(['messages' => function ($query) {
-                    $query->orderByDesc('originated_at');
+                    $query->orderByDesc('originated_at')
+                    ->limit(15);
                 }, 'participants' => function ($query) {
                     $query->where('name', 'not like', '%bridge bot%');
                 }, 'messages.toPerson', 'messages.fromPerson'])
@@ -53,6 +54,6 @@ class MessageController
                 },
             ])
             ->orderByDesc('origin_server_ts')
-            ->paginate(request('limit', 15), ['*'], 'page', 1);
+            ->paginate(request('limit', 10), ['*'], 'page', 1);
     }
 }

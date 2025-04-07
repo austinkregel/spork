@@ -11,6 +11,7 @@ use App\Models\Thread;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Psr\Log\LoggerInterface;
 
 class MatrixClientSyncRepository
 {
@@ -51,7 +52,9 @@ class MatrixClientSyncRepository
         //        ], JSON_PRETTY_PRINT));
     }
 
-    public function __construct()
+    public function __construct(
+        protected LoggerInterface $logger,
+    )
     {
         //        if (file_exists(storage_path('app/matrix-sync.json'))) {
         //            $contents = json_decode(file_get_contents(storage_path('app/matrix-sync.json')), true);
@@ -70,27 +73,47 @@ class MatrixClientSyncRepository
 
     public function process(array $sync, Credential $credential, User $user): void
     {
-        $events = $sync['account_data']['events'];
+        $events = $sync['account_data']['events'] ?? [];
         foreach ($events as $event) {
             $this->processEvent($event);
         }
 
-        $rooms = json_decode(json_encode($sync['rooms']['join']), true);
+        $rooms = json_decode(json_encode($sync['rooms']['join'] ?? []), true);
 
         foreach ($rooms as $id => $room) {
             $this->processRoom($id, $room, $credential, $user);
         }
-
     }
 
-    public function processRoom($roomId, array $room, $credential, $user): void
+    public function processRoom($roomId, array $room, Credential $credential, User $user): void
     {
         $events = array_merge(
             $room['state']['events'],
             $room['timeline']['events']
         );
+
+
         foreach ($events as $event) {
             switch ($event['type']) {
+                case 'm.room.name':
+                    $thread = Thread::firstWhere('thread_id', $roomId);
+                    if (empty($thread)) {
+                        Thread::create(
+                            [
+                                'thread_id' => $roomId,
+                                'name' => $event['content']['name'],
+                                'origin_server_ts' => Carbon::now(),
+                            ]
+                        );
+                        break;
+                    }
+                    $this->renameThreadToTheParticipantThatIsntTheUser($thread, $user);
+
+                    if (!str_starts_with($thread->name, '!')) {
+                        break;
+                    }
+                    $thread->update(['name' => $event['content']['name']]);
+                    break;
                 case 'm.room.create':
                     $this->processCreateEvent($roomId, $event);
                     break;
@@ -123,32 +146,37 @@ class MatrixClientSyncRepository
                         ),
                     ]);
                     break;
-                case 'm.room.encrypted':
-                    $this->ignored($event);
-                    break;
-                case 'm.reaction': // @todo
-                case 'm.sticker':
-                case 'm.room.avatar':
-                    $this->ignored($event);
-                    break;
-                case 'm.room.redaction': // @todo
-                    $message = Message::firstWhere('event_id', $event['redacts']);
-                    if (isset($message)) {
-                        $message->update([
-                            'message' => 'Message redacted',
-                            'html_message' => '<i>Message redacted</i>',
-                            'thumbnail_url' => null,
-                        ]);
-                    }
+
+                case 'm.room.redaction':
+                    $this->redactEvent($event);
                     break;
                 case 'm.room.message':
                     /** @var Thread $thread */
-                    $thread = Thread::firstWhere('thread_id', $roomId);
-
+                    $thread = Thread::query()
+                        ->with('participants')
+                        ->firstWhere('thread_id', $roomId);
                     $message = $thread->messages()->firstWhere('event_id', $event['event_id']);
+                    // We need to handle when events are edited. There is an optional m.relates_to blob we need to inspect to see how we should process the message.
+                    // Sometimes we don't create a new message, but update the existing one.
+                    if (isset($event['content']['m.relates_to'])) {
+                        if (empty($event['content']['m.relates_to']['event_id'])) {
+                            $this->ignored($event);
+                            break;
+                        }
+
+                        $relatedEvent = $thread->messages()->firstWhere('event_id', $event['content']['m.relates_to']['event_id']);
+
+                        if (isset($relatedEvent) && $event['content']['m.relates_to']['rel_type'] === 'm.replace') {
+                            $relatedEvent->update([
+                                'message' => $event['content']['m.new_content']['body'],
+                                'originated_at' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))
+                            ]);
+                            break;
+                        }
+                    }
 
                     if (empty($message)) {
-                        $sender = $this->findOrCreatePerson($event['sender']);
+                        $sender = $this->findOrCreatePerson($event['sender'], $user);
 
                         if (! isset($event['content']['body'])) {
                             if ($event['unsigned']['redacted_because']) {
@@ -159,11 +187,7 @@ class MatrixClientSyncRepository
                                     break;
                                 }
 
-                                $message->update([
-                                    'message' => 'Message redacted',
-                                    'html_message' => '<i>Message redacted</i>',
-                                    'thumbnail_url' => null,
-                                ]);
+                                $this->redactEvent($event);
                                 break;
                             }
                         }
@@ -195,6 +219,10 @@ class MatrixClientSyncRepository
 
                     break;
                 case 'm.room.power_levels':
+                case 'm.room.encrypted':
+                case 'm.reaction':
+                case 'm.sticker':
+                case 'm.room.avatar':
                 case 'io.element.functional_members':
                 case 'm.room.join_rules':
                 case 'm.room.history_visibility':
@@ -216,28 +244,34 @@ class MatrixClientSyncRepository
                 case 'uk.half-shot.matrix-hookshot.feed':
                 case 'm.room.plumbing':
                 case 'm.room.related_groups':
+                case "com.beeper.room_features":
                     $this->ignored($event);
                     break;
-                case 'm.room.name':
-                    $thread = Thread::firstWhere('thread_id', $roomId);
-                    if (empty($thread)) {
-                        Thread::create(
-                            [
-                                'thread_id' => $roomId,
-                                'name' => $event['content']['name'],
-                                'origin_server_ts' => Carbon::now(),
-                            ]
-                        );
-                        break;
-                    }
-                    $thread->update(['name' => $event['content']['name']]);
-                    break;
                 default:
-                    dd($event, 'Unknown event type');
+                    $this->logger->error('Unknown event type: '.$event['type'], [
+                        'event' => $event,
+                    ]);
             }
         }
     }
+    protected function redactEvent(array $event): void
+    {
+        $message = Message::firstWhere('event_id', $event['redacts']);
 
+        if (empty($message)) {
+            $this->ignored($event);
+            return;
+        }
+
+        $redactionMessage = $event['content']['reason'] ?? 'Message redacted';
+
+        $message->update([
+            'message' => '🗑️ '.$redactionMessage,
+            'html_message' => '<i>🗑️ '.$redactionMessage.'</i>',
+            'thumbnail_url' => null,
+            'originated_at' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))
+        ]);
+    }
     public function processEvent(array $event): void
     {
         if (! isset($event['type'])) {
@@ -297,7 +331,9 @@ class MatrixClientSyncRepository
                 $this->processDirect($event);
                 break;
             default:
-                dd($event, 'Unknown event type');
+                $this->logger->error('Unknown event type: '.$event['type'], [
+                    'event' => $event,
+                ]);
         }
     }
 
@@ -405,7 +441,7 @@ class MatrixClientSyncRepository
 
     protected function ignored($event)
     {
-        // ignoring
+        info('Ignoring event: '. $event['type'], $event);
     }
 
     protected function processWebSettings(array $event)
@@ -430,7 +466,7 @@ class MatrixClientSyncRepository
         return end($parts);
     }
 
-    protected function processMessageEvent(array $messages, string $roomId)
+    protected function processMessageEvent(array $messages, string $roomId, $user)
     {
         foreach ($messages as $message) {
             if ($message['type'] !== 'm.room.message') {
@@ -442,8 +478,8 @@ class MatrixClientSyncRepository
                 ['name' => $roomId, 'origin_server_ts' => Carbon::now()]
             );
 
-            $sender = $this->findOrCreatePerson($message['sender']);
-            $dmTarget = $this->findOrCreatePerson($this->getMatrixUserName());
+            $sender = $this->findOrCreatePerson($message['sender'], $user);
+            $dmTarget = $this->findOrCreatePerson($this->getMatrixUserName(), $user);
 
         }
     }
@@ -468,7 +504,7 @@ class MatrixClientSyncRepository
         }
     }
 
-    protected function findOrCreatePerson($identifier)
+    protected function findOrCreatePerson($identifier, $personSystemUser)
     {
         $person = Person::whereJsonContains('identifiers', $identifier)->first();
 
@@ -541,6 +577,29 @@ class MatrixClientSyncRepository
                     ]);
                 }
             }
+        }
+    }
+
+    protected function renameThreadToTheParticipantThatIsntTheUser(Thread|null $thread, User $user): void
+    {
+        if (empty($thread)) {
+            return;
+        }
+
+        if (!str_starts_with($thread->name, '!')) {
+            return;
+        }
+
+        $participants = $thread->participants;
+
+        if ($participants->count() === 1) {
+            $thread->update(['name' => $participants->first()->name]);
+        } elseif ($participants->count() === 2) {
+            $participants->each(function (Person $participant) use ($thread, $user) {
+                if (!in_array($user->email, $participant->identifiers)) {
+                    $thread->update(['name' => $participant->identifiers]);
+                }
+            });
         }
     }
 }

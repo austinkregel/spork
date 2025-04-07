@@ -155,7 +155,7 @@ class ImapCredentialService implements ImapServiceContract
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
             $this->credential->settings['username'],
             $this->credential->settings['password'],
-            storage_path(), // Directory, where attachments will be saved (optional)
+            config('filesystems.disks.email-attachments.root'), // Directory, where attachments will be saved (optional)
             'UTF-8', // Server encoding (optional)
             true, // Trim leading/ending whitespaces of IMAP path (optional)
             false // Attachment filename mode (optional; false = random filename; true = original filename)
@@ -254,7 +254,7 @@ class ImapCredentialService implements ImapServiceContract
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
             $this->credential->settings['username'],
             $this->credential->settings['password'],
-            storage_path(), // Directory, where attachments will be saved (optional)
+            config('filesystems.disks.email-attachments.root'), // Directory, where attachments will be saved (optional)
             'UTF-8', // Server encoding (optional)
             true, // Trim leading/ending whitespaces of IMAP path (optional)
             false // Attachment filename mode (optional; false = random filename; true = original filename)
@@ -269,7 +269,7 @@ class ImapCredentialService implements ImapServiceContract
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
             $this->credential->settings['username'],
             $this->credential->settings['password'],
-            storage_path(), // Directory, where attachments will be saved (optional)
+            config('filesystems.disks.email-attachments.root'), // Directory, where attachments will be saved (optional)
             'UTF-8', // Server encoding (optional)
             true, // Trim leading/ending whitespaces of IMAP path (optional)
             false // Attachment filename mode (optional; false = random filename; true = original filename)

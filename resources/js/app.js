@@ -109,44 +109,67 @@ createInertiaApp({
 
         if (props?.initialPage?.props?.auth?.user?.id) {
             const userId = props?.initialPage?.props?.auth?.user?.id;
+            console.log('Subscribing to user channel', `App.Models.User.${userId}`);
             Echo.private(`App.Models.User.${userId}`)
-                .listen('Models.Message.EmailCreated', (e) => {
+                .listen('Models\\Message\\EmailCreated', (e) => {
+                    console.log('Models.Email from server', e);
                     playSound('notification');
                     router.reload({
-                        only: ['messages', 'unread_email_count'],
+                        only: ['messages', 'unread_email_count', 'threads', 'thread'],
                     });
                 })
-                .listen('Models.Account.AccountUpdated', e => {
+                .listen('Models\\Message\\MessageCreated', (e) => {
+                    console.log('Models.Message from server', e);
+                    playSound('notification');
+                    router.reload({
+                        only: ['messages', 'unread_email_count', 'threads', 'thread'],
+                    });
+                })
+                .listen('Models\\Message\\MessageUpdated', (e) => {
+                    console.log('Models.Message from server', e);
+                    playSound('notification');
+                    router.reload({
+                        only: ['messages', 'unread_email_count', 'threads', 'thread'],
+                    });
+                })
+                .listen('Models\\Account\\AccountUpdated', e => {
+                    console.log('JobBatchUpdated', e);
                     router.reload({
                         only: ['accounts', 'unread_email_count']
                     })
                 })
-                .listen('Models.JobBatch.JobBatchCreated', e => {
+                .listen('Models\\JobBatch\\JobBatchCreated', e => {
+                    console.log('JobBatchCreated', e);
                     router.reload({
                         only: ['job_batches', 'news']
                     })
                 })
-                .listen('Models.JobBatch.JobBatchUpdated', e => {
+                .listen('Models\\JobBatch\\JobBatchUpdated', e => {
+                    console.log('JobBatchUpdated', e);
                     router.reload({
                         only: ['job_batches', 'news']
                     })
                 })
-                .listen('Models.Server.ServerCreated', e => {
+                .listen('Models\\Server\\ServerCreated', e => {
+                    console.log('ServerCreated', e);
                     router.reload({
                         only: ['servers', 'data', 'server']
                     })
                 })
-                .listen('Models.Server.ServerUpdating', e => {
+                .listen('Models\\Server\\ServerUpdating', e => {
+                    console.log('ServerUpdating', e);
                     router.reload({
                         only: ['servers', 'data', 'server']
                     })
                 })
-                .listen('Models.Server.ServerUpdated', e => {
+                .listen('Models\\Server\\ServerUpdated', e => {
+                    console.log('ServerUpdated', e);
                     router.reload({
                         only: ['servers', 'data', 'server']
                     })
                 })
-                .listen('Models.Server.ServerDeleted', e => {
+                .listen('Models\\Server\\ServerDeleted', e => {
+                    console.log('ServerDeleted', e);
                     router.reload({
                         only: ['servers', 'data', 'server']
                     })
@@ -158,18 +181,11 @@ createInertiaApp({
                 .error((error) => {
                     console.error('non-fatal error', error);
                 })
+                .listenToAll(console.log)
         }
 
         if (props?.initialPage?.props.auth.user?.person?.id) {
             Echo.private('App.Models.Person.'+props?.initialPage?.props.auth.user?.person?.id)
-                .listen('message', (data) => {
-                    console.log('Message from server', data);
-                    playSound('notification');
-                    router.reload({
-                        only: ['messages', 'unread_email_count'],
-                    });
-
-                })
                 .error((error) => {
                     console.error(error);
                 });

@@ -25,23 +25,20 @@ class MatrixSyncJob implements ShouldQueue
         /** @var Credential $credential */
         $credential = collect($credentialRepository->findAllOfType(Credential::TYPE_MATRIX)->items())->first();
 
-        $nextBatch = $credential->settings->next_batch ?? null;
-        do {
+        $nextBatch = $credential->settings['next_batch'] ?? null;
 
-            $rooms = Http::withHeaders([
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer '.$credential->access_token,
+        $rooms = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$credential->access_token,
+        ])
+            ->get($credential->settings['matrix_server'].'/_matrix/client/v3/sync', [
+                'since' => $nextBatch,
+                'timeout' => 30000,
             ])
-                ->get($credential->settings['matrix_server'].'/_matrix/client/v3/sync', [
-                    'since' => $nextBatch,
-                    'timeout' => 30000,
-                    'full_state' => 'true',
-                ])
-                ->json();
-            $nextBatch = $rooms['next_batch'];
+            ->json();
+        $nextBatch = $rooms['next_batch'];
 
-            $repository->process($rooms, $credential, $credential->user);
-        } while (isset($response['next_batch']));
+        $repository->process($rooms, $credential, $credential->user);
 
         $credential->update([
             'settings' => array_merge($credential->settings, [

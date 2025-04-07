@@ -90,7 +90,7 @@ class ImapService implements ImapServiceContract
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
             env('IMAP_USERNAME'), // Username for the before configured mailbox
             env('IMAP_PASSWORD'), // Password for the before configured username
-            storage_path(), // Directory, where attachments will be saved (optional)
+            config('filesystems.disks.email-attachments.root'), // Directory, where attachments will be saved (optional)
             'UTF-8', // Server encoding (optional)
             true, // Trim leading/ending whitespaces of IMAP path (optional)
             false // Attachment filename mode (optional; false = random filename; true = original filename)
@@ -184,7 +184,7 @@ class ImapService implements ImapServiceContract
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
             env('IMAP_USERNAME'), // Username for the before configured mailbox
             env('IMAP_PASSWORD'), // Password for the before configured username
-            storage_path(), // Directory, where attachments will be saved (optional)
+            config('filesystems.disks.email-attachments.root'), // Directory, where attachments will be saved (optional)
             'UTF-8', // Server encoding (optional)
             true, // Trim leading/ending whitespaces of IMAP path (optional)
             false // Attachment filename mode (optional; false = random filename; true = original filename)
@@ -199,7 +199,7 @@ class ImapService implements ImapServiceContract
             sprintf($this->buildMailboxString().'INBOX'), // IMAP server and mailbox folder
             env('IMAP_USERNAME'), // Username for the before configured mailbox
             env('IMAP_PASSWORD'), // Password for the before configured username
-            storage_path(), // Directory, where attachments will be saved (optional)
+            config('filesystems.disks.email-attachments.root'), // Directory, where attachments will be saved (optional)
             'UTF-8', // Server encoding (optional)
             true, // Trim leading/ending whitespaces of IMAP path (optional)
             false // Attachment filename mode (optional; false = random filename; true = original filename)

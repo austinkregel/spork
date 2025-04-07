@@ -117,9 +117,9 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
                 'user_id' => User::firstWhere('email', env('SPORK_ADMIN_EMAILS'))->id,
             ]);
         }
-        $emails = array_values(array_unique(array_filter(array_merge($person->emails, [$message['from']['email']]), fn ($val) => ! empty($val))));
+        $emails = array_values(array_unique(array_filter(array_merge($person->emails ?? [], [$message['from']['email']]), fn ($val) => ! empty($val))));
 
-        if (! empty(array_diff($person->emails, $emails)) || ! empty(array_diff($emails, $person->emails))) {
+        if (! empty(array_diff($person->emails ?? [], $emails)) || ! empty(array_diff($emails, $person->emails ?? []))) {
             $person->update(compact('emails'));
         }
 
@@ -150,7 +150,7 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
             $person = Person::first();
 
             $person->update([
-                'emails' => array_values(array_unique(array_merge($person->emails, [strtolower($fromEmail)]))),
+                'emails' => array_values(array_unique(array_merge($person->emails ?? [], [strtolower($fromEmail)]))),
             ]);
             // Need some way to determine a "default" user to assign messages to if they don't already have a person record.
         }

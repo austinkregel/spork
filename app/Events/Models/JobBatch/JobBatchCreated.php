@@ -24,9 +24,4 @@ class JobBatchCreated extends AbstractLogicalEvent implements ShouldBroadcast
             ->map(fn (User $user) => new PrivateChannel('App.Models.User.'.$user->id))
             ->toArray();
     }
-
-    public function broadcastAs()
-    {
-        return class_basename(static::class);
-    }
 }
