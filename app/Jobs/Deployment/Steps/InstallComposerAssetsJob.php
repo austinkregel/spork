@@ -11,13 +11,12 @@ use App\Models\Server;
 use App\Services\SshService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 class InstallComposerAssetsJob
 {
-    use Batchable, DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         public Server $server,

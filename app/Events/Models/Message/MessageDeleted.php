@@ -14,6 +14,7 @@ class MessageDeleted extends AbstractLogicalEvent implements ShouldBroadcast
     public function __construct(
         public Message $model,
     ) {}
+
     public function broadcastOn(): array
     {
         $this->model->load('credential');

@@ -20,7 +20,7 @@ class MessageController
                 })
                 ->with(['messages' => function ($query) {
                     $query->orderByDesc('originated_at')
-                    ->limit(15);
+                        ->limit(15);
                 }, 'participants' => function ($query) {
                     $query->where('name', 'not like', '%bridge bot%');
                 }, 'messages.toPerson', 'messages.fromPerson'])

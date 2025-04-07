@@ -12,7 +12,7 @@ class ServerApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_server_throws_validation_error()
+    public function test_server_throws_validation_error(): void
     {
         $user = $this->createUserWithPermissions([
             'create_server',
@@ -33,7 +33,7 @@ class ServerApiTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_server_create_successful()
+    public function test_server_create_successful(): void
     {
         $user = $this->createUserWithPermissions([
             'create_server',

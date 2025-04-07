@@ -12,11 +12,16 @@ use App\Events\Models\Person\PersonDeleting;
 use App\Events\Models\Person\PersonUpdated;
 use App\Events\Models\Person\PersonUpdating;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Scout\Searchable;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Person extends Model implements Crud, ModelQuery
 {
     use HasFactory;
@@ -49,12 +54,13 @@ class Person extends Model implements Crud, ModelQuery
         ];
     }
 
-    public function scopeQ(Builder $query, string $string): void
+    #[Scope]
+    protected function q(Builder $query, string $string): void
     {
         $query->where('name', 'like', '%'.$string.'%');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

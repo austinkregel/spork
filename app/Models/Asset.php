@@ -41,13 +41,16 @@ class Asset extends Model implements Crud
         'owner_type',
     ];
 
-    protected $casts = [
-        'acquired_at' => 'datetime',
-        'shipped_at' => 'datetime',
-        'delivered_at' => 'datetime',
-        'returned_at' => 'datetime',
-        'meta' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'acquired_at' => 'datetime',
+            'shipped_at' => 'datetime',
+            'delivered_at' => 'datetime',
+            'returned_at' => 'datetime',
+            'meta' => 'array',
+        ];
+    }
 
     public function owner(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {

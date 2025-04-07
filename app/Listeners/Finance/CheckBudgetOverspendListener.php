@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Listeners\Finance;
 
-use App\Events\Models\Transaction\TransactionCreated;
 use App\Events\Models\Budget\BudgetOverspentEvent;
+use App\Events\Models\Transaction\TransactionCreated;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
 use Illuminate\Contracts\Queue\ShouldQueue;

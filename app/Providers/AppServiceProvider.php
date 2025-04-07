@@ -12,19 +12,6 @@ use App\Contracts\Services\NamecheapServiceContract;
 use App\Contracts\Services\News\NewsServiceContract;
 use App\Contracts\Services\PlaidServiceContract;
 use App\Contracts\Services\WeatherServiceContract;
-use App\Models\Credential;
-use App\Models\Domain;
-use App\Models\Navigation;
-use App\Models\Page;
-use App\Models\Person;
-use App\Models\Project;
-use App\Models\Research;
-use App\Models\Server;
-use App\Models\Spork\Script;
-use App\Models\Task;
-use App\Models\Team;
-use App\Models\User;
-use App\Observers\ApplyCredentialsObserver;
 use App\Operations\Operator;
 use App\Repositories\CredentialRepository;
 use App\Services\Code;
@@ -45,7 +32,6 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 use Symfony\Component\Finder\SplFileInfo;
 
 class AppServiceProvider extends ServiceProvider
@@ -64,19 +50,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Credential::observe(ApplyCredentialsObserver::class);
-        Domain::observe(ApplyCredentialsObserver::class);
-        Navigation::observe(ApplyCredentialsObserver::class);
-        Page::observe(ApplyCredentialsObserver::class);
-        Person::observe(ApplyCredentialsObserver::class);
-        Project::observe(ApplyCredentialsObserver::class);
-        Research::observe(ApplyCredentialsObserver::class);
-        Role::observe(ApplyCredentialsObserver::class);
-        Script::observe(ApplyCredentialsObserver::class);
-        Server::observe(ApplyCredentialsObserver::class);
-        Task::observe(ApplyCredentialsObserver::class);
-        Team::observe(ApplyCredentialsObserver::class);
-        User::observe(ApplyCredentialsObserver::class);
 
         $this->app->bind(NewsServiceContract::class, NewsService::class);
         $this->app->bind(NamecheapServiceContract::class, NamecheapService::class);

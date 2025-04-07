@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Broadcast;
-use App\Models\User;
 use App\Models\Server;
+use App\Models\User;
+use Illuminate\Support\Facades\Broadcast;
+
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels

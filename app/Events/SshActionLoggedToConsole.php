@@ -21,8 +21,7 @@ class SshActionLoggedToConsole implements ShouldBroadcast
     public function __construct(
         public Server $server,
         public string $output,
-    )
-    {
+    ) {
         //
     }
 
@@ -34,7 +33,7 @@ class SshActionLoggedToConsole implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('App.Models.Server.' . $this->server->id),
+            new PrivateChannel('App.Models.Server.'.$this->server->id),
         ];
     }
 }

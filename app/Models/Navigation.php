@@ -14,11 +14,14 @@ use App\Events\Models\Navigation\NavigationUpdating;
 use App\Models\Traits\HasConditions;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Navigation extends Model implements Conditionable, Crud
 {
     use HasConditions;

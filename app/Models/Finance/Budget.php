@@ -17,6 +17,7 @@ use App\Models\Traits\ScopeRelativeSearch;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Tags\HasTags;
 
 class Budget extends Model implements Crud, Taggable
@@ -46,7 +47,7 @@ class Budget extends Model implements Crud, Taggable
         'updated' => BudgetUpdated::class,
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

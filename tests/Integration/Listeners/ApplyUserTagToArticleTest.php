@@ -18,7 +18,7 @@ final class ApplyUserTagToArticleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_basic_condition_will_be_applied_to_article()
+    public function test_basic_condition_will_be_applied_to_article(): void
     {
         $user = User::factory()->createQuietly();
 
@@ -70,7 +70,7 @@ final class ApplyUserTagToArticleTest extends TestCase
         $this->assertTrue($article->tags()->where('id', $tag->id)->exists());
     }
 
-    public function test_basic_multiple_condition_will_be_applied_to_article()
+    public function test_basic_multiple_condition_will_be_applied_to_article(): void
     {
         $user = User::factory()->createQuietly();
 
@@ -128,7 +128,7 @@ final class ApplyUserTagToArticleTest extends TestCase
         $this->assertTrue($article->tags()->where('id', $tag->id)->exists());
     }
 
-    public function test_we_dont_need_all_condition_to_pass_for_tag_to_be_applied_to_article()
+    public function test_we_dont_need_all_condition_to_pass_for_tag_to_be_applied_to_article(): void
     {
         $user = User::factory()->createQuietly();
 

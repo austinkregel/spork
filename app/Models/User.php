@@ -15,9 +15,12 @@ use App\Models\Finance\Account;
 use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -30,6 +33,7 @@ use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Tags\HasTags;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class User extends Authenticatable implements ModelQuery, Taggable
 {
     use HasApiTokens;
@@ -141,12 +145,12 @@ class User extends Authenticatable implements ModelQuery, Taggable
         return $this->morphMany(ExternalRssFeed::class, 'owner');
     }
 
-    public function person()
+    public function person(): HasOne
     {
         return $this->hasOne(Person::class);
     }
 
-    public function budgets()
+    public function budgets(): HasMany
     {
         return $this->hasMany(Finance\Budget::class);
     }

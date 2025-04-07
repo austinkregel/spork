@@ -14,6 +14,8 @@ use App\Events\Models\Server\ServerUpdating;
 use App\Models\Traits\HasOwner;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +26,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Server extends Model implements Crud, ModelQuery, Taggable
 {
     use HasApiTokens;
@@ -62,10 +65,13 @@ class Server extends Model implements Crud, ModelQuery, Taggable
         'updated' => ServerUpdated::class,
     ];
 
-    public $casts = [
-        'turned_off_at' => 'datetime',
-        'booted_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'turned_off_at' => 'datetime',
+            'booted_at' => 'datetime',
+        ];
+    }
 
     public function credential(): BelongsTo
     {

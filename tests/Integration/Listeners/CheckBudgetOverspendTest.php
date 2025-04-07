@@ -4,40 +4,38 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Listeners;
 
-use App\Events\Models\Transaction\TransactionCreated;
 use App\Events\Models\Budget\BudgetOverspentEvent;
+use App\Events\Models\Transaction\TransactionCreated;
 use App\Listeners\Finance\CheckBudgetOverspendListener;
 use App\Models\Credential;
+use App\Models\Finance\Account;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
-use App\Models\Finance\Account;
 use App\Models\Tag;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
-use function Symfony\Component\String\b;
 
 class CheckBudgetOverspendTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testHandleTransactionCreatedEvent()
+    public function test_handle_transaction_created_event(): void
     {
         Event::fake([BudgetOverspentEvent::class]);
 
         $transaction = Transaction::factory()->create();
         $event = new TransactionCreated($transaction);
 
-        $listener = new CheckBudgetOverspendListener();
+        $listener = new CheckBudgetOverspendListener;
         $listener->handle($event);
 
         Event::assertNotDispatched(BudgetOverspentEvent::class);
     }
 
-    public function testCheckIfTransactionMatchesAnyDefinedBudget()
+    public function test_check_if_transaction_matches_any_defined_budget(): void
     {
         Event::fake([BudgetOverspentEvent::class]);
 
@@ -47,13 +45,13 @@ class CheckBudgetOverspendTest extends TestCase
 
         $event = new TransactionCreated($transaction);
 
-        $listener = new CheckBudgetOverspendListener();
+        $listener = new CheckBudgetOverspendListener;
         $listener->handle($event);
 
         Event::assertNotDispatched(BudgetOverspentEvent::class);
     }
 
-    public function testCalculateSpendAmountSinceStartOfDefinedPeriod()
+    public function test_calculate_spend_amount_since_start_of_defined_period(): void
     {
         Event::fake([BudgetOverspentEvent::class]);
 
@@ -63,13 +61,13 @@ class CheckBudgetOverspendTest extends TestCase
 
         $event = new TransactionCreated($transaction);
 
-        $listener = new CheckBudgetOverspendListener();
+        $listener = new CheckBudgetOverspendListener;
         $listener->handle($event);
 
         Event::assertNotDispatched(BudgetOverspentEvent::class);
     }
 
-    public function testFireBudgetOverspentEventIfBudgetIsOverspent()
+    public function test_fire_budget_overspent_event_if_budget_is_overspent(): void
     {
         Event::fake([BudgetOverspentEvent::class]);
         Carbon::setTestNow(
@@ -95,14 +93,14 @@ class CheckBudgetOverspendTest extends TestCase
         $transaction = Transaction::factory()->create([
             'date' => '2025-01-19',
             'amount' => 150,
-            'account_id' => $account->account_id
+            'account_id' => $account->account_id,
         ]);
         $transaction->tags()->sync($tag->id);
         $budget->tags()->sync($tag->id);
 
         $event = new TransactionCreated($transaction);
 
-        $listener = new CheckBudgetOverspendListener();
+        $listener = new CheckBudgetOverspendListener;
         $listener->handle($event);
 
         Event::assertDispatched(BudgetOverspentEvent::class);

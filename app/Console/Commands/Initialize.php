@@ -19,7 +19,7 @@ class Initialize extends Command
 
     protected $description = 'Initialize the application';
 
-    public function handle()
+    public function handle(): void
     {
         if (Credential::where('type', Credential::TYPE_SSH)->exists()) {
             $this->info('SSH key already exists');

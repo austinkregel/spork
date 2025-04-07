@@ -74,7 +74,7 @@ class Email extends Model
         return $this->hasManyJson(Person::class, 'emails', 'to_email');
     }
 
-    public function credential()
+    public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class, 'credential_id');
     }

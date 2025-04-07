@@ -38,6 +38,7 @@ class ServersController extends Controller
             'server' => $server,
         ]);
     }
+
     public function console(Server $server)
     {
         $server->load([
@@ -65,6 +66,7 @@ class ServersController extends Controller
             'server' => $server,
         ]);
     }
+
     public function workers(Server $server)
     {
         $server->load([
@@ -78,6 +80,7 @@ class ServersController extends Controller
             'server' => $server,
         ]);
     }
+
     public function crontab(Server $server)
     {
         $server->load([
@@ -91,6 +94,7 @@ class ServersController extends Controller
             'server' => $server,
         ]);
     }
+
     public function logs(Server $server)
     {
         $server->load([
