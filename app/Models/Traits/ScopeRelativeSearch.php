@@ -6,6 +6,7 @@ namespace App\Models\Traits;
 
 use App\Models\Finance\Transaction;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -13,7 +14,8 @@ use Illuminate\Database\Eloquent\Builder;
  */
 trait ScopeRelativeSearch
 {
-    public function scopeRelative(Builder $query, string $string): void
+    #[Scope]
+    protected function relative(Builder $query, string $string): void
     {
         switch ($string) {
             case 'user':

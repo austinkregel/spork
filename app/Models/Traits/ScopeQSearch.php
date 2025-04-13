@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Traits;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -11,7 +12,8 @@ use Illuminate\Database\Eloquent\Builder;
  */
 trait ScopeQSearch
 {
-    public function scopeQ(Builder $query, string $string): void
+    #[Scope]
+    protected function q(Builder $query, string $string): void
     {
         $query->where('name', 'like', '%'.$string.'%');
     }

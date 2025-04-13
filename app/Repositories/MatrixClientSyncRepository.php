@@ -10,6 +10,7 @@ use App\Models\Person;
 use App\Models\Thread;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Psr\Log\LoggerInterface;
 
@@ -99,13 +100,22 @@ class MatrixClientSyncRepository
                         Thread::create(
                             [
                                 'thread_id' => $roomId,
-                                'name' => $event['content']['name'],
+                                'name' => is_array($event['content']['name']) ? Arr::first($event['content']['name']) : $event['content']['name'],
                                 'origin_server_ts' => Carbon::now(),
                             ]
                         );
                         break;
                     }
                     $this->renameThreadToTheParticipantThatIsntTheUser($thread, $user);
+
+                    if (is_array($thread->name)) {
+                        if (count($thread->name) === 1) {
+                            $thread->name = Arr::first($thread->name);
+                        } else {
+                            dd($thread->toArray());
+                        }
+                    }
+
 
                     if (! str_starts_with($thread->name, '!')) {
                         break;

@@ -5,16 +5,19 @@ declare(strict_types=1);
 namespace Tests\Unit\Repositories;
 
 use App\Repositories\MatrixClientSyncRepository;
+use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 class MatrixClientSyncRepositoryTest extends TestCase
 {
     protected MatrixClientSyncRepository $repository;
-
+    protected LoggerInterface|MockInterface $logger;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new MatrixClientSyncRepository;
+
+        $this->repository = new MatrixClientSyncRepository($this->logger = \Mockery::mock(LoggerInterface::class));
     }
 
     public function test_process_event_matrix_client_event(): void
