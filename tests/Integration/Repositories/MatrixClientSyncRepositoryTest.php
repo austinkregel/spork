@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Integration\Repositories;
+namespace Tests\Integration\Repositories;
 
 use App\Models\Credential;
 use App\Models\User;
 use App\Repositories\MatrixClientSyncRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 class MatrixClientSyncRepositoryTest extends TestCase
@@ -19,10 +20,11 @@ class MatrixClientSyncRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new MatrixClientSyncRepository;
+        $mockLog = \Mockery::mock(LoggerInterface::class);
+        $this->repository = new MatrixClientSyncRepository($mockLog);
     }
 
-    public function test_process_room()
+    public function test_process_room(): void
     {
         $this->assertDatabaseEmpty('threads');
         $this->assertDatabaseEmpty('people');

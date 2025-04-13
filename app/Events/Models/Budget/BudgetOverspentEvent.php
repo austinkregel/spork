@@ -10,6 +10,7 @@ use App\Models\Finance\Transaction;
 class BudgetOverspentEvent
 {
     public Budget $budget;
+
     public Transaction $transaction;
 
     public function __construct(Budget $budget, Transaction $transaction)

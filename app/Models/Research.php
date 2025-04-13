@@ -12,6 +12,8 @@ use App\Events\Models\Research\ResearchUpdated;
 use App\Events\Models\Research\ResearchUpdating;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -19,6 +21,7 @@ use Laravel\Scout\Searchable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+#[ObservedBy([ApplyCredentialsObserver::class])]
 class Research extends Model implements Crud
 {
     use HasFactory;

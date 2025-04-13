@@ -24,7 +24,10 @@ class ServerService extends Model implements ModelQuery
         'settings',
     ];
 
-    protected $casts = [
-        'settings' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'settings' => 'array',
+        ];
+    }
 }

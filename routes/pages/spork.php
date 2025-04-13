@@ -90,7 +90,6 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/servers/{server}/crontab', [Controllers\Spork\ServersController::class, 'crontab'])->name('servers.crontab');
     Route::get('/servers/{server}/logs', [Controllers\Spork\ServersController::class, 'logs'])->name('servers.logs');
 
-
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
     Route::post('deployment/{deployment}/detach', [Controllers\Spork\DeploymentController::class, 'detach'])->name('deployment.detach');

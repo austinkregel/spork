@@ -12,13 +12,12 @@ use App\Services\Development\ForgeDevelopmentService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 class SetupWebServerJob implements ShouldQueue
 {
-    use Batchable, DispatchesJobs, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         public Server $server,

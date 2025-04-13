@@ -10,6 +10,7 @@ use App\Models\Person;
 use App\Models\Thread;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Psr\Log\LoggerInterface;
 
@@ -54,8 +55,7 @@ class MatrixClientSyncRepository
 
     public function __construct(
         protected LoggerInterface $logger,
-    )
-    {
+    ) {
         //        if (file_exists(storage_path('app/matrix-sync.json'))) {
         //            $contents = json_decode(file_get_contents(storage_path('app/matrix-sync.json')), true);
         //
@@ -92,7 +92,6 @@ class MatrixClientSyncRepository
             $room['timeline']['events']
         );
 
-
         foreach ($events as $event) {
             switch ($event['type']) {
                 case 'm.room.name':
@@ -101,7 +100,7 @@ class MatrixClientSyncRepository
                         Thread::create(
                             [
                                 'thread_id' => $roomId,
-                                'name' => $event['content']['name'],
+                                'name' => is_array($event['content']['name']) ? Arr::first($event['content']['name']) : $event['content']['name'],
                                 'origin_server_ts' => Carbon::now(),
                             ]
                         );
@@ -109,7 +108,16 @@ class MatrixClientSyncRepository
                     }
                     $this->renameThreadToTheParticipantThatIsntTheUser($thread, $user);
 
-                    if (!str_starts_with($thread->name, '!')) {
+                    if (is_array($thread->name)) {
+                        if (count($thread->name) === 1) {
+                            $thread->name = Arr::first($thread->name);
+                        } else {
+                            dd($thread->toArray());
+                        }
+                    }
+
+
+                    if (! str_starts_with($thread->name, '!')) {
                         break;
                     }
                     $thread->update(['name' => $event['content']['name']]);
@@ -169,7 +177,7 @@ class MatrixClientSyncRepository
                         if (isset($relatedEvent) && $event['content']['m.relates_to']['rel_type'] === 'm.replace') {
                             $relatedEvent->update([
                                 'message' => $event['content']['m.new_content']['body'],
-                                'originated_at' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))
+                                'originated_at' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000)),
                             ]);
                             break;
                         }
@@ -244,7 +252,7 @@ class MatrixClientSyncRepository
                 case 'uk.half-shot.matrix-hookshot.feed':
                 case 'm.room.plumbing':
                 case 'm.room.related_groups':
-                case "com.beeper.room_features":
+                case 'com.beeper.room_features':
                     $this->ignored($event);
                     break;
                 default:
@@ -254,12 +262,14 @@ class MatrixClientSyncRepository
             }
         }
     }
+
     protected function redactEvent(array $event): void
     {
         $message = Message::firstWhere('event_id', $event['redacts']);
 
         if (empty($message)) {
             $this->ignored($event);
+
             return;
         }
 
@@ -269,9 +279,10 @@ class MatrixClientSyncRepository
             'message' => '🗑️ '.$redactionMessage,
             'html_message' => '<i>🗑️ '.$redactionMessage.'</i>',
             'thumbnail_url' => null,
-            'originated_at' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000))
+            'originated_at' => Carbon::createFromFormat('U', round($event['origin_server_ts'] / 1000)),
         ]);
     }
+
     public function processEvent(array $event): void
     {
         if (! isset($event['type'])) {
@@ -441,7 +452,7 @@ class MatrixClientSyncRepository
 
     protected function ignored($event)
     {
-        info('Ignoring event: '. $event['type'], $event);
+        info('Ignoring event: '.$event['type'], $event);
     }
 
     protected function processWebSettings(array $event)
@@ -580,13 +591,13 @@ class MatrixClientSyncRepository
         }
     }
 
-    protected function renameThreadToTheParticipantThatIsntTheUser(Thread|null $thread, User $user): void
+    protected function renameThreadToTheParticipantThatIsntTheUser(?Thread $thread, User $user): void
     {
         if (empty($thread)) {
             return;
         }
 
-        if (!str_starts_with($thread->name, '!')) {
+        if (! str_starts_with($thread->name, '!')) {
             return;
         }
 
@@ -596,7 +607,7 @@ class MatrixClientSyncRepository
             $thread->update(['name' => $participants->first()->name]);
         } elseif ($participants->count() === 2) {
             $participants->each(function (Person $participant) use ($thread, $user) {
-                if (!in_array($user->email, $participant->identifiers)) {
+                if (! in_array($user->email, $participant->identifiers)) {
                     $thread->update(['name' => $participant->identifiers]);
                 }
             });

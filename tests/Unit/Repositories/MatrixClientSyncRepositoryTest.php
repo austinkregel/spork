@@ -5,19 +5,22 @@ declare(strict_types=1);
 namespace Tests\Unit\Repositories;
 
 use App\Repositories\MatrixClientSyncRepository;
+use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 class MatrixClientSyncRepositoryTest extends TestCase
 {
     protected MatrixClientSyncRepository $repository;
-
+    protected LoggerInterface|MockInterface $logger;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new MatrixClientSyncRepository;
+
+        $this->repository = new MatrixClientSyncRepository($this->logger = \Mockery::mock(LoggerInterface::class));
     }
 
-    public function test_process_event_matrix_client_event()
+    public function test_process_event_matrix_client_event(): void
     {
         $this->repository->processEvent([
             'type' => 'io.element.matrix_client_information.DEVICE_ID',
@@ -40,7 +43,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
 
     }
 
-    public function test_process_event_local_notification_settings()
+    public function test_process_event_local_notification_settings(): void
     {
         $this->repository->processEvent([
             'type' => 'org.matrix.msc3890.local_notification_settings.DEVICE_ID',
@@ -62,7 +65,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
 
     }
 
-    public function test_process_event_secret_storage_key()
+    public function test_process_event_secret_storage_key(): void
     {
         $this->repository->processEvent([
             'type' => 'm.secret_storage.key.DEVICE_KEY',
@@ -87,7 +90,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
 
     }
 
-    public function test_process_event_recent_emoji()
+    public function test_process_event_recent_emoji(): void
     {
         $this->repository->processEvent([
             'type' => 'io.element.recent_emoji',
@@ -112,7 +115,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
 
     }
 
-    public function test_process_event_secret_storage_default_key()
+    public function test_process_event_secret_storage_default_key(): void
     {
         $this->repository->processEvent([
             'type' => 'm.secret_storage.default_key',
@@ -131,7 +134,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertSame(null, $this->getProperty($this->repository, 'notification_settings'));
     }
 
-    public function test_process_event_cross_signing_master()
+    public function test_process_event_cross_signing_master(): void
     {
         $this->repository->processEvent([
             'type' => 'm.cross_signing.master',
@@ -162,7 +165,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertSame(null, $this->getProperty($this->repository, 'notification_settings'));
     }
 
-    public function test_process_event_cross_signing_self_signing()
+    public function test_process_event_cross_signing_self_signing(): void
     {
         $this->repository->processEvent([
             'type' => 'm.cross_signing.self_signing',
@@ -193,7 +196,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertSame(null, $this->getProperty($this->repository, 'notification_settings'));
     }
 
-    public function test_process_event_cross_signing_user_signing()
+    public function test_process_event_cross_signing_user_signing(): void
     {
         $this->repository->processEvent([
             'type' => 'm.cross_signing.user_signing',
@@ -224,7 +227,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertSame(null, $this->getProperty($this->repository, 'notification_settings'));
     }
 
-    public function test_process_event_megolm_backup()
+    public function test_process_event_megolm_backup(): void
     {
         $this->repository->processEvent([
             'type' => 'm.megolm_backup.v1',
@@ -255,7 +258,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertSame(null, $this->getProperty($this->repository, 'notification_settings'));
     }
 
-    public function test_process_event_accepted_terms()
+    public function test_process_event_accepted_terms(): void
     {
         $this->repository->processEvent([
             'type' => 'm.accepted_terms',
@@ -272,7 +275,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertSame(null, $this->getProperty($this->repository, 'notification_settings'));
     }
 
-    public function test_process_event_web_settings()
+    public function test_process_event_web_settings(): void
     {
         $this->repository->processEvent([
             'type' => 'im.vector.web.settings',
@@ -289,7 +292,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertSame(null, $this->getProperty($this->repository, 'notification_settings'));
     }
 
-    public function test_process_event_breadcrumbs()
+    public function test_process_event_breadcrumbs(): void
     {
         $this->test_process_event_web_settings();
         $this->repository->processEvent([
@@ -309,7 +312,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertSame(null, $this->getProperty($this->repository, 'notification_settings'));
     }
 
-    public function test_process_event_direct()
+    public function test_process_event_direct(): void
     {
         $this->test_process_event_web_settings();
         $this->repository->processEvent([
@@ -335,7 +338,7 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertSame(null, $this->getProperty($this->repository, 'notification_settings'));
     }
 
-    public function test_process_event_push_rules()
+    public function test_process_event_push_rules(): void
     {
         $this->repository->processEvent([
             'type' => 'm.push_rules',

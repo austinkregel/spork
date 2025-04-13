@@ -14,7 +14,7 @@ class ExchangeTokenController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'institution' => 'required',
             'public_token' => 'required',
         ]);

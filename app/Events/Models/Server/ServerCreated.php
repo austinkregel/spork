@@ -15,7 +15,7 @@ class ServerCreated extends AbstractLogicalEvent implements ShouldBroadcastNow
         public Server $model,
     ) {}
 
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         $this->model->load('credential');
         if (empty($this->model->credential)) {
