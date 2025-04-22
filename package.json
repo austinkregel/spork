@@ -33,7 +33,7 @@
         "highlight.js": "^11.10.0",
         "highlightjs-vue": "^1.0.0",
         "node-html-parser": "^7.0.1",
-        "dotenv": "^16.4.7",
+        "dotenv": "^16.5.0",
         "node-pty": "^1.0.0",
         "notiwind": "^2.0.2",
         "pusher": "^5.1.3",
