@@ -15,24 +15,10 @@ class CrudControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected ?App\Models\User $user = null;
-
-    public function actingAsUser(): User
-    {
-        if (! Role::firstWhere('name', 'developer')) {
-            Role::create(['name' => 'developer']);
-        }
-
-        $this->actingAs($this->user = App\Models\User::factory()->create());
-        $this->user->assignRole('developer');
-
-        return $this->user;
-    }
-
     public function test_basic_test_success(): void
     {
         $this->actingAsUser();
-        Project::factory()->create([
+        $project = $this->user->projects()->create([
             'name' => 'github@austinkregel.com',
         ]);
 
@@ -40,6 +26,7 @@ class CrudControllerTest extends TestCase
             'name' => 'view_any_project',
             'guard_name' => 'web',
         ]);
+        $this->user->assignRole('developer');
         $response = $this->get('http://spork.localhost/api/crud/projects');
 
         $response->assertStatus(200);
@@ -48,7 +35,7 @@ class CrudControllerTest extends TestCase
     public function test_create_test_success(): void
     {
         $this->actingAsUser();
-        Project::factory()->create([
+        $this->user->projects()->create([
             'name' => 'github@austinkregel.com',
         ]);
         $this->user->permissions()->create([
@@ -66,7 +53,7 @@ class CrudControllerTest extends TestCase
     public function test_update_test_success(): void
     {
         $this->actingAsUser();
-        $project = Project::factory()->create([
+        $project = $this->user->projects()->create([
             'name' => 'github@austinkregel.com',
         ]);
 
@@ -87,7 +74,7 @@ class CrudControllerTest extends TestCase
     public function test_update_patch_test_success(): void
     {
         $this->actingAsUser();
-        $project = Project::factory()->create([
+        $project = $this->user->projects()->create([
             'name' => 'github@austinkregel.com',
         ]);
 
@@ -108,10 +95,12 @@ class CrudControllerTest extends TestCase
     public function test_delete_test_success(): void
     {
         $this->actingAsUser();
-        $project = Project::factory()->create([
+        $project = $this->user->projects()->create([
             'name' => 'github@austinkregel.com',
         ]);
-        $project2 = Project::factory()->create();
+        $project2 = $this->user->projects()->create([
+            'name' => 'project 2',
+        ]);
         $this->user->permissions()->create([
             'name' => 'delete_project.'.$project2->id,
             'guard_name' => 'web',
@@ -127,7 +116,7 @@ class CrudControllerTest extends TestCase
     public function test_show_test_success(): void
     {
         $this->actingAsUser();
-        $project = Project::factory()->create([
+        $project = $this->user->projects()->create([
             'name' => 'github@austinkregel.com',
         ]);
 
@@ -142,5 +131,13 @@ class CrudControllerTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson($project->toArray());
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getUser(): ?User
+    {
+        return $this->user;
     }
 }

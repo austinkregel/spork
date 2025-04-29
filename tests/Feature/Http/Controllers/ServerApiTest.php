@@ -22,7 +22,7 @@ class ServerApiTest extends TestCase
             'api_key' => 'credential_api_key',
         ]);
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAsUser()
             ->postJson(route('server.create'), [], [
                 'Accept' => 'application/json',
                 'Authentication' => 'Bearer '.$credential->api_key,

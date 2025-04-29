@@ -22,7 +22,7 @@ class RegistrationTest extends TestCase
             return;
         }
 
-        $response = $this->get('/register');
+        $response = $this->actingAsUser()->get('/register');
 
         $response->assertStatus(200);
     }
@@ -35,7 +35,7 @@ class RegistrationTest extends TestCase
             return;
         }
 
-        $response = $this->get('/register');
+        $response = $this->actingAsUser()->get('/register');
 
         $response->assertStatus(404);
     }

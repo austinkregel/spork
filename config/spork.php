@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-use App\Features;
 
 return [
     'prefix' => '',
@@ -32,23 +31,7 @@ return [
             'whitelist' => [],
         ],
     ],
-    'features' => [
-        Features\Automatic\Crud::class => true,
-        Features\Automatic\GeneratedPages::class => true,
-        Features\Automatic\ServerLinking::class => true,
-        Features\Communication\Email::class => true,
-        Features\Communication\Messaging::class => true,
-        Features\Banking::class => true,
-        Features\InfrastructureManagement::class => true,
-        Features\Domains::class => true,
-        Features\Feeds::class => true,
-        Features\FileManager::class => true,
-        Features\LinkShortening::class => true,
-        Features\PetoskeyToday::class => true,
-        Features\Projects::class => true,
-        Features\SporkApp::class => true,
-        Features\Websockets::class => true,
-    ],
+    'features' => [],
     'spork' => [
         'filesystem' => [
             'default' => 'local',

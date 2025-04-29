@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
+use App\Models\Credential;
 use App\Models\Deployment;
 use App\Models\Domain;
 use App\Models\Project;
@@ -17,12 +18,20 @@ class DeploymentController extends Controller
     {
         $deployment->load([
             'servers.tags', 'domains',
+            'credentials'
         ]);
 
-        $forgeCredential = $deployment->credentials()->where('service', 'forge')->first();
-        $cloudflareCredential = $deployment->credentials()->where('service', 'cloudflare')->first();
-        $namecheapCredential = $deployment->credentials()->where('service', 'namecheap')->first();
+        $forgeCredential = $deployment->credentials()->where('service', Credential::FORGE_DEVELOPMENT)->first();
+        $cloudflareCredential = $deployment->credentials()->where('service', Credential::CLOUDFLARE)->first();
+        $namecheapCredential = $deployment->credentials()->where('service', Credential::NAMECHEAP)->first();
 
+        if (in_array(null, [$forgeCredential, $cloudflareCredential, $namecheapCredential])) {
+            return response()->json([
+                'message' => 'Missing required credentials for deployment.',
+            ], 422);
+        }
+
+        return response([], 200);
         /** @var \App\Models\Server $server */
         foreach ($deployment->servers as $server) {
             $tags = array_map(fn ($tag) => $tag->name->en, $server->tags);
@@ -60,7 +69,6 @@ class DeploymentController extends Controller
 
     public function attach(Deployment $deployment)
     {
-        //    request()
         request()->validate([
             'resource_type' => \Illuminate\Validation\Rule::in([
                 \App\Models\Credential::class,
@@ -83,20 +91,17 @@ class DeploymentController extends Controller
             'resource_type' => request()->get('resource_type'),
             'resource_id' => request()->get('resource_id'),
             'deployment_id' => $deployment->id,
-            'settings' => $this->filterSettingsForResource(request()->get('resource_type'), request()->get('resource_id')),
+            'settings' => json_encode($this->filterSettingsForResource(request()->get('resource_type'), request()->get('resource_id'))),
         ]);
-
     }
 
-    public function detach(Project $deployment)
+    public function detach(Deployment $deployment)
     {
-        //    request()
         request()->validate([
             'resource_type' => \Illuminate\Validation\Rule::in([
                 \App\Models\Credential::class,
                 Domain::class,
                 Server::class,
-
             ]),
         ]);
 
@@ -124,7 +129,7 @@ class DeploymentController extends Controller
 
         $tags = $instance->tags;
 
-        if ($tags->map->name->map->en->contains('loadbalancer')) {
+        if ($tags?->map?->name?->map?->en?->contains('loadbalancer')) {
             $settings['loadbalancer'] = true;
         }
 

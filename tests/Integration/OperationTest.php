@@ -25,8 +25,8 @@ class OperationTest extends TestCase
         Queue::fake();
     }
 
-    /** @test */
-    public function started_run_at_is_the_only_fillable_default_field(): void
+    
+    public function test_started_run_at_is_the_only_fillable_default_field(): void
     {
         ExampleOperation::create([
             'id' => 17,
@@ -48,8 +48,8 @@ class OperationTest extends TestCase
         $this->assertNull($operation->deleted_at, 'deleted_at should not be fillable');
     }
 
-    /** @test */
-    public function it_can_stop_itself(): void
+    
+    public function test_it_can_stop_itself(): void
     {
         $this->expectException(OperationStoppedException::class);
 
@@ -58,8 +58,8 @@ class OperationTest extends TestCase
         $operation->stop();
     }
 
-    /** @test */
-    public function it_can_cancel_itself(): void
+    
+    public function test_it_can_cancel_itself(): void
     {
         $this->expectException(OperationCanceledException::class);
 
@@ -68,16 +68,16 @@ class OperationTest extends TestCase
         $operation->cancel();
     }
 
-    /** @test */
-    public function it_can_schedule_itself(): void
+    
+    public function test_it_can_schedule_itself(): void
     {
         $operation = ExampleOperation::schedule(Carbon::now()->addDay());
 
         $this->assertEquals(Carbon::now()->addDay(), $operation->should_run_at);
     }
 
-    /** @test */
-    public function it_can_schedule_itself_with_custom_columns(): void
+    
+    public function test_it_can_schedule_itself_with_custom_columns(): void
     {
         $operation = ColumnOperation::schedule(Carbon::now()->addDay(), [
             'value' => 2500,
@@ -89,16 +89,16 @@ class OperationTest extends TestCase
         $this->assertEquals('Custom Columns', $operation->message);
     }
 
-    /** @test */
-    public function it_can_dispatch_itself_which_schedules_it_to_run_now(): void
+    
+    public function test_it_can_dispatch_itself_which_schedules_it_to_run_now(): void
     {
         $operation = ExampleOperation::dispatch();
 
         $this->assertEquals(Carbon::now(), $operation->should_run_at);
     }
 
-    /** @test */
-    public function it_can_dispatch_itself_to_run_now_with_custom_columns(): void
+    
+    public function test_it_can_dispatch_itself_to_run_now_with_custom_columns(): void
     {
         $operation = ColumnOperation::dispatch([
             'value' => 5000,
@@ -110,8 +110,8 @@ class OperationTest extends TestCase
         $this->assertEquals('Dispatching Operations', $operation->message);
     }
 
-    /** @test */
-    public function it_can_dispatch_itself_concurrently(): void
+    
+    public function test_it_can_dispatch_itself_concurrently(): void
     {
         $operation = ExampleOperation::dispatchNow();
 
@@ -125,8 +125,8 @@ class OperationTest extends TestCase
         $this->assertEquals(Carbon::now(), $operation->finished_run_at);
     }
 
-    /** @test */
-    public function it_can_dispatch_itself_concurrently_with_custom_columns(): void
+    
+    public function test_it_can_dispatch_itself_concurrently_with_custom_columns(): void
     {
         $operation = ColumnOperation::dispatchNow([
             'value' => 1234,

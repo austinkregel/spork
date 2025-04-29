@@ -9,9 +9,12 @@ use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected ?User $user = null;
+
     public function createApplication()
     {
         $app = require Application::inferBasePath().'/bootstrap/app.php';
@@ -47,5 +50,18 @@ abstract class TestCase extends BaseTestCase
         }
 
         return $user;
+    }
+    public function actingAsUser(): static
+    {
+        if (! Role::firstWhere('name', 'developer')) {
+            Role::create(['name' => 'developer']);
+        }
+
+        $this->actingAs($this->user = User::factory()->create([
+            'email_verified_at' => now()->subHour(),
+        ]));
+        $this->user->assignRole('developer');
+
+        return $this;
     }
 }

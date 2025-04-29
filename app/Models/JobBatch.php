@@ -11,10 +11,7 @@ class JobBatch extends Model
 {
     use HasFactory;
 
-    public $incrementing = false;
-
     public $fillable = [
-        'id',
         'name',
         'total_jobs',
         'pending_jobs',
@@ -25,6 +22,8 @@ class JobBatch extends Model
         'created_at',
         'finished_at',
     ];
+
+    public $timestamps = false;
 
     public $dispatchesEvents = [
         'created' => \App\Events\Models\JobBatch\JobBatchCreated::class,

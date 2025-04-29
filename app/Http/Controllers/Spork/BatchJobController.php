@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
+use App\Models\JobBatch;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
@@ -52,9 +53,9 @@ class BatchJobController extends Controller
         ]);
     }
 
-    public function show(Request $request, $batch)
+    public function show(Request $request, int $batch)
     {
-        $batches = \DB::table('job_batches')
+        $batches = JobBatch::query()
             ->select('*')
             ->orderByDesc('created_at')
             ->where('id', $batch)
@@ -64,7 +65,7 @@ class BatchJobController extends Controller
             array_map(function ($batch) {
                 $batch->jobs = \DB::table('failed_jobs')
                     ->select('*')
-                    ->whereIn('uuid', json_decode($batch->failed_job_ids, true))
+                    ->whereIn('uuid', json_decode($batch->failed_job_ids ?? '[]', true))
                     ->orderByDesc('failed_at')
                     ->get()
                     ->map(function ($job) {
