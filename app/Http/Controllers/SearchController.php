@@ -18,6 +18,12 @@ class SearchController extends Controller
 {
     public function index(Request $request)
     {
+        if (empty(request('query'))) {
+            return Inertia::render('Search/Search', [
+                'results' => [],
+            ]);
+        }
+
         $client = new Client(
             config('scout.meilisearch.host'),
             config('scout.meilisearch.key'),

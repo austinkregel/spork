@@ -19,7 +19,13 @@ class ThreadFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'thread_id' => $this->faker->uuid(),
+            'name' => $this->faker->name(),
+            'description' => $this->faker->name(),
+            'rules' => $this->faker->name(),
+            'topic' => $this->faker->name(),
+            'settings' => [],
+            'origin_server_ts' => $this->faker->unixTime(),
         ];
     }
 }

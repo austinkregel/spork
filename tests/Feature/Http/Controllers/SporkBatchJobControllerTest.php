@@ -11,18 +11,18 @@ class SporkBatchJobControllerTest extends TestCase
 
     public function test_batch_jobs_route_is_accessible()
     {
-        $response = $this->get('/-/batch-jobs');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/batch-jobs');
 
         $response->assertStatus(200);
     }
 
     public function test_batch_jobs_route_loads_expected_data()
     {
-        $response = $this->get('/-/batch-jobs');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/batch-jobs');
 
         $response->assertInertia(fn ($page) => $page
-            ->component('BatchJobs/Index')
-            ->has('batchJobs')
+            ->component('Admin/BatchJob/Index')
+            ->has('paginator')
         );
     }
 
@@ -30,7 +30,7 @@ class SporkBatchJobControllerTest extends TestCase
     {
         $batchJob = \App\Models\JobBatch::factory()->create();
 
-        $response = $this->get("/-/batch-jobs/{$batchJob->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/batch-jobs/$batchJob->id");
 
         $response->assertStatus(200);
     }
@@ -39,11 +39,11 @@ class SporkBatchJobControllerTest extends TestCase
     {
         $batchJob = \App\Models\JobBatch::factory()->create();
 
-        $response = $this->get("/-/batch-jobs/{$batchJob->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/batch-jobs/$batchJob->id");
 
         $response->assertInertia(fn ($page) => $page
-            ->component('BatchJobs/Show')
-            ->has('batchJob')
+            ->component('Admin/BatchJob/Show')
+            ->has('paginator')
         );
     }
 }

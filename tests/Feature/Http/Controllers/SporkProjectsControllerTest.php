@@ -12,14 +12,14 @@ class SporkProjectsControllerTest extends TestCase
 
     public function test_projects_route_is_accessible()
     {
-        $response = $this->get('/-/projects');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects');
 
         $response->assertStatus(200);
     }
 
     public function test_projects_create_route_is_accessible()
     {
-        $response = $this->get('/-/projects/create');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects/create');
 
         $response->assertStatus(200);
     }
@@ -28,18 +28,18 @@ class SporkProjectsControllerTest extends TestCase
     {
         $project = Project::factory()->create();
 
-        $response = $this->get("/-/projects/{$project->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/projects/{$project->id}");
 
         $response->assertStatus(200);
     }
 
     public function test_projects_route_loads_expected_data()
     {
-        $response = $this->get('/-/projects');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Projects/Index')
-            ->has('projects')
+            ->has('data')
         );
     }
 
@@ -47,10 +47,10 @@ class SporkProjectsControllerTest extends TestCase
     {
         $project = Project::factory()->create();
 
-        $response = $this->get("/-/projects/{$project->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/projects/{$project->id}");
 
         $response->assertInertia(fn ($page) => $page
-            ->component('Projects/Show')
+            ->component('Projects/Project')
             ->has('project')
         );
     }

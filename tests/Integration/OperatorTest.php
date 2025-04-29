@@ -35,8 +35,8 @@ class OperatorTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_queues_operations_that_are_ready_to_run(): void
+    
+    public function test_it_queues_operations_that_are_ready_to_run(): void
     {
         $exampleOperation = new ExampleOperation;
         $exampleOperation->should_run_at = Carbon::now()->subMinutes(5);
@@ -51,8 +51,8 @@ class OperatorTest extends TestCase
         $this->assertNotNull($exampleOperation->fresh()->started_run_at);
     }
 
-    /** @test */
-    public function it_queues_multiple_operations_that_are_ready_to_run(): void
+    
+    public function test_it_queues_multiple_operations_that_are_ready_to_run(): void
     {
         $exampleOperation = new ExampleOperation;
         $exampleOperation->should_run_at = Carbon::now()->subMinutes(5);
@@ -83,8 +83,8 @@ class OperatorTest extends TestCase
         $this->assertNotNull($secondAnotherOperation->fresh()->started_run_at);
     }
 
-    /** @test */
-    public function it_runs_operations_with_a_custom_queue_on_the_custom_queue_when_scheduled_and_queued(): void
+    
+    public function test_it_runs_operations_with_a_custom_queue_on_the_custom_queue_when_scheduled_and_queued(): void
     {
         $customQueueOperation = CustomQueueOperation::schedule(Carbon::now()->subMinutes(5));
 
@@ -96,8 +96,8 @@ class OperatorTest extends TestCase
         });
     }
 
-    /** @test */
-    public function it_runs_operations_with_a_custom_connection_on_the_custom_connection_when_scheduled_and_queued(): void
+    
+    public function test_it_runs_operations_with_a_custom_connection_on_the_custom_connection_when_scheduled_and_queued(): void
     {
         $customConnectionOperation = CustomConnectionOperation::schedule(Carbon::now()->subMinutes(5));
 
@@ -109,8 +109,8 @@ class OperatorTest extends TestCase
         });
     }
 
-    /** @test */
-    public function it_does_not_queue_operations_that_are_not_ready_to_run(): void
+    
+    public function test_it_does_not_queue_operations_that_are_not_ready_to_run(): void
     {
         $exampleOperation = new ExampleOperation;
         $exampleOperation->should_run_at = Carbon::now()->addMinutes(5);
@@ -123,8 +123,8 @@ class OperatorTest extends TestCase
         $this->assertNull($exampleOperation->fresh()->started_run_at);
     }
 
-    /** @test */
-    public function it_does_not_queue_operations_that_have_already_started_to_run(): void
+    
+    public function test_it_does_not_queue_operations_that_have_already_started_to_run(): void
     {
         $exampleOperation = new ExampleOperation;
         $exampleOperation->should_run_at = Carbon::now()->subMinutes(5);
@@ -138,8 +138,8 @@ class OperatorTest extends TestCase
         $this->assertEquals(Carbon::now()->subMinute(), $exampleOperation->fresh()->started_run_at);
     }
 
-    /** @test */
-    public function it_does_not_queue_operations_that_have_been_deleted(): void
+    
+    public function test_it_does_not_queue_operations_that_have_been_deleted(): void
     {
         $exampleOperation = new ExampleOperation;
         $exampleOperation->should_run_at = Carbon::now()->subMinutes(5);
@@ -153,8 +153,8 @@ class OperatorTest extends TestCase
         $this->assertNull($exampleOperation->fresh()->started_run_at);
     }
 
-    /** @test */
-    public function it_calls_an_operations_queue_event_when_event_is_queued(): void
+    
+    public function test_it_calls_an_operations_queue_event_when_event_is_queued(): void
     {
         $exampleOperation = new ExampleOperation;
         $exampleOperation->should_run_at = Carbon::now()->subMinutes(5);

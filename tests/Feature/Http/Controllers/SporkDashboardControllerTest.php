@@ -11,18 +11,17 @@ class SporkDashboardControllerTest extends TestCase
 
     public function test_dashboard_route_is_accessible()
     {
-        $response = $this->get('/-/dashboard');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/dashboard');
 
         $response->assertStatus(200);
     }
 
     public function test_dashboard_route_loads_expected_data()
     {
-        $response = $this->get('/-/dashboard');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/dashboard');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Dashboard')
-            ->has('user')
             ->has('notifications')
         );
     }

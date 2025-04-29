@@ -20,6 +20,4 @@ class AssetController extends Controller
                 ->paginate(),
         ]);
     }
-
-    public function labels() {}
 }

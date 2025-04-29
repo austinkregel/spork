@@ -11,21 +11,21 @@ class SporkBankingControllerTest extends TestCase
 
     public function test_banking_route_is_accessible()
     {
-        $response = $this->get('/-/banking');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/banking');
 
         $response->assertStatus(200);
     }
 
     public function test_banking_budgets_route_is_accessible()
     {
-        $response = $this->get('/-/banking/budgets');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/banking/budgets');
 
         $response->assertStatus(200);
     }
 
     public function test_banking_route_loads_expected_data()
     {
-        $response = $this->get('/-/banking');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/banking');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Banking/Index')
@@ -36,11 +36,11 @@ class SporkBankingControllerTest extends TestCase
 
     public function test_banking_budgets_route_loads_expected_data()
     {
-        $response = $this->get('/-/banking/budgets');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/banking/budgets');
 
         $response->assertInertia(fn ($page) => $page
-            ->component('Banking/Budgets')
-            ->has('budgets')
+            ->component('Banking/Index')
+            ->has('accounts')
         );
     }
 }

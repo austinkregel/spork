@@ -11,14 +11,14 @@ class SporkFileManagerControllerTest extends TestCase
 
     public function test_file_manager_route_is_accessible()
     {
-        $response = $this->get('/-/file-manager');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/file-manager');
 
         $response->assertStatus(200);
     }
 
     public function test_file_manager_route_loads_expected_data()
     {
-        $response = $this->get('/-/file-manager');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/file-manager');
 
         $response->assertInertia(fn ($page) => $page
             ->component('FileManager')

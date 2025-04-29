@@ -11,14 +11,14 @@ class SporkRssFeedsControllerTest extends TestCase
 
     public function test_rss_feeds_route_is_accessible()
     {
-        $response = $this->get('/-/rss-feeds');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/rss-feeds');
 
         $response->assertStatus(200);
     }
 
     public function test_rss_feeds_route_loads_expected_data()
     {
-        $response = $this->get('/-/rss-feeds');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/rss-feeds');
 
         $response->assertInertia(fn ($page) => $page
             ->component('RssFeeds/Index')

@@ -11,18 +11,18 @@ class SporkSettingsControllerTest extends TestCase
 
     public function test_settings_route_is_accessible()
     {
-        $response = $this->get('/-/settings');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/settings');
 
         $response->assertStatus(200);
     }
 
     public function test_settings_route_loads_expected_data()
     {
-        $response = $this->get('/-/settings');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/settings');
 
         $response->assertInertia(fn ($page) => $page
-            ->component('Settings')
-            ->has('user')
+            ->component('Settings/Index')
+            ->has('config')
             ->has('settings')
         );
     }

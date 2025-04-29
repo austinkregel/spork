@@ -94,7 +94,7 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
 
     Route::post('deployment/{deployment}/detach', [Controllers\Spork\DeploymentController::class, 'detach'])->name('deployment.detach');
     Route::post('deployment/{deployment}/attach', [Controllers\Spork\DeploymentController::class, 'attach'])->name('deployment.attach');
-    Route::post('deployment/{project}/deploy', [Controllers\Spork\DeploymentController::class, 'deploy'])->name('project.deploy');
+    Route::post('deployment/{deployment}/deploy', [Controllers\Spork\DeploymentController::class, 'deploy'])->name('project.deploy');
 
     Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');
     Route::get('/banking/budgets', [Controllers\Spork\BankingController::class, 'budgets'])->name('banking.budgets');
@@ -140,7 +140,6 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');
 
     Route::get('/assets', [Controllers\Spork\AssetController::class, 'index'])->name('assets.index');
-    Route::get('/labels', [Controllers\Spork\AssetController::class, 'labels'])->name('assets.labels');
 });
 Route::middleware([
     'web',

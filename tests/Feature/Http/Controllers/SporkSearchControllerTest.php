@@ -11,17 +11,17 @@ class SporkSearchControllerTest extends TestCase
 
     public function test_search_route_is_accessible()
     {
-        $response = $this->get('/-/search');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/search');
 
         $response->assertStatus(200);
     }
 
     public function test_search_route_loads_expected_data()
     {
-        $response = $this->get('/-/search');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/search');
 
         $response->assertInertia(fn ($page) => $page
-            ->component('Search')
+            ->component('Search/Search')
             ->has('results')
         );
     }

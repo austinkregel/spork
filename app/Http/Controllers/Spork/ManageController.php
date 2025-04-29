@@ -16,8 +16,6 @@ class ManageController
 {
     public function index()
     {
-        Inertia::share('subnavigation', $navigation = $this->navigation());
-
         $user = request()->user();
 
         return Inertia::render('Manage/Index', [
@@ -48,10 +46,14 @@ class ManageController
 
     public function show($model)
     {
-        Inertia::share('subnavigation', $navigation = $this->navigation());
-        $model = $navigation->firstWhere('slug', $model)['class'];
+        $models = Code::instancesOf(Crud::class)->getClasses();
 
-        $table = (new $model)->getTable();
+        $index = array_search($model, array_map(fn ($class) => (new $class)->getTable(), $models));
+        $table = $model;
+        $model = $models[$index] ?? null;
+
+        abort_unless(empty($modal), 404, 'Invalid model specified.');
+
         $description = (new DescribeTableService)->describe(new $model);
 
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */

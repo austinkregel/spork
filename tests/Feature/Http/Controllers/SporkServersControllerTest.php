@@ -11,7 +11,7 @@ class SporkServersControllerTest extends TestCase
 
     public function test_servers_route_is_accessible()
     {
-        $response = $this->get('/-/servers');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/servers');
 
         $response->assertStatus(200);
     }
@@ -20,7 +20,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->get("/-/servers/{$server->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}");
 
         $response->assertStatus(200);
     }
@@ -29,7 +29,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->get("/-/servers/{$server->id}/console");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/console");
 
         $response->assertStatus(200);
     }
@@ -38,7 +38,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->get("/-/servers/{$server->id}/keys");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/keys");
 
         $response->assertStatus(200);
     }
@@ -47,7 +47,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->get("/-/servers/{$server->id}/workers");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/workers");
 
         $response->assertStatus(200);
     }
@@ -56,7 +56,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->get("/-/servers/{$server->id}/crontab");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/crontab");
 
         $response->assertStatus(200);
     }
@@ -65,17 +65,17 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->get("/-/servers/{$server->id}/logs");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/logs");
 
         $response->assertStatus(200);
     }
 
     public function test_servers_route_loads_expected_data()
     {
-        $response = $this->get('/-/servers');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/servers');
 
         $response->assertInertia(fn ($page) => $page
-            ->component('Servers/Index')
+            ->component('Infrastructure/Index')
             ->has('servers')
         );
     }
@@ -84,10 +84,10 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->get("/-/servers/{$server->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}");
 
         $response->assertInertia(fn ($page) => $page
-            ->component('Servers/Show')
+            ->component('Infrastructure/Show')
             ->has('server')
         );
     }

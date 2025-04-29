@@ -11,39 +11,47 @@ class SporkResearchControllerTest extends TestCase
 
     public function test_research_route_is_accessible()
     {
-        $response = $this->get('/-/research');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/research');
 
         $response->assertStatus(200);
     }
 
     public function test_research_route_loads_expected_data()
     {
-        $response = $this->get('/-/research');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/research');
 
         $response->assertInertia(fn ($page) => $page
-            ->component('Research/Index')
-            ->has('researches')
+            ->component('Research/Dashboard')
+            ->has('research')
         );
     }
 
     public function test_research_show_route_is_accessible()
     {
-        $research = \App\Models\Research::factory()->create();
+        $research = \App\Models\Research::factory()->create([
+            'topic' => 'Test Research',
+            'notes' => '',
+            'sources' => [],
+        ]);
 
-        $response = $this->get("/-/research/{$research->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/research/{$research->id}");
 
         $response->assertStatus(200);
     }
 
     public function test_research_show_route_loads_expected_data()
     {
-        $research = \App\Models\Research::factory()->create();
+        $research = \App\Models\Research::factory()->create([
+            'topic' => 'Test Research',
+            'notes' => '',
+            'sources' => [],
+        ]);
 
-        $response = $this->get("/-/research/{$research->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/research/{$research->id}");
 
         $response->assertInertia(fn ($page) => $page
-            ->component('Research/Show')
-            ->has('research')
+            ->component('Research/Topic')
+            ->has('topic')
         );
     }
 }

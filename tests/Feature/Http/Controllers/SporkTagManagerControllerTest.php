@@ -11,38 +11,45 @@ class SporkTagManagerControllerTest extends TestCase
 
     public function test_tag_manager_route_is_accessible()
     {
-        $response = $this->get('/-/tag-manager');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/tag-manager');
 
         $response->assertStatus(200);
     }
 
     public function test_tag_manager_tag_route_is_accessible()
     {
-        $tag = \App\Models\Tag::factory()->create();
+        $tag = \App\Models\Tag::factory()->create([
+            'name' => 'Test Tag',
+        ]);
+        $this->actingAsUser();
 
-        $response = $this->get("/-/tag-manager/{$tag->id}");
+        $this->user->tags()->attach($tag);
+
+        $response = $this->get("http://spork.localhost/-/tag-manager/{$tag->id}");
 
         $response->assertStatus(200);
     }
 
     public function test_tag_manager_route_loads_expected_data()
     {
-        $response = $this->get('/-/tag-manager');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/tag-manager');
 
         $response->assertInertia(fn ($page) => $page
-            ->component('TagManager')
+            ->component('Tags/Index')
             ->has('tags')
         );
     }
 
     public function test_tag_manager_tag_route_loads_expected_data()
     {
-        $tag = \App\Models\Tag::factory()->create();
+        $tag = \App\Models\Tag::factory()->create([
+            'name' => 'Test Tag',
+        ]);
 
-        $response = $this->get("/-/tag-manager/{$tag->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/tag-manager/{$tag->id}");
 
         $response->assertInertia(fn ($page) => $page
-            ->component('TagManager/Show')
+            ->component('Tags/Show')
             ->has('tag')
         );
     }

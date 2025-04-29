@@ -17,17 +17,16 @@ use App\Services\Condition\GreaterThanOrEqualToOperator;
 use App\Services\Condition\LessThanOperator;
 use App\Services\Condition\LessThanOrEqualToOperator;
 use App\Services\Condition\StartsWithOperator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ConditionOperatorsTest extends TestCase
 {
-    const EXPECT_TO_PASS = true;
+    public const EXPECT_TO_PASS = true;
 
-    const EXPECT_TO_FAIL = false;
+    public const EXPECT_TO_FAIL = false;
 
-    /**
-     * @dataProvider conditionOperatorsProvider
-     */
+    #[DataProvider('conditionOperatorsProvider')]
     public function test_condition_operators(AbstractLogicalOperator $operator, $needle, $haystack, $expected): void
     {
         $this->assertEquals($expected, $operator->compute($needle, $haystack));

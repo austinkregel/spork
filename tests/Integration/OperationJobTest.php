@@ -26,8 +26,8 @@ class OperationJobTest extends TestCase
         Queue::fake();
     }
 
-    /** @test */
-    public function it_can_hold_an_operation(): void
+     
+    public function test_it_can_hold_an_operation(): void
     {
         $operation = new ExampleOperation;
 
@@ -36,8 +36,8 @@ class OperationJobTest extends TestCase
         $this->assertSame($operation, $operationJob->getOperation());
     }
 
-    /** @test */
-    public function handle_successfully_runs_operation(): void
+     
+    public function test_handle_successfully_runs_operation(): void
     {
         $operation = new ExampleOperation;
         $operation->should_run_at = Carbon::now();
@@ -55,8 +55,8 @@ class OperationJobTest extends TestCase
         $this->assertNotNull($operation->finished_run_at);
     }
 
-    /** @test */
-    public function handle_successfully_binds_dependencies(): void
+     
+    public function test_handle_successfully_binds_dependencies(): void
     {
         $operation = new DependantOperation;
         $operation->should_run_at = Carbon::now();
@@ -68,8 +68,8 @@ class OperationJobTest extends TestCase
         $this->assertNotNull($operation->fresh()->finished_run_at);
     }
 
-    /** @test */
-    public function it_has_the_proper_display_name(): void
+     
+    public function test_it_has_the_proper_display_name(): void
     {
         $exampleOperation = new ExampleOperation;
         $exampleOperationJob = new OperationJob($exampleOperation);
@@ -79,9 +79,8 @@ class OperationJobTest extends TestCase
         $anotherOperationJob = new OperationJob($anotherOperation);
         $this->assertSame(AnotherOperation::class, $anotherOperationJob->displayName());
     }
-
-    /** @test */
-    public function it_has_the_proper_tags(): void
+    
+    public function test_it_has_the_proper_tags(): void
     {
         $exampleOperation = new ExampleOperation;
         $exampleOperation->id = 123;
@@ -102,8 +101,8 @@ class OperationJobTest extends TestCase
         $this->assertSame($expectedAnotherTags, $anotherOperationJob->tags());
     }
 
-    /** @test */
-    public function it_uses_custom_tags_from_operation_instead_of_default_tags(): void
+     
+    public function test_it_uses_custom_tags_from_operation_instead_of_default_tags(): void
     {
         $taggedOperation = new TaggedOperation;
         $taggedOperation->id = 123;

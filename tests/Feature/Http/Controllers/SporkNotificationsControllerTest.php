@@ -11,14 +11,14 @@ class SporkNotificationsControllerTest extends TestCase
 
     public function test_notifications_route_is_accessible()
     {
-        $response = $this->get('/-/notifications');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/notifications');
 
         $response->assertStatus(200);
     }
 
     public function test_notifications_route_loads_expected_data()
     {
-        $response = $this->get('/-/notifications');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/notifications');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Notifications')
