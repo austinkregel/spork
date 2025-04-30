@@ -103,7 +103,7 @@
 
                 <template #table-bottom>
                     <div class="w-full dark:text-white flex justify-between flex-wrap bg-stone-100 dark:bg-stone-800 px-4 py-2">
-                        <Link :href="paginator.prev_page_url" :disabled="hasPreviousPage" :plain="true" :xlarge="true" :class="[!hasPreviousPage ? 'opacity-50 cursor-not-allowed': '']">Previous</Link>
+                        <Link :href="paginator.prev_page_url ?? '#'" :disabled="hasPreviousPage" :plain="true" :xlarge="true" :class="[!hasPreviousPage ? 'opacity-50 cursor-not-allowed': '']">Previous</Link>
                         <div class="py-2">
                             {{ (currentPage * itemsPerPage) - itemsPerPage }} total items, {{ currentPage  }} of {{ paginator?.total}}
                         </div>

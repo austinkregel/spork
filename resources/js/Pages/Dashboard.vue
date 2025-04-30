@@ -46,7 +46,7 @@ dayjs.extend(relativeTime);
 
 const round = (value)=> Math.round(value * 10) / 10
 
-const relativeDateFormat = (date) => dayjs(date).from(dayjs())
+const relativeDateFormat = (date) => dayjs(date * 1000).from(dayjs())
 
 onMounted(() => {
   timeInterval.value = setInterval(() => {
