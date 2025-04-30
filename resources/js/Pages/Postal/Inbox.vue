@@ -40,7 +40,7 @@
               </Link>
               <Link
                   v-if="page.props.messages.next_page_url"
-                  :href="page.props.messages.next_page_url"
+                  :href="page.props.messages.next_page_url ?? '#'"
                   class="px-4 py-2 border rounded-lg m-1"
                   :class="[page.props.messages.next_page_url ? 'text-stone-900 dark:text-stone-50 border-stone-900 dark:border-stone-50' : 'border-stone-500 dark:stone-400 dark:text-stone-400 text-stone-500 cursor-not-allowed']"
               >

@@ -55,9 +55,13 @@ const parameters = [
     },
     // Recent article
     {
-        "value": "article.headline",
-        "name": "Article Title"
+      "value": "article.headline",
+      "name": "Article Title"
     },
+    {
+      "value": "article.content",
+      "name": "Article Content"
+  },
 ];
 const comparators = [
     {
