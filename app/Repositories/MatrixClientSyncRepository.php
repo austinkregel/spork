@@ -154,7 +154,6 @@ class MatrixClientSyncRepository
                         ),
                     ]);
                     break;
-
                 case 'm.room.redaction':
                     $this->redactEvent($event);
                     break;
@@ -164,6 +163,7 @@ class MatrixClientSyncRepository
                         ->with('participants')
                         ->firstWhere('thread_id', $roomId);
                     $message = $thread->messages()->firstWhere('event_id', $event['event_id']);
+
                     // We need to handle when events are edited. There is an optional m.relates_to blob we need to inspect to see how we should process the message.
                     // Sometimes we don't create a new message, but update the existing one.
                     if (isset($event['content']['m.relates_to'])) {
@@ -201,8 +201,8 @@ class MatrixClientSyncRepository
                         }
 
                         $thread->messages()->forceCreate(array_merge(
-                            isset($event['content']['info']) && isset($event['content']['info']['thumbnail_url']) ? [
-                                'thumbnail_url' => $this->downloadMedia($credential, $event['content']['info']['thumbnail_url']),
+                            isset($event['content']['info']) && $event['content']['msgtype'] === 'm.image' ? [
+                                'thumbnail_url' => $this->downloadMedia($credential, $event['content']['url']),
                             ] : [],
                             isset($event['content']['settings']) ? [
                                 'settings' => $event['content']['settings'],
