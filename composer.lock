@@ -10498,7 +10498,7 @@
         },
         {
             "name": "symfony/polyfill-php73",
-            "version": "v1.31.0",
+            "version": "v1.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php73.git",
@@ -10554,7 +10554,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php73/tree/v1.31.0"
+                "source": "https://github.com/symfony/polyfill-php73/tree/v1.32.0"
             },
             "funding": [
                 {
@@ -10574,16 +10574,16 @@
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.31.0",
+            "version": "v1.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "60328e362d4c2c802a54fcbf04f9d3fb892b4cf8"
+                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/60328e362d4c2c802a54fcbf04f9d3fb892b4cf8",
-                "reference": "60328e362d4c2c802a54fcbf04f9d3fb892b4cf8",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
+                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
                 "shasum": ""
             },
             "require": {
@@ -10634,7 +10634,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.31.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.32.0"
             },
             "funding": [
                 {
@@ -10650,7 +10650,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-09T11:45:10+00:00"
+            "time": "2025-01-02T08:10:11+00:00"
         },
         {
             "name": "symfony/polyfill-php81",
@@ -11652,16 +11652,16 @@
         },
         {
             "name": "toin0u/digitalocean-v2",
-            "version": "5.0.3",
+            "version": "5.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DigitalOceanPHP/Client.git",
-                "reference": "88409b77903157ce24060bc439561da3f58cf0d5"
+                "reference": "be8658cb864c1af8d43fcd64c94b5f39e6af2c53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DigitalOceanPHP/Client/zipball/88409b77903157ce24060bc439561da3f58cf0d5",
-                "reference": "88409b77903157ce24060bc439561da3f58cf0d5",
+                "url": "https://api.github.com/repos/DigitalOceanPHP/Client/zipball/be8658cb864c1af8d43fcd64c94b5f39e6af2c53",
+                "reference": "be8658cb864c1af8d43fcd64c94b5f39e6af2c53",
                 "shasum": ""
             },
             "require": {
@@ -11721,7 +11721,7 @@
             ],
             "support": {
                 "issues": "https://github.com/DigitalOceanPHP/Client/issues",
-                "source": "https://github.com/DigitalOceanPHP/Client/tree/5.0.3"
+                "source": "https://github.com/DigitalOceanPHP/Client/tree/5.0.5"
             },
             "funding": [
                 {
@@ -11729,7 +11729,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-11T19:54:32+00:00"
+            "time": "2025-05-03T20:44:33+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
