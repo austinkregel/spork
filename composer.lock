@@ -11653,16 +11653,16 @@
         },
         {
             "name": "toin0u/digitalocean-v2",
-            "version": "5.0.3",
+            "version": "5.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DigitalOceanPHP/Client.git",
-                "reference": "88409b77903157ce24060bc439561da3f58cf0d5"
+                "reference": "be8658cb864c1af8d43fcd64c94b5f39e6af2c53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DigitalOceanPHP/Client/zipball/88409b77903157ce24060bc439561da3f58cf0d5",
-                "reference": "88409b77903157ce24060bc439561da3f58cf0d5",
+                "url": "https://api.github.com/repos/DigitalOceanPHP/Client/zipball/be8658cb864c1af8d43fcd64c94b5f39e6af2c53",
+                "reference": "be8658cb864c1af8d43fcd64c94b5f39e6af2c53",
                 "shasum": ""
             },
             "require": {
@@ -11722,7 +11722,7 @@
             ],
             "support": {
                 "issues": "https://github.com/DigitalOceanPHP/Client/issues",
-                "source": "https://github.com/DigitalOceanPHP/Client/tree/5.0.3"
+                "source": "https://github.com/DigitalOceanPHP/Client/tree/5.0.5"
             },
             "funding": [
                 {
@@ -11730,7 +11730,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-11T19:54:32+00:00"
+            "time": "2025-05-03T20:44:33+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
