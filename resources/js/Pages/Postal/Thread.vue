@@ -81,7 +81,6 @@
                                     class="px-2 py-1 flex rounded-lg shadow"
                                 >
                                     <img v-if="message.thumbnail_url || message.message?.startsWith('https://tenor.com')" :src="message.thumbnail_url ?? message.message" :alt="message.message" class="w-64"/>
-                                    <div v-else-if="message.html_message" v-html="message.html_message"></div>
                                     <div v-else-if="message.thumbnail_url">{{message.thumbnail_url}}</div>
                                     <Markdown v-else :source="message.message" class="prose dark:prose-invert"></Markdown>
                                 </div>
