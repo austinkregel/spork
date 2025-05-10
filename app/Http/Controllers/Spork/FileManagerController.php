@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Winter\LaravelConfigWriter\ArrayFile;
 
@@ -26,7 +27,7 @@ class FileManagerController
                     'type' => 'file',
                     'last_modified' => \Carbon\Carbon::parse($filesystem->lastModified($file)),
                 ],
-                $filesystem->files($path)
+                Arr::sort($filesystem->files($path))
             ))->sortBy('name')->values(),
             'directories' => collect(array_map(
                 fn ($file) => [
@@ -36,7 +37,7 @@ class FileManagerController
                     'type' => 'folder',
                     'path' => $file,
                 ],
-                $filesystem->directories($path)
+                Arr::sort($filesystem->directories($path))
             ))->sortBy('name')->values(),
             'filesystems' => collect(config('filesystems.disks'))->keys(),
             'selectedFilesystem' => $selectedFilesystem,
@@ -66,13 +67,17 @@ class FileManagerController
                     'file_path' => base64_encode($directory),
                     'is_directory' => true,
                 ])
+                ->sortBy('name')
+                ->values()
                 ->concat(
                     collect($filesystem->files($decoded))
                         ->map(fn ($file) => [
-                            'name' => $file,
+                            'name' => basename($file),
                             'file_path' => base64_encode($file),
                             'is_directory' => false,
                         ])
+                        ->sortBy('name')
+                        ->values
                 );
         }
 

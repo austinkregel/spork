@@ -24,13 +24,17 @@ class DevelopmentController
                     'file_path' => base64_encode($directory),
                     'is_directory' => true,
                 ])
+                ->sortBy('name')
+                ->values()
                 ->concat(
                     collect(Storage::disk($disk)->files($decoded))
                         ->map(fn ($file) => [
-                            'name' => $file,
+                            'name' => basename($file),
                             'file_path' => base64_encode($file),
                             'is_directory' => false,
                         ])
+                    ->sortBy('name')
+                    ->values()
                 ),
 
         ]);
