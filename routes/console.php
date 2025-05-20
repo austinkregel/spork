@@ -28,9 +28,10 @@ Artisan::command('build:summary-notification', function () {
 Artisan::command('sync:jira-tickets', function () {
     SyncJiraTicketsJob::dispatch();
 })->describe('Sync Jira tickets');
-Artisan::command('sync:matrix', function () {
-    MatrixSyncJob::dispatchSync();
-})->describe('Sync Matrix');
+//Artisan::command('sync:matrix', function () {
+// Temporarily disabled due to the server going down
+//    MatrixSyncJob::dispatchSync();
+//})->describe('Sync Matrix');
 Artisan::command('sync:transaction-tags', function () {
     dispatch_sync(new \App\Jobs\SyncTagsWithTransactionsInDatabase);
 });
