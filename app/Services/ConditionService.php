@@ -90,7 +90,7 @@ class ConditionService
 
     protected function logCondition(Condition $condition, bool $passesCondition, $value)
     {
-        $this->logger->info("Condition: {$condition->parameter} {$condition->comparator} {$condition->value}", [
+        $this->logger->info("Condition: Is [$value] {$condition->parameter} {$condition->comparator} {$condition->value}", [
             'passes_condition' => $passesCondition,
             'value' => $value,
         ]);

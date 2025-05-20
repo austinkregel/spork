@@ -1,33 +1,10 @@
 <style lang="css">
 @import "../../../../node_modules/vue-select/dist/vue-select.css";
 
-.tribute-container {
-    @apply bg-white dark:bg-stone-900 rounded shadow text-xs ;
-}
 .tribute-container ul, .tribute-container li {
     list-style: none;
     margin: 0;
     padding: 0;
-}
-.tribute-container li {
-    @apply py-1 px-2;
-}
-.tribute-container li span {
-    @apply font-bold;
-}
-.tribute-container .selected {
-    @apply bg-stone-200 dark:bg-stone-600 px-2;
-}
-.vs__dropdown-menu, .vs__selected {
-    @apply dark:bg-stone-700 dark:text-stone-50;
-}
-
-.vjs-tree-node.is-highlight, .vjs-tree-node:hover {
-    @apply dark:bg-stone-600 !important;
-}
-
-.vs__dropdown-toggle {
-    @apply dark:bg-stone-600;
 }
 </style>
 

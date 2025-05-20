@@ -14,7 +14,7 @@ class TagManagerController
 {
     public function __invoke()
     {
-        $tags = \App\Models\Tag::withSum('transactions', 'amount')
+        $tags = auth()->user()->tags()->withSum('transactions', 'amount')
             ->with(['conditions'])
             ->orderBy('type')
             ->paginate(
@@ -46,7 +46,6 @@ class TagManagerController
 
     public function show(Tag $tag)
     {
-        //        dd(collect(Code::instancesOf(HasTags::class)->getClasses())->map(fn ($class) => (new $class)->getTable()));
         return Inertia::render('Tags/Show', [
             'tag' => $tag->loadSum('transactions', 'amount')
                 ->load([

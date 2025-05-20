@@ -124,9 +124,3 @@ const close = () => $emit('close');
         </Modal>
     </div>
 </template>
-
-<style>
-.multiselect__input {
-    @apply bg-white dark:bg-stone-700 text-black dark:text-white;
-}
-</style>

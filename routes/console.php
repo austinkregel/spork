@@ -14,7 +14,8 @@ Schedule::job(UpdateAllFeeds::class)->everyFifteenMinutes();
 Schedule::job(FetchResourcesFromCredentials::class)->hourly();
 Schedule::job(BuildSummaryNotificationJob::class)->dailyAt('13:00');
 Schedule::command('operations:queue')->everyFiveMinutes();
-Schedule::job(MatrixSyncJob::class)->everyMinute();
+// Temporarily disabled due to the server going down
+//Schedule::job(MatrixSyncJob::class)->everyMinute();
 
 Artisan::command('update:all-feeds', function () {
     UpdateAllFeeds::dispatch();
@@ -28,10 +29,9 @@ Artisan::command('build:summary-notification', function () {
 Artisan::command('sync:jira-tickets', function () {
     SyncJiraTicketsJob::dispatch();
 })->describe('Sync Jira tickets');
-//Artisan::command('sync:matrix', function () {
-// Temporarily disabled due to the server going down
-//    MatrixSyncJob::dispatchSync();
-//})->describe('Sync Matrix');
+Artisan::command('sync:matrix', function () {
+    MatrixSyncJob::dispatchSync();
+})->describe('Sync Matrix');
 Artisan::command('sync:transaction-tags', function () {
     dispatch_sync(new \App\Jobs\SyncTagsWithTransactionsInDatabase);
 });
