@@ -44,7 +44,7 @@ class ApplyUserAutomatedTagsToArticle implements ShouldQueue
         $conditionService = new ConditionService($this->logger);
 
         $tagsToApply = $tags->filter(fn (Tag $tag) => $conditionService->process($tag, [
-            'article' => $article,
+            'article' => $article->toArray(),
         ]));
 
         foreach ($tagsToApply as $tag) {
