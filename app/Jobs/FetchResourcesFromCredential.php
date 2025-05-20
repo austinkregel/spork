@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Events\Models\JobBatch\JobBatchUpdated;
 use App\Jobs\Finance\SyncPlaidTransactionsJob;
 use App\Jobs\Servers\LaravelForgeServersSyncJob;
 use App\Models\Credential;
+use App\Models\JobBatch;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Bus\Dispatcher;
@@ -52,6 +54,8 @@ class FetchResourcesFromCredential implements ShouldQueue
             $this->batch()->add([
                 $nextJob,
             ]);
+
+            broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $this->batch()->id)));
         } else {
             dispatch($nextJob);
         }

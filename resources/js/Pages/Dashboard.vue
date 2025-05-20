@@ -53,7 +53,6 @@ onMounted(() => {
     now.value = dayjs();
   }, 1000)
 
-    console.log(MetricApiCard)
 
     return () => {
         clearInterval(timeInterval.value)

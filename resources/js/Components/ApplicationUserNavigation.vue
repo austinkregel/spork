@@ -6,6 +6,7 @@ import NotificationBody from "@/Components/NotificationBody.vue";
 import {ChevronDownIcon} from "@heroicons/vue/20/solid/index.js";
 import Search from "@/Components/Spork/Molecules/Search.vue";
 import {Link} from "@inertiajs/vue3";
+import Status from "@/Components/Spork/Molecules/Status.vue";
 
 const { user, notifications, notificationCount, } = defineProps({
   user: Object,
@@ -27,7 +28,12 @@ const userNavigation = [
     <div class="h-6 w-px bg-stone-900/10 lg:hidden" aria-hidden="true" />
 
     <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-      <Search />
+      <div class="flex-grow flex  ">
+        <Search />
+        <div class="w-1/2">
+          <Status />
+        </div>
+      </div>
       <div class="flex items-center gap-x-4 lg:gap-x-6">
         <Menu as="div" class="relative z-20">
           <MenuButton class="-m-1.5 flex items-center p-1.5">

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Jobs\News;
 
+use App\Events\Models\JobBatch\JobBatchUpdated;
 use App\Models\Article;
 use App\Models\ExternalRssFeed;
+use App\Models\JobBatch;
 use App\Services\News\Feeds\AbstractFeed;
 use App\Services\News\Feeds\FeedItem;
 use Illuminate\Bus\Batchable;
@@ -80,6 +82,9 @@ class UpdateFeed implements ShouldQueue
 
         if ($this->feed->isDirty()) {
             $this->feed->save();
+        }
+        if ($this->batch()) {
+            broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $this->batch()->id)));
         }
     }
 }

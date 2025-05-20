@@ -40,6 +40,12 @@ const appNavigation = {
     i.current = i.href === location.pathname;
     return i;
   }),
+  dev: [
+    { name: 'Development', href: '/-/development', icon: 'CommandLineIcon', active: false, },
+  ].map(i => {
+    i.current = i.href === location.pathname;
+    return i;
+  }),
 };
 </script>
 

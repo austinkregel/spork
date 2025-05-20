@@ -77,7 +77,7 @@ class FileManagerController
                             'is_directory' => false,
                         ])
                         ->sortBy('name')
-                        ->values
+                        ->values()
                 );
         }
 
