@@ -4,7 +4,7 @@ declare (strict_types=1);
 return [
     'prefix' => '',
     'filesystem' => [
-        'default' => env('SPORK_DEFAULT_FILESYSTEM', 'local'),
+        'default' => env('SPORK_DEFAULT_FILESYSTEM', 'ftp'),
     ],
     'code' => [
         'enabled' => true,

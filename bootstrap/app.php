@@ -10,7 +10,6 @@ use Illuminate\Foundation\Configuration\Middleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
         AppServiceProvider::class,
-        \Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
     ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -26,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web([
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \Spatie\ResponseCache\Middlewares\CacheResponse::class,
         ]);
 
         $middleware->throttleApi();
@@ -33,7 +33,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'server_auth' => \App\Http\Middleware\ServerAccessable::class,
         ]);
-
+        $middleware->alias([
+            'doNotCacheResponse' => \Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class,
+        ]);
         $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, \App\Http\Middleware\TrustProxies::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
