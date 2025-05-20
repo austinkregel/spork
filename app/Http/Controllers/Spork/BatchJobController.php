@@ -15,14 +15,13 @@ class BatchJobController extends Controller
 {
     public function index()
     {
-        $batches = \DB::table('job_batches')
-            ->select('*')
+        $batches = JobBatch::query()
             ->orderByDesc('created_at')
             ->paginate();
 
         $paginator = new LengthAwarePaginator(
             array_map(function ($batch) {
-                $failedJobs = json_decode($batch->failed_job_ids, true);
+                $failedJobs = $batch->failed_job_ids;
 
                 if (count($failedJobs) > 0) {
                     $batch->jobs = \DB::table('failed_jobs')
@@ -53,7 +52,7 @@ class BatchJobController extends Controller
         ]);
     }
 
-    public function show(Request $request, int $batch)
+    public function show(Request $request, string $batch)
     {
         $batches = JobBatch::query()
             ->select('*')
@@ -63,18 +62,21 @@ class BatchJobController extends Controller
 
         $paginator = new LengthAwarePaginator(
             array_map(function ($batch) {
-                $batch->jobs = \DB::table('failed_jobs')
-                    ->select('*')
-                    ->whereIn('uuid', json_decode($batch->failed_job_ids ?? '[]', true))
-                    ->orderByDesc('failed_at')
-                    ->get()
-                    ->map(function ($job) {
-                        $job->parsed_exception = (new Stacktrace)->parse($job->exception);
-                        $job->payload = json_decode($job->payload, true);
 
-                        return $job;
-                    });
-                $batch->failed_at = $batch->jobs->max('failed_at');
+                if (!empty($batch->failed_job_ids)) {
+                    $batch->jobs = \DB::table('failed_jobs')
+                        ->select('*')
+                        ->whereIn('uuid', $batch->failed_job_ids)
+                        ->orderByDesc('failed_at')
+                        ->get()
+                        ->map(function ($job) {
+                            $job->parsed_exception = (new Stacktrace)->parse($job->exception);
+                            $job->payload = json_decode($job->payload, true);
+
+                            return $job;
+                        });
+                    $batch->failed_at = $batch->jobs->max('failed_at');
+                }
 
                 return $batch;
             }, $batches->items()),

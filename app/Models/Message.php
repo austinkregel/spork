@@ -106,4 +106,9 @@ class Message extends Model implements Taggable
 
         return $data;
     }
+
+    public function thread()
+    {
+        return $this->belongsTo(Thread::class);
+    }
 }

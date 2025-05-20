@@ -28,13 +28,13 @@
         "laravel/reverb": "^1.4",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.12",
-        "laravel/tinker": "^2.10.1",
         "league/flysystem-ftp": "^3.0",
         "lesstif/php-jira-rest-client": "^5.7",
         "meilisearch/meilisearch-php": "^1.6",
         "mikehaertl/php-pdftk": "^0.13.1",
         "mustache/mustache": "^2.14",
         "nette/php-generator": "*",
+        "nikic/php-parser": "^4.10",
         "php-imap/php-imap": "^5.0",
         "phpseclib/phpseclib": "*",
         "picqer/php-barcode-generator": "^3.2",
@@ -48,7 +48,8 @@
         "spatie/laravel-tags": "^4.9",
         "staudenmeir/eloquent-json-relations": "^1.14",
         "tightenco/ziggy": "^2.0",
-        "toin0u/digitalocean-v2": "^5.0"
+        "toin0u/digitalocean-v2": "^5.0",
+        "winter/laravel-config-writer": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15",
@@ -58,7 +59,6 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3",
         "laravel/pail": "^1.2.2"
     },
     "autoload": {

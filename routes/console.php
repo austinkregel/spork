@@ -28,9 +28,60 @@ Artisan::command('build:summary-notification', function () {
 Artisan::command('sync:jira-tickets', function () {
     SyncJiraTicketsJob::dispatch();
 })->describe('Sync Jira tickets');
-Artisan::command('sync:matrix', function () {
-    MatrixSyncJob::dispatchSync();
-})->describe('Sync Matrix');
+//Artisan::command('sync:matrix', function () {
+// Temporarily disabled due to the server going down
+//    MatrixSyncJob::dispatchSync();
+//})->describe('Sync Matrix');
 Artisan::command('sync:transaction-tags', function () {
     dispatch_sync(new \App\Jobs\SyncTagsWithTransactionsInDatabase);
+});
+
+Artisan::command('test', function () {
+    $template = view('docker.basic-service', [
+        'projects' => [
+            [
+                'path' => 'spork',
+                'queue' => true,
+                'web' => true,
+                'websocket' => true,
+                'cron' => true,
+                'image' => 'ghcr.io/austinkregel/spork:latest',
+                'dependencies' => [
+                ],
+                'command' => 'bash /var/www/artisan'
+            ],
+            [
+                'path' => 'lazy.build',
+                'queue' => false,
+                'web' => true,
+                'websocket' => false,
+                'cron' => false,
+                'volumes' => [],
+                'image' => 'ghcr.io/austinkregel/lazy.build:latest',
+                'dependencies' => [
+                ],
+            ],
+            [
+                'path' => 'cannabis-consumer-information',
+                'queue' => true,
+                'web' => true,
+                'websocket' => false,
+                'cron' => true,
+                'image' => 'ghcr.io/austinkregel/cannabis-consumer-information:latest',
+                'dependencies' => [
+                ],
+            ],
+            [
+                'path' => 'aut.hair',
+                'queue' => false,
+                'web' => true,
+                'websocket' => false,
+                'cron' => false,
+                'image' => 'ghcr.io/austinkregel/aut.hair:latest',
+                'dependencies' => [
+                ],
+            ],
+        ]
+    ]);
+file_put_contents('template.yml', $template->toHtml());
 });

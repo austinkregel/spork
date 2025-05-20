@@ -1,11 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 return [
     'prefix' => '',
     'filesystem' => [
-        'default' => env('SPORK_DEFAULT_FILESYSTEM', 'ftp'),
+        'default' => env('SPORK_DEFAULT_FILESYSTEM', 'local'),
     ],
     'code' => [
         'enabled' => true,

@@ -30,7 +30,7 @@
                     <Link class="border px-4 py-2 rounded"
                           :class="[paginator?.prev_page_url ? 'border-stone-300 dark:border-stone-600 text-white' : 'text-stone-400 border-stone-300 dark:border-stone-700 bg-stone-200 dark:bg-stone-800/70 cursor-not-allowed']"
                           :disabled="!(paginator?.prev_page_url)"
-                          :href="paginator?.prev_page_url"
+                          :href="paginator?.prev_page_url ?? '#'"
 
                     >
                         Previous

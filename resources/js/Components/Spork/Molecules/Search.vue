@@ -13,7 +13,7 @@ const searchQuery = ref(search);
         <MagnifyingGlassIcon class="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-stone-400" aria-hidden="true" />
         <input
             id="search-field"
-            class="block h-full w-full border-0 dark:bg-neutral-900 py-0 pl-8 pr-0 text-stone-900 dark:text-stone-50 placeholder:text-stone-400 focus:ring-0 sm:text-sm"
+            class="block h-full w-full border-0 dark:bg-neutral-900 py-4 pl-8 pr-0 text-stone-900 dark:text-stone-50 placeholder:text-stone-400 focus:ring-0 sm:text-sm"
             placeholder="Search..."
             type="search"
             name="query"

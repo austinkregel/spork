@@ -46,14 +46,13 @@ dayjs.extend(relativeTime);
 
 const round = (value)=> Math.round(value * 10) / 10
 
-const relativeDateFormat = (date) => dayjs(date).from(dayjs())
+const relativeDateFormat = (date) => dayjs(date * 1000).from(dayjs())
 
 onMounted(() => {
   timeInterval.value = setInterval(() => {
     now.value = dayjs();
   }, 1000)
 
-    console.log(MetricApiCard)
 
     return () => {
         clearInterval(timeInterval.value)

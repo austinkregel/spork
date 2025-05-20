@@ -115,7 +115,7 @@ createInertiaApp({
                     console.log('Models.Email from server', e);
                     playSound('notification');
                     router.reload({
-                        only: ['messages', 'unread_email_count', 'threads', 'thread'],
+                        only: ['emails', 'messages', 'unread_email_count', 'threads', 'thread'],
                     });
                 })
                 .listen('Models\\Message\\MessageCreated', (e) => {
@@ -133,19 +133,17 @@ createInertiaApp({
                     });
                 })
                 .listen('Models\\Account\\AccountUpdated', e => {
-                    console.log('JobBatchUpdated', e);
+                    console.log('Models\\\\Account\\\\AccountUpdated\',', e);
                     router.reload({
                         only: ['accounts', 'unread_email_count']
                     })
                 })
                 .listen('Models\\JobBatch\\JobBatchCreated', e => {
-                    console.log('JobBatchCreated', e);
                     router.reload({
                         only: ['job_batches', 'news']
                     })
                 })
                 .listen('Models\\JobBatch\\JobBatchUpdated', e => {
-                    console.log('JobBatchUpdated', e);
                     router.reload({
                         only: ['job_batches', 'news']
                     })
@@ -181,7 +179,6 @@ createInertiaApp({
                 .error((error) => {
                     console.error('non-fatal error', error);
                 })
-                .listenToAll(console.log)
         }
 
         if (props?.initialPage?.props.auth.user?.person?.id) {

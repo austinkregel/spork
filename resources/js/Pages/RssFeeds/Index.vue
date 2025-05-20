@@ -36,7 +36,7 @@
             </div>
             <div class="w-full dark:text-white flex justify-between flex-wrap px-4 py-2 mb-20">
                 <Link
-                    :href="pagination.prev_page_url"
+                    :href="pagination.prev_page_url ?? '#'"
                     :disabled="!pagination.prev_page_url"
                     :plain="true"
                     :xlarge="true"

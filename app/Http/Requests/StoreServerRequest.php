@@ -7,6 +7,7 @@ namespace App\Http\Requests;
 use App\Models\Credential;
 use App\Models\Server;
 use App\Services\Development\DescribeTableService;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreServerRequest extends FormRequest
@@ -76,7 +77,7 @@ class StoreServerRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {

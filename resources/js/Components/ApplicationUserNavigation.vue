@@ -6,6 +6,7 @@ import NotificationBody from "@/Components/NotificationBody.vue";
 import {ChevronDownIcon} from "@heroicons/vue/20/solid/index.js";
 import Search from "@/Components/Spork/Molecules/Search.vue";
 import {Link} from "@inertiajs/vue3";
+import Status from "@/Components/Spork/Molecules/Status.vue";
 
 const { user, notifications, notificationCount, } = defineProps({
   user: Object,
@@ -27,7 +28,12 @@ const userNavigation = [
     <div class="h-6 w-px bg-stone-900/10 lg:hidden" aria-hidden="true" />
 
     <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-      <Search />
+      <div class="flex-grow flex  ">
+        <Search />
+        <div class="w-1/2">
+          <Status />
+        </div>
+      </div>
       <div class="flex items-center gap-x-4 lg:gap-x-6">
         <Menu as="div" class="relative z-20">
           <MenuButton class="-m-1.5 flex items-center p-1.5">
@@ -63,7 +69,7 @@ const userNavigation = [
           <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
             <MenuItems class="absolute min-w-48 right-0 z-0 mt-2.5 w-32 origin-top-right rounded-md bg-white dark:bg-stone-800 py-2 shadow-lg ring-1 ring-stone-900/5 focus:outline-none">
               <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
-                <Link :href="item.href" :class="[active ? 'bg-stone-50 dark:bg-stone-700' : '', 'block px-3 py-1 text-base leading-6 dark:text-stone-50 text-stone-900']">{{ item.name }}</Link>
+                <Link :href="item.href ?? '#/'" :class="[active ? 'bg-stone-50 dark:bg-stone-700' : '', 'block px-3 py-1 text-base leading-6 dark:text-stone-50 text-stone-900']">{{ item.name }}</Link>
               </MenuItem>
             </MenuItems>
           </transition>

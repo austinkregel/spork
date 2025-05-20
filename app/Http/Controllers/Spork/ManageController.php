@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Spork;
 use App\Models\Crud;
 use App\Services\Code;
 use App\Services\Development\DescribeTableService;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -56,7 +57,7 @@ class ManageController
 
         $description = (new DescribeTableService)->describe(new $model);
 
-        /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
+        /** @var LengthAwarePaginator $paginator */
         $paginator = $model::query()
             ->with(
                 array_filter($description['includes'], fn ($relation) => ! in_array($relation, [

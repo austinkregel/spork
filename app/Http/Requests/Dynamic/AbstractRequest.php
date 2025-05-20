@@ -7,6 +7,7 @@ namespace App\Http\Requests\Dynamic;
 use App\Models\Crud;
 use App\Models\User;
 use App\Services\Code;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 
@@ -37,7 +38,7 @@ class AbstractRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
