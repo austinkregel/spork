@@ -46,7 +46,6 @@ return [
     */
 
     'dont_alias' => [
-        'App\Nova',
     ],
 
 ];

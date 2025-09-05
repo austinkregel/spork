@@ -133,6 +133,7 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/manage', [Controllers\Spork\ManageController::class, 'index'])->name('manage.index');
 
     Route::get('/settings', Controllers\Spork\SettingsController::class);
+    Route::put('/settings', Controllers\Spork\UpdateSettingsController::class)->name('settings.update');
     Route::get('/tag-manager', Controllers\Spork\TagManagerController::class);
     Route::get('/tag-manager/{tag}', [Controllers\Spork\TagManagerController::class, 'show']);
 

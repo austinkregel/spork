@@ -1,57 +1,61 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {usePage} from "@inertiajs/vue3";
-import TwoColumn from "@/Components/Spork/Molecules/Containers/Form/TwoColumn.vue";
-import FieldInput from "@/Builder/Components/Form/FieldInput.vue";
+import { usePage } from "@inertiajs/vue3";
 import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
+import SporkButton from "@/Components/Spork/SporkButton.vue";
+import axios from "axios";
 import { ref } from 'vue';
-const page = usePage()
 
-const settings = ref([{
-    value: "",
-    name: "Website",
-},{
-    value: false,
-    name: "Is Active",
-}]);
+const page = usePage();
+
+const transform = (configs) => {
+    const result = {};
+    for (const [section, values] of Object.entries(configs)) {
+        if (typeof values === 'object') {
+            result[section] = Object.entries(values)
+                .filter(([_, v]) => typeof v !== 'object')
+                .map(([k, v]) => ({ name: k, value: v }));
+        }
+    }
+    return result;
+};
+
+const settings = ref(transform(page.props.settings.configs));
+
+const save = () => {
+    const payload = { configs: {} };
+    for (const [section, fields] of Object.entries(settings.value)) {
+        payload.configs[section] = {};
+        for (const field of fields) {
+            payload.configs[section][field.name] = field.value;
+        }
+    }
+
+    axios.put(route('settings.update'), payload);
+};
 </script>
+
 <template>
     <AppLayout>
-
         <template #default>
-            <div>
-                <div class="mx-16 mt-8">
-                <TwoColumn
-                    title="Activity Log"
-                    description="Basic CRUD edit tracking across the application."
-                    >
-                    <template #default>
-                        <div>
-                            <div v-for="(setting, i) in settings" class="sm:col-span-4">
-                                <SporkDynamicInput
-                                    v-model="settings[i]"
-                                />
-
-                            </div>
-
+            <div class="mx-16 mt-8 space-y-8">
+                <div v-for="(fields, section) in settings" :key="section">
+                    <div class="text-2xl py-2">{{ section }}</div>
+                    <div class="grid sm:grid-cols-4 gap-4">
+                        <div v-for="(field, index) in fields" :key="index" class="sm:col-span-4">
+                            <SporkDynamicInput
+                                v-model="settings[section][index]"
+                                :type="typeof field.value === 'boolean' ? 'checkbox' : 'text'"
+                                :disabled-input="false"
+                            />
                         </div>
-                    </template>
-                </TwoColumn>
+                    </div>
                 </div>
-                <div class="py-4" v-for="(data, index) in page.props.settings.configs">
-                    <div class="text-2xl py-2">{{index}}</div>
-
-                    <div v-if="typeof data !== 'string'" v-for="(value, key) in data">{{index}}.{{ key }}: {{ value }}</div>
-
-                    <div v-else>{{index}}: {{ data }}</div>
-                </div>
-
-                <pre>{{ page.props.settings.configs }}</pre>
+                <SporkButton class="mt-4" @click="save">Save</SporkButton>
             </div>
         </template>
     </AppLayout>
 </template>
 
 <style scoped>
-
 </style>
