@@ -24,6 +24,7 @@
         "laravel/framework": "^12.7",
         "laravel/horizon": "^5.30",
         "laravel/jetstream": "^5.3",
+        "laravel/nova": "^5.7",
         "laravel/reverb": "^1.4",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.12",
@@ -33,12 +34,10 @@
         "mikehaertl/php-pdftk": "^0.13.1",
         "mustache/mustache": "^2.14",
         "nette/php-generator": "*",
-        "nikic/php-parser": "^4.10",
         "php-imap/php-imap": "^5.0",
         "phpseclib/phpseclib": "*",
         "picqer/php-barcode-generator": "^3.2",
         "pusher/pusher-php-server": "^7.0",
-        "sentry/sentry-laravel": "^4.13",
         "smalot/pdfparser": "^2.10",
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-feed": "^4.4",
@@ -47,19 +46,25 @@
         "spatie/laravel-query-builder": "^6.3",
         "spatie/laravel-responsecache": "^7.7",
         "spatie/laravel-tags": "^4.9",
+        "spatie/nova-tags-field": "^5.0",
+        "staudenmeir/belongs-to-through": "^2.5",
         "staudenmeir/eloquent-json-relations": "^1.14",
         "tightenco/ziggy": "^2.0",
         "toin0u/digitalocean-v2": "^5.0",
-        "winter/laravel-config-writer": "*"
+        "kregel/nova-banking": "@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.1",
+        "laravel/nova-devtool": "^1.8",
+        "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
+        "nikic/php-parser": "^5.4",
         "nunomaduro/collision": "^8.6",
-        "laravel/pail": "^1.2.2"
+        "phpunit/phpunit": "^11.5.3",
+        "ryoluo/sail-ssl": "^1.4"
     },
     "autoload": {
         "psr-4": {
@@ -109,5 +114,15 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "nova": {
+            "type": "composer",
+            "url": "https://nova.laravel.com"
+        },
+        "0": {
+            "type": "path",
+            "url": "./nova-components/NovaBanking"
+        }
+    }
 }

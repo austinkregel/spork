@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Actions\Spork\CustomAction;
 use App\Http\Controllers;
+use App\Http\Middleware;
 use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,7 +15,6 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-
     if (\Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures()) {
         Route::delete('/user', [\Laravel\Jetstream\Http\Controllers\Inertia\CurrentUserController::class, 'destroy'])
             ->name('current-user.destroy');
@@ -51,6 +51,7 @@ Route::redirect('/', '/flight/login');
 
 Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
+    Route::get('/all-icons', fn () => Inertia::render('AllIcons'))->name('AllIcons');
     Route::get('/search', [Controllers\SearchController::class, 'index'])->name('search');
     Route::get('/search/{index}', [Controllers\SearchController::class, 'show'])->name('search.show');
     Route::get('/notifications', fn () => Inertia::render('Notifications'))->name('notifications');
@@ -62,13 +63,10 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     });
 
     Route::get('/rss-feeds', fn () => Inertia::render('RssFeeds/Index', [
-        'feeds' => \App\Models\Article::query()->latest('last_modified')
-            ->with('author.tags')
-            ->paginate()
-            ->items(),
-        'pagination' => \App\Models\Article::query()->latest('last_modified')
-            ->with('author.tags')
+        'pagination' => $page = \App\Models\Article::query()->latest('last_modified')
+            ->with('author.tags' ,'tags')
             ->paginate(),
+        'feeds' => $page->items(),
     ]));
     Route::get('/batch-jobs', [Controllers\Spork\BatchJobController::class, 'index'])->name('batch-jobs.index');
     Route::get('/batch-jobs/{batch_job}', [Controllers\Spork\BatchJobController::class, 'show'])->name('batch-jobs.show');
@@ -102,28 +100,6 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
     Route::post('/file-manager/default', [Controllers\Spork\FileManagerController::class, 'updateFileManager'])->name('file-manager.update-default');
 
-    Route::get('kvm', function () {
-        $vmName = 'ubuntu22.04';
-        $libvirt = libvirt_connect('qemu:///system', false);
-        $domain = libvirt_domain_lookup_by_name($libvirt, $vmName);
-        $data = libvirt_domain_get_screenshot_api($domain, 0);
-        $filePath = $data['file'];
-        $img = new \Imagick($filePath);
-        $img->readImage($filePath);
-
-        $img->setImageFormat('jpeg');
-        $img->setImageCompressionQuality(90);
-        $img->writeImageFile(fopen($filePath.'.jpg', 'w'));
-        try {
-            return response(file_get_contents($filePath.'.jpg'), 200, [
-                'Content-Type' => 'image/jpeg',
-            ]);
-        } finally {
-            unlink($filePath);
-            unlink($filePath.'.jpg');
-        }
-    });
-
     Route::get('/inbox', [Controllers\Spork\MessageController::class, 'index'])->name('inbox');
     Route::get('/inbox/{message}', [Controllers\Spork\MessageController::class, 'show'])->name('inbox.show');
     Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
@@ -145,8 +121,8 @@ Route::middleware([
     'web',
     config('jetstream.auth_session'),
     'verified',
-    App\Http\Middleware\OnlyHost::class,
-    \App\Http\Middleware\OnlyInDevelopment::class,
+    Middleware\OnlyHost::class,
+    Middleware\OnlyInDevelopment::class,
 ])->group(function () {
     Route::post('/api/install', Controllers\InstallNewProvider::class);
     Route::post('/api/uninstall', Controllers\UninstallNewProvider::class);

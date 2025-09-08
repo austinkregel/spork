@@ -40,7 +40,7 @@ return new class extends Migration
             // Where we clone our project to /var/www/site.domain
             $table->string('full_path', 2048);
 
-            // Could be php 8.2.22, or ruby 1.2, or rust 1.48.1, etc
+            // Could be php 8.4.22, or ruby 1.2, or rust 1.48.1, etc
             $table->string('executable_version')->nullable();
             $table->string('executable_binary')->nullable();
 

@@ -4,32 +4,26 @@ declare(strict_types=1);
 
 Route::redirect('/login', '/flight/login');
 
-Route::domain('echo.kregel.dev')
-//    ->middleware('throttle:5')
+Route::domain(config('app.deploy_domain'))
     ->withoutMiddleware(['web'])
     ->group(base_path('routes/pages/deploy.php'));
 
+Route::middleware('web')
+    ->domain(config('app.location_domain'))
+    ->group(base_path('routes/pages/location.php'));
+
+Route::middleware('web')
+    ->domain(config('app.spork_domain'))
+    ->group(base_path('routes/pages/spork.php'));
 Route::prefix('api')
-    ->domain(config('app.env') == 'production' ? 'spork.zone' : 'spork.localhost')
+    ->domain(config('app.spork_domain'))
     ->middleware(config('jetstream.middleware', ['web']))
     ->group(base_path('routes/crud.php'));
 
-Route::middleware('web')
-    ->domain(config('app.env') == 'production' ? 'petoskey.today' : 'petoskey.localhost')
-    ->group(base_path('routes/pages/petoskey.php'));
-
-Route::middleware('web')
-    ->domain(config('app.env') == 'production' ? 'spork.zone' : 'spork.localhost')
-    ->group(base_path('routes/pages/spork.php'));
-
-if (! empty($linkShorteningDomain = env('LINK_SHORTENING_DOMAIN', ''))) {
+if (! empty($linkShorteningDomain = config('app.link_shortening_domain'))) {
     Route::domain($linkShorteningDomain)
         ->group(base_path('routes/pages/link-shortening.php'));
 }
 
-Route::domain(
-    config('app.env') == 'production'
-        ? 'starting.host'
-        : 'domains.localhost'
-)
+Route::domain(config('app.domain'))
     ->group(base_path('routes/pages/domains.php'));

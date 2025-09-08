@@ -111,8 +111,6 @@ class MatrixClientSyncRepository
                     if (is_array($thread->name)) {
                         if (count($thread->name) === 1) {
                             $thread->name = Arr::first($thread->name);
-                        } else {
-                            dd($thread->toArray());
                         }
                     }
 

@@ -1,6 +1,6 @@
-FROM ghcr.io/austinkregel/base:8.2
+FROM ghcr.io/austinkregel/base:8.4
 
-COPY php.ini /etc/php/8.2/cli/conf.d/99-sail.ini
+COPY php.ini /etc/php/8.4/cli/conf.d/99-sail.ini
 
 RUN apt-get update \
     && apt-get install -y cron
@@ -13,7 +13,7 @@ RUN crontab /etc/cron.d/basecron
 RUN cat /etc/cron.d/basecron | crontab -
 RUN apt update
 RUN apt install mediainfo ffmpeg -y
-    
+
 # Create the log file to be able to run tail
 RUN touch /var/log/cron.log
 # Run the command on container startup
