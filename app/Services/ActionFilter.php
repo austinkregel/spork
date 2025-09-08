@@ -139,7 +139,7 @@ class ActionFilter
         }
 
         if ($method === 'count') {
-            return cache()->remember($query->toRawSql(), now()->addHour(), fn () => $query->count());
+            return $query->count();
         }
 
         if (count($arguments) > 0) {
@@ -149,7 +149,7 @@ class ActionFilter
         }
 
         if ($result instanceof QueryBuilder) {
-            return cache()->remember($result->toRawSql(), now()->addHour(), fn () => $result->first()->count);
+            return $result->first()->count;
         }
 
         return $result;

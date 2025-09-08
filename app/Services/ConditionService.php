@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Contracts\Conditionable;
 use App\Models\Condition;
+use App\Models\Navigation;
 use App\Services\Condition\AbstractLogicalOperator;
 use App\Services\Condition\ArrayContainsValueOperator;
 use App\Services\Condition\ContainsValueOperator;
@@ -52,6 +53,23 @@ class ConditionService
     public function __construct(
         protected LoggerInterface $logger,
     ) {}
+    public function navigation()
+    {
+        // So we want to filter out any nav items
+        $navItems = Navigation::query()
+            ->with('conditions', 'children')
+            ->where('authentication_required', auth()->check())
+            ->whereNull('parent_id')
+            ->orderBy('order')
+            ->get()
+            ->map(function (Navigation $item) {
+                $item->current = $item->href === request()->getRequestUri() || ($item->children->isNotEmpty() && $item->children->filter(fn ($item) => $item->href === request()->getRequestUri())->count() > 0);
+
+                return $item;
+            });
+
+        return $navItems->filter(fn (Navigation $item) => $this->process($item));
+    }
 
     public function process(Conditionable $item, array $additionalValueData = []): bool
     {
@@ -65,13 +83,15 @@ class ConditionService
             $comparator = static::AVAILABLE_CONDITIONS[$condition->comparator];
             /** @var AbstractLogicalOperator $instance */
             $instance = new $comparator;
+            $value = $this->processParameter($condition->parameter, $additionalValueData);
 
             $passesCondition = $instance->compute(
                 // Looking for the condition value
                 $condition->value,
                 // inside the parameter's interpolated value.
-                $value = $this->processParameter($condition->parameter, $additionalValueData),
+                $value
             );
+
 
             if ($passesCondition && ! $item->must_all_conditions_pass) {
                 $this->logCondition($condition, $passesCondition, $value);
@@ -83,6 +103,7 @@ class ConditionService
                 $returnedValue = false;
             }
         }
+
         $this->logCondition($condition, $passesCondition, $value);
 
         return $returnedValue;
@@ -90,6 +111,10 @@ class ConditionService
 
     protected function logCondition(Condition $condition, bool $passesCondition, $value)
     {
+        if (empty($value)) {
+            return;
+        }
+
         $this->logger->info("Condition: Is [$value] {$condition->parameter} {$condition->comparator} {$condition->value}", [
             'passes_condition' => $passesCondition,
             'value' => $value,

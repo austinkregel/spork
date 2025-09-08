@@ -1,0 +1,7 @@
+<template>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><desc>Money Payments Smartphone Pay Dollar Streamline Icon: https://streamlinehq.com</desc><g fill="currentColor"><path d="M27.425 12.19h1.53v7.62h-1.53ZM25.905 19.81h1.52v1.52h-1.52ZM25.905 10.66h1.52v1.53h-1.52ZM24.375 21.33h1.53v1.53h-1.53ZM24.375 9.14h1.53v1.52h-1.53ZM22.855 28.95H4.575V3.05h4.57v1.52h9.14V3.05h4.57v3.04h1.52V1.52h-1.52V0H4.575v1.52h-1.53v28.95h1.53V32h18.28v-1.53h1.52V25.9h-1.52Zm-9.14-27.43h3.05v1.53h-3.05Zm-3.05 0h1.52v1.53h-1.52Z"/><path d="M22.855 16.76h1.52v1.52h-1.52ZM16.765 22.86h7.61v1.52h-7.61ZM18.285 15.24h4.57v1.52h-4.57ZM18.285 18.28v1.53h1.52v1.52h1.53v-1.52h1.52v-1.53zM22.855 13.71v-1.52h-1.52v-1.53h-1.53v1.53h-1.52v1.52zM16.765 7.62h7.61v1.52h-7.61ZM16.765 13.71h1.52v1.53h-1.52ZM15.235 21.33h1.53v1.53h-1.53ZM15.235 9.14h1.53v1.52h-1.53ZM13.715 19.81h1.52v1.52h-1.52ZM13.715 10.66h1.52v1.53h-1.52ZM12.185 12.19h1.53v7.62h-1.53Z"/></g></svg>
+</template>
+
+<script setup>
+
+</script>

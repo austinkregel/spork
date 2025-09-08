@@ -116,7 +116,6 @@ class MatrixClientSyncRepository
                         }
                     }
 
-
                     if (! str_starts_with($thread->name, '!')) {
                         break;
                     }

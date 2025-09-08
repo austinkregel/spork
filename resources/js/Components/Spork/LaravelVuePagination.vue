@@ -18,28 +18,28 @@
             slot-scope="{ data, limit, showDisabled, size, align, computed, prevButtonEvents, nextButtonEvents, pageButtonEvents }">
 
             <li class="page-item pagination-prev-nav" :class="{'disabled': !computed.prevPageUrl}" v-if="computed.prevPageUrl || showDisabled">
-                <a class="page-link" href="#" aria-label="Previous" :tabindex="!computed.prevPageUrl && -1" v-on="prevButtonEvents">
+                <Link class="page-link" href="#" aria-label="Previous" :tabindex="!computed.prevPageUrl && -1" v-on="prevButtonEvents">
                     <slot name="prev-nav">
                         <span aria-hidden="true">&laquo;</span>
                         <span class="sr-only">Previous</span>
                     </slot>
-                </a>
+                </Link>
             </li>
 
             <li class="page-item pagination-page-nav" v-for="(page, key) in computed.pageRange" :key="key" :class="{ 'active': page == computed.currentPage }">
-                <a class="page-link" href="#" v-on="pageButtonEvents(page)">
+                <Link class="page-link" href="#" v-on="pageButtonEvents(page)">
                     {{ page }}
                     <span class="sr-only" v-if="page == computed.currentPage">(current)</span>
-                </a>
+                </Link>
             </li>
 
             <li class="page-item pagination-next-nav" :class="{'disabled': !computed.nextPageUrl}" v-if="computed.nextPageUrl || showDisabled">
-                <a class="page-link" href="#" aria-label="Next" :tabindex="!computed.nextPageUrl && -1" v-on="nextButtonEvents">
+                <Link class="page-link" href="#" aria-label="Next" :tabindex="!computed.nextPageUrl && -1" v-on="nextButtonEvents">
                     <slot name="next-nav">
                         <span aria-hidden="true">&raquo;</span>
                         <span class="sr-only">Next</span>
                     </slot>
-                </a>
+                </Link>
             </li>
 
         </ul>
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { Link } from '@inertiajs/vue3';
 import RenderlessLaravelVuePagination from './RenderlessLaravelVuePagination.vue';
 
 export default {

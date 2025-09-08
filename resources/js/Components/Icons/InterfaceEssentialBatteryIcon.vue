@@ -1,0 +1,7 @@
+<template>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><desc>Interface Essential Battery Streamline Icon: https://streamlinehq.com</desc><g fill="currentColor"><path d="M12.95 4.57V1.52h6.1v3.05h4.57v25.91h1.52V3.05h-4.57V0h-9.14v3.05H6.86v27.43h1.52V4.57zM8.38 30.48h15.24V32H8.38Z"/><path d="M9.9 22.86h12.19v4.57H9.9ZM9.9 18.29h12.19v1.52H9.9ZM9.9 13.71h12.19v1.53H9.9ZM9.9 9.14h12.19v1.53H9.9Z"/></g></svg>
+</template>
+
+<script setup>
+
+</script>

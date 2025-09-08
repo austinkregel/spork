@@ -1,0 +1,7 @@
+<template>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><desc>Coding Apps Websites Database Streamline Icon: https://streamlinehq.com</desc><g fill="currentColor"><path d="M28.19 27.43h1.53v-1.52h1.52V6.1h-1.52v1.52h-1.53v1.52h-4.57v1.53H8.38v1.52H22.1v7.62h1.52v-1.52h4.57v-1.53h1.53v1.53h-1.53v1.52h-4.57v1.52H22.1v7.62H8.38v1.53h15.24v-1.53h4.57zM26.67 4.57h3.05V6.1h-3.05ZM22.1 3.05h4.57v1.52H22.1Z"/><path d="M8.38 19.81H22.1v1.52H8.38ZM9.91 24.38h4.57v1.53H9.91ZM9.91 15.24h4.57v1.52H9.91ZM9.91 1.52H22.1v1.53H9.91ZM3.81 27.43h4.57v1.52H3.81ZM3.81 18.29h4.57v1.52H3.81ZM3.81 9.14h4.57v1.53H3.81ZM5.33 3.05h4.58v1.52H5.33ZM3.81 21.33h3.05v3.05H3.81ZM3.81 12.19h3.05v3.05H3.81ZM2.29 4.57h3.04V6.1H2.29ZM2.29 25.91h1.52v1.52H2.29ZM2.29 18.29h1.52v-1.53H2.29V9.14h1.52V7.62H2.29V6.1H.76v19.81h1.53z"/></g></svg>
+</template>
+
+<script setup>
+
+</script>

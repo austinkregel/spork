@@ -31,7 +31,12 @@
 
                 <div class="text-xs">{{ formatDate(item.sent_at) }}</div>
               </div>
-              <pre>{{item.tags}}</pre>
+              <div class="flex flex-wrap">
+                  <div v-for="tag in item.tags" :key="tag"
+                       class="px-1 py-0.5 rounded bg-green-300 dark:bg-green-600 text-xs">
+                      {{ tag.name.en }}
+                  </div>
+              </div>
             </button>
 
             <div class="flex flex-wrap w-full justify-between">

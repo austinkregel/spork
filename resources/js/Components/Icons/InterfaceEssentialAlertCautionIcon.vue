@@ -1,0 +1,7 @@
+<template>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><desc>Interface Essential Alert Caution Streamline Icon: https://streamlinehq.com</desc><g fill="currentColor"><path d="M29.71 25.905h1.53v3.05h-1.53ZM28.19 22.855h1.52v3.05h-1.52ZM2.28 28.955h27.43v1.52H2.28ZM26.67 19.805h1.52v3.05h-1.52ZM25.14 16.765h1.53v3.04h-1.53ZM23.62 13.715h1.52v3.05h-1.52ZM22.09 10.665h1.53v3.05h-1.53ZM20.57 7.615h1.52v3.05h-1.52ZM19.05 4.575h1.52v3.04h-1.52ZM17.52 3.045h1.53v1.53h-1.53ZM14.47 25.905h3.05v-1.52h1.53v-3.05h-1.53v-1.53h-3.05v1.53h-1.52v3.05h1.52zM14.47 9.145h3.05v9.14h-3.05ZM14.47 1.525h3.05v1.52h-3.05ZM12.95 3.045h1.52v1.53h-1.52ZM11.43 4.575h1.52v3.04h-1.52ZM9.9 7.615h1.53v3.05H9.9ZM8.38 10.665H9.9v3.05H8.38ZM6.86 13.715h1.52v3.05H6.86ZM5.33 16.765h1.53v3.04H5.33ZM3.81 19.805h1.52v3.05H3.81ZM2.28 22.855h1.53v3.05H2.28Z"/><path d="M.76 25.905h1.52v3.05H.76Z"/></g></svg>
+</template>
+
+<script setup>
+
+</script>

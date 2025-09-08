@@ -4,7 +4,7 @@ import Toaster from "@meforma/vue-toaster";
 import { createApp, h } from 'vue';
 import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist';
+import { ZiggyVue } from 'ziggy-js';
 import { createStore } from "vuex";
 import Hero from './Builder/Components/Heros/Classic.vue';
 import BuilderButton from './Builder/Components/BuilderButton.vue';
@@ -67,7 +67,7 @@ createInertiaApp({
             .use(Notifications)
             .use(store)
             .use(Toaster)
-            .use(ZiggyVue, Ziggy);
+            .use(ZiggyVue);
         const addComponentToRegistry = (component) => {
             const name = (component.__name ?? component.name ?? component.__file ?? '').split('/').pop().split('.')[0];
             registeredComponents.push({

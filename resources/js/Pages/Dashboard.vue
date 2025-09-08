@@ -1,9 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import Welcome from '@/Components/Welcome.vue';
-import MetricCard from '@/Components/Spork/Atoms/MetricCard.vue';
 import MetricApiCard from '@/Components/Spork/Molecules/MetricApiCard.vue';
-import WeatherHeader from "@/Pages/Petoskey/WeatherHeader.vue";
+import WeatherHeader from "@/Pages/Location/WeatherHeader.vue";
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
 import { Link } from '@inertiajs/vue3';

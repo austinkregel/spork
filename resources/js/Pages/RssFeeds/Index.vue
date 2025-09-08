@@ -16,6 +16,12 @@
                                 <div v-html="topic.content"></div>
                             </div>
                             <div class="flex flex-wrap mt-2 gap-2">
+                                <!-- These would likely be tags automatically applied -->
+                                <div v-for="tag in topic.tags" :key="tag.name"
+                                     class="py-1 px-2 rounded-full bg-blue-300 dark:bg-green-600 text-xs">
+                                    {{ tag.name.en }}
+                                </div>
+                                <!-- This is likely just a news classification tag -->
                                 <div v-for="tag in topic.author?.tags" :key="tag.name"
                                      class="py-1 px-2 rounded-full bg-blue-300 dark:bg-blue-600 text-xs">
                                     {{ tag.name.en }}
@@ -60,16 +66,11 @@
 
 <script setup>
 import {
-    TrashIcon,
     ArrowTopRightOnSquareIcon ,
-    DocumentDuplicateIcon,
-    PencilIcon,
-    UserPlusIcon
 } from '@heroicons/vue/24/outline';
 import AppLayout from "@/Layouts/AppLayout.vue";
 import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
 import { Link } from '@inertiajs/vue3'
-import LaravelVuePagination from "@/Components/Spork/LaravelVuePagination.vue";
 
 const { feeds, pagination } = defineProps({
     feeds: Array,

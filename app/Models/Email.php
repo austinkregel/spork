@@ -15,10 +15,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Tags\HasTags;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
+use Znck\Eloquent\Traits\BelongsToThrough;
 
+/**
+ * @property User $user
+ * @property Credential $credential
+ * @property Person $fromPerson
+ * @property Person $toPerson
+ */
 class Email extends Model
 {
-    use HasFactory, HasJsonRelationships, HasTags;
+    use HasFactory, HasJsonRelationships, HasTags, BelongsToThrough;
 
     protected $fillable = [
         'email_id',
@@ -77,5 +84,9 @@ class Email extends Model
     public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class, 'credential_id');
+    }
+    public function user()
+    {
+        return $this->belongsToThrough(User::class, Credential::class);
     }
 }

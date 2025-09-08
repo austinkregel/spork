@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Services\ConditionService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Psr\Log\LoggerInterface;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -36,6 +38,8 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
+            'navigation' => $navigation = (new ConditionService(app(LoggerInterface::class)))->navigation(),
+            'current_navigation' => $navigation->where('current', true)->first(),
             'unread_email_count' => 0,
             'notifications' => $request->user()
                 ?->notifications()

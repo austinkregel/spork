@@ -2,6 +2,9 @@
 import { computed } from 'vue';
 import * as OutlinedIcons from '@heroicons/vue/24/outline'
 import * as SolidIcons from '@heroicons/vue/24/solid'
+import * as CustomIcons  from  '../Components/Icons/index.js';
+
+
 const props = defineProps({
     iconName: String,
     active: Boolean
@@ -11,6 +14,7 @@ const icons = computed(() => {
   const activeIconSet = props.active ? SolidIcons : OutlinedIcons;
   return {
       ...activeIconSet,
+      ...CustomIcons,
       ChatBubbleLeftRightIcon: activeIconSet.ChatBubbleLeftRightIcon,
       ArticleIcon: activeIconSet.NewspaperIcon,
       ConditionIcon: activeIconSet.CodeBracketIcon,
@@ -27,13 +31,14 @@ const icons = computed(() => {
       ScriptIcon: activeIconSet.CodeBracketSquareIcon,
       ThreadIcon: activeIconSet.ChatBubbleLeftRightIcon,
       ClipboardIcon: activeIconSet.ClipboardIcon,
-      EmailIcon: activeIconSet.EnvelopeIcon,
+      EmailIcon: CustomIcons.ChatEmailIcon,
       ArrowTopRightOnSquareIcon: activeIconSet.ArrowTopRightOnSquareIcon,
       AssetIcon: activeIconSet.ArchiveBoxIcon,
       DomainRecordIcon: activeIconSet.LinkIcon,
       TransactionIcon: activeIconSet.RectangleStackIcon,
       ShortCodeIcon: activeIconSet.QrCodeIcon,
-      TaskIcon: activeIconSet.QueueListIcon
+      TaskIcon: activeIconSet.QueueListIcon,
+
   }
 })
 </script>

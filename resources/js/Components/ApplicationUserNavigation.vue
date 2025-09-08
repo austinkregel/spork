@@ -1,7 +1,7 @@
 <script setup>
 
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
-import {Bars3Icon, BellIcon} from "@heroicons/vue/24/outline/index.js";
+import {BellIcon} from "@heroicons/vue/24/outline/index.js";
 import NotificationBody from "@/Components/NotificationBody.vue";
 import {ChevronDownIcon} from "@heroicons/vue/20/solid/index.js";
 import Search from "@/Components/Spork/Molecules/Search.vue";
@@ -36,7 +36,7 @@ const userNavigation = [
       </div>
       <div class="flex items-center gap-x-4 lg:gap-x-6">
         <Menu as="div" class="relative z-20">
-          <MenuButton class="-m-1.5 flex items-center p-1.5">
+          <MenuButton class="-m-1.5 flex items-center p-1.5 cursor-pointer">
             <span class="sr-only">View notifications</span>
             <BellIcon class="h-6 w-6" aria-hidden="true" />
             <span v-if="notificationCount > 0" class="bg-red-500 absolute top-0 right-0 rounded-full text-xs text-white py-0.5 px-1">

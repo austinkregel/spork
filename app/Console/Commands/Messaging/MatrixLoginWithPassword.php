@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands\Messaging;
 
 use App\Models\Credential;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class MatrixLoginWithPassword extends Command
@@ -32,7 +33,10 @@ class MatrixLoginWithPassword extends Command
 
         $response = $client->loginWithPassword($this->argument('username'), $this->secret('What is the password?'));
 
-        Credential::create([
+        User::first()->credentials()->create([
+            'type' => Credential::TYPE_MATRIX,
+            'service' => $this->option('host') ?: 'https://matrix.org',
+            'name' => '@' . $this->argument('username').':'.parse_url($this->option('host'), PHP_URL_HOST),
             'access_token' => $response['access_token'],
             'settings' => [
                 'device_id' => $response['device_id'],
@@ -40,6 +44,5 @@ class MatrixLoginWithPassword extends Command
                 'matrix_server' => $response['well_known']['m.homeserver']['base_url'],
             ],
         ]);
-
     }
 }

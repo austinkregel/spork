@@ -31,15 +31,24 @@ const deleteCondition = (index, condition) => {
     });
 };
 const parameters = [
-    // New Email
-    {
-        value: 'email.from_email',
-        name: "Email Sender"
-    },
-    {
-        value: 'email.subject',
-        name: "Email Subject"
-    },
+  // New Email
+  {
+    value: 'email.from_email',
+    name: "Email Sender"
+  },
+  {
+    value: 'email.subject',
+    name: "Email Subject"
+  },
+  // New message
+  {
+    value: 'message.from_person',
+    name: "Message Sender"
+  },
+  {
+    value: 'message.message',
+    name: "Message Content"
+  },
     // New Transaction
     {
         "value": "transaction.name",

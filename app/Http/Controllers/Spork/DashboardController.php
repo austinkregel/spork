@@ -66,7 +66,7 @@ class DashboardController extends Controller
                 ->get(),
             'weather' => $weatherReport,
             'news' => (\App\Models\Article::query()
-                ->with('externalRssFeed.tags')
+                ->with(['externalRssFeed.tags', 'tags'])
                 ->whereHas('externalRssFeed', function ($query) {
                     $query->where('owner_type', User::class)
                         ->where('owner_id', auth()->id());

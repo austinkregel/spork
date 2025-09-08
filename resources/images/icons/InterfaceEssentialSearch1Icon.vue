@@ -1,0 +1,7 @@
+<template>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><desc>Interface Essential Search 1 Streamline Icon: https://streamlinehq.com</desc><g fill="currentColor"><path d="M24.38 19.81h-1.53v3.05h-3.04v1.52h-3.05v1.52h4.57v1.53h1.52v1.52h1.53v1.53h1.52V32h1.53v-1.52h1.52v-1.53h1.52v-1.52H32V25.9h-1.53v-1.52h-1.52v-1.52h-1.52v-1.53H25.9v-4.57h-1.52zM25.9 10.67h1.53v6.09H25.9ZM24.38 7.62h1.52v3.05h-1.52ZM22.85 4.57h1.53v3.05h-1.53ZM21.33 12.19h1.52v3.05h-1.52ZM19.81 9.14h1.52v3.05h-1.52ZM19.81 3.05h3.04v1.52h-3.04ZM16.76 7.62h3.05v1.52h-3.05ZM16.76 1.52h3.05v1.53h-3.05ZM13.71 6.1h3.05v1.52h-3.05ZM10.66 25.9h6.1v1.53h-6.1ZM10.66 0h6.1v1.52h-6.1ZM7.62 24.38h3.04v1.52H7.62ZM7.62 1.52h3.04v1.53H7.62ZM4.57 22.86h3.05v1.52H4.57ZM4.57 3.05h3.05v1.52H4.57ZM3.05 19.81h1.52v3.05H3.05ZM3.05 4.57h1.52v3.05H3.05ZM1.52 16.76h1.53v3.05H1.52ZM1.52 7.62h1.53v3.05H1.52ZM0 10.67h1.52v6.09H0Z"/></g></svg>
+</template>
+
+<script setup>
+
+</script>

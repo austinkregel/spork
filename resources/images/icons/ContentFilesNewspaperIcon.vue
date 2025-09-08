@@ -1,0 +1,7 @@
+<template>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><desc>Content Files Newspaper Streamline Icon: https://streamlinehq.com</desc><g fill="currentColor"><path d="M30.472 9.145h1.53v19.81h-1.53ZM28.952 28.955h1.52v1.52h-1.52ZM27.432 12.195h1.52v15.23h-1.52ZM27.432 28.955h-1.53v1.52H3.052v1.52h25.9v-1.52h-1.52z"/><path d="M24.382 28.955h1.52V9.145h4.57v-1.53h-4.57v-4.57h-1.52zM6.092 27.425h16.77v1.53H6.092ZM18.282 15.235h4.58v4.57h-4.58ZM12.192 15.235h4.57v1.53h-4.57ZM12.192 18.285h4.57v1.52h-4.57ZM3.052 24.385h19.81v1.52H3.052ZM3.052 21.335h19.81v1.52H3.052ZM3.052 18.285h7.62v1.52h-7.62ZM3.052 15.235h7.62v1.53h-7.62ZM22.862 13.715V6.1H3.052v7.62Zm-18.29-6.1h6.1v1.53h-1.53v1.52h-1.52V12.2h-3.05ZM1.522 1.525h22.86v1.52H1.522ZM1.522 28.955h1.53v1.52h-1.53ZM.002 3.045h1.52v25.91H.002Z"/></g></svg>
+</template>
+
+<script setup>
+
+</script>

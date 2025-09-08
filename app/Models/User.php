@@ -34,7 +34,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Tags\HasTags;
 
 #[ObservedBy([ApplyCredentialsObserver::class])]
-class User extends Authenticatable implements ModelQuery, Taggable
+class User extends Authenticatable implements ModelQuery, Taggable, Crud
 {
     use HasApiTokens;
     use HasFactory;

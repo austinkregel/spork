@@ -1,0 +1,7 @@
+<template>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><desc>Food Drink Desert Cake Pond Streamline Icon: https://streamlinehq.com</desc><g fill="currentColor"><path d="M30.47 16.76h-1.52v1.53h1.52v4.57H1.52v-4.57h1.52v-1.53H1.52v-4.57H0v16.76h1.52v-3.04h28.95v3.04H32V12.19h-1.53z"/><path d="M28.95 28.95h1.52v1.53h-1.52ZM28.95 10.67h1.52v1.52h-1.52ZM27.42 13.71h1.53v1.53h-1.53ZM3.04 30.48h25.91V32H3.04ZM24.38 18.29h4.57v1.52h-4.57Z"/><path d="M22.85 16.76h1.53v1.53h-1.53ZM21.33 0h1.52v1.52h-1.52ZM19.81 12.19h1.52v1.52h-1.52ZM16.76 18.29h6.09v1.52h-6.09ZM15.23 16.76h1.53v1.53h-1.53ZM15.23 0h1.53v1.52h-1.53ZM10.66 12.19h1.53v1.52h-1.53ZM9.14 18.29h6.09v1.52H9.14ZM9.14 0h1.52v1.52H9.14ZM7.61 16.76h1.53v1.53H7.61ZM28.95 10.67V9.14h-6.1V3.05h-1.52v6.09h-4.57V3.05h-1.53v6.09h-4.57V3.05H9.14v6.09h-6.1v1.53zM3.04 18.29h4.57v1.52H3.04ZM3.04 13.71h1.53v1.53H3.04ZM1.52 28.95h1.52v1.53H1.52ZM1.52 10.67h1.52v1.52H1.52Z"/></g></svg>
+</template>
+
+<script setup>
+
+</script>

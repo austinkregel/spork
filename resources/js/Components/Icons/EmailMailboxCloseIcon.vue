@@ -1,0 +1,7 @@
+<template>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><desc>Email Mailbox Close Streamline Icon: https://streamlinehq.com</desc><g fill="currentColor"><path d="M28.185 9.14h1.53v12.19h-1.53ZM26.665 7.62h1.52v1.52h-1.52Z"/><path d="M3.805 22.86h9.14V32h1.53v-9.14h4.57V32h1.52v-9.14h7.62v-1.53h-13.71V9.14h-1.53V7.62h6.1v4.57h1.52V7.62h6.1V6.09h-6.1V4.57h4.57V0h-6.09v6.09H5.325v1.53h-1.52v1.52h-1.52v12.19h1.52Zm16.76-21.34h3.05v1.53h-3.05Zm-16.76 9.14h1.52V9.14h3.05v1.52h-3.05v7.62h-1.52Z"/></g></svg>
+</template>
+
+<script setup>
+
+</script>
