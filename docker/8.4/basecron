@@ -3,4 +3,4 @@
 # This is just a basic cron, it will never be more advnaced than this.
 #
 #############################################################################
-* * * * * php /var/www/html/artisan schedule:run >> /var/www/html/storage/logs/crontab.log 2>&1
+* * * * * php -d memory_limit=-1 /var/www/html/artisan schedule:run >> /var/www/html/storage/logs/crontab.log 2>&1
