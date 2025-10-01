@@ -13,100 +13,15 @@ When available, use these MCP (Model Context Protocol) servers to enhance develo
 - **Filesystem MCP Server**: For file operations and navigation
 - **Database MCP Server**: For database queries and schema inspection
 
-### MCP Server Configuration
+### Configuration
 
-To enable MCP servers for this project, add the following configuration to your MCP settings file (typically `~/.config/claude/claude_desktop_config.json` or similar):
+MCP server configuration for this project is available in `mcp.json` at the root of the repository. See `MCP_README.md` for detailed setup instructions including:
 
-```json
-{
-  "mcpServers": {
-    "laravel": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-laravel"
-      ],
-      "env": {
-        "PROJECT_PATH": "/absolute/path/to/spork"
-      }
-    },
-    "github": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-github"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_github_token_here"
-      }
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/absolute/path/to/spork"
-      ]
-    },
-    "sqlite": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-sqlite",
-        "/absolute/path/to/spork/database/database.sqlite"
-      ]
-    }
-  }
-}
-```
-
-#### Configuration Notes
-
-- **Laravel Server**: Set `PROJECT_PATH` to the absolute path of this repository
-- **GitHub Server**: Requires a GitHub Personal Access Token with appropriate permissions (repo, read:org)
-  - Create token at: https://github.com/settings/tokens
-  - Recommended scopes: `repo`, `read:org`, `read:user`
-- **Filesystem Server**: Provide the absolute path to the repository root to allow file operations
-- **SQLite Server**: Point to the SQLite database file (default location: `database/database.sqlite`)
-  - If using MySQL/PostgreSQL, use the appropriate MCP database server instead
-
-#### Alternative Database Configurations
-
-If using MySQL:
-```json
-{
-  "mysql": {
-    "command": "npx",
-    "args": [
-      "-y",
-      "@modelcontextprotocol/server-mysql"
-    ],
-    "env": {
-      "MYSQL_HOST": "localhost",
-      "MYSQL_PORT": "3306",
-      "MYSQL_USER": "your_user",
-      "MYSQL_PASSWORD": "your_password",
-      "MYSQL_DATABASE": "spork"
-    }
-  }
-}
-```
-
-If using PostgreSQL:
-```json
-{
-  "postgres": {
-    "command": "npx",
-    "args": [
-      "-y",
-      "@modelcontextprotocol/server-postgres"
-    ],
-    "env": {
-      "POSTGRES_CONNECTION_STRING": "postgresql://user:password@localhost:5432/spork"
-    }
-  }
-}
-```
+- Installation steps
+- Path configuration
+- GitHub token setup
+- Alternative database configurations (MySQL/PostgreSQL)
+- Troubleshooting guide
 
 ## Backend Architecture
 
