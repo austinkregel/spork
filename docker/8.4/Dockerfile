@@ -1,4 +1,5 @@
-FROM ghcr.io/austinkregel/base:8.4
+FROM ghcr.io/austinkregel/base:8.3
+USER root
 
 WORKDIR /var/www/html
 ADD . /var/www/html
@@ -11,5 +12,6 @@ COPY php.ini /etc/php/${PHP_VERSION}/cli/conf.d/99-sail.ini
 
 EXPOSE 6001
 EXPOSE 80
+RUN git config --global --add safe.directory /var/www/html
 
 ENTRYPOINT ["start-container"]
