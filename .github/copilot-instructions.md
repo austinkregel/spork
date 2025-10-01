@@ -376,34 +376,34 @@ tests/
 
 ```bash
 # Start all services (uses concurrently)
-composer dev
+sail composer dev
 
 # Individual services
-php artisan serve        # Web server
-php artisan queue:listen # Queue worker
-php artisan pail         # Log viewer
-npm run dev              # Vite dev server
+sail php artisan serve        # Web server
+sail php artisan queue:listen # Queue worker
+sail php artisan pail         # Log viewer
+sail npm run dev              # Vite dev server
 ```
 
 ### Code Quality
 
 ```bash
 # Linting
-./vendor/bin/pint        # Fix PHP code style
+sail ./vendor/bin/pint        # Fix PHP code style
 
 # Testing
-php artisan test         # Run all tests
-php artisan test --filter=TestName  # Run specific test
+sail php artisan test         # Run all tests
+sail php artisan test --filter=TestName  # Run specific test
 
 # Static Analysis
-./vendor/bin/phpstan analyse  # Run static analysis
+sail ./vendor/bin/phpstan analyse  # Run static analysis
 ```
 
 ### Building for Production
 
 ```bash
-npm run build            # Build frontend assets
-php artisan optimize     # Optimize Laravel
+sail npm run build            # Build frontend assets
+sail php artisan optimize     # Optimize Laravel
 ```
 
 ## Common Patterns
