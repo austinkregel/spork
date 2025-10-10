@@ -1,0 +1,40 @@
+{
+  "mcpServers": {
+    "laravel": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-laravel"
+      ],
+      "env": {
+        "PROJECT_PATH": "/absolute/path/to/spork"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_github_token_here"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/absolute/path/to/spork"
+      ]
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "/absolute/path/to/spork/database/database.sqlite"
+      ]
+    }
+  }
+}
