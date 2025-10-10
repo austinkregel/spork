@@ -27,12 +27,14 @@ class CreateTeam implements CreatesTeams
             'name' => ['required', 'string', 'max:255'],
         ])->validateWithBag('createTeam');
 
-        AddingTeam::dispatch($user);
+        if (Jetstream::hasTeamFeatures()) {
+            AddingTeam::dispatch($user);
 
-        $user->switchTeam($team = $user->ownedTeams()->create([
-            'name' => $input['name'],
-            'personal_team' => false,
-        ]));
+            $user->switchTeam($team = $user->ownedTeams()->create([
+                'name' => $input['name'],
+                'personal_team' => false,
+            ]));
+        }
 
         return $team;
     }

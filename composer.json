@@ -45,7 +45,6 @@
         "spatie/laravel-ignition": "^2.9",
         "spatie/laravel-permission": "^6.12",
         "spatie/laravel-query-builder": "^6.3",
-        "spatie/laravel-responsecache": "^7.7",
         "spatie/laravel-tags": "^4.9",
         "staudenmeir/eloquent-json-relations": "^1.14",
         "tightenco/ziggy": "^2.0",
