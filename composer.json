@@ -30,7 +30,7 @@
         "league/flysystem-ftp": "^3.0",
         "lesstif/php-jira-rest-client": "^5.7",
         "meilisearch/meilisearch-php": "^1.6",
-        "mikehaertl/php-pdftk": "^0.13.1",
+        "mikehaertl/php-pdftk": "^0.14.2",
         "mustache/mustache": "^2.14",
         "nette/php-generator": "*",
         "nikic/php-parser": "^4.10",
