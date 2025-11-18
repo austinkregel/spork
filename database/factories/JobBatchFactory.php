@@ -17,6 +17,7 @@ class JobBatchFactory extends Factory
     public function definition(): array
     {
         return [
+            'id' => $this->faker->uuid(),
             'name' => $this->faker->word(),
             'total_jobs' => 0,
             'pending_jobs' => 0,
