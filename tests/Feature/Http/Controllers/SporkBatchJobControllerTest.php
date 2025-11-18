@@ -28,8 +28,18 @@ class SporkBatchJobControllerTest extends TestCase
 
     public function test_batch_job_show_route_is_accessible()
     {
-        $batchJob = \App\Models\JobBatch::factory()->create();
+        $batchJob = \App\Models\JobBatch::factory()->create([
+            'total_jobs' => 5,
+            'pending_jobs' => 3,
+            'failed_jobs' => 1,
+            'failed_job_ids' => json_encode([1]),
+            'id' => fake()->uuid()
+        ]);
 
+        $this->assertDatabaseCount('job_batches', 1);
+        $this->assertDatabaseHas('job_batches', [
+            'id' => $batchJob->id,
+        ]);
         $response = $this->actingAsUser()->get("http://spork.localhost/-/batch-jobs/$batchJob->id");
 
         $response->assertStatus(200);
@@ -38,7 +48,10 @@ class SporkBatchJobControllerTest extends TestCase
     public function test_batch_job_show_route_loads_expected_data()
     {
         $batchJob = \App\Models\JobBatch::factory()->create();
-
+        $this->assertDatabaseCount('job_batches', 1);
+        $this->assertDatabaseHas('job_batches', [
+            'id' => $batchJob->id,
+        ]);
         $response = $this->actingAsUser()->get("http://spork.localhost/-/batch-jobs/$batchJob->id");
 
         $response->assertInertia(fn ($page) => $page
