@@ -12,6 +12,13 @@ class SporkInboxControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config(['broadcasting.default' => 'null']);
+    }
+
     public function test_inbox_route_is_accessible()
     {
         $response = $this->actingAsUser()->get('http://spork.localhost/-/inbox');

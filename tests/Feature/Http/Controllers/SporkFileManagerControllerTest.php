@@ -9,6 +9,15 @@ class SporkFileManagerControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config([
+            'spork.filesystem.default' => 'local',
+        ]);
+    }
+
     public function test_file_manager_route_is_accessible()
     {
         $response = $this->actingAsUser()->get('http://spork.localhost/-/file-manager');

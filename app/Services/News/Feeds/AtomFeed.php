@@ -40,15 +40,13 @@ class AtomFeed extends AbstractFeed
 
     public function getData(): array
     {
-        if (is_array($this->element->entry)) {
+        $items = [];
+
+        if (is_array($this->element->entry ?? null)) {
             $items = $this->element->entry;
-        }
-
-        if (empty($items)) {
-            $items = [];
-
+        } else {
             foreach (($this->element?->entry ?? []) as $element) {
-                array_push($items, $element);
+                $items[] = $element;
             }
         }
 
@@ -59,7 +57,8 @@ class AtomFeed extends AbstractFeed
             $post = json_decode(json_encode($xmlPost), true);
 
             if (! isset($post['id'])) {
-                dd(54, $post);
+                // Skip entries without an id instead of failing.
+                return null;
             }
 
             $feedItem = new FeedItem;
@@ -83,7 +82,7 @@ class AtomFeed extends AbstractFeed
             }
 
             return $feedItem;
-        })->toArray();
+        })->filter()->values()->toArray();
     }
 
     protected function addExtraContext(FeedItem $feedItem, mixed $xmlPost)

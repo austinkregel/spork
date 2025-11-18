@@ -8,11 +8,15 @@ use App\Events\Models\Budget\BudgetOverspentEvent;
 use App\Events\Models\Transaction\TransactionCreated;
 use App\Models\Finance\Budget;
 use App\Models\Finance\Transaction;
+use App\Services\Finance\BudgetCalculationService;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\DB;
 
 class CheckBudgetOverspendListener implements ShouldQueue
 {
+    public function __construct(
+        protected BudgetCalculationService $budgetCalculationService,
+    ) {}
+
     /**
      * Handle the event.
      */
@@ -31,17 +35,19 @@ class CheckBudgetOverspendListener implements ShouldQueue
             $transactionTags = $transaction->tags->pluck('id')->toArray();
 
             if (array_intersect($tags, $transactionTags)) {
-                // Calculate the spend amount since the start of the defined period
-                $startDate = $budget->started_at;
-                $spendAmount = DB::table('transactions')
-                    ->join('taggables', 'transactions.id', '=', 'taggables.taggable_id')
-                    ->where('taggables.taggable_type', Transaction::class)
-                    ->whereIn('taggables.tag_id', $tags)
-                    ->where('transactions.date', '>=', $startDate)
-                    ->sum('transactions.amount');
+                $stats = $this->budgetCalculationService->getPeriodStats(
+                    $budget,
+                    $transaction->date?->copy()->utc() ?? now('UTC')
+                );
+                $spendAmount = $stats['total_spend'];
 
                 // Fire the BudgetOverspent event if the budget is overspent
                 if ($spendAmount > $budget->amount) {
+                    if ($budget->breached_at === null) {
+                        $budget->breached_at = now('UTC');
+                        $budget->save();
+                    }
+
                     event(new BudgetOverspentEvent($budget, $transaction));
                 }
             }

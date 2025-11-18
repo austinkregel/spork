@@ -20,6 +20,8 @@ class MatrixClientSyncRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        config(['broadcasting.default' => 'null']);
+
         $mockLog = \Mockery::mock(LoggerInterface::class);
         $this->repository = new MatrixClientSyncRepository($mockLog);
     }

@@ -61,7 +61,7 @@ class NamecheapService implements NamecheapServiceContract
 
     public function getDomainNs(string $domain): array
     {
-        [$domainPart, $tld] = explode('.', $domain);
+        [$domainPart, $tld] = explode('.', $domain, 2);
         $url = static::NAMECHEAP_URL.'?'.http_build_query([
             'ApiUser' => $this->credential->settings['api_user'],
             'ApiKey' => $this->credential->access_token,
@@ -78,11 +78,8 @@ class NamecheapService implements NamecheapServiceContract
         if (isset($domainResponse->Errors->Error)) {
             throw new \Exception($domainResponse->Errors->Error);
         }
-        try {
-            return $domainResponse->CommandResponse->DomainDNSGetListResult->Nameserver;
-        } catch (\Throwable $e) {
-            dd($domainResponse);
-        }
+
+        return (array) ($domainResponse->CommandResponse->DomainDNSGetListResult->Nameserver ?? []);
     }
 
     public function getTlds(): array
@@ -96,20 +93,35 @@ class NamecheapService implements NamecheapServiceContract
         ]);
         $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn () => Http::get($url)->body());
 
+        $domainResponse = json_decode(json_encode(simplexml_load_string($xmlDebugResponse)));
+
+        if (isset($domainResponse->Errors->Error)) {
+            throw new \Exception($domainResponse->Errors->Error);
+        }
+
         $parser = xml_parser_create();
         xml_parse_into_struct($parser, $xmlDebugResponse, $data);
         xml_parser_free($parser);
 
-        $tlds = array_values(array_filter($data, fn ($row) => $row['tag'] === 'TLD' && $row['type'] === 'open' && $row['attributes']['ISAPIREGISTERABLE'] === 'true'));
+        $tlds = array_values(array_filter(
+            $data,
+            fn ($row) => ($row['tag'] ?? null) === 'TLD'
+                && in_array($row['type'] ?? null, ['open', 'complete'], true)
+                && (($row['attributes']['ISAPIREGISTERABLE'] ?? 'false') === 'true')
+        ));
 
-        dd(array_map(fn ($tld) => $tld['attributes']['NAME'], $tlds));
-
-        return $domainResponse->CommandResponse->DomainDNSGetListResult->Nameserver;
+        return array_map(
+            fn ($tld) => [
+                'name' => strtolower($tld['attributes']['NAME'] ?? ''),
+                'registerable' => ($tld['attributes']['ISAPIREGISTERABLE'] ?? 'false') === 'true',
+            ],
+            $tlds
+        );
     }
 
     public function updateDomainNs(string $domain, array $nameservers): array
     {
-        [$domainPart, $tld] = explode('.', $domain);
+        [$domainPart, $tld] = explode('.', $domain, 2);
 
         $response = Http::get(static::NAMECHEAP_URL.'?'.http_build_query([
             'ApiUser' => $this->credential->settings['api_user'],
@@ -163,9 +175,16 @@ class NamecheapService implements NamecheapServiceContract
             }
 
             foreach ($prices as $price) {
-                return $price?->{'@attributes'}?->Price ?? $price->Price ?? dd($price, $prices);
+                if (isset($price?->{'@attributes'}?->Price)) {
+                    return (string) $price->{'@attributes'}->Price;
+                }
+
+                if (isset($price->Price)) {
+                    return (string) $price->Price;
+                }
             }
 
+            return '';
         });
     }
 
@@ -186,18 +205,34 @@ class NamecheapService implements NamecheapServiceContract
 
         $xmlDebugResponse = cache()->remember($url, now()->addHour(), fn () => Http::get($url)->body());
 
-        $parser = xml_parser_create();
-        xml_parse_into_struct($parser, $xmlDebugResponse, $data);
-        xml_parser_free($parser);
+        $domainResponse = json_decode(json_encode(simplexml_load_string($xmlDebugResponse)));
 
-        dd($data, simplexml_load_string($xmlDebugResponse));
+        if (isset($domainResponse->Errors->Error)) {
+            throw new \Exception($domainResponse->Errors->Error);
+        }
 
-        return [];
+        $result = $domainResponse->CommandResponse->DomainCheckResult ?? null;
+
+        if ($result === null) {
+            throw new \RuntimeException('Missing DomainCheckResult in Namecheap response');
+        }
+
+        $attributes = $result->{'@attributes'} ?? $result;
+
+        return [
+            'domain' => (string) ($attributes->Domain ?? $domain),
+            'available' => ((string) ($attributes->Available ?? 'false')) === 'true',
+            'is_premium' => ((string) ($attributes->IsPremiumName ?? $attributes->IsPremium ?? 'false')) === 'true',
+            'price' => isset($attributes->PremiumRegistrationPrice)
+                ? (string) $attributes->PremiumRegistrationPrice
+                : null,
+        ];
     }
 
     public function registerDomain(string $domain, int $years = 1): array
     {
-        // Command: namecheap.domains.check
+        [$domainPart, $tld] = explode('.', $domain, 2);
+
         $url = static::NAMECHEAP_URL.'?'.http_build_query([
             // Auth
             'ApiUser' => $this->credential->settings['api_user'],
@@ -205,17 +240,39 @@ class NamecheapService implements NamecheapServiceContract
             'UserName' => $this->credential->settings['username'],
             'ClientIp' => $this->credential->settings['client_ip'],
             // command
-            'Command' => 'namecheap.domains.check',
+            'Command' => 'namecheap.domains.create',
             // request deets
-            'DomainList' => $domain,
+            'SLD' => $domainPart,
+            'TLD' => $tld,
+            'Years' => $years,
         ]);
 
-        return [];
+        $response = Http::get($url)->body();
+        $domainResponse = json_decode(json_encode(simplexml_load_string($response)));
+
+        if (isset($domainResponse->Errors->Error)) {
+            throw new \Exception($domainResponse->Errors->Error);
+        }
+
+        $result = $domainResponse->CommandResponse->DomainCreateResult ?? null;
+        $attributes = $result?->{'@attributes'} ?? $result ?? null;
+
+        if (! $attributes) {
+            throw new \RuntimeException('Missing DomainCreateResult in Namecheap response');
+        }
+
+        return [
+            'domain' => (string) ($attributes->Domain ?? $domain),
+            'success' => ((string) ($attributes->IsSuccess ?? 'true')) === 'true',
+            'order_id' => isset($attributes->OrderID) ? (string) $attributes->OrderID : null,
+            'transaction_id' => isset($attributes->TransactionID) ? (string) $attributes->TransactionID : null,
+        ];
     }
 
     public function renewDomain(string $domain, int $years = 1): array
     {
-        // Command: namecheap.domains.check
+        [$domainPart, $tld] = explode('.', $domain, 2);
+
         $url = static::NAMECHEAP_URL.'?'.http_build_query([
             // Auth
             'ApiUser' => $this->credential->settings['api_user'],
@@ -223,13 +280,32 @@ class NamecheapService implements NamecheapServiceContract
             'UserName' => $this->credential->settings['username'],
             'ClientIp' => $this->credential->settings['client_ip'],
             // command
-            'Command' => 'namecheap.domains.check',
+            'Command' => 'namecheap.domains.renew',
             // request deets
-            'DomainList' => $domain,
+            'SLD' => $domainPart,
+            'TLD' => $tld,
+            'Years' => $years,
         ]);
 
-        // TODO: Implement renewDomain() method.
+        $response = Http::get($url)->body();
+        $domainResponse = json_decode(json_encode(simplexml_load_string($response)));
 
-        return [];
+        if (isset($domainResponse->Errors->Error)) {
+            throw new \Exception($domainResponse->Errors->Error);
+        }
+
+        $result = $domainResponse->CommandResponse->DomainRenewResult ?? null;
+        $attributes = $result?->{'@attributes'} ?? $result ?? null;
+
+        if (! $attributes) {
+            throw new \RuntimeException('Missing DomainRenewResult in Namecheap response');
+        }
+
+        return [
+            'domain' => (string) ($attributes->Domain ?? $domain),
+            'success' => ((string) ($attributes->IsSuccess ?? 'true')) === 'true',
+            'order_id' => isset($attributes->OrderID) ? (string) $attributes->OrderID : null,
+            'transaction_id' => isset($attributes->TransactionID) ? (string) $attributes->TransactionID : null,
+        ];
     }
 }

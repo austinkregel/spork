@@ -12,6 +12,13 @@ class SporkDeploymentControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config(['broadcasting.default' => 'null']);
+    }
+
     public function test_deployment_detach_route_is_accessible()
     {
         $this->actingAsUser();
@@ -80,11 +87,6 @@ class SporkDeploymentControllerTest extends TestCase
             'type' => Credential::TYPE_REGISTRAR,
             'service' => Credential::NAMECHEAP,
         ]);
-        $credentialForge = \App\Models\Credential::factory()->create([
-            'user_id' => $this->user->id,
-            'type' => Credential::TYPE_DEVELOPMENT,
-            'service' => Credential::FORGE_DEVELOPMENT,
-        ]);
         \DB::table('deployment_resources')->insert([
             'resource_type' => $credentialCloudflare::class,
             'resource_id' => $credentialCloudflare->id,
@@ -97,15 +99,8 @@ class SporkDeploymentControllerTest extends TestCase
             'deployment_id' => $deployment->id,
             'settings' => json_encode([]),
         ]);
-        \DB::table('deployment_resources')->insert([
-            'resource_type' => $credentialForge::class,
-            'resource_id' => $credentialForge->id,
-            'deployment_id' => $deployment->id,
-            'settings' => json_encode([]),
-        ]);
-
         $deployment->load('credentials');
-        $this->assertCount(3, $deployment->credentials);
+        $this->assertCount(2, $deployment->credentials);
         $response = $this->post('http://spork.localhost/-/deployment/'.$deployment->id.'/deploy');
 
         $response->assertStatus(200);

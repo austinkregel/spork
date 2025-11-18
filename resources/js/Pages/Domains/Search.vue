@@ -1,5 +1,5 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import DomainAppLayout from "@/Layouts/DomainAppLayout.vue";
 import Container from "@/Components/Spork/Atoms/Container.vue";
 import Hero from "@/Components/Spork/Atoms/Hero.vue";
@@ -7,6 +7,28 @@ import PaddedContainer from "@/Components/Spork/Atoms/PaddedContainer.vue";
 import VerticalContainer from "@/Components/Spork/Atoms/VerticalContainer.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import Collapsible from "@/Components/Spork/Atoms/Collapsible.vue";
+
+const props = defineProps({
+    query: {
+        type: String,
+        default: '',
+    },
+    results: {
+        type: Object,
+        default: null,
+    },
+});
+
+const search = () => {
+    if (!props.query) {
+        return;
+    }
+
+    router.get(route('domain.search'), { q: props.query }, {
+        preserveState: true,
+        replace: true,
+    });
+};
 
 const faq = [
     {
@@ -45,10 +67,25 @@ const faq = [
                 <div>
                     <div class="text-sm uppercase">Get your first domain from starter.host</div>
 
-                    <input type="text" placeholder="stoner.host" class="my-4 p-2 bg-white dark:bg-slate-800 rounded border-slate-300 dark:active:ring-slate-800 max-w-xl w-full"/>
+                    <input
+                        type="text"
+                        placeholder="stoner.host"
+                        class="my-4 p-2 bg-white dark:bg-slate-800 rounded border-slate-300 dark:active:ring-slate-800 max-w-xl w-full"
+                        :value="props.query"
+                        @input="event => router.get(route('domain.search'), { q: event.target.value }, { preserveState: true, replace: true })"
+                    />
 
-                    <div class="flex justify-end w-full pr-4">
-                        <button class="bg-amber-200 dark:bg-amber-600 px-2 py-1 rounded dark:text-black">
+                    <div class="flex justify-between items-center w-full pr-4">
+                        <div v-if="results" class="text-sm text-stone-700 dark:text-stone-300">
+                            <span v-if="results.domain">
+                                <span class="font-semibold">{{ results.domain }}</span>
+                                <span class="ml-2">
+                                    <span v-if="results.available">is available 🎉</span>
+                                    <span v-else>is not available</span>
+                                </span>
+                            </span>
+                        </div>
+                        <button class="bg-amber-200 dark:bg-amber-600 px-2 py-1 rounded dark:text-black" @click.prevent="search">
                             Search
                         </button>
                     </div>

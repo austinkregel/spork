@@ -9,6 +9,13 @@ class SporkServersControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config(['broadcasting.default' => 'null']);
+    }
+
     public function test_servers_route_is_accessible()
     {
         $response = $this->actingAsUser()->get('http://spork.localhost/-/servers');

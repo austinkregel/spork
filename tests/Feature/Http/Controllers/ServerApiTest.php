@@ -12,6 +12,13 @@ class ServerApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config(['broadcasting.default' => 'null']);
+    }
+
     public function test_server_throws_validation_error(): void
     {
         $user = $this->createUserWithPermissions([

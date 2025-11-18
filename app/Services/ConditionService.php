@@ -91,10 +91,13 @@ class ConditionService implements ConditionServiceContract
 
     protected function logCondition(Condition $condition, bool $passesCondition, $value)
     {
-        $this->logger->info("Condition: Is [$value] {$condition->parameter} {$condition->comparator} {$condition->value}", [
-            'passes_condition' => $passesCondition,
-            'value' => $value,
-        ]);
+        $this->logger->info(
+            "Condition: {$condition->parameter} {$condition->comparator} {$condition->value}",
+            [
+                'passes_condition' => $passesCondition,
+                'value' => $value,
+            ],
+        );
     }
 
     protected function processParameter(string $parameter, array $additionalData)
@@ -121,7 +124,9 @@ class ConditionService implements ConditionServiceContract
     {
         return match ($key) {
             'config' => fn ($field) => config($field),
-            default => dd($key, $parameter),
+            default => function () use ($key, $parameter) {
+                throw new \InvalidArgumentException(sprintf('Unknown condition parameter key "%s" for parameter "%s"', $key, $parameter));
+            },
         };
     }
 }

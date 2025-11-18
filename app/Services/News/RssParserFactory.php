@@ -41,8 +41,7 @@ class RssParserFactory
             return new RdfFeed($element, $headers);
         }
 
-        dd($element);
-        throw new \DomainException(sprintf('The %s Feed type is not supported', ''));
+        throw new \DomainException(sprintf('The Feed type is not supported for URL: %s', $headers['url'] ?? 'unknown'));
     }
 
     public function isValid(\SimpleXMLElement $element): bool

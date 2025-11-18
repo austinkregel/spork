@@ -1,0 +1,23 @@
+In this repository, follow these environment and tooling rules:
+
+1. **Working directory**
+   - Always assume the project root is `/-/reforged-spork`.
+   - Before running any commands in a shell, ensure the current working directory is `/-/reforged-spork`.
+   - When constructing commands, prefer using absolute paths rooted at `/-/reforged-spork` rather than relative paths.
+
+2. **Laravel Sail usage**
+   - Always use the Sail binary at `/usr/local/bin/sail` for Laravel / Docker-related commands in this project.
+   - Do **not** use `./vendor/bin/sail`, `php artisan`, or `php` directly for app commands when Sail is appropriate; instead, run:
+     - `/usr/local/bin/sail up`
+     - `/usr/local/bin/sail artisan ...`
+     - `/usr/local/bin/sail test`, `/usr/local/bin/sail phpunit`, etc.
+   - When suggesting or executing commands, prefer the explicit binary path `/usr/local/bin/sail` instead of relying on `$PATH` resolution.
+
+3. **General command patterns**
+   - Any command that depends on the application code, database, or containers should be run via `/usr/local/bin/sail` unless there is a strong reason not to.
+   - Example patterns (always from `/-/reforged-spork`):
+     - `cd /-/reforged-spork && /usr/local/bin/sail artisan migrate`
+     - `cd /-/reforged-spork && /usr/local/bin/sail npm run dev`
+   - When in doubt, default to using `/usr/local/bin/sail` from the project root.
+
+

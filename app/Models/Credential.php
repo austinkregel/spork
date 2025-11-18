@@ -43,6 +43,8 @@ class Credential extends Model implements Crud, ModelQuery, Owner
 
     public const NAMECHEAP = 'namecheap';
 
+    public const ENOM = 'enom';
+
     public const OVH_CLOUD = 'ovhcloud';
 
     public const VULTR = 'vultr';
@@ -58,8 +60,6 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public const GITHUB_SOURCE = 'github';
 
     public const IMAP = 'imap';
-
-    public const FORGE_DEVELOPMENT = 'forge';
 
     public const TYPE_SERVER = 'server';
 
@@ -96,11 +96,10 @@ class Credential extends Model implements Crud, ModelQuery, Owner
         self::CLOUDFLARE,
         self::GOOGLE_DOMAINS,
         self::NAMECHEAP,
+        self::ENOM,
         self::AWS_ROUTE_53,
         self::GO_DADDY,
     ];
-
-    public const ALL_DEVELOPMENT_PROVIDERS = [self::FORGE_DEVELOPMENT];
 
     public const ALL_SOURCE_PROVIDERS = [self::GITHUB_SOURCE];
 

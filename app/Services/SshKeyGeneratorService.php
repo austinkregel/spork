@@ -14,7 +14,7 @@ class SshKeyGeneratorService implements SshKeyGeneratorServiceContract
      */
     public static function generate(
         string $passKey
-    ) {
+    ): array {
 
         $key = EC::createKey('ed25519');
         if (! empty($passKey)) {
@@ -27,12 +27,12 @@ class SshKeyGeneratorService implements SshKeyGeneratorServiceContract
         return [$privateKey, $publicKey];
     }
 
-    public function getPrivateKey(): string
+    public function getPrivateKey(): ?string
     {
         return $this->encryptedPrivateKey;
     }
 
-    public function getPublicKey(): string
+    public function getPublicKey(): ?string
     {
         return $this->encryptedPublicKey;
     }

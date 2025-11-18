@@ -41,20 +41,32 @@ class RssFeed extends AbstractFeed
 
     public function getData(): array
     {
-        try {
-            return array_map(function ($post) {
+        $items = ($this->element->channel ?? null)?->item ?? [];
+
+        if (empty($items)) {
+            return [];
+        }
+
+        $items = is_array($items) || $items instanceof \Traversable ? $items : [$items];
+
+        $feedItems = [];
+
+        foreach ($items as $post) {
+            try {
                 $feedItem = new FeedItem;
                 $feedItem->id = (string) ($post->guid ?? Str::uuid());
-                $feedItem->setTitle($post->title);
-                $feedItem->setPublishedAt($post->pubDate);
+                $feedItem->setTitle($post->title ?? null);
+                $feedItem->setPublishedAt($post->pubDate ?? null);
                 $feedItem->setUrl($post);
-                $feedItem->content = (string) $post->description ?? null;
-                $feedItem->authorName = (string) $post->source ?? null;
+                $feedItem->content = isset($post->description) ? (string) $post->description : null;
+                $feedItem->authorName = isset($post->source) ? (string) $post->source : null;
 
-                return $feedItem;
-            }, ((array) $this->element->channel)['item']);
-        } catch (\Throwable $e) {
-            dd($e, ((array) $this->element->channel)['item']);
+                $feedItems[] = $feedItem;
+            } catch (\Throwable $e) {
+                // Skip malformed items rather than failing the whole feed.
+            }
         }
+
+        return $feedItems;
     }
 }
