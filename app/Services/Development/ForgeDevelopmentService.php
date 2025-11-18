@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Development;
 
+use App\Contracts\Services\Development\ForgeDevelopmentServiceContract;
 use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\Project;
@@ -15,7 +16,7 @@ use Laravel\Forge\Resources\Certificate;
 use Laravel\Forge\Resources\Job;
 use Laravel\Forge\Resources\Site;
 
-class ForgeDevelopmentService
+class ForgeDevelopmentService implements ForgeDevelopmentServiceContract
 {
     public Forge $client;
 

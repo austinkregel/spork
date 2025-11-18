@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Contracts\Services\HttpServiceContract;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
-class HttpService
+class HttpService implements HttpServiceContract
 {
     protected static $instance;
 

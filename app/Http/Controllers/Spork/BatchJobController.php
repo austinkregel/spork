@@ -66,8 +66,8 @@ class BatchJobController extends Controller
                 if (!empty($batch->failed_job_ids)) {
                     $batch->jobs = \DB::table('failed_jobs')
                         ->select('*')
-                        ->whereIn('uuid', $batch->failed_job_ids)
-                        ->orderByDesc('failed_at')
+                            ->whereIn('uuid', is_string($batch->failed_job_ids) ? json_decode($batch->failed_job_ids, true) : $batch->failed_job_ids)
+                            ->orderByDesc('failed_at')
                         ->get()
                         ->map(function ($job) {
                             $job->parsed_exception = (new Stacktrace)->parse($job->exception);

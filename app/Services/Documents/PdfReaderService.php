@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Documents;
 
+use App\Contracts\Services\Documents\PdfReaderServiceContract;
 use Smalot\PdfParser\Document;
 use Smalot\PdfParser\Parser;
 
-class PdfReaderService extends Parser
+class PdfReaderService extends Parser implements PdfReaderServiceContract
 {
     public function parseContent(string $content): Document
     {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Contracts\Conditionable;
+use App\Contracts\Services\ConditionServiceContract;
 use App\Models\Condition;
 use App\Services\Condition\AbstractLogicalOperator;
 use App\Services\Condition\ArrayContainsValueOperator;
@@ -23,7 +24,7 @@ use App\Services\Condition\StartsWithOperator;
 use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
 
-class ConditionService
+class ConditionService implements ConditionServiceContract
 {
     public const AVAILABLE_CONDITIONS = [
         // strings, numbers, arrays, etc..

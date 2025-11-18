@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Contracts\Services\SshKeyGeneratorServiceContract;
 use phpseclib3\Crypt\EC;
 
-class SshKeyGeneratorService
+class SshKeyGeneratorService implements SshKeyGeneratorServiceContract
 {
     /**
      * Store an encrypted version of the SSH key on the server, and in the databasae.

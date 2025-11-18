@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Development;
 
 use App\Contracts\ActionInterface;
+use App\Contracts\Services\Development\DescribeTableServiceContract;
 use App\Models\Tag;
 use App\Models\Taggable;
 use App\Services\ActionFilter;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class DescribeTableService
+class DescribeTableService implements DescribeTableServiceContract
 {
     public function describe(Model $model): array
     {

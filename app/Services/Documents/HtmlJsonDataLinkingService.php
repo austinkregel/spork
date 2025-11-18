@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Documents;
 
+use App\Contracts\Services\Documents\HtmlJsonDataLinkingServiceContract;
 use GuzzleHttp\Client;
 
-class HtmlJsonDataLinkingService
+class HtmlJsonDataLinkingService implements HtmlJsonDataLinkingServiceContract
 {
     public function __construct(
         protected Client $client,
