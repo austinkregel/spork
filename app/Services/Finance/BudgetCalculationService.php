@@ -48,6 +48,30 @@ class BudgetCalculationService
         ];
     }
 
+    public function getPreviousPeriodStats(Budget $budget, Carbon $now): array
+    {
+        [$periodStart, $periodEnd] = $this->periodHelper->getPreviousPeriod($budget, $now);
+        $totalSpend = $this->calculatePeriodSpend($budget, $periodStart, $periodEnd);
+
+        $amount = (float) $budget->amount;
+        $totalSpendNormalized = $totalSpend < 0 ? abs($totalSpend) : $totalSpend;
+
+        return [
+            'period_start' => $periodStart,
+            'period_end' => $periodEnd,
+            'total_spend' => $totalSpendNormalized,
+            'remaining' => $amount - $totalSpendNormalized,
+            'usage_percentage' => $amount > 0.0 ? ($totalSpendNormalized / $amount) * 100.0 : 0.0,
+        ];
+    }
+
+    public function getSpendBetween(Budget $budget, Carbon $periodStart, Carbon $periodEnd): float
+    {
+        $spend = $this->calculatePeriodSpend($budget, $periodStart, $periodEnd);
+
+        return $spend < 0 ? abs($spend) : $spend;
+    }
+
     protected function calculatePeriodSpend(Budget $budget, Carbon $periodStart, Carbon $periodEnd): float
     {
         $tagIds = $budget->tags->pluck('id')->all();

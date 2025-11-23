@@ -29,9 +29,8 @@ class SporkBankingControllerTest extends TestCase
 
         $response->assertInertia(fn ($page) => $page
             ->component('Banking/Index')
-            ->has('accounts')
-            ->has('transactions')
-        );
+            ->where('tab', 'overview')
+            ->has('overview'));
     }
 
     public function test_banking_budgets_route_loads_expected_data()
@@ -40,7 +39,7 @@ class SporkBankingControllerTest extends TestCase
 
         $response->assertInertia(fn ($page) => $page
             ->component('Banking/Index')
-            ->has('accounts')
-        );
+            ->where('tab', 'budgets')
+            ->has('budgetsData'));
     }
 }

@@ -96,8 +96,20 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::post('deployment/{deployment}/attach', [Controllers\Spork\DeploymentController::class, 'attach'])->name('deployment.attach');
     Route::post('deployment/{deployment}/deploy', [Controllers\Spork\DeploymentController::class, 'deploy'])->name('project.deploy');
 
-    Route::get('/banking', Controllers\Spork\BankingController::class)->name('banking.index');
-    Route::get('/banking/budgets', [Controllers\Spork\BankingController::class, 'budgets'])->name('banking.budgets');
+    Route::prefix('/banking')->name('banking.')->group(function () {
+        Route::get('/', [Controllers\Spork\BankingController::class, 'overview'])->name('overview');
+        Route::get('/accounts', [Controllers\Spork\BankingController::class, 'accounts'])->name('accounts');
+        Route::get('/budgets', [Controllers\Spork\BankingController::class, 'budgets'])->name('budgets');
+        Route::get('/transactions', [Controllers\Spork\BankingController::class, 'transactions'])->name('transactions');
+        Route::get('/settings', [Controllers\Spork\BankingController::class, 'settings'])->name('settings');
+
+        Route::post('/manual-transactions', [Controllers\Spork\ManualTransactionController::class, 'store'])
+            ->name('manual-transactions.store');
+        Route::put('/preferences/pins', [Controllers\Spork\BankingPreferenceController::class, 'updatePins'])
+            ->name('preferences.pins');
+        Route::put('/preferences/settings', [Controllers\Spork\BankingPreferenceController::class, 'updateSettings'])
+            ->name('preferences.settings');
+    });
 
     Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
     Route::post('/file-manager/default', [Controllers\Spork\FileManagerController::class, 'updateFileManager'])->name('file-manager.update-default');
