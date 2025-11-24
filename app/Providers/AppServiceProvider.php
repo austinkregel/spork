@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Console\Commands\CrudCacheCommand;
 use App\Contracts\Repositories\CredentialRepositoryContract;
 use App\Contracts\Repositories\MatrixClientSyncRepositoryContract;
 use App\Contracts\Repositories\ProjectRepositoryContract;
@@ -155,6 +156,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->bootRoute();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CrudCacheCommand::class,
+            ]);
+        }
     }
 
     public function bootRoute(): void

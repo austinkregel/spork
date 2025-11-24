@@ -63,6 +63,7 @@ class ManageController
             ->with(
                 array_filter($description['includes'], fn ($relation) => ! in_array($relation, [
                     'tagsTranslated',
+                    'owner',
                 ]))
             )
             ->paginate(request('limit', 15), ['*'], 'manage_page', request('manage_page', 1));
