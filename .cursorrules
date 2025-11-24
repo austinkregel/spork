@@ -68,4 +68,29 @@ In this repository, follow these environment and tooling rules:
      - `cd /-/reforged-spork && /usr/local/bin/sail npm run dev`
    - When in doubt, default to using `/usr/local/bin/sail` from the project root.
 
+6. Spork UI styling conventions:
+
+  - Palette and dark mode:
+    - Default surfaces lean on the Tailwind `stone` scale, e.g. `bg-white dark:bg-stone-800`, `text-stone-700 dark:text-stone-200`, and `divide-stone-200 dark:divide-stone-600`.
+    - Primary actions stay in the indigo family (`bg-indigo-500 dark:bg-indigo-600`), destructive choices use reds (`bg-red-500`, `text-red-500`), and neutral chrome uses `slate` only for focus states.
+    - Every new color choice should include a `dark:` counterpart so components stay legible in dark mode.
+
+  - Spacing:
+    - Inline controls (buttons, dropdown rows) default to `px-3 py-2 text-sm`; compact versions shrink to `px-2 py-1 text-xs`, while headers/panels use `px-4 py-2`.
+    - Form fields, cards, and modals rely on `p-4` bodies with `gap-4` or `gap-2` between stacked elements; tables reserve `px-4 py-2` for top/bottom toolbars.
+    - Vertical rhythm is set with Tailwind’s even steps (`mt-2`, `mt-4`, `mb-4`) rather than arbitrary pixel values.
+
+  - Borders, corners, and dividers:
+    - Inputs/selects/textareas use `border border-stone-300 dark:border-stone-700` plus `rounded-md`; disabled states swap to `bg-stone-200` or `dark:bg-slate-800/50`.
+    - Higher-level surfaces (cards, tables, modals) use `border-stone-200 dark:border-stone-800`, `rounded-lg`, and `shadow`/`shadow-sm` to match `SporkTable`/`Card`.
+    - When stacking rows, prefer `divide-y divide-stone-200 dark:divide-stone-600` over per-row borders.
+
+  - Focus and interaction:
+    - Clickable elements keep `focus:outline-none` and Tailwind ring helpers: controls tied to data entry use `focus:ring-stone-500 focus:border-stone-500`, while CTA buttons use `focus:ring-indigo-500 focus:ring-offset-2`.
+    - Hover states nudge background opacity instead of drastic color shifts to keep contrast predictable.
+
+  - Feedback:
+    - Error text and badges use `text-red-500 dark:text-red-400` with light red backgrounds (`bg-red-100`) when a surface needs emphasis.
+    - Selection/highlight pills rely on subtle neutral fills (`bg-stone-100 dark:bg-stone-700`) so they remain readable inside tables and dropdowns.
+
 
