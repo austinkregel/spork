@@ -145,6 +145,10 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
     Route::get('/postal/{email}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
 
+    Route::get('/automation', [Controllers\Spork\AutomationController::class, 'index'])->name('automation.index');
+    Route::get('/automation/tags', [Controllers\Spork\AutomationController::class, 'tags'])->name('automation.tags');
+    Route::get('/automation/tags/{tag}', [Controllers\Spork\AutomationController::class, 'show'])->name('automation.tags.show');
+
     Route::get('/manage/{slug}', [Controllers\Spork\ManageController::class, 'show'])->name('manage.show');
     Route::get('/manage', [Controllers\Spork\ManageController::class, 'index'])->name('manage.index');
 
