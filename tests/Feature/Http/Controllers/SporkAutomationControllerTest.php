@@ -53,7 +53,7 @@ class SporkAutomationControllerTest extends TestCase
         $this->actingAsUser();
         $this->user->tags()->attach($tag);
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/automation/tags/{$tag->id}");
+        $response = $this->get("http://spork.localhost/-/automation/tags/{$tag->id}");
 
         $response->assertInertia(fn ($page) => $page
             ->component('Automation/TagShow')
