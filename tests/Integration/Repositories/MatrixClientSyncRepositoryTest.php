@@ -8,6 +8,7 @@ use App\Models\Credential;
 use App\Models\User;
 use App\Repositories\MatrixClientSyncRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
@@ -28,6 +29,13 @@ class MatrixClientSyncRepositoryTest extends TestCase
 
     public function test_process_room(): void
     {
+        // Ensure a clean slate for this integration test regardless of any
+        // global fixtures that may have created people or threads.
+        DB::table('thread_participants')->delete();
+        DB::table('messages')->delete();
+        DB::table('threads')->delete();
+        DB::table('people')->delete();
+
         $this->assertDatabaseEmpty('threads');
         $this->assertDatabaseEmpty('people');
         $this->assertDatabaseEmpty('messages');

@@ -6,6 +6,7 @@ namespace App\Http\Requests;
 
 use App\Models\Credential;
 use App\Models\User;
+use App\Rules\Credentials\UniqueCredentialForOwner;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -30,6 +31,11 @@ class StoreCredentialRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var User $user */
+        $user = $this->user();
+
+        $uniqueForOwner = new UniqueCredentialForOwner($user);
+
         return [
             'name' => 'required|string',
             'type' => [
@@ -49,10 +55,10 @@ class StoreCredentialRequest extends FormRequest
                 'string',
                 Rule::in(Credential::ALL_SERVER_PROVIDERS),
             ],
-            'api_key' => 'nullable',
-            'secret_key' => 'nullable',
-            'access_token' => 'nullable|string',
-            'refresh_token' => 'nullable|string',
+            'api_key' => ['nullable', $uniqueForOwner],
+            'secret_key' => ['nullable'],
+            'access_token' => ['nullable', 'string'],
+            'refresh_token' => ['nullable', 'string'],
             'settings' => [],
             'settings.*' => 'nullable|string',
             'enabled_on' => 'nullable|date',

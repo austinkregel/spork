@@ -266,7 +266,12 @@
                     />
 
                 </div>
-                <pre>{{ valuesToSend.errors }}</pre>
+                <div v-if="Object.keys(valuesToSend.errors || {}).length" class="px-3 text-xs text-red-500 dark:text-red-400 space-y-1">
+                    <div v-for="(message, field) in valuesToSend.errors" :key="field">
+                        <span class="font-medium">{{ field }}:</span>
+                        <span>{{ Array.isArray(message) ? message[0] : message }}</span>
+                    </div>
+                </div>
                 <div>
                     <SporkButton type="submit" @click.prevent="saveCredentialType">
                         Save

@@ -65,29 +65,65 @@
 
                                     <div class="col-span-6">
                                         <label for="access_token" class="block text-sm font-medium">Api key/Access Token</label>
-                                        <spork-input v-model="form.access_token" type="text" name="access_token" id="access_token" />
+                                        <spork-input
+                                            v-model="form.access_token"
+                                            type="password"
+                                            name="access_token"
+                                            id="access_token"
+                                            autocomplete="off"
+                                        />
                                     </div>
 
                                     <div class="col-span-6" v-if="form.service === 'namecheap'">
                                         <label for="api_user" class="block text-sm font-medium">API User</label>
-                                        <spork-input v-model="form.settings.api_user" type="text" name="api_user" id="api_user" />
+                                        <spork-input
+                                            v-model="form.settings.api_user"
+                                            type="text"
+                                            name="api_user"
+                                            id="api_user"
+                                            autocomplete="off"
+                                        />
                                     </div>
                                     <div class="col-span-6" v-if="form.service === 'namecheap'">
                                         <label for="username" class="block text-sm font-medium">Username</label>
-                                        <spork-input v-model="form.settings.username" type="text" name="username" id="username" />
+                                        <spork-input
+                                            v-model="form.settings.username"
+                                            type="text"
+                                            name="username"
+                                            id="username"
+                                            autocomplete="off"
+                                        />
                                     </div>
                                     <div class="col-span-6" v-if="form.service === 'namecheap'">
                                         <label for="client_ip" class="block text-sm font-medium">Client IP</label>
-                                        <spork-input v-model="form.settings.client_ip" type="text" name="client_ip" id="client_ip" />
+                                        <spork-input
+                                            v-model="form.settings.client_ip"
+                                            type="text"
+                                            name="client_ip"
+                                            id="client_ip"
+                                            autocomplete="off"
+                                        />
                                     </div>
 
                                     <div class="col-span-6" v-if="form.service === 'cloudflare'">
                                         <label for="account_email" class="block text-sm font-medium">Account Email</label>
-                                        <spork-input v-model="form.settings.email" type="text" name="account_email" id="account_email" />
+                                        <spork-input
+                                            v-model="form.settings.email"
+                                            type="text"
+                                            name="account_email"
+                                            id="account_email"
+                                            autocomplete="off"
+                                        />
                                     </div>
                                     <div class="col-span-6" v-if="form.service === 'cloudflare'">
                                         <label for="account_id" class="block text-sm font-medium">Account ID</label>
-                                        <spork-input v-model="form.settings.account_id" type="text" name="account_id" id="account_id" />
+                                        <spork-input
+                                            v-model="form.settings.account_id"
+                                            type="text"
+                                            name="account_id"
+                                            id="account_id"
+                                            autocomplete="off"
+                                        />
                                     </div>
 
                                     <div class="col-span-6" v-if="form.type === 'ssh'">

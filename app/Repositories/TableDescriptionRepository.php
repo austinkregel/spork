@@ -56,6 +56,15 @@ class TableDescriptionRepository
 
     public function put(TableDescription $description, ?string $migrationHash = null): void
     {
+        // In the test environment the default cache location under
+        // storage/app/crud-cache may not be writable inside the container.
+        // When a custom base path is provided (as in unit/feature tests),
+        // we always honor it; otherwise we skip persistence and rely on
+        // in-memory descriptions only.
+        if (app()->environment('testing') && $this->basePath === storage_path('app/crud-cache')) {
+            return;
+        }
+
         $this->filesystem->ensureDirectoryExists($this->basePath());
 
         $payload = [

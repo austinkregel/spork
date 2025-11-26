@@ -49,6 +49,10 @@ Route::middleware([
 
 Route::redirect('/', '/flight/login');
 
+Route::get('/post-login', function () {
+	return redirect()->intended(\App\Providers\AppServiceProvider::HOME);
+})->middleware('auth')->name('post-login');
+
 Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::get('/dashboard', Controllers\Spork\DashboardController::class)->name('dashboard');
     Route::get('/search', [Controllers\SearchController::class, 'index'])->name('search');

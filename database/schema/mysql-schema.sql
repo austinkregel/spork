@@ -164,12 +164,14 @@ CREATE TABLE `credentials` (
   `access_token` varchar(2048) DEFAULT NULL,
   `refresh_token` varchar(255) DEFAULT NULL,
   `settings` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`settings`)),
+  `secret_fingerprint` varchar(255) DEFAULT NULL,
   `enabled_on` datetime DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `credentials_type_index` (`type`),
-  KEY `credentials_service_index` (`service`)
+  KEY `credentials_service_index` (`service`),
+  KEY `credentials_secret_fingerprint_index` (`secret_fingerprint`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `deployment`;

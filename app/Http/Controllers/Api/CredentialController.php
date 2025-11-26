@@ -19,6 +19,6 @@ class CredentialController extends Controller
 
         $credential = $user->credentials()->create($request->validated());
 
-        return Inertia::location(route('manage.show', ['link' => $credential->getTable()]));
+        return Inertia::location(route('manage.show', ['slug' => $credential->getTable()]));
     }
 }

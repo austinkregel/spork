@@ -58,7 +58,7 @@ In this repository, follow these environment and tooling rules:
    - Do **not** use `./vendor/bin/sail`, `php artisan`, or `php` directly for app commands when Sail is appropriate; instead, run:
      - `/usr/local/bin/sail up`
      - `/usr/local/bin/sail artisan ...`
-     - `/usr/local/bin/sail test`, `/usr/local/bin/sail phpunit`, etc.
+     - `/usr/local/bin/sail phpunit`, `/usr/local/bin/sail mysql`, etc.
    - When suggesting or executing commands, prefer the explicit binary path `/usr/local/bin/sail` instead of relying on `$PATH` resolution.
 
 3. **General command patterns**
