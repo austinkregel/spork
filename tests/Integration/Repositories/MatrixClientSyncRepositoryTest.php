@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Integration\Repositories;
 
 use App\Models\Credential;
+use App\Models\Thread;
 use App\Models\User;
 use App\Repositories\MatrixClientSyncRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -523,5 +524,101 @@ class MatrixClientSyncRepositoryTest extends TestCase
         $this->assertDatabaseCount('threads', 1);
         $this->assertDatabaseCount('people', 7);
         $this->assertDatabaseCount('messages', 3);
+    }
+
+    public function test_process_room_renames_dm_using_other_participant_name(): void
+    {
+        $user = User::factory()->create();
+        $user->person->update([
+            'identifiers' => ['@self:fake.tools'],
+        ]);
+
+        $credential = Credential::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $roomState = [
+            'timeline' => [
+                'events' => [],
+            ],
+            'state' => [
+                'events' => [
+                    [
+                        'type' => 'm.room.create',
+                        'sender' => '@system:fake.tools',
+                        'content' => [
+                            'room_version' => '10',
+                            'creator' => '@system:fake.tools',
+                        ],
+                        'state_key' => '',
+                        'origin_server_ts' => now()->valueOf(),
+                    ],
+                    $this->buildMemberEvent('@self:fake.tools', 'Kregel'),
+                    $this->buildMemberEvent('@friend:fake.tools', 'Friend Name'),
+                ],
+            ],
+        ];
+
+        $this->repository->processRoom('!room:fake.tools', $roomState, $credential, $user);
+
+        $thread = Thread::firstWhere('thread_id', '!room:fake.tools');
+
+        $this->assertNotNull($thread);
+        $this->assertSame('Friend Name', $thread->name);
+    }
+
+    public function test_process_room_keeps_custom_thread_name(): void
+    {
+        $user = User::factory()->create();
+        $user->person->update([
+            'identifiers' => ['@self:fake.tools'],
+        ]);
+
+        $credential = Credential::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        Thread::create([
+            'thread_id' => '!room:fake.tools',
+            'name' => 'Custom Room',
+            'origin_server_ts' => now(),
+        ]);
+
+        $roomState = [
+            'timeline' => [
+                'events' => [],
+            ],
+            'state' => [
+                'events' => [
+                    $this->buildMemberEvent('@self:fake.tools', 'Kregel'),
+                    $this->buildMemberEvent('@friend:fake.tools', 'Friend Name'),
+                ],
+            ],
+        ];
+
+        $this->repository->processRoom('!room:fake.tools', $roomState, $credential, $user);
+
+        $thread = Thread::firstWhere('thread_id', '!room:fake.tools');
+
+        $this->assertNotNull($thread);
+        $this->assertSame('Custom Room', $thread->name);
+    }
+
+    protected function buildMemberEvent(string $identifier, string $displayName): array
+    {
+        return [
+            'type' => 'm.room.member',
+            'sender' => $identifier,
+            'content' => [
+                'membership' => 'join',
+                'displayname' => $displayName,
+            ],
+            'state_key' => $identifier,
+            'origin_server_ts' => now()->valueOf(),
+            'unsigned' => [
+                'age' => 0,
+            ],
+            'event_id' => '$'.md5($identifier.$displayName),
+        ];
     }
 }

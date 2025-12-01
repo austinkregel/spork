@@ -263,6 +263,11 @@ class MatrixClientSyncRepository implements MatrixClientSyncRepositoryContract
                     ]);
             }
         }
+
+        $this->renameThreadToTheParticipantThatIsntTheUser(
+            Thread::query()->with('participants')->firstWhere('thread_id', $roomId),
+            $user
+        );
     }
 
     protected function redactEvent(array $event): void
@@ -595,24 +600,80 @@ class MatrixClientSyncRepository implements MatrixClientSyncRepositoryContract
 
     protected function renameThreadToTheParticipantThatIsntTheUser(?Thread $thread, User $user): void
     {
-        if (empty($thread)) {
+        if (empty($thread) || ! $this->shouldRenameThread($thread)) {
             return;
         }
 
-        if (! str_starts_with($thread->name, '!')) {
-            return;
-        }
-
+        $thread->loadMissing('participants');
         $participants = $thread->participants;
 
-        if ($participants->count() === 1) {
-            $thread->update(['name' => $participants->first()->name]);
-        } elseif ($participants->count() === 2) {
-            $participants->each(function (Person $participant) use ($thread, $user) {
-                if (! in_array($user->email, $participant->identifiers)) {
-                    $thread->update(['name' => $participant->identifiers]);
-                }
-            });
+        if ($participants->count() === 0) {
+            return;
         }
+
+        if ($participants->count() === 1) {
+            $thread->update(['name' => $this->resolvePersonDisplayName($participants->first())]);
+
+            return;
+        }
+
+        if ($participants->count() !== 2) {
+            return;
+        }
+
+        $userIdentifiers = collect($user->person?->identifiers ?? [])
+            ->filter()
+            ->map(fn ($identifier) => strtolower($identifier))
+            ->values();
+
+        $otherParticipant = $participants->first(function (Person $participant) use ($userIdentifiers) {
+            $participantIdentifiers = collect($participant->identifiers ?? [])
+                ->filter()
+                ->map(fn ($identifier) => strtolower($identifier));
+
+            return $participantIdentifiers->intersect($userIdentifiers)->isEmpty();
+        });
+
+        if (! $otherParticipant) {
+            return;
+        }
+
+        $thread->update(['name' => $this->resolvePersonDisplayName($otherParticipant)]);
+    }
+
+    protected function shouldRenameThread(Thread $thread): bool
+    {
+        $name = $thread->name;
+
+        if (is_array($name)) {
+            $name = Arr::first($name);
+        }
+
+        if (blank($name)) {
+            return true;
+        }
+
+        if (! is_string($name)) {
+            return false;
+        }
+
+        return str_starts_with($name, '!');
+    }
+
+    protected function resolvePersonDisplayName(Person $person): string
+    {
+        $name = trim((string) ($person->name ?? ''));
+
+        if ($name !== '') {
+            return $name;
+        }
+
+        $identifiers = $person->identifiers ?? [];
+
+        if (! empty($identifiers)) {
+            return Arr::first($identifiers);
+        }
+
+        return 'Conversation';
     }
 }
