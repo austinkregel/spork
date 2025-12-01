@@ -32,5 +32,6 @@
         <env name="LINK_SHORTENING_DOMAIN"  value="127.0.0.1" />
         <env name="LOG_CHANNEL" value="null"/>
         <env name="XDEBUG_MODE" value="coverage"/>
+        <env name="SCOUT_DRIVER" value="null"/>
     </php>
 </phpunit>
