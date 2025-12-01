@@ -46,11 +46,14 @@ jobs:
             ${{ runner.os }}-composer-
       - name: Install dependencies
         run: |
+          mkdir -p storage/logs
           touch storage/logs/laravel.log
           touch storage/logs/crontab.log
           touch storage/logs/horizon.log
           touch database/database.sqlite
           cp .env.ci .env
+          chmod 666 .env
+          chmod -R 777 storage bootstrap/cache
           ./bin/sail up -d
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
