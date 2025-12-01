@@ -67,7 +67,7 @@ jobs:
           ./bin/sail art key:generate
           export $(cat .env | xargs)
           ./bin/sail exec mariadb /docker-entrypoint-initdb.d/10-create-testing-database.sh
-          ./bin/sail test
+          ./bin/sail phpunit
       - name: tear down containers
         run: |
           ./bin/sail down
