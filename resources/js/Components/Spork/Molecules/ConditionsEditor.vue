@@ -139,11 +139,11 @@ const addCondition = () => {
             </template>
         </SporkSelect>
         <SporkInput v-model="condition.value" />
-        <button v-if="condition?.id" @click="() => deleteCondition(index, condition)" class="bg-red-500 text-white rounded-lg px-2">Delete</button>
-        <button v-else @click="() => createCondition(index, condition)" class="bg-blue-500 text-white rounded-lg px-2">Create</button>
+        <button type="button" v-if="condition?.id" @click="() => deleteCondition(index, condition)" class="bg-red-500 text-white rounded-lg px-2">Delete</button>
+        <button type="button" v-else @click="() => createCondition(index, condition)" class="bg-blue-500 text-white rounded-lg px-2">Create</button>
     </div>
     <div>
-        <button @click="addCondition" class="bg-green-500 text-white rounded-lg px-2">Add Condition</button>
+        <button type="button" @click="addCondition" class="bg-green-500 text-white rounded-lg px-2">Add Condition</button>
     </div>
 </div>
 </template>

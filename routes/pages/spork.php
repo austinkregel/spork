@@ -40,6 +40,9 @@ Route::middleware([
 
     Route::post('/api/plaid/create-link-token', Controllers\Api\Plaid\CreateLinkTokenController::class);
     Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
+    Route::get('/api/suggest/taggable-types', [Controllers\Api\SuggestController::class, 'taggableTypes'])->name('api.suggest.taggable-types');
+    Route::get('/api/suggest/models', [Controllers\Api\SuggestController::class, 'models'])->name('api.suggest.models');
+    Route::get('/api/suggest/operations', [Controllers\Api\SuggestController::class, 'operations'])->name('api.suggest.operations');
 
     Route::post('/api/projects/{project}/tasks', Controllers\Api\Projects\CreateTaskController::class);
     Route::post('/api/credentials', [Controllers\Api\CredentialController::class, 'store']);
@@ -145,6 +148,24 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
     Route::get('/postal/{email}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
 
+    Route::get('/automation', [Controllers\Spork\AutomationController::class, 'index'])->name('automation.index');
+    Route::get('/automation/tags', [Controllers\Spork\AutomationController::class, 'tags'])->name('automation.tags');
+    Route::get('/automation/tags/{tag}', [Controllers\Spork\AutomationController::class, 'show'])->name('automation.tags.show');
+
+    Route::prefix('/automation')->name('automation.')->group(function () {
+        Route::resource('automations', Controllers\Spork\AutomationsController::class)
+            ->parameters(['automations' => 'automation']);
+        Route::post('automations/{automation}/run-now', [Controllers\Spork\AutomationsController::class, 'runNow'])
+            ->name('automations.run-now');
+
+        // Steps management
+        Route::post('automations/{automation}/steps', [Controllers\Spork\AutomationsController::class, 'storeStep'])
+            ->name('automations.steps.store');
+        Route::put('automations/{automation}/steps/{step}', [Controllers\Spork\AutomationsController::class, 'updateStep'])
+            ->name('automations.steps.update');
+        Route::delete('automations/{automation}/steps/{step}', [Controllers\Spork\AutomationsController::class, 'destroyStep'])
+            ->name('automations.steps.destroy');
+    });
     Route::get('/manage/{slug}', [Controllers\Spork\ManageController::class, 'show'])->name('manage.show');
     Route::get('/manage', [Controllers\Spork\ManageController::class, 'index'])->name('manage.index');
 

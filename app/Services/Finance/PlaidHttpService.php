@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Finance;
 
 use App\Services\HttpService;
+use GuzzleHttp\Client;
 
 class PlaidHttpService extends HttpService
 {
@@ -23,35 +24,30 @@ class PlaidHttpService extends HttpService
      */
     protected $authBits = [];
 
-    /**
-     * PlaidHttpService constructor.
-     */
     public function __construct()
     {
-        $this->url = sprintf($this->baseUrl, $this->env);
-        parent::__construct($this->url, []);
+        $this->swapClientForEnvironment($this->env);
     }
 
     public function sandbox(): self
     {
-        $this->url = sprintf($this->baseUrl, 'sandbox');
-        $this->new($this->url, []);
-
-        return $this;
+        return $this->use('sandbox');
     }
 
     public function development(): self
     {
-        $this->url = sprintf($this->baseUrl, 'development');
-        $this->new($this->url, []);
-
-        return $this;
+        return $this->use('development');
     }
 
     public function production(): self
     {
-        $this->url = sprintf($this->baseUrl, 'production');
-        $this->new($this->url, []);
+        return $this->use('production');
+    }
+
+    protected function use(string $env): self
+    {
+        $this->env = $env;
+        $this->swapClientForEnvironment($env);
 
         return $this;
     }
@@ -63,14 +59,15 @@ class PlaidHttpService extends HttpService
         return $this;
     }
 
-    /**
-     * @param  null  $data
-     * @return \Illuminate\Support\Collection
-     *
-     * @throws \Exception
-     */
-    protected function request($action, $data = [])
+    protected function request(string $method, string $path, $data = null)
     {
-        return parent::request($action, array_merge((array) $data, $this->authBits));
+        return parent::request($method, $path, array_merge((array) $data, $this->authBits));
+    }
+
+    protected function swapClientForEnvironment(string $env): void
+    {
+        $this->client = new Client([
+            'base_uri' => sprintf($this->baseUrl, $env),
+        ]);
     }
 }

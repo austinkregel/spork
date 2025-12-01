@@ -25,6 +25,7 @@ const appNavigation = {
   }),
   core: [
     { name: 'CRUD', href: '/-/manage', icon: 'CircleStackIcon', active: false, },
+    { name: 'Automations', href: '/-/automation', icon: 'BoltIcon', active: false, },
     { name: 'Tags', href: '/-/tag-manager', icon: 'TagIcon', active: false, },
   ].map(i => {
     i.current = i.href === location.pathname;
@@ -73,7 +74,7 @@ const appNavigation = {
                 <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=slate&shade=500" alt="Your Company" />
               </div>
               <nav class="flex flex-col">
-                <div v-for="(group, index) in appNavigation" class="mt-6 w-full flex-1 space-y-1 px-2 flex flex-col">
+                <div v-for="(group, index) in appNavigation" :key="`mobile-${index}`" class="mt-6 w-full flex-1 space-y-1 px-2 flex flex-col">
                   <div class="px-2 text-xs font-semibold text-stone-400 uppercase tracking-wider xl:w-12 w-8 truncate">{{ index }}</div>
                   <Link v-for="item in group" :key="item.name" :href="item?.href ?? '#'" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-wrap gap-2 rounded-md text-xs font-medium px-2 py-1.5 xl:justify-start']" :aria-current="item.current ? 'page' : undefined">
                     <DynamicIcon :icon-name="item.icon"  :active="item.current"  :class="[item.current ? 'text-white' : 'text-slate-300 group-hover:text-white', 'xl:h-5 xl:w-5 w-6 h-6']" aria-hidden="true" />
@@ -101,7 +102,7 @@ const appNavigation = {
       </div>
 
       <nav class="mt-8">
-        <div v-for="(group, index) in appNavigation" class="mt-6 w-full flex-1 space-y-1 px-2 flex flex-col">
+        <div v-for="(group, index) in appNavigation" :key="`desktop-${index}`" class="mt-6 w-full flex-1 space-y-1 px-2 flex flex-col">
           <div class="px-2 text-xs font-semibold text-stone-400 uppercase text-center xl:text-left tracking-wider truncate">{{ index }}</div>
           <Link v-for="item in group" :key="item.name" :href="item?.href ?? '#'" :class="[item.current ? 'bg-slate-800 text-white' : 'text-slate-100 hover:bg-slate-800 hover:text-white', 'group flex w-full flex-wrap gap-2 rounded-md text-xs font-medium px-2 py-1.5 items-center justify-center xl:justify-start']" :aria-current="item.current ? 'page' : undefined">
             <DynamicIcon :icon-name="item.icon"  :active="item.current"  :class="[item.current ? 'text-white' : 'text-slate-300 group-hover:text-white',
