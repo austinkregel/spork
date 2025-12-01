@@ -30,13 +30,6 @@ jobs:
           key: ${{ runner.os }}-docker-${{ steps.extract_branch.outputs.branch }}
           restore-keys: |
             ${{ runner.os }}-docker-
-      - name: Cache npm packages
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
       - name: Cache composer dependencies
         uses: actions/cache@v3
         with:
@@ -55,6 +48,8 @@ jobs:
           chmod 666 .env
           chmod -R 777 storage bootstrap/cache
           ./bin/sail up -d
+          ./bin/sail composer install --no-interaction --prefer-dist
+          sudo chown -R $(id -u):$(id -g) vendor
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
