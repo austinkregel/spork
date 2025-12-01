@@ -17,7 +17,7 @@ return [
      * can still do so by visiting the login url.
      */
     'registration' => env('FLIGHT_ALLOW_REGISTRATION', true),
-    'post_login_redirect' => env('FLIGHT_LOGIN_REDIRECT', '/-/dashboard'),
+    'post_login_redirect' => env('FLIGHT_LOGIN_REDIRECT', '/post-login'),
     'community_drivers' => [
         SocialiteProviders\LaravelPassport\LaravelPassportExtendSocialite::class,
     ],
