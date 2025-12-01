@@ -11,9 +11,9 @@ class JobBatch extends Model
 {
     use HasFactory;
 
-    public $incrementing = true;
+    public $incrementing = false;
 
-    public $usesUniqueIds = false;
+    public $usesUniqueIds = true;
 
     public $fillable = [
         'name',

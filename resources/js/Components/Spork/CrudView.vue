@@ -103,15 +103,25 @@
 
                 <template #table-bottom>
                     <div class="w-full dark:text-white flex justify-between flex-wrap bg-stone-100 dark:bg-stone-800 px-4 py-2">
-                        <Link :href="paginator.prev_page_url ?? '#'" :disabled="hasPreviousPage" :plain="true" :xlarge="true" :class="[!hasPreviousPage ? 'opacity-50 cursor-not-allowed': '']">Previous</Link>
+                        <Link
+                            :href="paginator.prev_page_url ?? '#'"
+                            :disabled="!hasPreviousPage"
+                            :plain="true"
+                            :xlarge="true"
+                            :class="[!hasPreviousPage ? 'opacity-50 cursor-not-allowed' : '']"
+                        >
+                            Previous
+                        </Link>
                         <div class="py-2">
                             {{ (currentPage * itemsPerPage) - itemsPerPage }} total items, {{ currentPage  }} of {{ paginator?.total}}
                         </div>
                         <Link
-                            :href="paginator.next_page_url"
-                         :disabled="hasNextPage"
-                         :class="[!hasNextPage ? 'opacity-50 cursor-not-allowed': 'cursor-pointer']"
-                        >Next</Link>
+                            :href="paginator.next_page_url ?? '#'"
+                            :disabled="!hasNextPage"
+                            :class="[!hasNextPage ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer']"
+                        >
+                            Next
+                        </Link>
                     </div>
                 </template>
             </SporkTable>
@@ -256,7 +266,12 @@
                     />
 
                 </div>
-                <pre>{{ valuesToSend.errors }}</pre>
+                <div v-if="Object.keys(valuesToSend.errors || {}).length" class="px-3 text-xs text-red-500 dark:text-red-400 space-y-1">
+                    <div v-for="(message, field) in valuesToSend.errors" :key="field">
+                        <span class="font-medium">{{ field }}:</span>
+                        <span>{{ Array.isArray(message) ? message[0] : message }}</span>
+                    </div>
+                </div>
                 <div>
                     <SporkButton type="submit" @click.prevent="saveCredentialType">
                         Save

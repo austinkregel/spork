@@ -8,6 +8,7 @@ use App\Contracts\Services\RegistrarServiceContract;
 use App\Models\Credential;
 use App\Services\Registrar\CloudflareRegistrarService;
 use App\Services\Registrar\NamecheapService;
+use App\Services\Registrar\TucowsEnomService;
 
 class RegistrarServiceFactory
 {
@@ -16,6 +17,7 @@ class RegistrarServiceFactory
         return match ($credential->service) {
             Credential::NAMECHEAP => new NamecheapService($credential),
             Credential::CLOUDFLARE => new CloudflareRegistrarService($credential),
+            Credential::ENOM => new TucowsEnomService($credential),
         };
     }
 }

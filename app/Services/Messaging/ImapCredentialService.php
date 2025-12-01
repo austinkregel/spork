@@ -57,12 +57,6 @@ class ImapCredentialService implements ImapServiceContract
                 $body = null;
                 $overview = Arr::first(imap_fetch_overview($inbox, (string) $messageNumber));
 
-                try {
-                    Carbon::parse($headers['X-Pm-Date']);
-                } catch (\Throwable $e) {
-                    dd($headers);
-                }
-
                 if (empty($headers['To'])) {
                     // ew
                     $headers['To'] = $headers['Delivered-To'];
@@ -74,8 +68,8 @@ class ImapCredentialService implements ImapServiceContract
                     'to' => $this->extractEmailAndName($headers['To']),
                     'addressed-to' => $this->extractEmailAndName($headers['X-Simplelogin-Envelope-To'] ?? $headers['X-Original-To'] ?? null),
                     'addressed-from' => $this->extractEmailAndName($rfcHeaders->fromaddress ?? $headers['X-Pm-External-Id'] ?? null),
-                    'date' => Carbon::parse($headers['X-Pm-Date']),
-                    'human_date' => Carbon::parse($headers['X-Pm-Date'])->fromNow(),
+                    'date' => $this->parseProtonDate($headers),
+                    'human_date' => $this->parseProtonDate($headers)->fromNow(),
                     'subject' => imap_utf8($headers['Subject']),
                     'from' => $this->extractEmailAndName($rfcHeaders->senderaddress ?? $rfcHeaders->fromaddress ?? $headers['From'], $headers),
                     'reply-to' => $this->extractEmailAndName($rfcHeaders->reply_toaddress ?? $headers['Reply-To']),
@@ -114,12 +108,6 @@ class ImapCredentialService implements ImapServiceContract
                 $body = null;
                 $overview = Arr::first(imap_fetch_overview($inbox, (string) $messageNumber));
 
-                try {
-                    Carbon::parse($headers['X-Pm-Date']);
-                } catch (\Throwable $e) {
-                    dd($headers);
-                }
-
                 if (empty($headers['To'])) {
                     // ew
                     $headers['To'] = $headers['Delivered-To'];
@@ -131,8 +119,8 @@ class ImapCredentialService implements ImapServiceContract
                     'to' => $this->extractEmailAndName($headers['To']),
                     'addressed-to' => $this->extractEmailAndName($headers['X-Simplelogin-Envelope-To'] ?? $headers['X-Original-To'] ?? null),
                     'addressed-from' => $this->extractEmailAndName($rfcHeaders->fromaddress ?? $headers['X-Pm-External-Id'] ?? null),
-                    'date' => Carbon::parse($headers['X-Pm-Date']),
-                    'human_date' => Carbon::parse($headers['X-Pm-Date'])->fromNow(),
+                    'date' => $this->parseProtonDate($headers),
+                    'human_date' => $this->parseProtonDate($headers)->fromNow(),
                     'subject' => imap_utf8($headers['Subject']),
                     'from' => $this->extractEmailAndName($rfcHeaders->senderaddress ?? $rfcHeaders->fromaddress ?? $headers['From'], $headers),
                     'reply-to' => $this->extractEmailAndName($rfcHeaders->reply_toaddress ?? $headers['Reply-To']),
@@ -246,6 +234,21 @@ class ImapCredentialService implements ImapServiceContract
                 'original' => $value,
             ],
         };
+    }
+
+    protected function parseProtonDate(array $headers): Carbon
+    {
+        $raw = $headers['X-Pm-Date'] ?? null;
+
+        if ($raw !== null) {
+            try {
+                return Carbon::parse($raw);
+            } catch (\Throwable $e) {
+                // fall through to now()
+            }
+        }
+
+        return Carbon::now();
     }
 
     public function markAsRead(string $messageId): void

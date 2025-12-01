@@ -25,7 +25,6 @@ class EmailFactory extends Factory
             'spam' => $this->faker->boolean(),
             'answered' => $this->faker->boolean(),
             'subject' => $this->faker->sentence(),
-            'message' => $this->faker->sentence(),
             'email_id' => $this->faker->uuid(),
             'credential_id' => Credential::factory(),
             'to' => Person::factory(),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Contracts\Conditionable;
+use App\Contracts\Services\ConditionServiceContract;
 use App\Models\Condition;
 use App\Services\Condition\AbstractLogicalOperator;
 use App\Services\Condition\ArrayContainsValueOperator;
@@ -23,7 +24,7 @@ use App\Services\Condition\StartsWithOperator;
 use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
 
-class ConditionService
+class ConditionService implements ConditionServiceContract
 {
     public const AVAILABLE_CONDITIONS = [
         // strings, numbers, arrays, etc..
@@ -90,10 +91,13 @@ class ConditionService
 
     protected function logCondition(Condition $condition, bool $passesCondition, $value)
     {
-        $this->logger->info("Condition: Is [$value] {$condition->parameter} {$condition->comparator} {$condition->value}", [
-            'passes_condition' => $passesCondition,
-            'value' => $value,
-        ]);
+        $this->logger->info(
+            "Condition: {$condition->parameter} {$condition->comparator} {$condition->value}",
+            [
+                'passes_condition' => $passesCondition,
+                'value' => $value,
+            ],
+        );
     }
 
     protected function processParameter(string $parameter, array $additionalData)
@@ -120,7 +124,9 @@ class ConditionService
     {
         return match ($key) {
             'config' => fn ($field) => config($field),
-            default => dd($key, $parameter),
+            default => function () use ($key, $parameter) {
+                throw new \InvalidArgumentException(sprintf('Unknown condition parameter key "%s" for parameter "%s"', $key, $parameter));
+            },
         };
     }
 }

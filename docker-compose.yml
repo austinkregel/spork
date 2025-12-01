@@ -6,7 +6,6 @@ services:
                 WWWUSER: '${WWWUSER}'
                 WWWGROUP: '${WWWGROUP}'
                 PHP_VERSION: 8.3
-
         network_mode: host
         user: 'root'
         extra_hosts:
@@ -15,7 +14,7 @@ services:
             WWWUSER: '${WWWUSER}'
             WWWGROUP: '${WWWGROUP}'
             LARAVEL_SAIL: 1
-            PHP_VERSION: 8.4
+            PHP_VERSION: 8.3
             XDEBUG_MODE: 'off'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'

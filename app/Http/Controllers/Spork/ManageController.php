@@ -42,6 +42,7 @@ class ManageController
                 'budgets' => $user->budgets()->count(),
                 'Tags' => $user->tags()->count(),
             ],
+            'subnavigation' => $this->navigation(),
         ]);
     }
 
@@ -49,7 +50,7 @@ class ManageController
     {
         $models = Code::instancesOf(Crud::class)->getClasses();
 
-        $index = array_search($model, array_map(fn ($class) => (new $class)->getTable(), $models));
+        $index = array_search($model, array_map(fn ($class) => Str::slug((new $class)->getTable()), $models));
         $table = $model;
         $model = $models[$index] ?? null;
 
@@ -62,6 +63,7 @@ class ManageController
             ->with(
                 array_filter($description['includes'], fn ($relation) => ! in_array($relation, [
                     'tagsTranslated',
+                    'owner',
                 ]))
             )
             ->paginate(request('limit', 15), ['*'], 'manage_page', request('manage_page', 1));
@@ -80,6 +82,7 @@ class ManageController
             'apiLink' => '/api/crud/'.$table,
             'data' => $data,
             'paginator' => $paginator,
+            'subnavigation' => $this->navigation(),
         ]);
     }
 
@@ -93,7 +96,7 @@ class ManageController
 
             return [
                 'name' => Str::ucfirst(str_replace('_', ' ', Str::ascii($tableName, 'en'))),
-                'href' => '/-/manage/'.$slug = Str::slug(Str::singular($tableName)),
+                'href' => '/-/manage/'.$slug = Str::slug($tableName),
                 'icon' => ucfirst(Str::singular(Str::camel($tableName))).'Icon',
                 'slug' => $slug,
                 'class' => $class,

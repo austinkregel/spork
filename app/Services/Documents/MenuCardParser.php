@@ -20,7 +20,6 @@ class MenuCardParser
     {
         $pdfContents = $this->parseAndHandleEncryptedPdf($filename);
 
-        dd($pdfContents);
         $replacements = [
             '  ' => ' ',
             "\n" => ' ',

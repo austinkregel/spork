@@ -32,7 +32,6 @@ class Email extends Model
         'seen',
         'spam',
         'answered',
-        'message',
     ];
 
     public $dispatchesEvents = [
@@ -50,7 +49,6 @@ class Email extends Model
             'seen' => 'boolean',
             'spam' => 'boolean',
             'answered' => 'boolean',
-            'message' => 'boolean',
         ];
     }
 

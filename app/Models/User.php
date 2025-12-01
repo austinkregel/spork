@@ -127,6 +127,16 @@ class User extends Authenticatable implements ModelQuery, Taggable
         return $this->hasManyThrough(Account::class, Credential::class);
     }
 
+    public function automations(): HasMany
+    {
+        return $this->hasMany(Automation::class);
+    }
+
+    public function bankingPreference(): HasOne
+    {
+        return $this->hasOne(Finance\BankingPreference::class);
+    }
+
     public function messages(): HasManyThrough
     {
         return $this->hasManyThrough(Message::class, Credential::class)->orderByDesc('originated_at');

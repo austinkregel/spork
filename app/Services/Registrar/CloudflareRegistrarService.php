@@ -57,31 +57,59 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
 
     public function getDomainNs(string $domain): array
     {
-        return [];
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'X-Auth-Email' => $this->email,
+            'X-Auth-Key' => $this->apiKey,
+        ])->get(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains/'.$domain);
+
+        if (! $response->successful()) {
+            throw new \RuntimeException('Unable to fetch Cloudflare registrar domain nameservers');
+        }
+
+        $result = $response->json('result');
+
+        if (! is_array($result) || ! isset($result['current_nameservers'])) {
+            throw new \RuntimeException('Cloudflare registrar response missing current_nameservers');
+        }
+
+        return (array) $result['current_nameservers'];
     }
 
     public function updateDomainNs(string $domain, array $nameservers): array
     {
-        return [];
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'X-Auth-Email' => $this->email,
+            'X-Auth-Key' => $this->apiKey,
+        ])->put(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains/'.$domain.'/nameservers', [
+            'nameservers' => array_values($nameservers),
+        ]);
+
+        if (! $response->successful()) {
+            throw new \RuntimeException('Unable to update Cloudflare registrar domain nameservers');
+        }
+
+        return array_values($nameservers);
     }
 
     public function getTlds(): array
     {
-        // TODO: Implement getTlds() method.
+        throw new \BadMethodCallException('Cloudflare registrar TLD listing is not implemented.');
     }
 
     public function searchDomain(string $domain): array
     {
-        // TODO: Implement searchDomain() method.
+        throw new \BadMethodCallException('Cloudflare registrar domain search is not implemented.');
     }
 
     public function registerDomain(string $domain, int $years = 1): array
     {
-        // TODO: Implement registerDomain() method.
+        throw new \BadMethodCallException('Cloudflare registrar domain registration is not implemented.');
     }
 
     public function renewDomain(string $domain, int $years = 1): array
     {
-        // TODO: Implement renewDomain() method.
+        throw new \BadMethodCallException('Cloudflare registrar domain renewal is not implemented.');
     }
 }

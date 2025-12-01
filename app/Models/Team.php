@@ -33,7 +33,7 @@ class Team extends JetstreamTeam implements ModelQuery
      *
      * @var array<string, class-string>
      */
-    protected $dispatchesEvents = [
+    public $dispatchesEvents = [
         'created' => TeamCreated::class,
         'updated' => TeamUpdated::class,
         'deleted' => TeamDeleted::class,

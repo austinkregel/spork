@@ -13,6 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class PopulateExternalRssFeeds implements ShouldQueue
 {
@@ -30,7 +31,11 @@ class PopulateExternalRssFeeds implements ShouldQueue
         $rssFeed = $service->fetchRssFeed($this->feed->url);
 
         if ($rssFeed === null) {
-            // TODO: dispatch some event or something to alert the system that this feed is dead.
+            Log::warning('External RSS feed is unavailable', [
+                'feed_id' => $this->feed->id,
+                'url' => $this->feed->url,
+            ]);
+
             return;
         }
 

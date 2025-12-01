@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Services\Documents;
 
+use App\Contracts\Services\Documents\HtmlJsonDataLinkingServiceContract;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 
-class HtmlJsonDataLinkingService
+class HtmlJsonDataLinkingService implements HtmlJsonDataLinkingServiceContract
 {
     public function __construct(
         protected Client $client,
     ) {}
 
-    public function fetchDataLink(string $url)
+    public function fetchDataLink(string $url): array
     {
         $page = $this->client->get($url);
 

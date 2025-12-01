@@ -21,50 +21,17 @@ class DeploymentController extends Controller
             'credentials'
         ]);
 
-        $forgeCredential = $deployment->credentials()->where('service', Credential::FORGE_DEVELOPMENT)->first();
         $cloudflareCredential = $deployment->credentials()->where('service', Credential::CLOUDFLARE)->first();
         $namecheapCredential = $deployment->credentials()->where('service', Credential::NAMECHEAP)->first();
 
-        if (in_array(null, [$forgeCredential, $cloudflareCredential, $namecheapCredential])) {
+        if (in_array(null, [$cloudflareCredential, $namecheapCredential])) {
             return response()->json([
                 'message' => 'Missing required credentials for deployment.',
             ], 422);
         }
 
+        // The actual deployment implementation has been removed now that Forge is no longer used.
         return response([], 200);
-        /** @var \App\Models\Server $server */
-        foreach ($deployment->servers as $server) {
-            $tags = array_map(fn ($tag) => $tag->name->en, $server->tags);
-            if (in_array('loadbalancer', $tags)) {
-                // Link the load balancer's network to all the other servers, only add servers that are labeled `web`
-            }
-            foreach ($deployment->domains as $domain) {
-                if (in_array('loadbalancer', $tags)) {
-                    // Each one of these jobs should look to see if the configuration is already where we want it.
-                    dispatch_sync(new \App\Jobs\Deployment\Steps\SetupCloudflareDns($domain, $cloudflareCredential, $namecheapCredential));
-                    dispatch_sync(new \App\Jobs\Deployment\Steps\SetupLoadBalancerJob($server, $domain, $deployment));
-                    dispatch_sync(new \App\Jobs\Deployment\Steps\SetupLoadBalancerDnsRecordJob($server, $domain, $deployment));
-                    dispatch_sync(new \App\Jobs\Deployment\Steps\DeploySslCertificateJob($server, $domain, $forgeCredential));
-                }
-                if (in_array('web', $tags)) {
-                    // Setup domain on server
-                    // Setup project for server (setup git, setup deployment webhook, etc etc...)
-                    // Update the environment variables with share values.
-                    // Configure jobs/queues for server
-                    // configure cron schedules/daemons
-                }
-                // Basically a queue worker, or a project with a prod env that isn't _the_ prod server.
-                if (in_array('app', $tags)) {
-                    // Queue workers are not setup to handle traffic from the load balancer
-                    // Setup domain on server
-                    // Setup project for server (setup git, setup deployment webhook, etc etc...)
-                    // Update the environment variables with share values.
-                    // Configure jobs/queues for server
-                    // configure cron schedules/daemons
-                }
-            }
-        }
-
     }
 
     public function attach(Deployment $deployment)

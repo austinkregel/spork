@@ -141,26 +141,61 @@ class DigitalOceanService implements DigitalOceanServiceContract
 
     public function deleteDnsRecord(string $domain, string $dnsRecordId): void
     {
-        // TODO: Implement deleteDnsRecord() method.
+        $this->digitalOcean->domainRecord()->delete($domain, (int) $dnsRecordId);
     }
 
     public function createDnsRecord(string $domain, array $dnsRecordArray): void
     {
-        // TODO: Implement createDnsRecord() method.
+        $this->digitalOcean->domainRecord()->create(
+            $domain,
+            $dnsRecordArray['type'],
+            $dnsRecordArray['name'],
+            $dnsRecordArray['data'],
+            $dnsRecordArray['priority'] ?? null,
+        );
     }
 
     public function getDomainNs(string $domain): array
     {
-        $this->getDns($domain, 'NS');
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
+        $paginator = $this->getDns($domain, 'NS', 1000, 1);
+
+        return array_values(array_map(
+            fn (array $record) => $record['data'] ?? $record['name'] ?? '',
+            $paginator->items()
+        ));
     }
 
     public function updateDomainNs(string $domain, array $nameservers): array
     {
-        // TODO: Implement updateDomainNs() method.
+        $existing = $this->getDns($domain, 'NS', 1000, 1)->items();
+
+        foreach ($existing as $record) {
+            if (($record['type'] ?? null) === 'NS' && isset($record['id'])) {
+                $this->deleteDnsRecord($domain, (string) $record['id']);
+            }
+        }
+
+        foreach ($nameservers as $ns) {
+            $this->createDnsRecord($domain, [
+                'type' => 'NS',
+                'name' => '@',
+                'data' => $ns,
+            ]);
+        }
+
+        return array_values($nameservers);
     }
 
     public function createDomain(string $domain): array
     {
-        // TODO: Implement createDomain() method.
+        $this->digitalOcean->domain()->create($domain);
+
+        // DigitalOcean uses a fixed set of nameservers for all domains.
+        return [
+            'ns1.digitalocean.com',
+            'ns2.digitalocean.com',
+            'ns3.digitalocean.com',
+        ];
     }
 }

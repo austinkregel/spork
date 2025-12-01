@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Contracts\Repositories\ProjectRepositoryContract;
 use App\Contracts\Services\JiraServiceContract;
 use App\Models\Project;
 use Illuminate\Support\Arr;
 use JiraRestApi\Project\Project as JiraProject;
 
-class ProjectRepository
+class ProjectRepository implements ProjectRepositoryContract
 {
     public function __construct(
         protected JiraServiceContract $jira

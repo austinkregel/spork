@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Contracts\Repositories\MatrixClientSyncRepositoryContract;
 use App\Models\Credential;
 use App\Models\Message;
 use App\Models\Person;
@@ -14,7 +15,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Psr\Log\LoggerInterface;
 
-class MatrixClientSyncRepository
+class MatrixClientSyncRepository implements MatrixClientSyncRepositoryContract
 {
     protected $devices = [];
 
@@ -162,6 +163,7 @@ class MatrixClientSyncRepository
                     $thread = Thread::query()
                         ->with('participants')
                         ->firstWhere('thread_id', $roomId);
+                    
                     $message = $thread->messages()->firstWhere('event_id', $event['event_id']);
 
                     // We need to handle when events are edited. There is an optional m.relates_to blob we need to inspect to see how we should process the message.

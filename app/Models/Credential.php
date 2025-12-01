@@ -18,6 +18,7 @@ use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use App\Observers\ApplyCredentialsObserver;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -43,6 +44,8 @@ class Credential extends Model implements Crud, ModelQuery, Owner
 
     public const NAMECHEAP = 'namecheap';
 
+    public const ENOM = 'enom';
+
     public const OVH_CLOUD = 'ovhcloud';
 
     public const VULTR = 'vultr';
@@ -58,8 +61,6 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public const GITHUB_SOURCE = 'github';
 
     public const IMAP = 'imap';
-
-    public const FORGE_DEVELOPMENT = 'forge';
 
     public const TYPE_SERVER = 'server';
 
@@ -96,17 +97,16 @@ class Credential extends Model implements Crud, ModelQuery, Owner
         self::CLOUDFLARE,
         self::GOOGLE_DOMAINS,
         self::NAMECHEAP,
+        self::ENOM,
         self::AWS_ROUTE_53,
         self::GO_DADDY,
     ];
 
-    public const ALL_DEVELOPMENT_PROVIDERS = [self::FORGE_DEVELOPMENT];
-
     public const ALL_SOURCE_PROVIDERS = [self::GITHUB_SOURCE];
 
-    public $guarded = [];
+    public $guarded = ['secret_fingerprint'];
 
-    public $hidden = ['api_key', 'access_token', 'refresh_token'];
+    public $hidden = ['api_key', 'secret_key', 'access_token', 'refresh_token', 'secret_fingerprint'];
 
     public $fillable = [
         'name',
@@ -132,6 +132,19 @@ class Credential extends Model implements Crud, ModelQuery, Owner
 
     public $actions = [SyncDataFromCredential::class];
 
+    protected static function booted(): void
+    {
+        static::saving(function (self $credential): void {
+            $credential->secret_fingerprint = self::makeSecretFingerprint(
+                api_key: $credential->api_key,
+                secret_key: $credential->secret_key,
+                access_token: $credential->access_token,
+                refresh_token: $credential->refresh_token,
+                settings: $credential->settings ?? null,
+            );
+        });
+    }
+
     protected function casts(): array
     {
         return [
@@ -142,6 +155,74 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public static function makeSecretFingerprint(
+        ?string $api_key,
+        ?string $secret_key,
+        ?string $access_token,
+        ?string $refresh_token,
+        ?array $settings,
+    ): ?string {
+        // Treat "no settings" and "empty settings" equivalently so that
+        // credentials created with no settings and validated with an empty
+        // settings array share the same fingerprint.
+        $normalizedSettings = self::normalizeSettings($settings ?? []);
+
+        if ($normalizedSettings === []) {
+            $normalizedSettings = null;
+        }
+
+        $payload = [
+            'api_key' => $api_key,
+            'secret_key' => $secret_key,
+            'access_token' => $access_token,
+            'refresh_token' => $refresh_token,
+            'settings' => $normalizedSettings,
+        ];
+
+        $hasNonEmptySecret = collect($payload)
+            ->map(function ($value) {
+                if (is_array($value)) {
+                    return collect($value)
+                        ->flatten()
+                        ->filter(fn ($v) => ! is_null($v) && $v !== '')
+                        ->isNotEmpty();
+                }
+
+                return ! is_null($value) && $value !== '';
+            })
+            ->contains(true);
+
+        if (! $hasNonEmptySecret) {
+            return null;
+        }
+
+        return hash('sha256', json_encode($payload, JSON_THROW_ON_ERROR));
+    }
+
+    /**
+     * Normalize settings for stable fingerprinting.
+     */
+    private static function normalizeSettings(?array $settings): ?array
+    {
+        if ($settings === null) {
+            return null;
+        }
+
+        $normalize = function (array $value) use (&$normalize): array {
+            ksort($value);
+
+            foreach ($value as $key => $item) {
+                if (is_array($item)) {
+                    $value[$key] = $normalize($item);
+                }
+            }
+
+            return $value;
+        };
+
+        return $normalize($settings);
     }
 
     public function getPublicKey(): string

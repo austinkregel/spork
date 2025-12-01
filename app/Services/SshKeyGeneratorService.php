@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Contracts\Services\SshKeyGeneratorServiceContract;
 use phpseclib3\Crypt\EC;
 
-class SshKeyGeneratorService
+class SshKeyGeneratorService implements SshKeyGeneratorServiceContract
 {
     /**
      * Store an encrypted version of the SSH key on the server, and in the databasae.
      */
     public static function generate(
         string $passKey
-    ) {
+    ): array {
 
         $key = EC::createKey('ed25519');
         if (! empty($passKey)) {
@@ -26,12 +27,12 @@ class SshKeyGeneratorService
         return [$privateKey, $publicKey];
     }
 
-    public function getPrivateKey(): string
+    public function getPrivateKey(): ?string
     {
         return $this->encryptedPrivateKey;
     }
 
-    public function getPublicKey(): string
+    public function getPublicKey(): ?string
     {
         return $this->encryptedPublicKey;
     }

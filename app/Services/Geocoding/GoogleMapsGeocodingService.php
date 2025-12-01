@@ -30,12 +30,12 @@ class GoogleMapsGeocodingService implements GeocodingServiceContract
 
             return compact('latitude', 'longitude', 'address');
         } catch (\Throwable $e) {
-            info('Failed to gecode '.$address, [
+            info('Failed to geocode '.$address, [
                 'address' => $address,
-                'exception' => $e,
+                'exception' => $e->getMessage(),
             ]);
 
-            dd($response, $address);
+            return ['latitude' => null, 'longitude' => null, 'address' => $address];
         }
     }
 

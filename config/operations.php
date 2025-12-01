@@ -8,5 +8,6 @@ return [
      * and queued when you run the Operator's queue function.
      */
     'operations' => [
+        \App\Operations\AutomationOperation::class,
     ],
 ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Contracts\Services\SshServiceContract;
 use App\Models\Credential;
 use App\Models\Server;
 use App\Models\Spork\Script;
@@ -11,7 +12,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Str;
 
-class SshService
+class SshService implements SshServiceContract
 {
     protected mixed $connection;
 
