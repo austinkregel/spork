@@ -1,5 +1,6 @@
 <script setup>
 import Manage from "@/Layouts/Manage.vue";
+import { Link } from "@inertiajs/vue3";
 import { CheckCircleIcon, ShieldCheckIcon, SparklesIcon, ClockIcon } from "@heroicons/vue/24/outline";
 
 const { title, blueprints, pipelines, safety, integrations } = defineProps({
@@ -45,6 +46,35 @@ const { title, blueprints, pipelines, safety, integrations } = defineProps({
               </div>
               <p class="text-sm text-amber-900 dark:text-amber-100 mt-2">Reoccurring cadences that stagger traffic to mimic human behavior.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <p class="text-sm uppercase tracking-widest text-stone-500 dark:text-stone-400">Quick actions</p>
+            <h2 class="text-2xl font-semibold text-stone-900 dark:text-white">Jump into automation</h2>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+              <div class="text-stone-900 dark:text-white font-medium">Manage automations</div>
+              <div class="text-sm text-stone-600 dark:text-stone-300">Create, edit, and run playbooks.</div>
+            </div>
+            <Link :href="route('automation.automations.index')" class="px-3 py-2 text-sm rounded-md bg-indigo-500 dark:bg-indigo-600 text-white">
+              Open
+            </Link>
+          </div>
+          <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-5 shadow-sm flex items-center justify-between">
+            <div>
+              <div class="text-stone-900 dark:text-white font-medium">Automation tags</div>
+              <div class="text-sm text-stone-600 dark:text-stone-300">Route outputs and control access.</div>
+            </div>
+            <Link :href="route('automation.tags')" class="px-3 py-2 text-sm rounded-md border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200">
+              Open
+            </Link>
           </div>
         </div>
       </section>

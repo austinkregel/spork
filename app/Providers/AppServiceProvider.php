@@ -66,6 +66,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -162,6 +163,9 @@ class AppServiceProvider extends ServiceProvider
                 CrudCacheCommand::class,
             ]);
         }
+
+        // Policies
+        Gate::policy(\App\Models\Automation::class, \App\Policies\AutomationPolicy::class);
     }
 
     public function bootRoute(): void

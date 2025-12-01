@@ -166,6 +166,12 @@ class AutomationController
                 'slug' => 'overview',
             ],
             [
+                'name' => 'Automations',
+                'href' => '/-/automation/automations',
+                'icon' => 'BoltIcon',
+                'slug' => 'automations',
+            ],
+            [
                 'name' => 'Tags + routing',
                 'href' => '/-/automation/tags',
                 'icon' => 'TagIcon',
