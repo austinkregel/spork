@@ -60,6 +60,7 @@ In this repository, follow these environment and tooling rules:
      - `/usr/local/bin/sail artisan ...`
      - `/usr/local/bin/sail phpunit`, `/usr/local/bin/sail mysql`, etc.
    - When suggesting or executing commands, prefer the explicit binary path `/usr/local/bin/sail` instead of relying on `$PATH` resolution.
+   - When trying to run tests, only calls using phpunit will work; calls to test will not. Ex: `/usr/local/bin/sail phpunit` or `/usr/local/bin/sail phpunit tests/PathToFile.php`
 
 3. **General command patterns**
    - Any command that depends on the application code, database, or containers should be run via `/usr/local/bin/sail` unless there is a strong reason not to.
