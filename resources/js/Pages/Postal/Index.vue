@@ -5,7 +5,7 @@
             <section class="flex flex-col bg-stone-50 dark:bg-stone-900 w-1/3 h-full min-h-screen overflow-y-scroll">
                 <ul>
                   <li v-for="thread in page.props.threads.data" class="p-4 px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
-                    <Link :href="route('inbox.show', thread.id)" class="flex flex-col">
+                    <Link :href="route('chat.show', thread.id)" class="flex flex-col">
                       <h3 class="text-lg font-semibold dark:text-stone-50 truncate">{{ thread.name}}</h3>
                       <div class="text-sm truncate dark:text-stone-200">{{ thread.participants.map(p => p.name).join(", ") }}</div>
                     </Link>

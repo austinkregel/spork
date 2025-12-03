@@ -8,6 +8,8 @@ use App\Contracts\Services\PlaidServiceContract;
 use App\Models\Finance\Account;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Log\LogManager;
+use Psr\Log\LoggerInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -16,9 +18,12 @@ class PlaidService implements PlaidServiceContract
 {
     protected PlaidHttpService $http;
 
-    public function __construct(PlaidHttpService $httpService)
+    protected LoggerInterface $logger;
+
+    public function __construct(PlaidHttpService $httpService, LogManager $logManager)
     {
         $this->http = $httpService;
+        $this->logger = $logManager->channel('plaid');
     }
 
     public function getInstitutionsByName(string $bankName): array
@@ -156,15 +161,23 @@ class PlaidService implements PlaidServiceContract
      */
     public function getAccounts(string $accessToken): array
     {
-        return $this->http
-            ->{config('services.plaid.env')}()
-            ->auth([
-                'client_id' => config('services.plaid.client_id'),
-                'secret' => config('services.plaid.secret_key'),
-                'access_token' => $accessToken,
-            ])
-            ->post('/accounts/get')
-            ->toArray();
+        try {
+            return $this->http
+                ->{config('services.plaid.env')}()
+                ->auth([
+                    'client_id' => config('services.plaid.client_id'),
+                    'secret' => config('services.plaid.secret_key'),
+                    'access_token' => $accessToken,
+                ])
+                ->post('/accounts/get')
+                ->toArray();
+        } catch (ClientException $exception) {
+            $this->logPlaidException($exception, '/accounts/get', [
+                'token_hash' => sha1($accessToken),
+            ]);
+
+            throw $exception;
+        }
     }
 
     public function rotateAccessTokens(Account $account): Account
@@ -259,15 +272,43 @@ class PlaidService implements PlaidServiceContract
 
     public function syncTransactions(string $access_token, ?string $cursor = null): array
     {
-        return $this->http
-            ->{config('services.plaid.env')}()
-            ->post('/transactions/sync', array_merge([
-                'access_token' => $access_token,
-                'client_id' => config('services.plaid.client_id'),
-                'secret' => config('services.plaid.secret_key'),
-            ], empty($cursor) ? [] : [
+        try {
+            return $this->http
+                ->{config('services.plaid.env')}()
+                ->post('/transactions/sync', array_merge([
+                    'access_token' => $access_token,
+                    'client_id' => config('services.plaid.client_id'),
+                    'secret' => config('services.plaid.secret_key'),
+                ], empty($cursor) ? [] : [
+                    'cursor' => $cursor,
+                ]))
+                ->toArray();
+        } catch (ClientException $exception) {
+            $this->logPlaidException($exception, '/transactions/sync', [
+                'token_hash' => sha1($access_token),
                 'cursor' => $cursor,
-            ]))
-            ->toArray();
+            ]);
+
+            throw $exception;
+        }
+    }
+
+    protected function logPlaidException(ClientException $exception, string $endpoint, array $context = []): void
+    {
+        $response = $exception->getResponse();
+        $body = $response?->getBody()?->getContents();
+        $payload = json_decode($body ?? '', true) ?? [];
+
+        $errorContext = array_filter([
+            'endpoint' => $endpoint,
+            'status_code' => $response?->getStatusCode(),
+            'error_type' => $payload['error_type'] ?? null,
+            'error_code' => $payload['error_code'] ?? null,
+            'error_message' => $payload['error_message'] ?? $exception->getMessage(),
+            'display_message' => $payload['display_message'] ?? null,
+            'request_id' => $payload['request_id'] ?? $response?->getHeaderLine('Plaid-Request-ID'),
+        ], static fn ($value) => $value !== null);
+
+        $this->logger->error('Plaid request failed', array_merge($errorContext, $context));
     }
 }

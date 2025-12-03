@@ -5,7 +5,7 @@
             <section class="flex flex-col pt-3 bg-stone-50 dark:bg-stone-900  overflow-y-scroll" style="height: calc(100vh - 65px);">
                 <ul class="divide-y divide-stone-200 dark:divide-stone-700">
                     <li v-for="thread in page.props.threads.data" class="p-4 px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
-                        <Link :href="route('inbox.show', thread.id)" class="flex flex-col">
+                        <Link :href="route('chat.show', thread.id)" class="flex flex-col">
                             <h3 class="text-lg font-semibold dark:text-stone-50 truncate">{{ thread.name}}</h3>
                             <div class="text-sm truncate dark:text-stone-200">{{ thread.participants.map(p => p.name).join(", ") }}</div>
                         </Link>
@@ -114,6 +114,12 @@ import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
 import Markdown from 'vue3-markdown-it';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(utc);
+dayjs.extend(relativeTime);
 
 
 const page = usePage();
@@ -152,7 +158,34 @@ const onExecute = async({ actionToRun, selectedItems}) => {
     console.log(e.message, 'error');
   }
 }
-const formatDate = (d) => dayjs(d * 1000).fromNow();
+const normalizeTimestamp = (value) => {
+  if (value === null || value === undefined) {
+    return dayjs.invalid();
+  }
+
+  if (typeof value === 'number') {
+    const seconds = value > 1e12 ? value / 1000 : value;
+    return dayjs.unix(seconds).utc();
+  }
+
+  const numeric = Number(value);
+  if (!Number.isNaN(numeric)) {
+    const seconds = numeric > 1e12 ? numeric / 1000 : numeric;
+    return dayjs.unix(seconds).utc();
+  }
+
+  return dayjs.utc(value);
+};
+
+const formatDate = (value) => {
+  const instance = normalizeTimestamp(value);
+
+  if (!instance.isValid()) {
+    return '';
+  }
+
+  return instance.fromNow();
+};
 </script>
 
 <style scoped>

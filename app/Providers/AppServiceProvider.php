@@ -47,6 +47,30 @@ use App\Services\HttpService;
 use App\Services\JiraService;
 use App\Services\Messaging\ImapCredentialService;
 use App\Services\Messaging\ImapFactoryService;
+use App\Services\Messaging\Matrix\Handlers\AccountData\BreadcrumbsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\CrossSigningEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\DirectChatsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\IgnoredAccountEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\LocalNotificationSettingsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\MatrixClientInformationEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\MegolmBackupEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\RecentEmojiEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\SecretStorageDefaultKeyEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\SecretStorageKeyEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\WebSettingsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\IgnoredRoomEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomAvatarEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomCanonicalAliasEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomCreateEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomEncryptionEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomMemberEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomMessageEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomNameEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomPowerLevelsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomRedactionEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomTopicEventHandler;
+use App\Services\Messaging\Matrix\MatrixEventHandlerRegistry;
+use App\Services\Messaging\Matrix\MatrixEventSupport;
 use App\Services\MustacheService;
 use App\Services\News\NewsService;
 use App\Services\News\RssFeedService;
@@ -72,6 +96,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\SplFileInfo;
+use Psr\Log\LoggerInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -93,6 +118,35 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CredentialRepositoryContract::class, CredentialRepository::class);
         $this->app->bind(ProjectRepositoryContract::class, ProjectRepository::class);
         $this->app->bind(MatrixClientSyncRepositoryContract::class, MatrixClientSyncRepository::class);
+
+        $this->app->singleton(MatrixEventSupport::class, fn ($app) => new MatrixEventSupport($app->make(LoggerInterface::class)));
+
+        $this->app->singleton(MatrixEventHandlerRegistry::class, function ($app) {
+            return new MatrixEventHandlerRegistry([
+                $app->make(MatrixClientInformationEventHandler::class),
+                $app->make(LocalNotificationSettingsEventHandler::class),
+                $app->make(RecentEmojiEventHandler::class),
+                $app->make(SecretStorageKeyEventHandler::class),
+                $app->make(SecretStorageDefaultKeyEventHandler::class),
+                $app->make(CrossSigningEventHandler::class),
+                $app->make(MegolmBackupEventHandler::class),
+                $app->make(WebSettingsEventHandler::class),
+                $app->make(BreadcrumbsEventHandler::class),
+                $app->make(DirectChatsEventHandler::class),
+                $app->make(IgnoredAccountEventHandler::class),
+                $app->make(RoomNameEventHandler::class),
+                $app->make(RoomCreateEventHandler::class),
+                $app->make(RoomMemberEventHandler::class),
+                $app->make(RoomTopicEventHandler::class),
+                $app->make(RoomEncryptionEventHandler::class),
+                $app->make(RoomAvatarEventHandler::class),
+                $app->make(RoomCanonicalAliasEventHandler::class),
+                $app->make(RoomPowerLevelsEventHandler::class),
+                $app->make(RoomRedactionEventHandler::class),
+                $app->make(RoomMessageEventHandler::class),
+                $app->make(IgnoredRoomEventHandler::class),
+            ]);
+        });
 
         // Services - News
         $this->app->bind(NewsServiceContract::class, NewsService::class);

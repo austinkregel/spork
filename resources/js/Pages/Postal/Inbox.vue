@@ -49,7 +49,7 @@
             </div>
           </div>
           <div class="w-1/2 xl:w-3/4 border-l border-stone-600 relative z-0" v-if="openMail">
-            <Link v-if="openMail" :href="route('inbox')" class="absolute left-0 bg-stone-500 dark:text-gray-50 p-1 rounded-full -ml-4 z-50 shadow-lg mt-4">
+            <Link v-if="openMail" :href="route('postal.index')" class="absolute left-0 bg-stone-500 dark:text-gray-50 p-1 rounded-full -ml-4 z-50 shadow-lg mt-4">
               <ArrowUturnLeftIcon class="w-5 h-5" />
             </Link>
 

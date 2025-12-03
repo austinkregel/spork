@@ -25,7 +25,9 @@ class ReplyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'thread_id' => ['required', 'integer', 'max:255'],
+            'message' => ['required', 'string'],
+            'reply_to_event_id' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

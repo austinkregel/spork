@@ -77,13 +77,24 @@ class MatrixClient
         string $body,
         string $room,
         string $jwt,
-    ) {
-        $eventId = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer '.$jwt,
-        ])->post('https://matrix.'.$this->homeserver.'/_matrix/client/r0/rooms/'.$room.'/send/m.room.message', [
+        ?string $inReplyToEvent = null,
+    ): array {
+        $payload = [
             'msgtype' => 'm.text',
             'body' => $body,
-        ])->json();
+        ];
+
+        if ($inReplyToEvent) {
+            $payload['m.relates_to'] = [
+                'm.in_reply_to' => [
+                    'event_id' => $inReplyToEvent,
+                ],
+            ];
+        }
+
+        return Http::withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$jwt,
+        ])->post('https://matrix.'.$this->homeserver.'/_matrix/client/r0/rooms/'.$room.'/send/m.room.message', $payload)->json();
     }
 }

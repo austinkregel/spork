@@ -91,6 +91,7 @@ import { XMarkIcon, ChatBubbleLeftRightIcon } from '@heroicons/vue/24/solid'
 import { ChevronLeftIcon  } from '@heroicons/vue/20/solid'
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import Message from "@/Components/Messages/Message.vue";
+import axios from 'axios';
 
 const open = ref(false);
 
@@ -129,7 +130,7 @@ const title = ref('Chat');
 const input = ref('');
 
 const sendMessage =  async () => {
-    const response = await router.post('/api/message/reply', {
+    await axios.post('/api/message/reply', {
         message: input.value,
         thread_id: active.value.chat.thread_id
     });

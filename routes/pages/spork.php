@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Actions\Spork\CustomAction;
 use App\Http\Controllers;
+use App\Models\Thread;
 use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,12 @@ Route::middleware([
     Route::post('/api/mail/destroy', Controllers\Api\Mail\DestroyMailController::class);
 
     Route::post('/api/message/reply', Controllers\Api\Message\ReplyController::class);
+    Route::post('/api/chat/threads/{thread}/archive', [Controllers\Api\ThreadActionController::class, 'archive'])->name('api.chat.threads.archive');
+    Route::post('/api/chat/threads/{thread}/unarchive', [Controllers\Api\ThreadActionController::class, 'unarchive'])->name('api.chat.threads.unarchive');
+    Route::post('/api/chat/threads/{thread}/mute', [Controllers\Api\ThreadActionController::class, 'mute'])->name('api.chat.threads.mute');
+    Route::post('/api/chat/threads/{thread}/unmute', [Controllers\Api\ThreadActionController::class, 'unmute'])->name('api.chat.threads.unmute');
+    Route::delete('/api/chat/threads/{thread}', [Controllers\Api\ThreadActionController::class, 'destroy'])->name('api.chat.threads.destroy');
+    Route::delete('/api/chat/messages/{message}', [Controllers\Api\ThreadActionController::class, 'destroyMessage'])->name('api.chat.messages.destroy');
 
     Route::post('/api/plaid/create-link-token', Controllers\Api\Plaid\CreateLinkTokenController::class);
     Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
@@ -143,8 +150,10 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
         }
     });
 
-    Route::get('/inbox', [Controllers\Spork\MessageController::class, 'index'])->name('inbox');
-    Route::get('/inbox/{message}', [Controllers\Spork\MessageController::class, 'show'])->name('inbox.show');
+    Route::get('/chat', [Controllers\Spork\MessageController::class, 'index'])->name('chat');
+    Route::get('/chat/{thread}', [Controllers\Spork\MessageController::class, 'show'])->name('chat.show');
+    Route::get('/inbox', fn () => redirect()->route('chat'))->name('inbox');
+    Route::get('/inbox/{thread}', fn (Thread $thread) => redirect()->route('chat.show', $thread))->name('inbox.show');
     Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
     Route::get('/postal/{email}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
 

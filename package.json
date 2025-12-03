@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "test": "vitest run"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^2.0.11",
@@ -11,15 +12,18 @@
         "@tailwindcss/typography": "^0.5.2",
         "@tailwindcss/vite": "^4.1.7",
         "@vitejs/plugin-vue": "^5.2.4",
+        "@vue/test-utils": "^2.4.6",
         "autoprefixer": "^10.4.21",
         "axios": "^1.9.0",
         "concurrently": "^9.0.1",
         "laravel-echo": "^2.2.4",
         "laravel-vite-plugin": "^1.0",
         "pusher-js": "^8.4.0-rc2",
+        "jsdom": "^24.0.0",
         "tailwindcss": "^4.1.14",
         "vite": "^6.3.5",
         "vite-plugin-static-copy": "^3.0.0",
+        "vitest": "^1.6.0",
         "vue": "^3.5.22"
     },
     "dependencies": {

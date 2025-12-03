@@ -8,13 +8,14 @@ use App\Models\Automation;
 use App\Models\AutomationStep;
 use App\Models\Credential;
 use App\Models\Server;
+use App\Models\Spork\Script;
 use App\Services\SshService;
 use Illuminate\Validation\ValidationException;
 
 class SshStepHandler
 {
     public function __construct(
-        protected SshService $sshService
+        protected ?SshService $sshService = null,
     ) {}
 
     /**
@@ -37,11 +38,16 @@ class SshStepHandler
         }
 
         // Delegate to injected service to allow test mocking.
-        $scriptModel = new \App\Models\Spork\Script([
+        $sshService = $this->resolveService($server, $credentialId);
+        if (is_array($sshService) && isset($sshService['error'])) {
+            return $sshService;
+        }
+
+        $scriptModel = new Script([
             'name' => 'automation-step',
             'script' => $command,
         ]);
-        $result = $this->sshService->run($scriptModel);
+        $result = $sshService->run($scriptModel);
         $stdout = (string) ($result['stdout'] ?? '');
         $stderr = (string) ($result['stderr'] ?? '');
 
@@ -50,6 +56,38 @@ class SshStepHandler
         }
 
         return ['output' => $stdout];
+    }
+
+    /**
+     * @return array{error:string}|SshService
+     */
+    protected function resolveService(Server $server, ?int $credentialId): array|SshService
+    {
+        try {
+            if ($this->sshService) {
+                return $this->sshService;
+            }
+
+            if ($credentialId) {
+                $credential = Credential::query()->find($credentialId);
+                if (! $credential) {
+                    return ['error' => 'Credential not found'];
+                }
+
+                return new SshService(
+                    host: $server->internal_ip_address ?? $server->ip_address ?? '127.0.0.1',
+                    username: $credential->settings['username'] ?? 'root',
+                    publicKeyFile: $credential->settings['pub_key_file'] ?? '',
+                    privateKeyFile: $credential->settings['private_key_file'] ?? '',
+                    port: $credential->settings['port'] ?? 22,
+                    passKey: $credential->settings['pass_key'] ?? null
+                );
+            }
+
+            return SshService::fromServer($server);
+        } catch (\Throwable $exception) {
+            return ['error' => 'Unable to initialize SSH connection: '.$exception->getMessage()];
+        }
     }
 }
 

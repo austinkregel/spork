@@ -28,9 +28,20 @@ export default defineConfig({
             ],
         }),
     ],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'resources/js'),
+        },
+    },
     server: {
         watch: {
             ignored: ["**/vendor/**", "**/node_modules/**"],
         },
+    },
+    test: {
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: path.resolve(__dirname, 'resources/js/tests/setup.ts'),
+        include: ['resources/js/**/*.{test,spec}.{js,ts,tsx}'],
     },
 });

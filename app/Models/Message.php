@@ -68,6 +68,11 @@ class Message extends Model implements Taggable
         ];
     }
 
+    public function replyTo(): BelongsTo
+    {
+        return $this->belongsTo(Message::class, 'reply_to_message_id');
+    }
+
     public function getIsUserAttribute()
     {
         return in_array($this->from_email, auth()->user()?->person?->emails ?? []);

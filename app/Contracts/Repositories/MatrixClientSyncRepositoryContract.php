@@ -11,8 +11,8 @@ interface MatrixClientSyncRepositoryContract
 {
     public function process(array $sync, Credential $credential, User $user): void;
 
-    public function processRoom($roomId, array $room, Credential $credential, User $user): void;
+    public function processRoom(string $roomId, array $room, Credential $credential, User $user): void;
 
-    public function processEvent(array $event): void;
+    public function processEvent(array $event, Credential $credential, User $user): void;
 }
 
