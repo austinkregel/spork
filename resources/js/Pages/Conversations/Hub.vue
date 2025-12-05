@@ -86,48 +86,68 @@
                         class="flex-1 overflow-y-auto px-3 lg:px-6 py-4 space-y-3 bg-stone-100/70 dark:bg-stone-900"
                         @scroll.passive="handleScroll"
                     >
-                        <MessageBubble
+                        <div
                             v-for="message in orderedMessages"
                             :key="message.id"
-                            :outbound="isOutbound(message)"
-                            :from-label="message.from_person?.name ?? message.from_person?.id ?? 'Unknown'"
-                            :timestamp-label="formatRelative(message.originated_at)"
-                            :font-class="messageFontClass"
-                            :reply="buildReplyPreview(message.reply_to)"
+                            :class="messageRowClasses(message)"
+                            data-testid="message-row"
                         >
-                            <Markdown
-                                class="prose max-w-none dark:prose-invert"
-                                :class="messageFontClass"
-                                :source="message.html_message ?? message.message ?? ''"
+                            <img
+                                v-if="isDiscordDensity"
+                                v-bind="messageAvatarProps(message)"
+                                class="h-10 w-10 rounded-full object-cover ring-2 ring-white dark:ring-stone-900 shadow-sm"
+                                data-testid="message-avatar"
                             />
 
-                            <template #actions>
-                                <IconCircleButton
-                                    sr-text="Reply to message"
-                                    variant="ghost"
-                                    size="sm"
-                                    @click="startReply(message)"
-                                >
-                                    <ArrowUturnLeftIcon class="h-4 w-4" />
-                                </IconCircleButton>
-                                <IconCircleButton
-                                    sr-text="Copy message text"
-                                    variant="ghost"
-                                    size="sm"
-                                    @click="copyMessage(message)"
-                                >
-                                    <ClipboardIcon class="h-4 w-4" />
-                                </IconCircleButton>
-                                <IconCircleButton
-                                    sr-text="Delete message"
-                                    variant="danger"
-                                    size="sm"
-                                    @click="deleteMessage(message.id)"
-                                >
-                                    <TrashIcon class="h-4 w-4" />
-                                </IconCircleButton>
-                            </template>
-                        </MessageBubble>
+                            <MessageBubble
+                                :outbound="isOutbound(message)"
+                                :align-override="isDiscordDensity ? 'start' : null"
+                                :from-label="message.from_person?.name ?? message.from_person?.id ?? 'Unknown'"
+                                :timestamp-label="formatRelative(message.originated_at)"
+                                :font-class="messageFontClass"
+                                :reply="buildReplyPreview(message.reply_to)"
+                            >
+                                <MessageContentRenderer
+                                    :message="message"
+                                    :font-class="messageFontClass"
+                                    @media-loaded="handleInlineMediaLoaded"
+                                />
+
+
+                                <template #actions>
+                                    <MessageReactionBar
+                                        :summary="message.reaction_summary ?? { items: [] }"
+                                        :emoji-options="composerMeta.emoji ?? []"
+                                        :busy="isReactionBusy(message.id)"
+                                        @react="(reaction) => handleReaction(message, reaction)"
+                                    />
+                                    <IconCircleButton
+                                        sr-text="Reply to message"
+                                        variant="ghost"
+                                        size="sm"
+                                        @click="startReply(message)"
+                                    >
+                                        <ArrowUturnLeftIcon class="h-4 w-4" />
+                                    </IconCircleButton>
+                                    <IconCircleButton
+                                        sr-text="Copy message text"
+                                        variant="ghost"
+                                        size="sm"
+                                        @click="copyMessage(message)"
+                                    >
+                                        <ClipboardIcon class="h-4 w-4" />
+                                    </IconCircleButton>
+                                    <IconCircleButton
+                                        sr-text="Delete message"
+                                        variant="danger"
+                                        size="sm"
+                                        @click="deleteMessage(message.id)"
+                                    >
+                                        <TrashIcon class="h-4 w-4" />
+                                    </IconCircleButton>
+                                </template>
+                            </MessageBubble>
+                        </div>
                     </main>
 
                     <button
@@ -234,27 +254,19 @@
 import { computed, nextTick, ref, watch, onMounted } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import Markdown from 'vue3-markdown-it';
 import axios from 'axios';
-import {
-    ArchiveBoxIcon,
-    ArrowUturnLeftIcon,
-    BellSlashIcon,
-    ChevronDownIcon,
-    ClipboardIcon,
-    CodeBracketIcon,
-    FaceSmileIcon,
-    MagnifyingGlassIcon,
-    PaperAirplaneIcon,
-    TrashIcon,
-} from '@heroicons/vue/24/outline';
+
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import AvatarStack from '@/Components/Spork/Atoms/AvatarStack.vue';
 import IconCircleButton from '@/Components/Spork/Atoms/IconCircleButton.vue';
 import MessageBubble from '@/Components/Spork/Molecules/Conversations/MessageBubble.vue';
+import MessageContentRenderer from '@/Components/Spork/Molecules/Conversations/MessageContentRenderer.vue';
+import MessageReactionBar from '@/Components/Spork/Molecules/Conversations/MessageReactionBar.vue';
 import SidebarThreadItem from '@/Components/Spork/Molecules/Conversations/SidebarThreadItem.vue';
+
+import { PaperAirplaneIcon, CodeBracketIcon, FaceSmileIcon, ArrowUturnLeftIcon, ClipboardIcon, TrashIcon, BellSlashIcon, ArchiveBoxIcon, ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
@@ -268,6 +280,7 @@ const messagePane = ref(null);
 const composerRef = ref(null);
 const autoScrollLocked = ref(false);
 const replyingTo = ref(null);
+const reactionBusy = ref({});
 const startReply = (message) => {
     replyingTo.value = {
         id: message.id,
@@ -278,6 +291,7 @@ const startReply = (message) => {
     focusComposer();
 };
 const messageFontSize = ref('text-sm');
+const isDiscordDensity = computed(() => messageFontSize.value === 'text-sm');
 
 const placeholderAvatar = (person) => {
     return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(person.name ?? 'Chat')}`;
@@ -289,6 +303,20 @@ const activeThread = computed(() => page.props.activeThread ?? null);
 const activeThreadId = computed(() => activeThread.value?.id ?? null);
 const labels = computed(() => page.props.labels ?? {});
 const composerMeta = computed(() => page.props.composer ?? {});
+const participantsById = computed(() => {
+    if (!activeThread.value?.participants) {
+        return {};
+    }
+
+    return activeThread.value.participants.reduce((carry, participant) => {
+        if (participant?.id === undefined || participant?.id === null) {
+            return carry;
+        }
+
+        carry[participant.id] = participant;
+        return carry;
+    }, {});
+});
 const activeThreadAvatars = computed(() => {
     if (!activeThread.value?.participants) {
         return [];
@@ -401,6 +429,34 @@ const isOutbound = (message) => {
     return message.from_person === userPersonId || message.is_user === true;
 };
 
+const messageRowClasses = (message) => [
+    'flex items-start gap-3',
+    {
+        'flex-row-reverse': !isDiscordDensity.value && isOutbound(message),
+    },
+];
+
+const resolveMessageAuthor = (message) => {
+    if (!message?.from_person) {
+        return null;
+    }
+
+    if (typeof message.from_person === 'object') {
+        return message.from_person;
+    }
+
+    return participantsById.value[message.from_person] ?? null;
+};
+
+const messageAvatarProps = (message) => {
+    const author = resolveMessageAuthor(message);
+    const fallbackName = author?.name ?? 'Participant';
+    return {
+        src: author?.photo_url ?? placeholderAvatar({ name: fallbackName }),
+        alt: fallbackName,
+    };
+};
+
 const handleScroll = () => {
     if (!messagePane.value) {
         return;
@@ -409,6 +465,14 @@ const handleScroll = () => {
     const el = messagePane.value;
     const threshold = 80;
     autoScrollLocked.value = el.scrollHeight - el.scrollTop - el.clientHeight > threshold;
+};
+
+const handleInlineMediaLoaded = () => {
+    if (autoScrollLocked.value) {
+        return;
+    }
+
+    nextTick(() => snapToBottom());
 };
 
 const snapToBottom = () => {
@@ -470,6 +534,43 @@ const refreshConversation = () => {
         preserveScroll: true,
         only: ['threads', 'activeThread'],
     });
+};
+
+const setReactionBusy = (messageId, state) => {
+    reactionBusy.value = {
+        ...reactionBusy.value,
+        [messageId]: state,
+    };
+};
+
+const isReactionBusy = (messageId) => Boolean(reactionBusy.value[messageId]);
+
+const handleReaction = async (message, reaction) => {
+    if (!message?.id || !reaction?.emoji) {
+        return;
+    }
+
+    if (reactionBusy.value[message.id]) {
+        return;
+    }
+
+    setReactionBusy(message.id, true);
+
+    try {
+        if (reaction.reacted) {
+            await axios.delete(`/api/chat/messages/${message.id}/reactions`, {
+                data: { emoji: reaction.emoji },
+            });
+        } else {
+            await axios.post(`/api/chat/messages/${message.id}/reactions`, {
+                emoji: reaction.emoji,
+            });
+        }
+
+        refreshConversation();
+    } finally {
+        setReactionBusy(message.id, false);
+    }
 };
 
 const sendMessage = async () => {

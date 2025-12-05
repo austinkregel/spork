@@ -6,6 +6,7 @@ namespace Tests\Feature\Repositories;
 
 use App\Models\Credential;
 use App\Models\Message;
+use App\Models\MessageReaction;
 use App\Models\Thread;
 use App\Models\User;
 use App\Repositories\MatrixClientSyncRepository;
@@ -73,6 +74,63 @@ class MatrixRoomEventHandlersTest extends TestCase
 
         $message->refresh();
         $this->assertSame('Edited body', $message->message);
+    }
+
+    public function test_it_upserts_existing_message_when_reprocessed(): void
+    {
+        Thread::create([
+            'thread_id' => '!room:test',
+            'name' => '!room:test',
+            'origin_server_ts' => now(),
+        ]);
+
+        $event = $this->messageEvent('$original', 'Original body');
+        $this->processRoom([$event]);
+
+        $updatedEvent = $event;
+        $updatedEvent['content']['body'] = 'Updated body';
+        $updatedEvent['content']['formatted_body'] = '<p>Updated body</p>';
+        $updatedEvent['origin_server_ts'] = now()->addMinute()->valueOf();
+
+        $this->processRoom([$updatedEvent]);
+
+        $message = Message::firstWhere('event_id', '$original');
+        $this->assertDatabaseCount('messages', 1);
+        $this->assertSame('Updated body', $message->message);
+        $this->assertSame('<p>Updated body</p>', $message->html_message);
+    }
+
+    public function test_it_refreshes_thumbnail_when_image_message_is_reprocessed(): void
+    {
+        Http::fake([
+            'https://matrix.test/*' => Http::response('binary', 200),
+        ]);
+
+        Thread::create([
+            'thread_id' => '!room:test',
+            'name' => '!room:test',
+            'origin_server_ts' => now(),
+        ]);
+
+        $event = $this->messageEvent('$image', 'Image body', [
+            'msgtype' => 'm.image',
+            'info' => ['mimetype' => 'image/png'],
+            'url' => 'mxc://matrix.test/original',
+        ]);
+
+        $this->processRoom([$event]);
+
+        $message = Message::firstWhere('event_id', '$image');
+        $this->assertSame('/storage/original', $message->thumbnail_url);
+
+        $updatedEvent = $event;
+        $updatedEvent['content']['url'] = 'mxc://matrix.test/updated';
+        $updatedEvent['origin_server_ts'] = now()->addMinute()->valueOf();
+
+        $this->processRoom([$updatedEvent]);
+
+        $message->refresh();
+        $this->assertSame('/storage/updated', $message->thumbnail_url);
     }
 
     public function test_it_redacts_messages(): void
@@ -245,6 +303,78 @@ class MatrixRoomEventHandlersTest extends TestCase
         $this->assertTrue($thread->settings['encrypted']);
         $this->assertSame('m.megolm.v1.aes-sha2', $thread->settings['algorithm']);
         $this->assertSame(604800000, $thread->settings['rotation_period_ms']);
+    }
+
+    public function test_it_persists_reactions_from_matrix_events(): void
+    {
+        Thread::create([
+            'thread_id' => '!room:test',
+            'name' => '!room:test',
+            'origin_server_ts' => now(),
+        ]);
+
+        $this->processRoom([$this->messageEvent('$original', 'Message body')]);
+
+        $reaction = [
+            'type' => 'm.reaction',
+            'sender' => '@friend:matrix.test',
+            'content' => [
+                'm.relates_to' => [
+                    'event_id' => '$original',
+                    'rel_type' => 'm.annotation',
+                    'key' => '🔥',
+                ],
+            ],
+            'origin_server_ts' => now()->addSecond()->valueOf(),
+            'event_id' => '$reaction',
+        ];
+
+        $this->processRoom([$reaction]);
+
+        $stored = MessageReaction::first();
+        $this->assertNotNull($stored);
+        $this->assertSame('🔥', $stored->emoji);
+        $this->assertSame('$reaction', $stored->matrix_event_id);
+    }
+
+    public function test_it_removes_reactions_when_redacted(): void
+    {
+        Thread::create([
+            'thread_id' => '!room:test',
+            'name' => '!room:test',
+            'origin_server_ts' => now(),
+        ]);
+
+        $this->processRoom([$this->messageEvent('$original', 'Message body')]);
+
+        $reaction = [
+            'type' => 'm.reaction',
+            'sender' => '@friend:matrix.test',
+            'content' => [
+                'm.relates_to' => [
+                    'event_id' => '$original',
+                    'rel_type' => 'm.annotation',
+                    'key' => '🔥',
+                ],
+            ],
+            'origin_server_ts' => now()->addSecond()->valueOf(),
+            'event_id' => '$reaction',
+        ];
+
+        $this->processRoom([$reaction]);
+
+        $this->processRoom([[
+            'type' => 'm.room.redaction',
+            'sender' => '@friend:matrix.test',
+            'redacts' => '$reaction',
+            'content' => [
+                'reason' => 'cleanup',
+            ],
+            'origin_server_ts' => now()->addMinutes(2)->valueOf(),
+            'event_id' => '$redaction',
+        ]]);
+
+        $this->assertDatabaseCount('message_reactions', 0);
     }
 
     protected function processRoom(array $events): void

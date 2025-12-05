@@ -6,6 +6,7 @@ namespace App\Services\Messaging\Matrix;
 
 use App\Models\Credential;
 use App\Models\Message;
+use App\Models\MessageReaction;
 use App\Models\Person;
 use App\Models\Thread;
 use App\Models\User;
@@ -83,11 +84,25 @@ class MatrixEventSupport
 
     public function redactMessage(array $event): void
     {
+        $targetEventId = $event['redacts'] ?? null;
+
+        if (! $targetEventId) {
+            $this->ignored($event, 'redaction_missing_reference', __METHOD__);
+
+            return;
+        }
+
         /** @var Message|null $message */
-        $message = Message::firstWhere('event_id', $event['redacts'] ?? '');
+        $message = Message::firstWhere('event_id', $targetEventId);
 
         if (! $message) {
-            $this->ignored($event, 'redaction_target_missing', __METHOD__);
+            $reaction = MessageReaction::firstWhere('matrix_event_id', $targetEventId);
+
+            if ($reaction) {
+                $reaction->delete();
+            } else {
+                $this->ignored($event, 'redaction_target_missing', __METHOD__);
+            }
 
             return;
         }

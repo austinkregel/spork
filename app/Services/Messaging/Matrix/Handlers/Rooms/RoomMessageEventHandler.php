@@ -36,8 +36,6 @@ class RoomMessageEventHandler implements MatrixEventHandlerContract
             return;
         }
 
-        $message = $thread->messages()->firstWhere('event_id', $context->event['event_id']);
-
         if ($this->handleRelatedEvent($context, $thread)) {
             return;
         }
@@ -47,12 +45,6 @@ class RoomMessageEventHandler implements MatrixEventHandlerContract
                 return;
             }
 
-            return;
-        }
-
-        if ($message) {
-            // Here we don't need to do anything, because the message already exists.
-            // TODO: We could eventually do a diff and update the message if it has changed.
             return;
         }
 
@@ -67,34 +59,53 @@ class RoomMessageEventHandler implements MatrixEventHandlerContract
             }
         }
 
-        $timestamp = Carbon::createFromFormat('U', (int) round(($context->event['origin_server_ts'] ?? 0) / 1000));
+        $timestamp = Carbon::createFromFormat('U', (string) (int) round(($context->event['origin_server_ts'] ?? 0) / 1000));
+        $message = $thread->messages()->firstOrNew(['event_id' => $context->event['event_id']]);
 
-        $thread->messages()->forceCreate(array_merge(
-            isset($context->event['content']['info']) && ($context->event['content']['msgtype'] ?? null) === 'm.image'
-                ? ['thumbnail_url' => $this->support->downloadMedia($context->credential, $context->event['content']['url'])]
-                : [],
-            isset($context->event['content']['settings'])
-                ? ['settings' => $context->event['content']['settings']]
-                : [],
-            [
-                'from_person' => $sender->id,
-                'to_person' => $context->user->id,
-                'thread_id' => $thread->id,
-                'type' => $context->event['type'],
-                'originated_at' => $timestamp,
-                'message' => $context->event['content']['body'],
-                'event_id' => $context->event['event_id'],
-                'html_message' => $context->event['content']['format_body'] ?? null,
-                'credential_id' => $context->credential->id,
-                'is_decrypted' => true,
-                'reply_to_message_id' => $replyToMessageId,
-                'reply_to_event_id' => $inReplyToEventId,
-            ]
-        ));
+        $message->forceFill($this->buildMessageAttributes(
+            context: $context,
+            thread: $thread,
+            senderId: $sender->id,
+            timestamp: $timestamp,
+            replyToMessageId: $replyToMessageId,
+            replyToEventId: $inReplyToEventId
+        ))->save();
 
         if ($timestamp->isAfter($thread->origin_server_ts)) {
             $thread->update(['origin_server_ts' => $timestamp]);
         }
+    }
+
+    protected function buildMessageAttributes(
+        MatrixEventContext $context,
+        Thread $thread,
+        int $senderId,
+        Carbon $timestamp,
+        ?int $replyToMessageId,
+        ?string $replyToEventId,
+    ): array {
+        $attributes = [
+            'from_person' => $senderId,
+            'to_person' => $context->user->id,
+            'thread_id' => $thread->id,
+            'type' => $context->event['type'],
+            'originated_at' => $timestamp,
+            'message' => $context->event['content']['body'],
+            'event_id' => $context->event['event_id'],
+            'html_message' => $context->event['content']['formatted_body'] ?? null,
+            'credential_id' => $context->credential->id,
+            'is_decrypted' => true,
+            'reply_to_message_id' => $replyToMessageId,
+            'reply_to_event_id' => $replyToEventId,
+            'settings' => $context->event['content']['settings'] ?? null,
+            'thumbnail_url' => null,
+        ];
+
+        if (isset($context->event['content']['info']) && ($context->event['content']['msgtype'] ?? null) === 'm.image') {
+            $attributes['thumbnail_url'] = $this->support->downloadMedia($context->credential, $context->event['content']['url']);
+        }
+
+        return $attributes;
     }
 
     protected function handleRelatedEvent(MatrixEventContext $context, Thread $thread): bool
@@ -120,7 +131,7 @@ class RoomMessageEventHandler implements MatrixEventHandlerContract
             return false;
         }
 
-        $timestamp = Carbon::createFromFormat('U', (int) round(($context->event['origin_server_ts'] ?? 0) / 1000));
+        $timestamp = Carbon::createFromFormat('U', (string) (int) round(($context->event['origin_server_ts'] ?? 0) / 1000));
 
         $relatedEvent->update([
             'message' => $context->event['content']['m.new_content']['body'] ?? $relatedEvent->message,

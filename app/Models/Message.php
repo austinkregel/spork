@@ -13,6 +13,7 @@ use App\Events\Models\Message\MessageUpdating;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
 use Spatie\Tags\HasTags;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
@@ -46,7 +47,7 @@ class Message extends Model implements Taggable
         'subject',
     ];
 
-    public $appends = ['is_user'];
+    public $appends = ['is_user', 'reaction_summary'];
 
     public $dispatchesEvents = [
         'created' => MessageCreated::class,
@@ -103,6 +104,11 @@ class Message extends Model implements Taggable
         return $this->hasManyJson(Person::class, 'emails', 'to_email');
     }
 
+    public function reactions(): HasMany
+    {
+        return $this->hasMany(MessageReaction::class);
+    }
+
     public function broadcastWith(string $event): array
     {
         $data = $this->toArray();
@@ -115,5 +121,36 @@ class Message extends Model implements Taggable
     public function thread()
     {
         return $this->belongsTo(Thread::class);
+    }
+
+    public function getReactionSummaryAttribute(): array
+    {
+        if (! $this->relationLoaded('reactions')) {
+            return [
+                'total' => 0,
+                'items' => [],
+            ];
+        }
+
+        $personId = auth()->user()?->person?->id;
+
+        $items = $this->reactions
+            ->groupBy('emoji')
+            ->map(function ($group, $emoji) use ($personId) {
+                return [
+                    'emoji' => $emoji,
+                    'count' => $group->count(),
+                    'reacted' => $personId ? $group->contains(fn (MessageReaction $reaction) => $reaction->person_id === $personId) : false,
+                ];
+            })
+            ->values()
+            ->sortByDesc('count')
+            ->values()
+            ->all();
+
+        return [
+            'total' => array_sum(array_column($items, 'count')),
+            'items' => $items,
+        ];
     }
 }

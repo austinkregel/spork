@@ -12,7 +12,6 @@ class IgnoredRoomEventHandler implements MatrixEventHandlerContract
 {
     protected array $ignoredTypes = [
         'm.room.encrypted',
-        'm.reaction',
         'm.sticker',
         'io.element.functional_members',
         'm.room.join_rules',

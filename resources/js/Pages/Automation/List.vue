@@ -9,7 +9,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <Manage :title="title" sub-title="Automation" home="/-/automation">
+  <Manage :title="title" sub-title="Automation" home="/-/automation" content-width-class="max-w-3xl">
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-stone-900 dark:text-white">Automations</h1>

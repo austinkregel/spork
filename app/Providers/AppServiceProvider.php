@@ -21,6 +21,7 @@ use App\Contracts\Services\HttpServiceContract;
 use App\Contracts\Services\ImapServiceContract;
 use App\Contracts\Services\JiraServiceContract;
 use App\Contracts\Services\Messaging\ImapFactoryServiceContract;
+use App\Contracts\Services\Messaging\MatrixServiceContract;
 use App\Contracts\Services\MustacheTemplateService;
 use App\Contracts\Services\NamecheapServiceContract;
 use App\Contracts\Services\News\NewsServiceContract;
@@ -47,6 +48,7 @@ use App\Services\HttpService;
 use App\Services\JiraService;
 use App\Services\Messaging\ImapCredentialService;
 use App\Services\Messaging\ImapFactoryService;
+use App\Services\Messaging\Matrix\MatrixService;
 use App\Services\Messaging\Matrix\Handlers\AccountData\BreadcrumbsEventHandler;
 use App\Services\Messaging\Matrix\Handlers\AccountData\CrossSigningEventHandler;
 use App\Services\Messaging\Matrix\Handlers\AccountData\DirectChatsEventHandler;
@@ -67,6 +69,7 @@ use App\Services\Messaging\Matrix\Handlers\Rooms\RoomMemberEventHandler;
 use App\Services\Messaging\Matrix\Handlers\Rooms\RoomMessageEventHandler;
 use App\Services\Messaging\Matrix\Handlers\Rooms\RoomNameEventHandler;
 use App\Services\Messaging\Matrix\Handlers\Rooms\RoomPowerLevelsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomReactionEventHandler;
 use App\Services\Messaging\Matrix\Handlers\Rooms\RoomRedactionEventHandler;
 use App\Services\Messaging\Matrix\Handlers\Rooms\RoomTopicEventHandler;
 use App\Services\Messaging\Matrix\MatrixEventHandlerRegistry;
@@ -143,6 +146,7 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(RoomCanonicalAliasEventHandler::class),
                 $app->make(RoomPowerLevelsEventHandler::class),
                 $app->make(RoomRedactionEventHandler::class),
+                $app->make(RoomReactionEventHandler::class),
                 $app->make(RoomMessageEventHandler::class),
                 $app->make(IgnoredRoomEventHandler::class),
             ]);
@@ -162,6 +166,7 @@ class AppServiceProvider extends ServiceProvider
         // Services - Messaging
         $this->app->bind(ImapServiceContract::class, ImapCredentialService::class);
         $this->app->bind(ImapFactoryServiceContract::class, ImapFactoryService::class);
+        $this->app->bind(MatrixServiceContract::class, MatrixService::class);
 
         // Services - Weather
         $this->app->bind(WeatherServiceContract::class, OpenWeatherService::class);

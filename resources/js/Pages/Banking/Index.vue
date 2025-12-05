@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
-import AppLayout from "@/Layouts/AppLayout.vue";
+import SplitNavigationShell from '@/Layouts/SplitNavigationShell.vue';
 import OverviewPanel from "@/Pages/Banking/Partials/OverviewPanel.vue";
 import AccountsPanel from "@/Pages/Banking/Partials/AccountsPanel.vue";
 import BudgetsPanel from "@/Pages/Banking/Partials/BudgetsPanel.vue";
@@ -48,45 +47,42 @@ const panels = {
 };
 
 const CurrentPanel = computed(() => panels[props.tab] ?? OverviewPanel);
+const navigationItems = computed(() =>
+  props.navigation.map((item) => ({
+    ...item,
+    name: item.label,
+    label: item.label,
+    active: item.active ?? item.tab === props.tab,
+  }))
+);
+const activeNav = computed(() => navigationItems.value.find((item) => item.active));
 </script>
 
 <template>
-  <AppLayout title="Banking">
-    <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
-      <aside class="w-full lg:w-64">
-        <nav class="rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm">
-          <ul class="divide-y divide-stone-100 dark:divide-stone-800">
-            <li v-for="item in navigation" :key="item.tab">
-              <Link
-                :href="item.href"
-                class="flex items-center justify-between px-4 py-3 text-sm font-medium rounded-2xl lg:rounded-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
-                :class="item.active
-                  ? 'text-stone-900 dark:text-white bg-stone-100 dark:bg-stone-800'
-                  : 'text-stone-500 dark:text-stone-300 hover:text-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800/60'"
-                :aria-current="item.active ? 'page' : undefined"
-              >
-                <span>{{ item.label }}</span>
-                <span
-                  class="w-2 h-2 rounded-full"
-                  :class="item.active ? 'bg-emerald-500' : 'bg-stone-300 dark:bg-stone-700'"
-                />
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+  <SplitNavigationShell title="Banking" subtitle="Finance cockpit" :nav-items="navigationItems">
+    <template #header>
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">
+            Banking
+          </p>
+          <h1 class="text-2xl font-semibold text-stone-900 dark:text-white">
+            {{ activeNav?.label ?? 'Overview' }}
+          </h1>
+        </div>
+      </div>
+    </template>
 
-      <section class="flex-1 min-h-[60vh]">
-        <component
-          :is="CurrentPanel"
-          :overview="overview"
-          :accounts-data="accountsData"
-          :budgets-data="budgetsData"
-          :transactions-data="transactionsData"
-          :settings-data="settingsData"
-        />
-      </section>
-    </div>
-  </AppLayout>
+    <section class="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm min-h-[60vh]">
+      <component
+        :is="CurrentPanel"
+        :overview="overview"
+        :accounts-data="accountsData"
+        :budgets-data="budgetsData"
+        :transactions-data="transactionsData"
+        :settings-data="settingsData"
+      />
+    </section>
+  </SplitNavigationShell>
 </template>
 

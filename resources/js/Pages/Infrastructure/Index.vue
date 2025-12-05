@@ -71,11 +71,12 @@
             </div>
             <div class="w-full dark:text-white flex justify-between flex-wrap px-4 py-2 mb-20">
                 <Link
-                    :href="pagination.prev_page_url ?? '#'"
-                    :disabled="!pagination.prev_page_url"
+                    :href="pagination?.prev_page_url ?? '#'"
+                    :disabled="!pagination?.prev_page_url"
                     :plain="true"
                     :xlarge="true"
-                    :class="[!pagination.prev_page_url ? 'opacity-50 cursor-not-allowed': '']"
+                    :class="[!pagination?.prev_page_url ? 'opacity-50 cursor-not-allowed' : '']"
+                    :aria-disabled="!pagination?.prev_page_url"
                 >
                     Previous
                 </Link>
@@ -84,10 +85,13 @@
                     {{ (pagination.current_page * pagination.per_page) - pagination.per_page }} total items, {{ pagination.current_page  }} of {{ pagination?.total}}
                 </div>
                 <Link
-                    :href="pagination.next_page_url ?? '#'"
-                    :disabled="!pagination.next_page_url"
-                    :class="[!pagination.next_page_url ? 'opacity-50 cursor-not-allowed': 'cursor-pointer']"
-                >Next</Link>
+                    :href="pagination?.next_page_url ?? '#'"
+                    :disabled="!pagination?.next_page_url"
+                    :class="[!pagination?.next_page_url ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer']"
+                    :aria-disabled="!pagination?.next_page_url"
+                >
+                    Next
+                </Link>
             </div>
         </div>
     </AppLayout>

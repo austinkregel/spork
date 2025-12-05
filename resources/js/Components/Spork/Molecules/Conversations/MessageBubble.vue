@@ -22,9 +22,23 @@ const props = defineProps({
         type: Object,
         default: null,
     },
+    alignOverride: {
+        type: String,
+        default: null,
+    },
 });
 
-const alignmentClasses = computed(() => (props.outbound ? 'items-end' : 'items-start'));
+const alignmentClasses = computed(() => {
+    if (props.alignOverride === 'start') {
+        return 'items-start';
+    }
+
+    if (props.alignOverride === 'end') {
+        return 'items-end';
+    }
+
+    return props.outbound ? 'items-end' : 'items-start';
+});
 const bubbleClasses = computed(() =>
     props.outbound ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100'
 );

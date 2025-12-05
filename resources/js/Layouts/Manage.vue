@@ -1,45 +1,84 @@
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import {computed} from 'vue'
-import {Link, usePage} from "@inertiajs/vue3";
-const page = usePage()
-const { description, home, subTitle } = defineProps({
-  title: String,
-  subTitle: String,
-  home: String,
-  description: Object,
-})
-const availablePages = computed(() => page.props.subnavigation)
+import { computed, useSlots } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import SplitNavigationShell from '@/Layouts/SplitNavigationShell.vue';
 
-import DynamicIcon from "@/Components/DynamicIcon.vue";
+const slots = useSlots();
+const page = usePage();
+
+const props = defineProps({
+    title: {
+        type: String,
+        default: '',
+    },
+    subTitle: {
+        type: String,
+        default: '',
+    },
+    home: {
+        type: String,
+        default: '',
+    },
+    description: {
+        type: Object,
+        default: () => ({}),
+    },
+    contentWidthClass: {
+        type: String,
+        default: 'max-w-2xl',
+    },
+});
+
+const availablePages = computed(() => page.props.subnavigation ?? []);
+const navigationItems = computed(() =>
+    availablePages.value.map((navItem) => ({
+        ...navItem,
+        label: navItem.name,
+        active: navItem.active ?? page.url.startsWith(navItem.href),
+    }))
+);
 </script>
 
 <template>
-    <AppLayout :title="title">
-        <div class="py-8 w-full grid grid-cols-3 lg:grid-cols-5">
-            <div class="col-span-1 lg:col-span-1 sm:px-6 lg:px-8 flex flex-col gap-4">
-              <Link
-                  :href="home"
-                  class="text-white w-full text-2xl my-4 font-bold"
-              >
-                {{ subTitle }}
-              </Link>
-                <Link
-                    v-for="page in availablePages"
-                    :href="page.href"
-                    class="text-white w-full flex flex-wrap gap-2"
-                    :class="''"
-                >
-                    <DynamicIcon v-if="page.icon" :icon-name="page.icon" class="w-6 h-6 outline-current" :active="false" />
-                    {{ page.name }}
-                </Link>
+    <SplitNavigationShell :title="title" :subtitle="subTitle" :nav-items="navigationItems" :sidebar-width="'w-72'">
+        <template #sidebar-header>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p v-if="subTitle" class="text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">
+                            {{ subTitle }}
+                        </p>
+                        <h1 class="text-2xl font-semibold text-stone-900 dark:text-white">
+                            {{ title }}
+                        </h1>
+                    </div>
+                    <Link
+                        v-if="home"
+                        :href="home"
+                        class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900"
+                    >
+                        Home
+                    </Link>
+                </div>
             </div>
+        </template>
 
+        <template v-if="slots.header" #header>
+            <slot name="header" />
+        </template>
+        <template v-else #header>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p v-if="subTitle" class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
+                        {{ subTitle }}
+                    </p>
+                    <h2 class="text-2xl font-semibold text-stone-900 dark:text-white">
+                        {{ title }}
+                    </h2>
+                </div>
+            </div>
+        </template>
 
-          <div class="col-span-2 lg:col-span-4 pl-8 pr-8 xl:pl-0 md:pr-8 text-black dark:text-white">
-            <!-- We need to figure out a better way to get the crud actions. -->
-            <slot />
-          </div>
-        </div>
-    </AppLayout>
+        <slot />
+    </SplitNavigationShell>
 </template>

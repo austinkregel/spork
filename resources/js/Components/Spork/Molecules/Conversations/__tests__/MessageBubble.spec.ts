@@ -52,5 +52,20 @@ describe('MessageBubble', () => {
         expect(wrapper.text()).toContain('Bob');
         expect(wrapper.text()).toContain('Preview content');
     });
+
+    it('honors alignment override even when outbound', () => {
+        const wrapper = mount(MessageBubble, {
+            props: {
+                ...baseProps,
+                outbound: true,
+                alignOverride: 'start',
+            },
+            slots: {
+                default: '<p>Override</p>',
+            },
+        });
+
+        expect(wrapper.classes()).toContain('items-start');
+    });
 });
 

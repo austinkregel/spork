@@ -4,7 +4,11 @@
         <main class="grid grid-cols-3 overflow-hidden">
             <section class="flex flex-col pt-3 bg-stone-50 dark:bg-stone-900  overflow-y-scroll" style="height: calc(100vh - 65px);">
                 <ul class="divide-y divide-stone-200 dark:divide-stone-700">
-                    <li v-for="thread in page.props.threads.data" class="p-4 px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
+                    <li
+                        v-for="thread in page.props.threads.data"
+                        :key="thread.id"
+                        class="p-4 px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600"
+                    >
                         <Link :href="route('chat.show', thread.id)" class="flex flex-col">
                             <h3 class="text-lg font-semibold dark:text-stone-50 truncate">{{ thread.name}}</h3>
                             <div class="text-sm truncate dark:text-stone-200">{{ thread.participants.map(p => p.name).join(", ") }}</div>
@@ -20,7 +24,11 @@
                 <div class="sticky z-0 bg-white dark:bg-stone-800 top-0 flex justify-between items-center h-24 border-b-2 dark:border-stone-700 p-4">
                     <div class="flex space-x-4 items-center">
                         <div class="isolate flex -space-x-2 overflow-hidden">
-                            <img v-for="(participant, i) in thread.participants.slice(0, 10)" :class="'z-'+i+( i > 0? '0' : '')" class="relative  inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-stone-600"
+                            <img
+                                v-for="(participant, i) in thread.participants.slice(0, 10)"
+                                :key="participant.id ?? i"
+                                :class="'z-'+i+( i > 0? '0' : '')"
+                                class="relative  inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-stone-600"
                                  :src="participant?.photo_url ?? ('/storage/'+participant.id+'.png')" alt="" />
                         </div>
                         <div class="flex flex-col">
@@ -69,7 +77,11 @@
                 </div>
                 <section class="flex-grow bg-gray-300 dark:bg-zinc-900">
                     <article class="px-4 mt-4 text-stone-500 dark:text-stone-50 leading-7 tracking-wider gap-1 flex flex-col-reverse">
-                        <div v-for="message in thread.messages" class="w-full flex gap-4 flex-wrap">
+                        <div
+                            v-for="message in thread.messages"
+                            :key="message.id ?? message.uuid ?? message.originated_at"
+                            class="w-full flex gap-4 flex-wrap"
+                        >
                             <div class="mt-5">
                                 <img :src="message?.from_person?.photo_url ?? ('/storage/'+message.from_person.id+'.png')" alt="" class="h-8 w-8 rounded-full" />
                             </div>
@@ -78,11 +90,19 @@
                                 <div class="-my-1 text-xxs text-black dark:text-stone-400">{{message?.from_person?.name}} -- {{ formatDate(message.originated_at) }}</div>
                                 <div
                                     :class="[message.is_user ? 'bg-indigo-600': ' bg-blue-600']"
-                                    class="px-2 py-1 flex rounded-lg shadow"
+                                    class="px-2 py-1 flex flex-col gap-2 rounded-lg shadow"
                                 >
-                                    <img v-if="message.thumbnail_url || message.message?.startsWith('https://tenor.com')" :src="message.thumbnail_url ?? message.message" :alt="message.message" class="w-64"/>
-                                    <div v-else-if="message.thumbnail_url">{{message.thumbnail_url}}</div>
-                                    <Markdown v-else :source="message.message" class="prose dark:prose-invert"></Markdown>
+                                    <img
+                                        v-if="message.thumbnail_url || message.message?.startsWith('https://tenor.com')"
+                                        :src="message.thumbnail_url ?? message.message"
+                                        :alt="message.message"
+                                        class="w-64"
+                                    />
+                                    <Markdown
+                                        v-if="message.message"
+                                        :source="message.message"
+                                        class="prose dark:prose-invert"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -113,10 +133,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import {buildUrl} from "@kbco/query-builder";
-import Markdown from 'vue3-markdown-it';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import Markdown from '@/Components/Spork/Molecules/Markdown.vue';
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);

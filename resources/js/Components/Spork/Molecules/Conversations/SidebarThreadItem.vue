@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import PillTag from '@/Components/Spork/Atoms/PillTag.vue';
+import MarkdownPreview from '@/Components/Spork/Molecules/MarkdownPreview.vue';
 
 const props = defineProps({
     thread: {
@@ -64,9 +65,10 @@ const rootClasses = computed(() => {
                     {{ formatRelative(thread.latest_message_at) }}
                 </span>
             </div>
-            <p class="text-xs text-stone-500 dark:text-stone-400 truncate">
-                {{ messagePreview }}
-            </p>
+            <MarkdownPreview
+                :source="messagePreview"
+                class="text-xs text-stone-500 dark:text-stone-400 line-clamp-1"
+            />
             <div class="flex items-center gap-1">
                 <PillTag
                     v-for="person in participantNames"

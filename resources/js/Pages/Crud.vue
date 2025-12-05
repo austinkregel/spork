@@ -1,156 +1,173 @@
-<template>
-    <AppLayout title="Dashboard">
-        <template #header>
-            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
-              {{ plural }}
-            </h2>
-        </template>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-stone-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <crud-view
-                        :form="form"
-                        :singular="singular"
-                        @destroy="onDelete"
-                        @index="({ page, limit, ...args}) => fetch({ page, limit, ...args })"
-                        @execute="onExecute"
-                        @save="save"
-                        :save="save"
-                        :data="data"
-                        :paginator="pagination"
-                    >
-                        <template #modal-title>
-                            <div>
-                                Create a {{ singular.toLowerCase() }}
-                            </div>
-                        </template>
-                        <template v-slot:data="{ data }">
-                            <div class="flex flex-col">j
-                                <div class="text-lg text-left">
-                                    <Link :href="'/'+link+'/'+ data.id" class="underline">
-                                        {{ data.name }}
-                                    </Link>
-                                </div>
-                                <div class="flex flex-wrap gap-2">
-                                    <div class="text-xs dark:text-stone-300">
-                                        {{ data }}
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                        <template #no-data>No {{ link }}</template>
+<script setup>
+import { computed, ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { useStore } from 'vuex';
+import axios from 'axios';
+import { buildUrl } from '@kbco/query-builder';
+import Manage from '@/Layouts/Manage.vue';
+import CrudView from '@/Components/Spork/CrudView.vue';
 
-                        <template #form>
-                            <div>
-                              <pre>{{ { description } }}</pre>
-                            </div>
-                        </template>
-
-                    </crud-view>
-                </div>
-            </div>
-        </div>
-    </AppLayout>
-</template>
-
-<script>
-import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue';
-import CrudView from "@/Components/Spork/CrudView.vue";
-import SporkInput from "@/Components/Spork/SporkInput.vue";
-import {buildUrl} from "@kbco/query-builder";
-
-export default {
-    components: {
-        Link,
-        CrudView,
-        AppLayout,
-        SporkInput
+const props = defineProps({
+    description: {
+        type: Object,
+        default: () => ({}),
     },
-    props: ['description', 'plural', 'singular', 'link', 'paginator'],
-    setup(props) {
-      const { data, ...paginator} = props.paginator;
-        return {
-            createOpen: ref(false),
-            form: ref(props.description?.required?.reduce((fields, field) => ({
-              ...fields,
-              [field]: ''
-            }), {})),
-            data: ref(data ?? []),
-            pagination: ref(paginator ?? {}),
-        }
+    plural: {
+        type: String,
+        default: '',
     },
-    methods: {
-        hasErrors(error) {
-            if (!this.form.errors) {
-                return '';
-            }
-
-            return this.form.errors[error] ?? null;
-        },
-      fillDefaultTeamAndUser(form) {
-        if (form.hasOwnProperty('team_id')) {
-          form.team_id = this.$attrs.auth.user.current_team_id;
-        }
-        if (form.hasOwnProperty('user_id')) {
-          form.user_id = this.$attrs.auth.user.id;
-        }
-
-        return form;
-      },
-        async save(form) {
-          form = this.fillDefaultTeamAndUser(form);
-
-            if (!form.id) {
-                await axios.post('/api/crud/'+this.link, form);
-            } else {
-                console.log('No edit method defined')
-            }
-            await this.fetch({ page: 1, limit: 15, });
-            this.clearForm();
-        },
-      clearForm() {
-        for (let key in form) {
-          if (form.hasOwnProperty(key)) {
-            form[key] = '';
-          }
-        }
-      },
-        async onDelete(data) {
-            await axios.delete('/api/crud/'+this.link+'/' + form.id);
-            await this.fetch({ page: 1, limit: 15, });
-        },
-        async onExecute({ actionToRun, selectedItems}) {
-            try {
-                await this.$store.dispatch('executeAction', {
-                    url: actionToRun.url,
-                    data: {
-                        selectedItems
-                    },
-                });
-
-            } catch (e) {
-                console.log(e.message, 'error');
-            }
-        },
-        async fetch({ page, limit, ...args }) {
-            const { data: { data, ...pagination} } = await axios.get(buildUrl(
-                '/api/crud/'+this.link, {
-                    page, limit,
-                    ...args,
-                    include: [],
-                }
-            ));
-
-            this.data = data;
-            this.pagination = pagination;
-        }
+    singular: {
+        type: String,
+        default: '',
     },
+    link: {
+        type: String,
+        default: '',
+    },
+    paginator: {
+        type: Object,
+        default: () => ({}),
+    },
+    apiLink: {
+        type: String,
+        default: '',
+    },
+});
 
+const page = usePage();
+const store = useStore();
+
+const buildEmptyForm = () =>
+    (props.description?.required ?? []).reduce((fields, field) => {
+        fields[field] = '';
+        return fields;
+    }, {});
+
+const form = ref(buildEmptyForm());
+const records = ref(props.paginator?.data ?? []);
+const pagination = ref({ ...(props.paginator ?? {}) });
+
+if (pagination.value.data) {
+    delete pagination.value.data;
 }
+
+const endpoint = computed(() => {
+    if (props.apiLink) {
+        return props.apiLink;
+    }
+
+    const normalizedLink = props.link?.startsWith('/') ? props.link : `/${props.link}`;
+    return `/api/crud${normalizedLink}`;
+});
+
+const fillDefaultTeamAndUser = (payload) => {
+    const working = { ...payload };
+    const user = page.props.auth?.user ?? {};
+
+    if (Object.prototype.hasOwnProperty.call(working, 'team_id')) {
+        working.team_id = working.team_id ?? user.current_team_id;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(working, 'user_id')) {
+        working.user_id = working.user_id ?? user.id;
+    }
+
+    return working;
+};
+
+const clearForm = () => {
+    Object.keys(form.value).forEach((key) => {
+        form.value[key] = '';
+    });
+};
+
+const fetchRecords = async ({ page: currentPage = 1, limit = 15, ...args } = {}) => {
+    const { data: response } = await axios.get(
+        buildUrl(endpoint.value, {
+            page: currentPage,
+            limit,
+            ...args,
+            include: [],
+        })
+    );
+
+    const { data: dataset, ...meta } = response;
+    records.value = dataset ?? [];
+    pagination.value = meta;
+};
+
+const saveRecord = async (payload) => {
+    const submission = fillDefaultTeamAndUser({ ...payload });
+
+    if (!submission.id) {
+        await axios.post(endpoint.value, submission);
+    } else {
+        await axios.put(`${endpoint.value}/${submission.id}`, submission);
+    }
+
+    await fetchRecords({ page: 1, limit: 15 });
+    clearForm();
+};
+
+const destroyRecord = async (record) => {
+    if (!record?.id) {
+        return;
+    }
+
+    await axios.delete(`${endpoint.value}/${record.id}`);
+    await fetchRecords({ page: 1, limit: 15 });
+};
+
+const executeAction = async ({ actionToRun, selectedItems }) => {
+    if (!actionToRun?.url || !selectedItems?.length) {
+        return;
+    }
+
+    await store.dispatch('executeAction', {
+        url: actionToRun.url,
+        data: {
+            selectedItems,
+        },
+    });
+};
 </script>
 
-<style scoped>
+<template>
+    <Manage :title="plural" :sub-title="singular" home="/-/manage" content-width-class="max-w-3xl">
+        <CrudView
+            :form="form"
+            :singular="singular"
+            :data="records"
+            :paginator="pagination"
+            @destroy="destroyRecord"
+            @index="fetchRecords"
+            @execute="executeAction"
+            @save="saveRecord"
+        >
+            <template #modal-title>
+                <div class="text-base font-semibold text-stone-900 dark:text-stone-100">
+                    Create a {{ singular.toLowerCase() }}
+                </div>
+            </template>
 
-</style>
+            <template #data="{ data }">
+                <div class="flex flex-col gap-2 text-left">
+                    <div class="text-lg font-semibold text-stone-900 dark:text-white">
+                        <Link :href="`${link}/${data.id}`" class="hover:underline">
+                            {{ data.name ?? `Record #${data.id}` }}
+                        </Link>
+                    </div>
+                    <div class="text-xs text-stone-500 dark:text-stone-300 whitespace-pre-wrap break-words">
+                        {{ data }}
+                    </div>
+                </div>
+            </template>
+
+            <template #no-data>No {{ plural }}</template>
+
+            <template #form>
+                <pre class="text-xs bg-stone-100 dark:bg-stone-900 rounded-lg p-4 overflow-auto">{{ description }}</pre>
+            </template>
+        </CrudView>
+    </Manage>
+</template>

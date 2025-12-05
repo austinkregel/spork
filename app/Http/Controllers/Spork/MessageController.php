@@ -76,7 +76,13 @@ class MessageController
                 },
                 'messages' => function ($query) {
                     $query->select('messages.*')
-                        ->with(['fromPerson', 'toPerson'])
+                        ->with([
+                            'fromPerson',
+                            'toPerson',
+                            'reactions' => function ($relation) {
+                                $relation->with('person');
+                            },
+                        ])
                         ->orderBy('originated_at')
                         ->limit(150);
                 },
