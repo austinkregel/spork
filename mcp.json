@@ -7,7 +7,7 @@
         "@modelcontextprotocol/server-laravel"
       ],
       "env": {
-        "PROJECT_PATH": "/absolute/path/to/spork"
+        "PROJECT_PATH": "/var/www/html"
       }
     },
     "github": {

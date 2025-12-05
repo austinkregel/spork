@@ -23,6 +23,7 @@ return [
         'language' => env('PLAID_LANGUAGE', 'en'),
         'country_codes' => explode(',', env('PLAID_COUNTRY_CODES', 'US')),
         'products' => ['transactions'],
+        'version' => env('PLAID_VERSION', '2020-09-14'),
     ],
 
     'laravelpassport' => [
