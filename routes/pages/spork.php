@@ -38,12 +38,15 @@ Route::middleware([
     Route::post('/api/mail/destroy', Controllers\Api\Mail\DestroyMailController::class);
 
     Route::post('/api/message/reply', Controllers\Api\Message\ReplyController::class);
+    Route::get('/api/media/unfurl', Controllers\Api\MediaUnfurlController::class)->name('api.media.unfurl');
     Route::post('/api/chat/threads/{thread}/archive', [Controllers\Api\ThreadActionController::class, 'archive'])->name('api.chat.threads.archive');
     Route::post('/api/chat/threads/{thread}/unarchive', [Controllers\Api\ThreadActionController::class, 'unarchive'])->name('api.chat.threads.unarchive');
     Route::post('/api/chat/threads/{thread}/mute', [Controllers\Api\ThreadActionController::class, 'mute'])->name('api.chat.threads.mute');
     Route::post('/api/chat/threads/{thread}/unmute', [Controllers\Api\ThreadActionController::class, 'unmute'])->name('api.chat.threads.unmute');
     Route::delete('/api/chat/threads/{thread}', [Controllers\Api\ThreadActionController::class, 'destroy'])->name('api.chat.threads.destroy');
     Route::delete('/api/chat/messages/{message}', [Controllers\Api\ThreadActionController::class, 'destroyMessage'])->name('api.chat.messages.destroy');
+    Route::post('/api/chat/messages/{message}/reactions', [Controllers\Api\MessageReactionController::class, 'store'])->name('api.chat.messages.reactions.store');
+    Route::delete('/api/chat/messages/{message}/reactions', [Controllers\Api\MessageReactionController::class, 'destroy'])->name('api.chat.messages.reactions.destroy');
 
     Route::post('/api/plaid/create-link-token', Controllers\Api\Plaid\CreateLinkTokenController::class);
     Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
