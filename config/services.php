@@ -36,4 +36,9 @@ return [
     'matrix' => [
         'url' => env('MATRIX_HOST'),
     ],
+
+    'monica' => [
+        'base_url' => env('MONICA_BASE_URL', 'https://monica.kregel.host/api'),
+        'service' => env('MONICA_SERVICE_NAME', \App\Models\Credential::MONICA),
+    ],
 ];

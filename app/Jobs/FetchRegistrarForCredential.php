@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class FetchRegistrarForCredential implements ShouldQueue
 {
@@ -49,6 +50,7 @@ class FetchRegistrarForCredential implements ShouldQueue
         $this->batch()->add([match ($this->credential->service) {
             Credential::NAMECHEAP => new NamecheapSyncJob($this->credential, $this->user),
             Credential::CLOUDFLARE => new CloudflareSyncJob($this->credential, $this->user),
+            default => Log::error(sprintf('Found unsupported credential type for FetchResourcesFromCredentialsJob: %s', $this->credential->type), []),
         }]);
     }
 }

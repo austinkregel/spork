@@ -16,6 +16,7 @@ class DomainServiceFactoryTest extends TestCase
     {
         $credential = new Credential([
             'service' => Credential::CLOUDFLARE,
+            'api_key' => 'fake global key',
             'settings' => [
                 'email' => 'user@example.com',
                 'account_id' => 'account',
@@ -35,6 +36,7 @@ class DomainServiceFactoryTest extends TestCase
         $credential = new Credential([
             'service' => Credential::DIGITAL_OCEAN,
             'api_key' => 'fake-api-key',
+            'access_token' => 'fake-token',
             'settings' => [],
         ]);
 

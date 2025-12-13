@@ -9,6 +9,7 @@ use App\Events\Models\Person\PersonCreated;
 use App\Events\Models\Person\PersonCreating;
 use App\Events\Models\Person\PersonDeleted;
 use App\Events\Models\Person\PersonDeleting;
+use App\Jobs\Crm\SyncPersonToMonica;
 use App\Events\Models\Person\PersonUpdated;
 use App\Events\Models\Person\PersonUpdating;
 use App\Models\Traits\ScopeRelativeSearch;
@@ -38,6 +39,37 @@ class Person extends Model implements Crud, ModelQuery
         'updating' => PersonUpdating::class,
         'updated' => PersonUpdated::class,
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(function (self $person): void {
+            if (! $person->user_id) {
+                return;
+            }
+
+            if (! $person->wasRecentlyCreated && ! $person->wasChanged([
+                'name',
+                'primary_email',
+                'primary_number',
+                'primary_address',
+                'birthdate',
+                'phone_numbers',
+                'addresses',
+                'emails',
+                'identifiers',
+                'names',
+                'locality',
+                'jobs',
+                'education',
+                'photo_url',
+                'pronouns',
+            ])) {
+                return;
+            }
+
+            SyncPersonToMonica::dispatch($person);
+        });
+    }
 
     protected function casts(): array
     {

@@ -27,3 +27,9 @@ class MatrixClientInformationEventHandler implements MatrixEventHandlerContract
 }
 
 
+
+
+
+
+
+

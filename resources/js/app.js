@@ -126,8 +126,6 @@ createInertiaApp({
                     });
                 })
                 .listen('Models\\Message\\MessageUpdated', (e) => {
-                    console.log('Models.Message from server', e);
-                    playSound('notification');
                     router.reload({
                         only: ['messages', 'unread_email_count', 'threads', 'thread'],
                     });

@@ -35,6 +35,7 @@ class CreateCredentialCommand extends Command
                 Credential::TYPE_DOMAIN,
                 Credential::TYPE_EMAIL,
                 Credential::TYPE_FINANCE,
+                Credential::TYPE_CRM,
                 Credential::TYPE_SSH,
                 Credential::TYPE_SOURCE,
                 Credential::TYPE_DEVELOPMENT,

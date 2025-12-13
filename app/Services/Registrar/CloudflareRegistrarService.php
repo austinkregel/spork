@@ -20,10 +20,13 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
 
     protected string $accountId;
 
+    protected string $accessToken;
+
     public function __construct(
         public Credential $credential
     ) {
-        $this->apiKey = $credential->access_token;
+        $this->apiKey = $credential->api_key;
+        $this->accessToken = $this->credential->access_token;
         $this->email = $credential->settings['email'];
         $this->accountId = $credential->settings['account_id'];
     }
@@ -35,10 +38,12 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
     {
         $domains = Http::withHeaders([
             'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer '.$this->accessToken,
             'X-Auth-Email' => $this->email,
             'X-Auth-Key' => $this->apiKey,
         ])->get(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains', []);
 
+        dd($domains->json());
         return new LengthAwarePaginator(
             array_map(fn ($zone) => [
                 'id' => $zone['registry_object_id'],
@@ -60,6 +65,7 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'X-Auth-Email' => $this->email,
+            'Authorization' => 'Bearer '.$this->accessToken,
             'X-Auth-Key' => $this->apiKey,
         ])->get(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains/'.$domain);
 
@@ -80,6 +86,7 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
     {
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer '.$this->accessToken,
             'X-Auth-Email' => $this->email,
             'X-Auth-Key' => $this->apiKey,
         ])->put(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains/'.$domain.'/nameservers', [

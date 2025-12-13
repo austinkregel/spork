@@ -14,6 +14,7 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
     public function handle(DomainServiceFactory $serviceFactory): void
     {
         if ($this->batch()?->cancelled()) {
+            dd('Canceled');
             return;
         }
         $credentials = Credential::where('service', 'cloudflare')->get();

@@ -38,6 +38,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     use ScopeRelativeSearch;
 
     public $fillable = [
+        'credential_id',
         'server_id',
         'name',
         'vcpu',
@@ -99,5 +100,10 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     public function services(): HasMany
     {
         return $this->hasMany(ServerService::class);
+    }
+
+    public function domains(): HasMany
+    {
+        return $this->hasMany(Domain::class);
     }
 }

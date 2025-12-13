@@ -14,6 +14,7 @@ class CloudflareRegistrarServiceTest extends TestCase
     protected function makeCredential(): Credential
     {
         return new Credential([
+            'api_key' => 'fake global key',
             'access_token' => 'fake-token',
             'settings' => [
                 'email' => 'user@example.com',

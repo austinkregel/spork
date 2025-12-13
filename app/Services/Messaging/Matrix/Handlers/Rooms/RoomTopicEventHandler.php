@@ -32,3 +32,9 @@ class RoomTopicEventHandler implements MatrixEventHandlerContract
 }
 
 
+
+
+
+
+
+

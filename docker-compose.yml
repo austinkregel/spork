@@ -98,6 +98,14 @@ services:
 #           - sail
 #       depends_on:
 #           - mariadb
+
+    proton-bridge:
+        container_name: proton-bridge
+        image: shenxn/protonmail-bridge:latest
+        volumes:
+            - protonmail:/root
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
@@ -109,4 +117,6 @@ volumes:
     sail-meilisearches:
         driver: local
     composer_cache:
+        driver: local
+    protonmail:
         driver: local

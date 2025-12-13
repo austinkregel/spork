@@ -15,7 +15,8 @@ return new class extends Migration
             $table->foreignId('message_id')->constrained()->cascadeOnDelete();
             $table->foreignId('person_id')->nullable()->constrained()->nullOnDelete();
             $table->string('sender_identifier')->nullable()->index();
-            $table->string('emoji', 32);
+            // Sometimes its actual emoji, sometimes custom emoji
+            $table->string('emoji', 255);
             $table->string('matrix_event_id')->unique();
             $table->json('payload')->nullable();
             $table->timestamps();

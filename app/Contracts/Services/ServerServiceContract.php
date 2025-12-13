@@ -28,6 +28,10 @@ interface ServerServiceContract
 
     public function findAllSshkeys(): array;
 
+    public function createSshKey(string $name, string $publicKey): array;
+
+    public function findSshKeyByFingerprint(?string $fingerprint): ?array;
+
     //    public function changeMemory(int|string $identifier, int $memory): void;
     //    public function changeCpu(int|string $identifier, int $vcpu, int $cores, int $threads): void;
     //    public function changeDisk(int|string $identifier, int $disk_capacity): void;

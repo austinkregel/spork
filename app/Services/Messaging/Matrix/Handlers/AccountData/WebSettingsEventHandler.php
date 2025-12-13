@@ -21,3 +21,9 @@ class WebSettingsEventHandler implements MatrixEventHandlerContract
 }
 
 
+
+
+
+
+
+

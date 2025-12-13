@@ -7,8 +7,20 @@ use App\Http\Controllers;
 use App\Models\Thread;
 use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+
+use App\Http\Controllers\Api\Infrastructure\ActivityFeedController;
+use App\Http\Controllers\Api\Infrastructure\BulkOperationController;
+use App\Http\Controllers\Api\Infrastructure\DomainContactController;
+use App\Http\Controllers\Api\Infrastructure\DomainLinkController;
+use App\Http\Controllers\Api\Infrastructure\DnsZoneChangeController;
+use App\Http\Controllers\Api\Infrastructure\DnsZoneRecordController;
+use App\Http\Controllers\Api\Infrastructure\InfrastructureOverviewController;
+use App\Http\Controllers\Api\Infrastructure\ProvisionInfrastructureController;
+use App\Http\Controllers\Api\Infrastructure\ServerLinkController;
+use Illuminate\Support\Facades\Route;
+
 
 Route::middleware([
     'auth:sanctum',
@@ -58,6 +70,36 @@ Route::middleware([
     Route::post('/api/credentials', [Controllers\Api\CredentialController::class, 'store']);
 
     Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
+
+
+Route::prefix('api/infrastructure')
+    ->name('api.infrastructure.')
+    ->group(function (): void {
+        Route::get('overview', InfrastructureOverviewController::class)->name('overview');
+
+        Route::post('servers/{server}/links', ServerLinkController::class)->name('servers.links.store');
+        Route::post('domains/{domain}/link', [DomainLinkController::class, 'store'])->name('domains.link.store');
+        Route::delete('domains/{domain}/link', [DomainLinkController::class, 'destroy'])->name('domains.link.destroy');
+
+        Route::post('dns-zones/{dnsZone}/records', [DnsZoneRecordController::class, 'store'])->name('dns-zones.records.store');
+        Route::delete('dns-zones/{dnsZone}/records/{record}', [DnsZoneRecordController::class, 'destroy'])->name('dns-zones.records.destroy');
+        Route::post('dns-zones/{dnsZone}/apply', DnsZoneChangeController::class)->name('dns-zones.apply');
+
+        Route::get('contacts', [DomainContactController::class, 'index'])->name('contacts.index');
+        Route::post('domains/{domain}/contacts', [DomainContactController::class, 'store'])->name('contacts.store');
+        Route::put('domains/{domain}/contacts/{contact}', [DomainContactController::class, 'update'])->name('contacts.update');
+        Route::delete('domains/{domain}/contacts/{contact}', [DomainContactController::class, 'destroy'])->name('contacts.destroy');
+
+        Route::get('activity/servers', [ActivityFeedController::class, 'servers'])->name('activity.servers');
+        Route::get('activity/domains', [ActivityFeedController::class, 'domains'])->name('activity.domains');
+
+        Route::post('bulk-operations', [BulkOperationController::class, 'store'])->name('bulk-operations.store');
+        Route::get('bulk-operations/{operation}', [BulkOperationController::class, 'show'])->name('bulk-operations.show');
+
+        Route::post('provision', [ProvisionInfrastructureController::class, 'store'])->name('provision.store');
+        Route::get('provision/{provisionRequest}', [ProvisionInfrastructureController::class, 'show'])->name('provision.show');
+
+    });
 });
 
 Route::redirect('/', '/flight/login');
@@ -106,6 +148,8 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/servers/{server}/workers', [Controllers\Spork\ServersController::class, 'workers'])->name('servers.workers');
     Route::get('/servers/{server}/crontab', [Controllers\Spork\ServersController::class, 'crontab'])->name('servers.crontab');
     Route::get('/servers/{server}/logs', [Controllers\Spork\ServersController::class, 'logs'])->name('servers.logs');
+    Route::get('/infrastructure/create', [Controllers\Spork\ServersController::class, 'create'])->name('infrastructure.create');
+    Route::get('/infrastructure/providers/{credential}/options', Controllers\Api\Infrastructure\ProviderOptionsController::class)->name('infrastructure.providers.options');
 
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 

@@ -10,6 +10,7 @@ use App\Events\Models\Message\MessageDeleted;
 use App\Events\Models\Message\MessageDeleting;
 use App\Events\Models\Message\MessageUpdated;
 use App\Events\Models\Message\MessageUpdating;
+use App\Jobs\Crm\LogMessageToMonica;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -57,6 +58,13 @@ class Message extends Model implements Taggable
         'updating' => MessageUpdating::class,
         'updated' => MessageUpdated::class,
     ];
+
+    protected static function booted(): void
+    {
+        static::created(function (self $message): void {
+            LogMessageToMonica::dispatch($message);
+        });
+    }
 
     protected function casts(): array
     {

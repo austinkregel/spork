@@ -25,6 +25,7 @@ class DomainRecord extends Model implements Crud, ModelQuery
     use ScopeRelativeSearch;
 
     protected $fillable = [
+        'domain_id',
         'name',
         'type',
         'ttl',
@@ -36,6 +37,7 @@ class DomainRecord extends Model implements Crud, ModelQuery
         'record_id',
         'proxied_through_cloudflare',
         'priority',
+        'dns_zone_id',
     ];
 
     public $dispatchesEvents = [
@@ -50,6 +52,11 @@ class DomainRecord extends Model implements Crud, ModelQuery
     public function domain(): BelongsTo
     {
         return $this->belongsTo(Domain::class);
+    }
+
+    public function dnsZone(): BelongsTo
+    {
+        return $this->belongsTo(DnsZone::class);
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -8,6 +8,7 @@ use App\Contracts\Services\DomainServiceContract;
 use App\Models\Credential;
 use App\Services\Domain\CloudflareDomainService;
 use App\Services\Server\DigitalOceanService;
+use Illuminate\Support\Facades\Log;
 
 class DomainServiceFactory
 {
@@ -15,7 +16,8 @@ class DomainServiceFactory
     {
         return match ($credential->service) {
             Credential::CLOUDFLARE => new CloudflareDomainService($credential),
-            Credential::DIGITAL_OCEAN => new DigitalOceanService($credential)
+            Credential::DIGITAL_OCEAN => new DigitalOceanService($credential),
+            default => Log::error(sprintf('Found unsupported credential type for DomainServiceFactory: %s', $this->credential->type), []),
         };
     }
 }

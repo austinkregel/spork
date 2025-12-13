@@ -64,6 +64,8 @@ class Credential extends Model implements Crud, ModelQuery, Owner
 
     public const TYPE_SERVER = 'server';
 
+    public const TYPE_CRM = 'crm';
+
     public const TYPE_DOMAIN = 'domain';
 
     public const TYPE_REGISTRAR = 'registrar';
@@ -78,6 +80,8 @@ class Credential extends Model implements Crud, ModelQuery, Owner
 
     public const TYPE_EMAIL = 'email';
 
+    public const MONICA = 'monica';
+
     public const ALL_DOMAIN_PROVIDERS = [
         self::DIGITAL_OCEAN,
         self::CLOUDFLARE,
@@ -88,6 +92,10 @@ class Credential extends Model implements Crud, ModelQuery, Owner
         self::GOOGLE_DOMAINS,
         self::AWS_ROUTE_53,
         self::TYPE_EMAIL,
+    ];
+
+    public const ALL_CRM_PROVIDERS = [
+        self::MONICA,
     ];
 
     public const ALL_SERVER_PROVIDERS = [self::DIGITAL_OCEAN, self::OVH_CLOUD, self::VULTR, self::LINODE, self::IMAP];

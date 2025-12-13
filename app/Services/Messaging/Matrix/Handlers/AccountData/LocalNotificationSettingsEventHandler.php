@@ -27,3 +27,9 @@ class LocalNotificationSettingsEventHandler implements MatrixEventHandlerContrac
 }
 
 
+
+
+
+
+
+

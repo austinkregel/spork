@@ -17,6 +17,7 @@ class RegistrarServiceFactoryTest extends TestCase
     {
         $credential = new Credential([
             'service' => Credential::NAMECHEAP,
+            'api_key' => 'fake global key',
             'settings' => [],
         ]);
 
@@ -31,6 +32,7 @@ class RegistrarServiceFactoryTest extends TestCase
     {
         $credential = new Credential([
             'service' => Credential::CLOUDFLARE,
+            'api_key' => 'fake global key',
             'settings' => [
                 'email' => 'user@example.com',
                 'account_id' => 'account',
@@ -49,6 +51,7 @@ class RegistrarServiceFactoryTest extends TestCase
     {
         $credential = new Credential([
             'service' => Credential::ENOM,
+            'api_key' => 'fake global key',
             'settings' => [
                 'api_user' => 'api-user',
                 'username' => 'api-user',

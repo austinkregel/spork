@@ -27,6 +27,7 @@
         "laravel/reverb": "^1.4",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.12",
+        "laravel/tinker": "^2.10",
         "league/flysystem-ftp": "^3.0",
         "lesstif/php-jira-rest-client": "^5.7",
         "meilisearch/meilisearch-php": "^1.6",
