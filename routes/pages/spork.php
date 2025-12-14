@@ -149,6 +149,7 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/servers/{server}/crontab', [Controllers\Spork\ServersController::class, 'crontab'])->name('servers.crontab');
     Route::get('/servers/{server}/logs', [Controllers\Spork\ServersController::class, 'logs'])->name('servers.logs');
     Route::get('/infrastructure/create', [Controllers\Spork\ServersController::class, 'create'])->name('infrastructure.create');
+    Route::get('/infrastructure/connect-host', [Controllers\Spork\ServersController::class, 'connectHost'])->name('infrastructure.connect-host');
     Route::get('/infrastructure/providers/{credential}/options', Controllers\Api\Infrastructure\ProviderOptionsController::class)->name('infrastructure.providers.options');
 
     Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');

@@ -39,7 +39,11 @@ class Server extends Model implements Crud, ModelQuery, Taggable
 
     public $fillable = [
         'credential_id',
+        'provider_credential_id',
         'server_id',
+        'provider_server_id',
+        'machine_id',
+        'connection_type',
         'name',
         'vcpu',
         'memory',
@@ -69,6 +73,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     protected function casts(): array
     {
         return [
+            'last_ping_at' => 'datetime',
             'turned_off_at' => 'datetime',
             'booted_at' => 'datetime',
         ];
@@ -77,6 +82,11 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
+    }
+
+    public function providerCredential(): BelongsTo
+    {
+        return $this->belongsTo(Credential::class, 'provider_credential_id');
     }
 
     public function projects(): MorphToMany

@@ -56,11 +56,18 @@ const props = defineProps({
 
 const defaultActions = [
     {
+        id: 'connect-host',
+        label: 'Connect existing host',
+        icon: 'ServerIcon',
+        description: 'Enroll a bare-metal box or existing VM using a one-line installer.',
+        variant: 'primary',
+        badge: 'Agent-ready',
+    },
+    {
         id: 'link-server',
         label: 'Link server (SSH)',
         icon: 'ServerIcon',
         description: 'Exchange keys and begin pulling server metadata automatically.',
-        variant: 'primary',
     },
     {
         id: 'import-domains',

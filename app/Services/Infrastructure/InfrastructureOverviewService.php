@@ -25,7 +25,7 @@ class InfrastructureOverviewService
         $request ??= request();
 
         $servers = $user->servers()
-            ->with(['services', 'domains'])
+            ->with(['services', 'domains', 'credential', 'providerCredential'])
             ->get();
 
         $domains = $user->domains()

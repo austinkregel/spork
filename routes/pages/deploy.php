@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\Infrastructure\RegisterHostController;
 use App\Models\Credential;
 
 Route::middleware(['web', 'auth:sanctum'])->get('/register-device', function () {
@@ -25,6 +26,18 @@ Route::get('/link/{identifier}', function ($identifier) {
         'Content-type' => 'text/text',
     ]);
 })->middleware('throttle:api')->name('link-device');
+
+Route::get('/host-connect/{identifier}', function ($identifier) {
+    $ssh = Credential::query()
+        ->where('api_key', $identifier)
+        ->firstOrFail();
+
+    return response()->view('basement-scripts.connect-existing-host', [
+        'credential' => $ssh,
+    ], 200, [
+        'Content-type' => 'text/text',
+    ]);
+})->middleware('throttle:api')->name('host-connect');
 
 Route::middleware([
     'throttle:api',
@@ -68,3 +81,7 @@ Route::post('/api/servers', [
     App\Http\Controllers\Api\ServerController::class,
     'store',
 ])->name('server.create');
+
+Route::post('/api/infrastructure/hosts/register', RegisterHostController::class)
+    ->middleware('throttle:api')
+    ->name('api.infrastructure.hosts.register');

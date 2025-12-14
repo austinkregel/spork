@@ -794,6 +794,11 @@ const closeBulkWizard = () => {
 };
 
 const handleQuickAction = (actionId) => {
+    if (actionId === 'connect-host') {
+        router.visit(route('infrastructure.connect-host'));
+        return;
+    }
+
     if (actionId === 'link-server') {
         openLinkServer.value = true;
         return;

@@ -55,6 +55,26 @@ class ServersController extends Controller
         ]);
     }
 
+    public function connectHost()
+    {
+        $sshCredential = auth()->user()
+            ->credentials()
+            ->firstWhere('type', Credential::TYPE_SSH);
+
+        $command = '';
+
+        if ($sshCredential) {
+            $command = sprintf(
+                'curl -fsSL %s | bash',
+                route('host-connect', [$sshCredential->api_key]),
+            );
+        }
+
+        return Inertia::render('Infrastructure/ConnectHost', [
+            'command' => $command,
+        ]);
+    }
+
     public function show(Server $server)
     {
         $server->load([

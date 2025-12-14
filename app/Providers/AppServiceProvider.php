@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Console\Commands\CrudCacheCommand;
+use App\Console\Commands\Infrastructure\ListenToCommandServerCommand;
 use App\Contracts\Repositories\CredentialRepositoryContract;
 use App\Contracts\Repositories\MatrixClientSyncRepositoryContract;
 use App\Contracts\Repositories\ProjectRepositoryContract;
 use App\Contracts\Services\CloudflareDomainServiceContract;
 use App\Contracts\Services\CloudflareRegistrarServiceContract;
 use App\Contracts\Services\ConditionServiceContract;
+use App\Contracts\Services\Crm\MonicaClientContract;
 use App\Contracts\Services\Development\DescribeTableServiceContract;
 use App\Contracts\Services\DigitalOceanServiceContract;
 use App\Contracts\Services\Documents\HtmlJsonDataLinkingServiceContract;
@@ -37,6 +39,7 @@ use App\Repositories\MatrixClientSyncRepository;
 use App\Repositories\ProjectRepository;
 use App\Services\Code;
 use App\Services\ConditionService;
+use App\Services\Crm\MonicaClient;
 use App\Services\Development\DescribeTableService;
 use App\Services\Documents\HtmlJsonDataLinkingService;
 use App\Services\Documents\PdfParserService;
@@ -197,6 +200,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Services - HTTP
         $this->app->bind(HttpServiceContract::class, HttpService::class);
+        $this->app->bind(MonicaClientContract::class, MonicaClient::class);
 
         // Services - SSH
         $this->app->bind(SshServiceContract::class, SshService::class);
@@ -220,6 +224,7 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CrudCacheCommand::class,
+                ListenToCommandServerCommand::class,
             ]);
         }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Infrastructure;
 
+use App\Models\Credential;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,13 +13,21 @@ class ServerResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        /** @var Credential|null $providerCredential */
+        $providerCredential = $this->providerCredential ?? null;
+        /** @var Credential|null $ownerCredential */
+        $ownerCredential = $this->credential ?? null;
+
+        $effectiveCredential = $providerCredential ?? $ownerCredential;
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'status' => $this->status,
             'ip_address' => $this->ip_address,
-            'provider' => $this->credential?->provider,
-            'provider_label' => $this->credential?->name,
+            'provider' => $effectiveCredential?->service,
+            'provider_label' => $effectiveCredential?->name,
+            'connection_type' => $this->connection_type ?? ($ownerCredential?->type === Credential::TYPE_SSH ? 'ssh' : null),
             'services' => $this->whenLoaded('services', fn () => $this->services->map(fn ($service) => [
                 'id' => $service->id,
                 'service' => $service->service,
