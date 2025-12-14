@@ -41,4 +41,8 @@ return [
         'base_url' => env('MONICA_BASE_URL', 'https://monica.kregel.host/api'),
         'service' => env('MONICA_SERVICE_NAME', \App\Models\Credential::MONICA),
     ],
+
+    'command_server' => [
+        'ws_url' => env('COMMAND_SERVER_WS_URL', ''),
+    ],
 ];

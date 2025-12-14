@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Credential;
+use Illuminate\Support\Str;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -84,6 +86,36 @@ class SporkServersControllerTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Infrastructure/Index')
             ->has('servers')
+        );
+    }
+
+    public function test_servers_route_loads_provider_optional_servers()
+    {
+        $this->actingAsUser();
+        $user = $this->user;
+
+        $ssh = Credential::factory()->create([
+            'user_id' => $user->id,
+            'type' => Credential::TYPE_SSH,
+            'service' => Credential::TYPE_SSH,
+        ]);
+
+        $ssh->servers()->create([
+            'server_id' => (string) Str::uuid(),
+            'name' => 'baremetal-01',
+            'status' => 'online',
+            'connection_type' => 'agent',
+            'machine_id' => 'machine-test-001',
+        ]);
+
+        $response = $this->actingAs($user)->get('http://spork.localhost/-/servers');
+
+        $response->assertInertia(fn ($page) => $page
+            ->component('Infrastructure/Index')
+            ->has('servers')
+            ->where('servers', fn ($servers) => collect($servers)
+                ->contains(fn ($server) => ($server['name'] ?? null) === 'baremetal-01' && ($server['provider'] ?? null) === Credential::TYPE_SSH)
+            )
         );
     }
 
