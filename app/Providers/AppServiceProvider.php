@@ -11,7 +11,6 @@ use App\Contracts\Repositories\ProjectRepositoryContract;
 use App\Contracts\Services\CloudflareDomainServiceContract;
 use App\Contracts\Services\CloudflareRegistrarServiceContract;
 use App\Contracts\Services\ConditionServiceContract;
-use App\Contracts\Services\Crm\MonicaClientContract;
 use App\Contracts\Services\Development\DescribeTableServiceContract;
 use App\Contracts\Services\DigitalOceanServiceContract;
 use App\Contracts\Services\Documents\HtmlJsonDataLinkingServiceContract;
@@ -38,7 +37,6 @@ use App\Repositories\MatrixClientSyncRepository;
 use App\Repositories\ProjectRepository;
 use App\Services\Code;
 use App\Services\ConditionService;
-use App\Services\Crm\MonicaClient;
 use App\Services\Development\DescribeTableService;
 use App\Services\Documents\HtmlJsonDataLinkingService;
 use App\Services\Documents\PdfParserService;
@@ -157,9 +155,6 @@ class AppServiceProvider extends ServiceProvider
         // Services - News
         $this->app->bind(NewsServiceContract::class, NewsService::class);
         $this->app->bind(RssServiceContract::class, RssFeedService::class);
-
-        // Services - CRM
-        $this->app->bind(MonicaClientContract::class, MonicaClient::class);
 
         // Services - Registrar
         $this->app->bind(NamecheapServiceContract::class, NamecheapService::class);

@@ -5,7 +5,7 @@
                 Recent activity
             </p>
             <p class="text-xs text-stone-500 dark:text-stone-400">
-                DNS changes, linkage updates, and automation events land here.
+                DNS, links, automation.
             </p>
         </header>
 
@@ -17,10 +17,10 @@
             >
                 <div class="flex flex-col gap-1">
                     <p class="text-sm font-medium text-stone-800 dark:text-stone-100">
-                        {{ item.title }}
+                        {{ item.description }}
                     </p>
                     <p class="text-xs text-stone-500 dark:text-stone-400">
-                        {{ item.description }}
+                        {{ item.subject_type }} {{ item.subject?.id}}
                     </p>
                     <div v-if="item.meta" class="flex flex-wrap gap-2 text-xs text-stone-400 dark:text-stone-500">
                         <span v-for="meta in item.meta" :key="meta">{{ meta }}</span>
@@ -33,7 +33,7 @@
         </ol>
 
         <div v-if="!resolvedItems.length" class="px-4 py-6 text-center text-sm text-stone-500 dark:text-stone-400">
-            No recent infrastructure events. Everything is calm.
+            No recent events.
         </div>
     </div>
 </template>

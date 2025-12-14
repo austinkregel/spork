@@ -5,8 +5,8 @@
                 <p class="text-sm font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-300">
                     Quick actions
                 </p>
-                <p class="text-xs text-stone-500 dark:text-stone-400">
-                    Run the most common provisioning workflows from one place.
+                <p v-if="!compact" class="text-xs text-stone-500 dark:text-stone-400">
+                    Common workflows, one click away.
                 </p>
             </div>
         </div>
@@ -26,8 +26,8 @@
                         {{ action.label }}
                     </p>
                 </div>
-                <p class="text-xs text-stone-500 dark:text-stone-300">
-                    {{ action.description }}
+                <p v-if="!compact" class="text-xs text-stone-500 dark:text-stone-300">
+                    {{ action.description ?? '' }}
                 </p>
                 <div v-if="action.badge" class="text-xs font-semibold text-indigo-600 dark:text-indigo-300">
                     {{ action.badge }}
@@ -48,25 +48,29 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    compact: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const defaultActions = [
     {
         id: 'link-server',
-        label: 'Link server via SSH',
+        label: 'Link server (SSH)',
         icon: 'ServerIcon',
         description: 'Exchange keys and begin pulling server metadata automatically.',
         variant: 'primary',
     },
     {
         id: 'import-domains',
-        label: 'Import registrar domains',
+        label: 'Import domains',
         icon: 'GlobeAltIcon',
         description: 'Sync Namecheap or Cloudflare domains into the single inventory.',
     },
     {
         id: 'bulk-edit',
-        label: 'Bulk infrastructure edit',
+        label: 'Bulk edit',
         icon: 'AdjustmentsHorizontalIcon',
         description: 'Change contacts, DNS, or Cloudflare settings across selections.',
         badge: 'Wizard',

@@ -112,3 +112,5 @@ class LogMessageToMonicaTest extends TestCase
     }
 }
 
+
+

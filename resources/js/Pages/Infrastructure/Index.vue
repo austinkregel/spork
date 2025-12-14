@@ -3,37 +3,52 @@
         <div class="px-4 py-6 sm:px-6 lg:px-8">
             <div class="space-y-8">
                 <section class="space-y-4">
-                    <div class="flex flex-wrap items-start justify-between gap-4">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500 dark:text-stone-300">
-                                Infrastructure
-                            </p>
-                            <h1 class="text-3xl font-semibold text-stone-900 dark:text-white">
-                                Unify servers, domains, and DNS at a glance
-                            </h1>
-                            <p class="mt-2 text-sm text-stone-500 dark:text-stone-400 max-w-2xl">
-                                Align every registrar, DNS zone, and compute host under one workspace. Use filters to focus, then launch quick workflows.
-                            </p>
+                    <div class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-800 p-4 shadow-sm space-y-4">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <h1 class="text-2xl font-semibold text-stone-900 dark:text-white">
+                                    Infrastructure
+                                </h1>
+                                <p class="mt-1 text-sm text-stone-500 dark:text-stone-400">
+                                    Inventory and health, at a glance.
+                                </p>
+                            </div>
+
+                            <div class="flex items-center gap-3">
+                                <SporkButton secondary :icon="DocumentDuplicateIcon">
+                                    <span>Export</span>
+                                </SporkButton>
+                                <Link
+                                    :href="route('infrastructure.create')"
+                                    class="inline-flex items-center border border-transparent shadow-sm font-medium rounded-md focus:outline-none px-3 py-2 text-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                >
+                                    <PlusIcon class="-ml-0.5 mr-2 h-4 w-4" />
+                                    <span>Add</span>
+                                </Link>
+                            </div>
                         </div>
 
-                        <div class="flex items-center gap-3">
-                            <SporkButton secondary :icon="DocumentDuplicateIcon">
-                                <span>Export snapshot</span>
-                            </SporkButton>
-                            <Link
-                                :href="route('infrastructure.create')"
-                                class="inline-flex items-center border border-transparent shadow-sm font-medium rounded-md focus:outline-none px-3 py-2 text-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                            <div
+                                v-for="stat in overviewStats"
+                                :key="stat.id ?? stat.label"
+                                class="rounded-lg border border-stone-200 dark:border-stone-700 p-3 bg-stone-50 dark:bg-stone-900/40"
                             >
-                                <PlusIcon class="-ml-0.5 mr-2 h-4 w-4" />
-                                <span>Add infrastructure</span>
-                            </Link>
+                                <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
+                                    {{ stat.label }}
+                                </p>
+                                <p class="mt-2 text-2xl font-semibold text-stone-900 dark:text-white">
+                                    {{ stat.value }}
+                                </p>
+                                <p v-if="stat.meta" class="mt-1 text-xs text-stone-500 dark:text-stone-400">
+                                    {{ stat.meta }}
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    <QuickActions :actions="quickActionItems" @select="handleQuickAction" />
+                    <QuickActions :actions="quickActionItems" compact @select="handleQuickAction" />
                 </section>
-
-                <OverviewStats :stats="overviewStats" />
 
 
                 <InfrastructureInventoryTabs
@@ -55,7 +70,7 @@
                             <div class="flex flex-wrap items-center gap-3">
                                 <SporkInput
                                     class="flex-1 min-w-[220px]"
-                                    placeholder="Search servers, domains, DNS zones..."
+                                    placeholder="Search inventory…"
                                     v-model="searchTerm"
                                 />
                                 <div class="text-xs text-stone-500 dark:text-stone-400">
@@ -95,7 +110,7 @@
 
             <template #content>
                 <p class="text-sm text-stone-500 dark:text-stone-300">
-                    Add this public key to the server’s <code class="font-mono text-xs bg-stone-100 dark:bg-stone-900 px-1 py-0.5 rounded">~/.ssh/authorized_keys</code> file, then keep the modal open while we verify the connection.
+                    Add this key to <code class="font-mono text-xs bg-stone-100 dark:bg-stone-900 px-1 py-0.5 rounded">~/.ssh/authorized_keys</code>, then leave this open while we verify.
                 </p>
 
                 <SporkInput
@@ -185,7 +200,7 @@
 
             <template #content>
                 <p class="text-sm text-stone-500 dark:text-stone-300 mb-4">
-                    Edit DNS records for this zone. Changes are queued and require backend approval before applying.
+                    Edit records for this zone. Changes queue for approval.
                 </p>
 
                 <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -260,7 +275,6 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import SporkButton from "@/Components/Spork/SporkButton.vue";
 import SporkInput from "@/Components/Spork/SporkInput.vue";
 import QuickActions from "@/Components/Infrastructure/QuickActions.vue";
-import OverviewStats from "@/Components/Infrastructure/OverviewStats.vue";
 import ProviderFilterChips from "@/Components/Infrastructure/ProviderFilterChips.vue";
 import RecentActivityFeed from "@/Components/Infrastructure/RecentActivityFeed.vue";
 import InfrastructureInventoryTabs from "@/Components/Infrastructure/InfrastructureInventoryTabs.vue";
@@ -377,18 +391,18 @@ const overviewStats = computed(() => [
 ]);
 
 const spotlights = computed(() => [
-    { id: 'expiring', label: 'Domains expiring soon', value: expiringDomains.value, description: 'Renew within 30 days' },
+    { id: 'expiring', label: 'Domains expiring soon', value: expiringDomains.value, description: 'Due in 30 days' },
     {
         id: 'unlinked',
         label: 'Domains without DNS zone',
         value: Math.max(domains.value.length - linkedDomainCount.value, 0),
-        description: 'Link to Cloudflare, Namecheap, or DigitalOcean DNS',
+        description: 'Needs a zone',
     },
     {
         id: 'unhealthy',
         label: 'Servers needing attention',
         value: unhealthyServers.value,
-        description: 'Automation agents reported degraded status',
+        description: 'Status not green',
     },
 ]);
 
@@ -467,7 +481,7 @@ const activityFeed = computed(() => {
     }));
 });
 
-const searchSubtitle = computed(() => (!searchTerm.value ? 'Scoped to current filters' : `Filtering inventory for “${searchTerm.value}”`));
+const searchSubtitle = computed(() => (!searchTerm.value ? 'Using current filters' : `Matching “${searchTerm.value}”`));
 
 const linkState = reactive({
     servers: {},
@@ -637,14 +651,14 @@ const linkingTitle = computed(() => {
 
 const linkingDescription = computed(() => {
     if (isServerLink.value) {
-        return 'Select which domains route to this server. We will propagate SSH and deployment context automatically once saved.';
+        return 'Select domains that should route to this server.';
     }
 
     if (isDomainLink.value) {
-        return 'Choose the authoritative server and DNS zone for this domain.';
+        return 'Choose the server and DNS zone for this domain.';
     }
 
-    return 'This action is handled by a specialized workflow.';
+    return 'This action uses a dedicated workflow.';
 });
 
 const linkModalDisabled = computed(() => {

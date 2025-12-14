@@ -26,10 +26,16 @@ class SyncPersonToMonica implements ShouldQueue
 
     public function handle(MonicaClientContract $monica): void
     {
-        $this->person->load('user');
         $this->person->refresh();
+        $this->person->loadMissing('user');
 
-        $credential = $monica->findCredentialForUser($this->person->user);
+        $user = $this->person->user;
+
+        if (! $user) {
+            return;
+        }
+
+        $credential = $monica->findCredentialForUser($user);
 
         if (! $credential) {
             return;
