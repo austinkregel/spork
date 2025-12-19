@@ -49,3 +49,9 @@ class RoomEncryptionEventHandler implements MatrixEventHandlerContract
 
 
 
+
+
+
+
+
+

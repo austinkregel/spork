@@ -69,3 +69,9 @@ class LogMessageToMonica implements ShouldQueue
 
 
 
+
+
+
+
+
+

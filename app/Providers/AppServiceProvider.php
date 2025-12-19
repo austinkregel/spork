@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Console\Commands\CrudCacheCommand;
+use App\Console\Commands\Infrastructure\CreateMonitorBridgeCredentialCommand;
 use App\Console\Commands\Infrastructure\ListenToCommandServerCommand;
 use App\Contracts\Repositories\CredentialRepositoryContract;
 use App\Contracts\Repositories\MatrixClientSyncRepositoryContract;
@@ -225,6 +226,7 @@ class AppServiceProvider extends ServiceProvider
             $this->commands([
                 CrudCacheCommand::class,
                 ListenToCommandServerCommand::class,
+                CreateMonitorBridgeCredentialCommand::class,
             ]);
         }
 

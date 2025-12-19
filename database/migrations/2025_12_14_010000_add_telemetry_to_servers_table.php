@@ -10,19 +10,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('people', function (Blueprint $table): void {
-            $table->string('monica_contact_id')->nullable()->after('identifiers');
+        Schema::table('servers', function (Blueprint $table): void {
+            $table->json('telemetry')->nullable()->after('os');
         });
     }
 
     public function down(): void
     {
-        Schema::table('people', function (Blueprint $table): void {
-            $table->dropColumn('monica_contact_id');
+        Schema::table('servers', function (Blueprint $table): void {
+            $table->dropColumn('telemetry');
         });
     }
 };
-
 
 
 

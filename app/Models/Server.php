@@ -59,6 +59,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
         'booted_at',
         'turned_off_at',
         'os',
+        'telemetry',
     ];
 
     public $dispatchesEvents = [
@@ -76,6 +77,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
             'last_ping_at' => 'datetime',
             'turned_off_at' => 'datetime',
             'booted_at' => 'datetime',
+            'telemetry' => 'array',
         ];
     }
 
