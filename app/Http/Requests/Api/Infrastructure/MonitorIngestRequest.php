@@ -29,8 +29,8 @@ class MonitorIngestRequest extends FormRequest
             return false;
         }
 
-        // Keep this flexible for now: we just require a development credential.
-        if ($credential->type !== Credential::TYPE_DEVELOPMENT) {
+        // Keep this flexible for now: allow monitor bridge credentials.
+        if (! in_array($credential->type, [Credential::TYPE_DEVELOPMENT, Credential::TYPE_BACKUP_AGENT], true)) {
             return false;
         }
 

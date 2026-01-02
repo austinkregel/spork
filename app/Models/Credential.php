@@ -72,6 +72,8 @@ class Credential extends Model implements Crud, ModelQuery, Owner
 
     public const TYPE_DEVELOPMENT = 'development';
 
+    public const TYPE_BACKUP_AGENT = 'backup_agent';
+
     public const TYPE_SOURCE = 'source';
 
     public const TYPE_FINANCE = 'finance';

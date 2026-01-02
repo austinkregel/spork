@@ -51,3 +51,7 @@ class RoomCanonicalAliasEventHandler implements MatrixEventHandlerContract
 
 
 
+
+
+
+

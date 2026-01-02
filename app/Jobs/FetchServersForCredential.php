@@ -14,7 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Nette\NotImplementedException;
+use Illuminate\Support\Facades\Log;
 
 class FetchServersForCredential implements ShouldQueue
 {
@@ -45,9 +45,30 @@ class FetchServersForCredential implements ShouldQueue
             return;
         }
 
-        $this->batch()->add([match ($this->credential->service) {
+        $nextJob = match ($this->credential->service) {
             Credential::DIGITAL_OCEAN => new DigitalOceanSyncJob($this->credential, $this->user),
-            default => throw new NotImplementedException('Service not implemented: '.$this.$this->credential->service),
-        }]);
+            default => null,
+        };
+
+        if (! $nextJob) {
+            Log::error('Unsupported credential service for FetchServersForCredential', [
+                'credential_id' => $this->credential->id,
+                'credential_type' => $this->credential->type,
+                'credential_service' => $this->credential->service,
+                'batch_id' => $this->batch()?->id,
+            ]);
+
+            return;
+        }
+
+        $batch = $this->batch();
+
+        if ($batch) {
+            $batch->add([$nextJob]);
+
+            return;
+        }
+
+        $dispatcher->dispatch($nextJob);
     }
 }

@@ -40,3 +40,7 @@ class RoomRedactionEventHandler implements MatrixEventHandlerContract
 
 
 
+
+
+
+

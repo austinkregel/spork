@@ -42,3 +42,7 @@ class RecentEmojiEventHandler implements MatrixEventHandlerContract
 
 
 
+
+
+
+

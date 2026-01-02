@@ -11,6 +11,7 @@ use App\Models\Domain;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Http;
+use RuntimeException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class CloudflareDomainService implements CloudflareDomainServiceContract
@@ -132,8 +133,8 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
 
         $data = $response->json('result');
 
-        if (! isset($data)) {
-            dd($response->json());
+        if (! is_array($data)) {
+            throw $response->toException() ?? new RuntimeException('Cloudflare DNS response missing result array.');
         }
 
         return new LengthAwarePaginator(

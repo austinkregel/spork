@@ -6,7 +6,6 @@ namespace App\Jobs;
 
 use App\Events\Models\JobBatch\JobBatchUpdated;
 use App\Jobs\Finance\SyncPlaidTransactionsJob;
-use App\Jobs\Servers\LaravelForgeServersSyncJob;
 use App\Models\Credential;
 use App\Models\JobBatch;
 use Illuminate\Bus\Batchable;
@@ -46,17 +45,33 @@ class FetchResourcesFromCredential implements ShouldQueue
             Credential::TYPE_SERVER => new FetchServersForCredential($this->credential),
             Credential::TYPE_FINANCE => new SyncPlaidTransactionsJob($this->credential, now()->subWeek(), now(), false),
             Credential::TYPE_EMAIL => new SyncMailboxIfCredentialsAreSet($this->credential),
-            default => Log::error(sprintf('Found unsupported credential type for FetchResourcesFromCredentialsJob: %s', $this->credential->type), []),
+        
+            default => null,
         };
 
-        if ($this->batch()) {
-            $this->batch()->add([
-                $nextJob,
+        if (! $nextJob) {
+            Log::error('Unsupported credential type for FetchResourcesFromCredential', [
+                'credential_id' => $this->credential->id,
+                'credential_type' => $this->credential->type,
+                'credential_service' => $this->credential->service,
+                'batch_id' => $this->batch()?->id,
             ]);
 
-            broadcast(new JobBatchUpdated(JobBatch::firstWhere('id', $this->batch()->id)));
+            return;
+        }
+
+        $batch = $this->batch();
+
+        if ($batch) {
+            $batch->add([$nextJob]);
+
+            $jobBatch = JobBatch::firstWhere('id', $batch->id);
+
+            if ($jobBatch) {
+                broadcast(new JobBatchUpdated($jobBatch));
+            }
         } else {
-            dispatch($nextJob);
+            $dispatcher->dispatch($nextJob);
         }
     }
 }

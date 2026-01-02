@@ -16,7 +16,10 @@
                                     {{ server.ip_address ?? 'IP unknown' }}
                                 </p>
                             </div>
-                            <Status :status="server.status" />
+                            <div class="flex flex-col items-end gap-2">
+                                <Status :status="server.status" />
+                                <ClientStatusBadge :timestamp="server.last_ping_at" />
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3 text-sm">
@@ -55,6 +58,8 @@
                             {{ item.name }}
                         </Link>
                     </nav>
+
+                    <BridgeStatusIndicator />
                 </aside>
 
                 <main class="flex-1">
@@ -70,6 +75,8 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from '@inertiajs/vue3';
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import Status from "@/Components/Spork/Atoms/Status.vue";
+import BridgeStatusIndicator from "@/Components/Infrastructure/BridgeStatusIndicator.vue";
+import ClientStatusBadge from "@/Components/Infrastructure/ClientStatusBadge.vue";
 import { computed, ref } from "vue";
 import dayjs from 'dayjs';
 import { buildServerNavigation } from '@/Pages/Infrastructure/serverNavigation';

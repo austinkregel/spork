@@ -47,10 +47,31 @@ class FetchRegistrarForCredential implements ShouldQueue
             return;
         }
 
-        $this->batch()->add([match ($this->credential->service) {
+        $nextJob = match ($this->credential->service) {
             Credential::NAMECHEAP => new NamecheapSyncJob($this->credential, $this->user),
             Credential::CLOUDFLARE => new CloudflareSyncJob($this->credential, $this->user),
-            default => Log::error(sprintf('Found unsupported credential type for FetchResourcesFromCredentialsJob: %s', $this->credential->type), []),
-        }]);
+            default => null,
+        };
+
+        if (! $nextJob) {
+            Log::error('Unsupported credential service for FetchRegistrarForCredential', [
+                'credential_id' => $this->credential->id,
+                'credential_type' => $this->credential->type,
+                'credential_service' => $this->credential->service,
+                'batch_id' => $this->batch()?->id,
+            ]);
+
+            return;
+        }
+
+        $batch = $this->batch();
+
+        if ($batch) {
+            $batch->add([$nextJob]);
+
+            return;
+        }
+
+        $dispatcher->dispatch($nextJob);
     }
 }

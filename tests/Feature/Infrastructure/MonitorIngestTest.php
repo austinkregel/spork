@@ -22,7 +22,7 @@ class MonitorIngestTest extends TestCase
     public function test_it_creates_or_updates_server_by_hostname_on_ingest(): void
     {
         $credential = Credential::factory()->create([
-            'type' => Credential::TYPE_DEVELOPMENT,
+            'type' => Credential::TYPE_BACKUP_AGENT,
             'service' => 'monitor-bridge',
             'api_key' => 'bridge-token-'.Str::random(12),
         ]);

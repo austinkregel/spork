@@ -13,6 +13,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 abstract class AbstractSyncResourceJob implements ShouldQueue
 {
@@ -28,4 +30,22 @@ abstract class AbstractSyncResourceJob implements ShouldQueue
     }
 
     abstract public function sync(): void;
+
+    public function failed(Throwable $e): void
+    {
+        Log::error('Sync job failed', [
+            'job_class' => static::class,
+            'job_id' => $this->job?->getJobId(),
+            'job_attempts' => $this->job?->attempts(),
+            'job_queue' => $this->job?->getQueue(),
+            'job_connection' => $this->job?->getConnectionName(),
+            'batch_id' => $this->batch()?->id,
+            'credential_id' => $this->credential->id ?? null,
+            'credential_type' => $this->credential->type ?? null,
+            'credential_service' => $this->credential->service ?? null,
+            'user_id' => $this->user?->id,
+            'exception_class' => $e::class,
+            'exception_message' => $e->getMessage(),
+        ]);
+    }
 }

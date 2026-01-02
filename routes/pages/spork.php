@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Infrastructure\DomainLinkController;
 use App\Http\Controllers\Api\Infrastructure\DnsZoneChangeController;
 use App\Http\Controllers\Api\Infrastructure\DnsZoneRecordController;
 use App\Http\Controllers\Api\Infrastructure\InfrastructureOverviewController;
+use App\Http\Controllers\Api\Infrastructure\MonitorBridgeTokenController;
 use App\Http\Controllers\Api\Infrastructure\ProvisionInfrastructureController;
 use App\Http\Controllers\Api\Infrastructure\ServerLinkController;
 use Illuminate\Support\Facades\Route;
@@ -76,6 +77,8 @@ Route::prefix('api/infrastructure')
     ->name('api.infrastructure.')
     ->group(function (): void {
         Route::get('overview', InfrastructureOverviewController::class)->name('overview');
+
+        Route::get('monitor-bridge/token', MonitorBridgeTokenController::class)->name('monitor-bridge.token');
 
         Route::post('servers/{server}/links', ServerLinkController::class)->name('servers.links.store');
         Route::post('domains/{domain}/link', [DomainLinkController::class, 'store'])->name('domains.link.store');

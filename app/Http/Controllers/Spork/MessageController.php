@@ -59,7 +59,7 @@ class MessageController
                     $query->where('name', 'not like', '%bridge bot%');
                 },
             ])
-            ->orderByDesc('origin_server_ts')
+            ->orderByDesc('latest_message_at')
             ->paginate(request('limit', 10), ['*'], 'page', 1);
     }
 

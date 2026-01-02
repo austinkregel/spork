@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\Infrastructure\RegisterHostController;
+use App\Http\Controllers\Api\Infrastructure\MonitorIngestController;
 use App\Models\Credential;
 
 Route::middleware(['web', 'auth:sanctum'])->get('/register-device', function () {
@@ -85,3 +86,7 @@ Route::post('/api/servers', [
 Route::post('/api/infrastructure/hosts/register', RegisterHostController::class)
     ->middleware('throttle:api')
     ->name('api.infrastructure.hosts.register');
+
+Route::post('/api/infrastructure/monitor/ingest', MonitorIngestController::class)
+    ->middleware('throttle:api')
+    ->name('api.infrastructure.monitor.ingest');
