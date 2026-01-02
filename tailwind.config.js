@@ -16,6 +16,7 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                mono: ['Hack', ...defaultTheme.fontFamily.mono],
             },
             fontSize: {
                 xxs: '0.65rem',

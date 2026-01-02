@@ -12,6 +12,7 @@ use App\Events\Models\Budget\BudgetUpdated;
 use App\Events\Models\Budget\BudgetUpdating;
 use App\Models\Crud;
 use App\Models\Taggable;
+use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use App\Models\User;
@@ -24,6 +25,7 @@ class Budget extends Model implements Crud, Taggable
 {
     use HasFactory;
     use HasTags;
+    use HasProjectResource;
     use ScopeQSearch;
     use ScopeRelativeSearch;
 

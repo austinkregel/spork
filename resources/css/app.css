@@ -1,6 +1,22 @@
 @import "tailwindcss";
 @source "../views";
 
+/* Match backup-server-access terminal font: Hack */
+@font-face {
+    font-family: 'Hack';
+    src:
+        url('hack-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Ensure xterm uses Hack even if it injects its own styles */
+.xterm .xterm-rows,
+.font-hack {
+    font-family: 'Hack' !important;
+}
+
 [x-cloak] {
     display: none;
 }
@@ -237,3 +253,14 @@
     }
     
 }
+
+@font-face {
+    font-family: 'Hack';
+    src: url('hack-regular.woff2?sha=3114f1256') format('woff2'), url('hack-regular.woff?sha=3114f1256') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  .xterm .xterm-rows, .font-hack { font-family: 'Hack' !important; }
+  

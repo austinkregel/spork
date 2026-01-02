@@ -14,6 +14,7 @@ use App\Events\Models\Transaction\TransactionUpdating;
 use App\Models\Credential;
 use App\Models\Crud;
 use App\Models\Taggable;
+use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,6 +28,7 @@ class Transaction extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
     use HasTags;
+    use HasProjectResource;
     use ScopeQSearch;
     use ScopeRelativeSearch;
     use Searchable;

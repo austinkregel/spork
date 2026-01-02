@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,7 @@ class Automation extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
     use HasTags;
+    use HasProjectResource;
     use ScopeQSearch;
     use ScopeRelativeSearch;
 

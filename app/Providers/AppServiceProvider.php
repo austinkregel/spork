@@ -6,7 +6,9 @@ namespace App\Providers;
 
 use App\Console\Commands\CrudCacheCommand;
 use App\Console\Commands\Infrastructure\CreateMonitorBridgeCredentialCommand;
+use App\Console\Commands\Infrastructure\DumpNamecheapApiResponseCommand;
 use App\Console\Commands\Infrastructure\ListenToCommandServerCommand;
+use App\Console\Commands\Infrastructure\UpdateNamecheapWhoisCommand;
 use App\Contracts\Repositories\CredentialRepositoryContract;
 use App\Contracts\Repositories\MatrixClientSyncRepositoryContract;
 use App\Contracts\Repositories\ProjectRepositoryContract;
@@ -227,6 +229,8 @@ class AppServiceProvider extends ServiceProvider
                 CrudCacheCommand::class,
                 ListenToCommandServerCommand::class,
                 CreateMonitorBridgeCredentialCommand::class,
+                UpdateNamecheapWhoisCommand::class,
+                DumpNamecheapApiResponseCommand::class,
             ]);
         }
 

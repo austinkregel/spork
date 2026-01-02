@@ -13,6 +13,7 @@ use App\Events\Models\ExternalRssFeed\ExternalRssFeedUpdated;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedUpdating;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Models\Traits\HasProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -25,6 +26,7 @@ class ExternalRssFeed extends Model implements Crud, Taggable
 {
     use HasFactory;
     use HasTags;
+    use HasProjectResource;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;

@@ -12,6 +12,7 @@ use App\Events\Models\Person\PersonDeleting;
 use App\Jobs\Crm\SyncPersonToMonica;
 use App\Events\Models\Person\PersonUpdated;
 use App\Events\Models\Person\PersonUpdating;
+use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeRelativeSearch;
 use App\Observers\ApplyCredentialsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -26,6 +27,7 @@ use Laravel\Scout\Searchable;
 class Person extends Model implements Crud, ModelQuery
 {
     use HasFactory;
+    use HasProjectResource;
     use ScopeRelativeSearch;
     use Searchable;
 

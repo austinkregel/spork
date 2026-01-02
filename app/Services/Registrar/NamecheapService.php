@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Registrar;
 
+use App\Data\Registrar\WhoisContactSetData;
 use App\Contracts\Services\NamecheapServiceContract;
 use App\Models\Credential;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Http;
+use RuntimeException;
 
 class NamecheapService implements NamecheapServiceContract
 {
@@ -38,7 +40,14 @@ class NamecheapService implements NamecheapServiceContract
             throw new \Exception($domainResponse->Errors->Error);
         }
 
-        $domains = array_map(fn ($obj) => $obj->{'@attributes'}, $domainResponse->CommandResponse->DomainGetListResult->Domain ?? []);
+        $items = $domainResponse->CommandResponse->DomainGetListResult->Domain ?? [];
+
+        // XML-to-json produces object for single item and array for multiple.
+        if (is_object($items)) {
+            $items = [$items];
+        }
+
+        $domains = array_map(fn ($obj) => $obj->{'@attributes'}, is_array($items) ? $items : []);
 
         return new LengthAwarePaginator(
             array_map(fn ($domain) => [
@@ -307,5 +316,110 @@ class NamecheapService implements NamecheapServiceContract
             'order_id' => isset($attributes->OrderID) ? (string) $attributes->OrderID : null,
             'transaction_id' => isset($attributes->TransactionID) ? (string) $attributes->TransactionID : null,
         ];
+    }
+
+    /**
+     * Updates WHOIS contact info on the domain (registrant/admin/tech/aux billing).
+     */
+    public function setDomainContacts(string $domain, WhoisContactSetData $contacts): void
+    {
+        $url = static::NAMECHEAP_URL.'?'.http_build_query(array_merge([
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'Command' => 'namecheap.domains.setContacts',
+            'ClientIp' => $this->credential->settings['client_ip'],
+            'DomainName' => $domain,
+        ], $contacts->toNamecheapParams()));
+
+        $xml = Http::timeout(30)->retry(2, 250)->get($url)->body();
+        $response = json_decode(json_encode(simplexml_load_string($xml)));
+
+        if (isset($response->Errors->Error)) {
+            throw new RuntimeException((string) $response->Errors->Error);
+        }
+    }
+
+    /**
+     * @return array<int, array{whoisguard_id:string, domain:string, status:string|null}>
+     */
+    public function getWhoisGuardList(?string $search_term = null): array
+    {
+        $url = static::NAMECHEAP_URL.'?'.http_build_query([
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'Command' => 'namecheap.whoisguard.getList',
+            'ClientIp' => $this->credential->settings['client_ip'],
+            'SearchTerm' => $search_term,
+            'PageSize' => 100,
+            'Page' => 1,
+        ]);
+
+        $xml = Http::timeout(30)->retry(2, 250)->get($url)->body();
+        $response = json_decode(json_encode(simplexml_load_string($xml)));
+
+        if (isset($response->Errors->Error)) {
+            throw new RuntimeException((string) $response->Errors->Error);
+        }
+
+        $items = $response->CommandResponse->WhoisguardGetListResult->Whoisguard ?? [];
+
+        // XML-to-json produces object for single item and array for multiple.
+        if (is_object($items)) {
+            $items = [$items];
+        }
+
+        return array_values(array_map(function ($item): array {
+            $attributes = $item?->{'@attributes'} ?? $item ?? null;
+
+            return [
+                'whoisguard_id' => (string) ($attributes->ID ?? ''),
+                'domain' => (string) ($attributes->DomainName ?? ''),
+                'status' => isset($attributes->Status) ? (string) $attributes->Status : null,
+            ];
+        }, is_array($items) ? $items : []));
+    }
+
+    /**
+     * Attempts to enable WhoisGuard privacy for this domain.
+     *
+     * Returns true if we successfully enabled it.
+     */
+    public function enableWhoisGuardForDomain(string $domain): bool
+    {
+        $whoisguards = $this->getWhoisGuardList($domain);
+        $match = collect($whoisguards)->first(fn (array $w) => strcasecmp($w['domain'] ?? '', $domain) === 0);
+
+        if (! is_array($match) || ($match['whoisguard_id'] ?? '') === '') {
+            return false;
+        }
+
+        $url = static::NAMECHEAP_URL.'?'.http_build_query([
+            'ApiUser' => $this->credential->settings['api_user'],
+            'ApiKey' => $this->credential->access_token,
+            'UserName' => $this->credential->settings['username'],
+            'Command' => 'namecheap.whoisguard.enable',
+            'ClientIp' => $this->credential->settings['client_ip'],
+            'WhoisGuardID' => $match['whoisguard_id'],
+        ]);
+
+        $xml = Http::timeout(30)->retry(2, 250)->get($url)->body();
+        $response = json_decode(json_encode(simplexml_load_string($xml)));
+
+        if (isset($response->Errors->Error)) {
+            $message = (string) $response->Errors->Error;
+
+            // Allow callers to back off + retry for throttling.
+            if (str_contains(strtolower($message), 'too many requests')) {
+                throw new RuntimeException($message);
+            }
+
+            // Treat "not available" and similar vendor failures as "not enabled"
+            // so the caller can continue processing.
+            return false;
+        }
+
+        return true;
     }
 }

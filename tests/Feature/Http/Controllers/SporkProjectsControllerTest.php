@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Domain;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Project;
@@ -22,6 +23,17 @@ class SporkProjectsControllerTest extends TestCase
         $response = $this->actingAsUser()->get('http://spork.localhost/-/projects/create');
 
         $response->assertStatus(200);
+    }
+
+    public function test_projects_create_route_includes_templates_and_registry()
+    {
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects/create');
+
+        $response->assertInertia(fn ($page) => $page
+            ->component('Projects/Create')
+            ->has('project_templates')
+            ->has('project_resource_registry')
+        );
     }
 
     public function test_projects_show_route_is_accessible()
@@ -52,6 +64,73 @@ class SporkProjectsControllerTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Projects/Project')
             ->has('project')
+            ->has('project_resource_registry')
         );
+    }
+
+    public function test_can_attach_allowed_resource_type_to_project()
+    {
+        $project = Project::factory()->create();
+        $domain = Domain::factory()->create();
+
+        $response = $this->actingAsUser()->post("http://spork.localhost/-/project/{$project->id}/attach", [
+            'resource_type' => \App\Models\Domain::class,
+            'resource_id' => $domain->id,
+        ]);
+
+        $response->assertStatus(204);
+
+        $this->assertDatabaseHas('project_resources', [
+            'project_id' => $project->id,
+            'resource_type' => \App\Models\Domain::class,
+            'resource_id' => $domain->id,
+        ]);
+    }
+
+    public function test_cannot_attach_disallowed_resource_type_to_project()
+    {
+        $project = Project::factory()->create();
+
+        $this->actingAsUser();
+
+        $response = $this->postJson("http://spork.localhost/-/project/{$project->id}/attach", [
+            'resource_type' => \App\Models\User::class,
+            'resource_id' => $this->user->id,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['resource_type']);
+    }
+
+    public function test_project_store_can_persist_template_settings_and_attach_resources()
+    {
+        $this->actingAsUser();
+        $user = $this->user;
+        $domain = Domain::factory()->create();
+
+        $response = $this->post('http://spork.localhost/-/projects', [
+            'name' => 'My Project',
+            'user_id' => $user->id,
+            'settings' => [
+                'template' => 'research_hub',
+            ],
+            'attachments' => [
+                [
+                    'resource_type' => \App\Models\Domain::class,
+                    'resource_id' => $domain->id,
+                ],
+            ],
+        ]);
+
+        $response->assertRedirect();
+
+        $project = Project::query()->where('name', 'My Project')->firstOrFail();
+        $this->assertSame('research_hub', $project->settings['template'] ?? null);
+
+        $this->assertDatabaseHas('project_resources', [
+            'project_id' => $project->id,
+            'resource_type' => \App\Models\Domain::class,
+            'resource_id' => $domain->id,
+        ]);
     }
 }
