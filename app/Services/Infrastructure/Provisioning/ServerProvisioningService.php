@@ -15,8 +15,7 @@ class ServerProvisioningService
 {
     public function __construct(
         private readonly ServerServiceFactory $serverServiceFactory,
-    ) {
-    }
+    ) {}
 
     public function handle(InfrastructureProvisionRequest $request): array
     {
@@ -132,9 +131,3 @@ class ServerProvisioningService
         return Arr::get($serverDetails, $key);
     }
 }
-
-
-
-
-
-

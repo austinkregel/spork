@@ -34,7 +34,8 @@ class SearchTest extends TestCase
             'service' => Credential::NAMECHEAP,
         ]);
 
-        $fakeService = new class implements RegistrarServiceContract {
+        $fakeService = new class implements RegistrarServiceContract
+        {
             public function getDomains(int $limit = 10, int $page = 1): \Illuminate\Pagination\LengthAwarePaginator
             {
                 return new \Illuminate\Pagination\LengthAwarePaginator([], 0, $limit, $page);
@@ -76,7 +77,8 @@ class SearchTest extends TestCase
             }
         };
 
-        app()->instance(RegistrarServiceFactory::class, new class($fakeService) extends RegistrarServiceFactory {
+        app()->instance(RegistrarServiceFactory::class, new class($fakeService) extends RegistrarServiceFactory
+        {
             public function __construct(private RegistrarServiceContract $service) {}
 
             public function make(Credential $credential): RegistrarServiceContract
@@ -97,5 +99,3 @@ class SearchTest extends TestCase
         );
     }
 }
-
-

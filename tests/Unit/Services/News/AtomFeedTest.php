@@ -11,7 +11,7 @@ class AtomFeedTest extends TestCase
 {
     public function test_get_data_maps_atom_entries_to_feed_items(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Example Feed</title>
@@ -41,7 +41,7 @@ XML;
 
     public function test_get_data_skips_entries_without_id(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Example Feed</title>
@@ -60,5 +60,3 @@ XML;
         $this->assertSame([], $items);
     }
 }
-
-

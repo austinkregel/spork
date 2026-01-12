@@ -37,5 +37,3 @@ class ProjectResourceRegistryTest extends TestCase
         $this->assertNotEmpty($domainMeta['group']);
     }
 }
-
-

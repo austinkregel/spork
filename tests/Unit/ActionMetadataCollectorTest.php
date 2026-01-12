@@ -12,10 +12,10 @@ use Tests\TestCase;
 
 class ActionMetadataCollectorTest extends TestCase
 {
-    public function testCollectReturnsActionsForModel(): void
+    public function test_collect_returns_actions_for_model(): void
     {
         $collector = new ActionMetadataCollector([ExampleAction::class]);
-        $actions = $collector->collect(new ExampleModel());
+        $actions = $collector->collect(new ExampleModel);
 
         $this->assertCount(1, $actions);
         $this->assertInstanceOf(ActionMetadata::class, $actions[0]);
@@ -34,4 +34,3 @@ class ExampleAction implements ActionInterface
         return ['name' => 'text'];
     }
 }
-

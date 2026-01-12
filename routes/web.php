@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 Route::redirect('/login', '/flight/login');
 
+Route::domain('dionysis.kregel.host')
+->group(function () {
+    Route::any('privacy-hook-please-dont-disable', function () {
+        info('dionysis.kregel.host', request()->all());
+
+        return 'ok';
+    });
+});
+
 Route::domain('echo.kregel.dev')
 //    ->middleware('throttle:5')
     ->withoutMiddleware(['web'])

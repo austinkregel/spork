@@ -123,9 +123,7 @@ class DigitalOceanSyncJobTest extends TestCase
     {
         $service = new class($servers) implements ServerServiceContract
         {
-            public function __construct(private readonly array $servers)
-            {
-            }
+            public function __construct(private readonly array $servers) {}
 
             public function createServer(array $config): array
             {
@@ -147,29 +145,17 @@ class DigitalOceanSyncJobTest extends TestCase
                 return $this->servers;
             }
 
-            public function removeServerKey($identifier): void
-            {
-            }
+            public function removeServerKey($identifier): void {}
 
-            public function deleteServer(int|string $identifier): void
-            {
-            }
+            public function deleteServer(int|string $identifier): void {}
 
-            public function powerOnServer(int|string $identifier): void
-            {
-            }
+            public function powerOnServer(int|string $identifier): void {}
 
-            public function powerOffServer(int|string $identifier): void
-            {
-            }
+            public function powerOffServer(int|string $identifier): void {}
 
-            public function shutdownServer(int|string $identifier): void
-            {
-            }
+            public function shutdownServer(int|string $identifier): void {}
 
-            public function rebootServer(int|string $identifier): void
-            {
-            }
+            public function rebootServer(int|string $identifier): void {}
 
             public function findAllSshkeys(): array
             {
@@ -189,9 +175,7 @@ class DigitalOceanSyncJobTest extends TestCase
 
         return new class($service) extends ServerServiceFactory
         {
-            public function __construct(private readonly ServerServiceContract $service)
-            {
-            }
+            public function __construct(private readonly ServerServiceContract $service) {}
 
             public function make(Credential $credential): ServerServiceContract
             {
@@ -200,5 +184,3 @@ class DigitalOceanSyncJobTest extends TestCase
         };
     }
 }
-
-

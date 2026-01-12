@@ -26,5 +26,3 @@ class TestEchoOperation extends Operation
         $this->save();
     }
 }
-
-

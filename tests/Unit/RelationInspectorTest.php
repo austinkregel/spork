@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use App\Services\Development\DescribeTable\RelationInspector;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Tests\TestCase;
 use Tests\Fixtures\Models\ExampleModel;
+use Tests\TestCase;
 
 class RelationInspectorTest extends TestCase
 {
-    public function testInspectReturnsRelationMethods(): void
+    public function test_inspect_returns_relation_methods(): void
     {
         $model = new class extends ExampleModel
         {
@@ -22,10 +21,9 @@ class RelationInspectorTest extends TestCase
             }
         };
 
-        $inspector = new RelationInspector();
+        $inspector = new RelationInspector;
         $relations = $inspector->inspect($model);
 
         $this->assertSame(['related'], $relations);
     }
 }
-

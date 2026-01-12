@@ -55,5 +55,3 @@ class IgnoredRoomEventHandler implements MatrixEventHandlerContract
         );
     }
 }
-
-

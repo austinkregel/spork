@@ -30,4 +30,3 @@ class ExampleTaggableModel extends ExampleModel implements Taggable
         return $this;
     }
 }
-

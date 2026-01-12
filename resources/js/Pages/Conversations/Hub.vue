@@ -494,11 +494,41 @@ watch(
     }
 );
 
+function consumeReplyIntentFromSession() {
+    const threadId = sessionStorage.getItem('spork.chat.reply_to_thread_id');
+    const eventId = sessionStorage.getItem('spork.chat.reply_to_event_id');
+
+    if (!threadId || !eventId) {
+        return;
+    }
+
+    if (String(threadId) !== String(activeThreadId.value ?? '')) {
+        return;
+    }
+
+    const message = (activeThread.value?.messages ?? []).find((item) => String(item?.event_id ?? '') === String(eventId));
+
+    if (!message) {
+        return;
+    }
+
+    sessionStorage.removeItem('spork.chat.reply_to_thread_id');
+    sessionStorage.removeItem('spork.chat.reply_to_event_id');
+
+    startReply(message);
+}
+
 onMounted(() => {
     nextTick(() => {
         snapToBottom();
+        consumeReplyIntentFromSession();
     });
 });
+
+watch(
+    () => activeThreadId.value,
+    () => nextTick(() => consumeReplyIntentFromSession())
+);
 
 const toggleEmoji = () => {
     emojiOpen.value = !emojiOpen.value;

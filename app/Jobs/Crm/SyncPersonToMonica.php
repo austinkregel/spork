@@ -21,8 +21,7 @@ class SyncPersonToMonica implements ShouldQueue
 
     public function __construct(
         public Person $person,
-    ) {
-    }
+    ) {}
 
     public function handle(MonicaClientContract $monica): void
     {
@@ -53,4 +52,3 @@ class SyncPersonToMonica implements ShouldQueue
         }
     }
 }
-

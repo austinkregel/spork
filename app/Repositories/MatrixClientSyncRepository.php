@@ -23,7 +23,7 @@ class MatrixClientSyncRepository implements MatrixClientSyncRepositoryContract
         protected MatrixEventHandlerRegistry $registry,
         protected MatrixEventSupport $support,
     ) {
-        $this->state = new MatrixSyncState();
+        $this->state = new MatrixSyncState;
     }
 
     public function process(array $sync, Credential $credential, User $user): void
@@ -87,5 +87,3 @@ class MatrixClientSyncRepository implements MatrixClientSyncRepositoryContract
         ]);
     }
 }
-
-

@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Controllers;
 
-use App;
-use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class CrudControllerTest extends TestCase
@@ -133,9 +130,6 @@ class CrudControllerTest extends TestCase
         $response->assertJson($project->toArray());
     }
 
-    /**
-     * @return User|null
-     */
     public function getUser(): ?User
     {
         return $this->user;

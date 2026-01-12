@@ -19,23 +19,3 @@ class WebSettingsEventHandler implements MatrixEventHandlerContract
         $context->state->setClient($context->event['content'] ?? []);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

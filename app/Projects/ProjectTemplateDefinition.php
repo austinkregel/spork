@@ -7,7 +7,13 @@ namespace App\Projects;
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
- * @phpstan-type ProjectTemplateSection array{key: string, label: string, description?: string, allowed_resource_groups?: list<string>}
+ * @phpstan-type ProjectTemplateSection array{
+ *   key: string,
+ *   label: string,
+ *   description?: string,
+ *   allowed_resource_groups?: list<string>,
+ *   allowed_resource_types?: list<class-string>
+ * }
  */
 class ProjectTemplateDefinition implements Arrayable
 {
@@ -21,8 +27,7 @@ class ProjectTemplateDefinition implements Arrayable
         public readonly string $description,
         public readonly array $sections,
         public readonly array $preferred_resource_types = [],
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
@@ -35,5 +40,3 @@ class ProjectTemplateDefinition implements Arrayable
         ];
     }
 }
-
-

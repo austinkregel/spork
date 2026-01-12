@@ -24,7 +24,7 @@ class DomainServiceFactoryTest extends TestCase
             'access_token' => 'fake-token',
         ]);
 
-        $factory = new DomainServiceFactory();
+        $factory = new DomainServiceFactory;
 
         $service = $factory->make($credential);
 
@@ -44,12 +44,10 @@ class DomainServiceFactoryTest extends TestCase
             $mock->shouldReceive('authenticate')->once();
         }));
 
-        $factory = new DomainServiceFactory();
+        $factory = new DomainServiceFactory;
 
         $service = $factory->make($credential);
 
         $this->assertInstanceOf(DigitalOceanService::class, $service);
     }
 }
-
-

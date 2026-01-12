@@ -22,8 +22,7 @@ class ApplyDnsZoneChangesJob implements ShouldQueue
         public int $dnsZoneId,
         public int $userId,
         public array $changes,
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {
@@ -43,22 +42,3 @@ class ApplyDnsZoneChangesJob implements ShouldQueue
         $zone->update(['settings' => $settings]);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

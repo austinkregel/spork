@@ -40,8 +40,3 @@ return new class extends Migration
         Schema::dropIfExists('privacy_cards');
     }
 };
-
-
-
-
-

@@ -41,5 +41,3 @@ class ManualTransactionService
         return $transaction->fresh(['tags', 'account']);
     }
 }
-
-

@@ -22,8 +22,7 @@ class MonicaClient implements MonicaClientContract
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-    ) {
-    }
+    ) {}
 
     public function findCredentialForUser(User $user): ?Credential
     {
@@ -191,4 +190,3 @@ class MonicaClient implements MonicaClientContract
         return Str::limit((string) ($message->message ?? strip_tags((string) $message->html_message)), 120);
     }
 }
-

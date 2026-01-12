@@ -30,23 +30,3 @@ class RoomTopicEventHandler implements MatrixEventHandlerContract
         $thread->update(['description' => $context->event['content']['topic'] ?? null]);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -24,8 +24,8 @@ use Spatie\Tags\HasTags;
 class Budget extends Model implements Crud, Taggable
 {
     use HasFactory;
-    use HasTags;
     use HasProjectResource;
+    use HasTags;
     use ScopeQSearch;
     use ScopeRelativeSearch;
 

@@ -25,23 +25,3 @@ class SecretStorageKeyEventHandler implements MatrixEventHandlerContract
         $context->state->mergeKey($key, $context->event['content'] ?? []);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

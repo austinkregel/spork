@@ -44,12 +44,3 @@ class ServerResource extends JsonResource
         ];
     }
 }
-
-
-
-
-
-
-
-
-

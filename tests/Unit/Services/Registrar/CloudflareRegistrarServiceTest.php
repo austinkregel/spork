@@ -219,5 +219,3 @@ class CloudflareRegistrarServiceTest extends TestCase
         $service->renewDomain('example.com', 1);
     }
 }
-
-

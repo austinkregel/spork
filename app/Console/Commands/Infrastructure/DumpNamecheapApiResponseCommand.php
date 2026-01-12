@@ -94,5 +94,3 @@ class DumpNamecheapApiResponseCommand extends Command
         return $data;
     }
 }
-
-

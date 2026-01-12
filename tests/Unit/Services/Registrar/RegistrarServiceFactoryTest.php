@@ -21,7 +21,7 @@ class RegistrarServiceFactoryTest extends TestCase
             'settings' => [],
         ]);
 
-        $factory = new RegistrarServiceFactory();
+        $factory = new RegistrarServiceFactory;
 
         $service = $factory->make($credential);
 
@@ -40,7 +40,7 @@ class RegistrarServiceFactoryTest extends TestCase
             'access_token' => 'fake-token',
         ]);
 
-        $factory = new RegistrarServiceFactory();
+        $factory = new RegistrarServiceFactory;
 
         $service = $factory->make($credential);
 
@@ -59,12 +59,10 @@ class RegistrarServiceFactoryTest extends TestCase
             ],
         ]);
 
-        $factory = new RegistrarServiceFactory();
+        $factory = new RegistrarServiceFactory;
 
         $service = $factory->make($credential);
 
         $this->assertInstanceOf(TucowsEnomService::class, $service);
     }
 }
-
-

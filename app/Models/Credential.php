@@ -18,7 +18,6 @@ use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use App\Observers\ApplyCredentialsObserver;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -83,6 +82,15 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public const TYPE_EMAIL = 'email';
 
     public const MONICA = 'monica';
+
+    public const PLAID = 'plaid';
+
+    public const PRIVACY = 'privacy';
+
+    public const ALL_FINANCE_PROVIDERS = [
+        self::PLAID,
+        self::PRIVACY,
+    ];
 
     public const ALL_DOMAIN_PROVIDERS = [
         self::DIGITAL_OCEAN,

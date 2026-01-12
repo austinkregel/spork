@@ -25,23 +25,3 @@ class LocalNotificationSettingsEventHandler implements MatrixEventHandlerContrac
         $context->state->mergeDevice($deviceId, $context->event['content'] ?? []);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

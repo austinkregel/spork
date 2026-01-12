@@ -28,12 +28,6 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-
-    if (\Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures()) {
-        Route::delete('/user', [\Laravel\Jetstream\Http\Controllers\Inertia\CurrentUserController::class, 'destroy'])
-            ->name('current-user.destroy');
-    }
-
     $instances = LaravelProgrammingStyle::instancesOf(CustomAction::class);
 
     foreach ($instances->constructorProperty('slug') as $file => $classAndSlug) {
@@ -68,6 +62,7 @@ Route::middleware([
     Route::get('/api/suggest/operations', [Controllers\Api\SuggestController::class, 'operations'])->name('api.suggest.operations');
 
     Route::post('/api/projects/{project}/tasks', Controllers\Api\Projects\CreateTaskController::class);
+    Route::post('/api/projects/{project}/research', Controllers\Api\Projects\CreateResearchController::class);
     Route::post('/api/credentials', [Controllers\Api\CredentialController::class, 'store']);
 
     Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
@@ -123,15 +118,10 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
         return response('', 204);
     });
 
-    Route::get('/rss-feeds', fn () => Inertia::render('RssFeeds/Index', [
-        'feeds' => \App\Models\Article::query()->latest('last_modified')
-            ->with('author.tags')
-            ->paginate()
-            ->items(),
-        'pagination' => \App\Models\Article::query()->latest('last_modified')
-            ->with('author.tags')
-            ->paginate(),
-    ]));
+    Route::get('/rss-feeds', [Controllers\Spork\RssFeedsController::class, 'index'])->name('rss-feeds.index');
+    Route::get('/rss-feeds/{socialFeed}', [Controllers\Spork\RssFeedsController::class, 'show'])->name('rss-feeds.show');
+    Route::post('/rss-feeds/{socialFeed}/make-public', [Controllers\Spork\RssFeedsController::class, 'makePublic'])->name('rss-feeds.make-public');
+    Route::post('/rss-feeds/{socialFeed}/make-private', [Controllers\Spork\RssFeedsController::class, 'makePrivate'])->name('rss-feeds.make-private');
     Route::get('/batch-jobs', [Controllers\Spork\BatchJobController::class, 'index'])->name('batch-jobs.index');
     Route::get('/batch-jobs/{batch_job}', [Controllers\Spork\BatchJobController::class, 'show'])->name('batch-jobs.show');
 
@@ -165,8 +155,17 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
         Route::get('/', [Controllers\Spork\BankingController::class, 'overview'])->name('overview');
         Route::get('/accounts', [Controllers\Spork\BankingController::class, 'accounts'])->name('accounts');
         Route::get('/budgets', [Controllers\Spork\BankingController::class, 'budgets'])->name('budgets');
+        Route::get('/budgets/{budget}', [Controllers\Spork\BankingBudgetController::class, 'show'])->name('budgets.show');
         Route::get('/transactions', [Controllers\Spork\BankingController::class, 'transactions'])->name('transactions');
+        Route::get('/privacy', [Controllers\Spork\BankingController::class, 'privacy'])->name('privacy');
         Route::get('/settings', [Controllers\Spork\BankingController::class, 'settings'])->name('settings');
+
+        Route::post('/budgets', [Controllers\Spork\BankingBudgetsController::class, 'store'])->name('budgets.store');
+        Route::put('/budgets/{budget}', [Controllers\Spork\BankingBudgetsController::class, 'update'])->name('budgets.update');
+        Route::delete('/budgets/{budget}', [Controllers\Spork\BankingBudgetsController::class, 'destroy'])->name('budgets.destroy');
+
+        Route::put('/transactions/{transaction}/tags', [Controllers\Spork\BankingTransactionTagsController::class, 'update'])
+            ->name('transactions.tags.update');
 
         Route::post('/manual-transactions', [Controllers\Spork\ManualTransactionController::class, 'store'])
             ->name('manual-transactions.store');
@@ -213,6 +212,18 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/automation/tags/{tag}', [Controllers\Spork\AutomationController::class, 'show'])->name('automation.tags.show');
 
     Route::prefix('/automation')->name('automation.')->group(function () {
+        Route::post('tags', Controllers\Spork\AutomationTagsController::class)
+            ->name('tags.store');
+        Route::patch('tags/{tag}', [Controllers\Spork\AutomationTagsController::class, 'update'])
+            ->name('tags.update');
+
+        Route::post('tags/{tag}/conditions', [Controllers\Spork\AutomationTagConditionsController::class, 'store'])
+            ->name('tags.conditions.store');
+        Route::put('tags/{tag}/conditions/{condition}', [Controllers\Spork\AutomationTagConditionsController::class, 'update'])
+            ->name('tags.conditions.update');
+        Route::delete('tags/{tag}/conditions/{condition}', [Controllers\Spork\AutomationTagConditionsController::class, 'destroy'])
+            ->name('tags.conditions.destroy');
+
         Route::resource('automations', Controllers\Spork\AutomationsController::class)
             ->parameters(['automations' => 'automation']);
         Route::post('automations/{automation}/run-now', [Controllers\Spork\AutomationsController::class, 'runNow'])

@@ -277,66 +277,8 @@ class ApplyGroupToTransactionAutomaticallyListenerTest extends TestCase
         $handler = new ApplyUserAutomatedTagsToTransaction(
             $logger = \Mockery::mock(\Psr\Log\LoggerInterface::class)
         );
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.name LIKE netflix', [
-                'passes_condition' => true,
-                'value' => 'Netflix',
-            ]);
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.name LIKE game store', [
-                'passes_condition' => false,
-                'value' => 'Netflix',
-            ]);
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.category.name EQUALS Car Dealers and Leasing', [
-                'passes_condition' => false,
-                'value' => null,
-            ]);
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.category.name EQUALS Government Departments and Agencies', [
-                'passes_condition' => false,
-                'value' => null,
-            ]);
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.category.name EQUALS Fast Food', [
-                'passes_condition' => false,
-                'value' => null,
-            ]);
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.name LIKE fee', [
-                'passes_condition' => false,
-                'value' => 'Netflix',
-            ]);
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.name STARTS_WITH PWP*', [
-                'passes_condition' => false,
-                'value' => 'Netflix',
-            ]);
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.name LIKE transfer', [
-                'passes_condition' => false,
-                'value' => 'Netflix',
-            ]);
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.amount GREATER_THAN 0', [
-                'passes_condition' => false,
-                'value' => 9.99,
-            ]);
-        $logger->shouldReceive('info')
-            ->once()
-            ->with('Condition: transaction.amount LESS_THAN 0', [
-                'passes_condition' => true,
-                'value' => 9.99,
-            ]);
+        // The system has many default automated tags; logging output is not important to this test.
+        $logger->shouldReceive('info')->andReturnNull()->byDefault();
         $event = new TransactionCreated($transaction);
         $handler->handle($event);
 

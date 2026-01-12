@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Infrastructure;
 
 use App\Models\Credential;
@@ -27,12 +29,12 @@ class RegisterHostTest extends TestCase
             'api_key' => 'test-token-'.Str::random(12),
         ]);
 
-        $response = $this->postJson('http://echo.kregel.dev/api/infrastructure/hosts/register', [
+        $response = $this->postJson(route('api.infrastructure.hosts.register'), [
             'machine_id' => 'machine-'.Str::random(12),
             'name' => 'baremetal-01',
             'ip_address' => '203.0.113.10',
         ], [
-            'Authentication' => 'Bearer '.$credential->api_key,
+            'Authorization' => 'Bearer '.$credential->api_key,
         ]);
 
         $response->assertOk();
@@ -48,7 +50,7 @@ class RegisterHostTest extends TestCase
 
     public function test_it_rejects_missing_or_invalid_authentication_header(): void
     {
-        $response = $this->postJson('http://echo.kregel.dev/api/infrastructure/hosts/register', [
+        $response = $this->postJson(route('api.infrastructure.hosts.register'), [
             'machine_id' => 'machine-'.Str::random(12),
             'name' => 'baremetal-01',
         ]);
@@ -66,21 +68,21 @@ class RegisterHostTest extends TestCase
 
         $machineId = 'machine-'.Str::random(12);
 
-        $first = $this->postJson('http://echo.kregel.dev/api/infrastructure/hosts/register', [
+        $first = $this->postJson(route('api.infrastructure.hosts.register'), [
             'machine_id' => $machineId,
             'name' => 'baremetal-01',
         ], [
-            'Authentication' => 'Bearer '.$credential->api_key,
+            'Authorization' => 'Bearer '.$credential->api_key,
         ]);
 
         $first->assertOk();
         $first->assertJsonPath('created', true);
 
-        $second = $this->postJson('http://echo.kregel.dev/api/infrastructure/hosts/register', [
+        $second = $this->postJson(route('api.infrastructure.hosts.register'), [
             'machine_id' => $machineId,
             'name' => 'baremetal-01-renamed',
         ], [
-            'Authentication' => 'Bearer '.$credential->api_key,
+            'Authorization' => 'Bearer '.$credential->api_key,
         ]);
 
         $second->assertOk();
@@ -116,15 +118,13 @@ class RegisterHostTest extends TestCase
 
         $this->assertNotNull($server->id);
 
-        $response = $this->postJson('http://echo.kregel.dev/api/infrastructure/hosts/register', [
+        $response = $this->postJson(route('api.infrastructure.hosts.register'), [
             'machine_id' => $machineId,
             'name' => 'attempted-hijack',
         ], [
-            'Authentication' => 'Bearer '.$credentialB->api_key,
+            'Authorization' => 'Bearer '.$credentialB->api_key,
         ]);
 
         $response->assertStatus(409);
     }
 }
-
-

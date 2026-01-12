@@ -69,16 +69,3 @@ class SyncPersonToMonicaTest extends TestCase
         $this->assertNull($person->fresh()->monica_contact_id);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

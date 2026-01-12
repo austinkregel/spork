@@ -157,4 +157,3 @@ class MessageReactionController extends Controller
         return [$person, $client, $identifier];
     }
 }
-

@@ -51,6 +51,7 @@ abstract class TestCase extends BaseTestCase
 
         return $user;
     }
+
     public function actingAsUser(): static
     {
         if (! Role::firstWhere('name', 'developer')) {

@@ -28,8 +28,7 @@ class TableDescription implements Arrayable, JsonSerializable
         public readonly array $actions = [],
         public readonly array|Collection $tags = [],
         public readonly array $permissions = [],
-    ) {
-    }
+    ) {}
 
     /**
      * Convenience constructor when a model instance is already in hand.
@@ -206,4 +205,3 @@ class TableDescription implements Arrayable, JsonSerializable
         return $this->toArray();
     }
 }
-

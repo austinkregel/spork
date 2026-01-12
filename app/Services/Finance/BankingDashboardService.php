@@ -11,14 +11,13 @@ use App\Models\Finance\Transaction;
 use App\Models\Tag;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Collection;
 
 class BankingDashboardService
 {
     public function __construct(
         protected BudgetCalculationService $budgetCalculationService,
         protected BudgetPeriodHelper $budgetPeriodHelper,
+        protected DefaultBudgetService $defaultBudgetService,
     ) {}
 
     public function preferencesFor(User $user): BankingPreference
@@ -111,20 +110,28 @@ class BankingDashboardService
         $preferences ??= $this->preferencesFor($user);
         $pinnedOrder = $preferences->pinned_budgets ?? [];
         $now = now('UTC');
+        $netMonthlyIncome = $this->defaultBudgetService->resolveNetMonthlyIncome($user);
 
         $budgets = $user->budgets()
             ->with('tags')
             ->get()
-            ->map(function (Budget $budget) use ($pinnedOrder, $now) {
+            ->map(function (Budget $budget) use ($pinnedOrder, $now, $netMonthlyIncome) {
                 $current = $this->budgetCalculationService->getPeriodStats($budget, $now);
                 $previous = $this->budgetCalculationService->getPreviousPeriodStats($budget, $now);
                 $pinned = in_array($budget->id, $pinnedOrder, true);
+                $monthlyBudgetAmount = $this->normalizeToMonthlyAmount((float) $budget->amount, $budget);
+                $monthlySpend = $this->normalizeToMonthlyAmount((float) ($current['total_spend'] ?? 0.0), $budget);
+                $expectedPercentOfIncome = $netMonthlyIncome > 0 ? ($monthlyBudgetAmount / $netMonthlyIncome) * 100.0 : 0.0;
+                $actualPercentOfIncome = $netMonthlyIncome > 0 ? ($monthlySpend / $netMonthlyIncome) * 100.0 : 0.0;
 
                 return [
                     'id' => $budget->id,
                     'name' => $budget->name,
                     'amount' => $budget->amount,
                     'frequency' => $budget->getFrequencyEnum(),
+                    'interval' => $budget->getIntervalInt(),
+                    'started_at' => $budget->started_at?->toDateString(),
+                    'count' => $budget->count,
                     'tags' => $budget->tags->map(fn (Tag $tag) => [
                         'id' => $tag->id,
                         'name' => $tag->name,
@@ -133,6 +140,11 @@ class BankingDashboardService
                     'previous' => $previous,
                     'delta' => $current['total_spend'] - $previous['total_spend'],
                     'pinned' => $pinned,
+                    'net_monthly_income' => $netMonthlyIncome,
+                    'expected_monthly_budget_amount' => $monthlyBudgetAmount,
+                    'actual_monthly_spend' => $monthlySpend,
+                    'expected_percent_of_income' => round($expectedPercentOfIncome, 2),
+                    'actual_percent_of_income' => round($actualPercentOfIncome, 2),
                 ];
             })
             ->all();
@@ -157,6 +169,20 @@ class BankingDashboardService
         });
 
         return $budgets;
+    }
+
+    protected function normalizeToMonthlyAmount(float $amount, Budget $budget): float
+    {
+        $interval = max(1, (int) $budget->getIntervalInt());
+        $frequency = strtoupper((string) $budget->getFrequencyEnum());
+
+        // Normalize budget amount to an approximate "per month" figure for percent-of-income reporting.
+        return match ($frequency) {
+            'DAILY' => ($amount * (365 / 12)) / $interval,
+            'WEEKLY' => ($amount * (52 / 12)) / $interval,
+            'YEARLY', 'ANNUALLY' => ($amount / 12) / $interval,
+            default => $amount / $interval, // MONTHLY and unknowns fall back to "per interval month"
+        };
     }
 
     public function recentTransactions(User $user, int $limit = 10): array
@@ -195,6 +221,7 @@ class BankingDashboardService
             ['label' => 'Accounts', 'tab' => 'accounts', 'href' => route('banking.accounts')],
             ['label' => 'Budgets', 'tab' => 'budgets', 'href' => route('banking.budgets')],
             ['label' => 'Transactions', 'tab' => 'transactions', 'href' => route('banking.transactions')],
+            ['label' => 'Privacy', 'tab' => 'privacy', 'href' => route('banking.privacy')],
             ['label' => 'Settings', 'tab' => 'settings', 'href' => route('banking.settings')],
         ];
 
@@ -335,5 +362,3 @@ class BankingDashboardService
             }, 0.0);
     }
 }
-
-

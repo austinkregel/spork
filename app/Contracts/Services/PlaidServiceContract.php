@@ -35,4 +35,6 @@ interface PlaidServiceContract
     public function updateLinkToken(string $userId, string $accessToken): array;
 
     public function updateWebhook(string $access_token): array;
+
+    public function syncTransactions(string $access_token, ?string $cursor = null): array;
 }

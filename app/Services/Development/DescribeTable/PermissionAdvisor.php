@@ -13,8 +13,7 @@ class PermissionAdvisor
 {
     public function __construct(
         private readonly AuthFactory $auth,
-    ) {
-    }
+    ) {}
 
     public function forModel(Model $model): array
     {
@@ -48,4 +47,3 @@ class PermissionAdvisor
         return method_exists($user, 'hasRole') && $user->hasRole('developer');
     }
 }
-

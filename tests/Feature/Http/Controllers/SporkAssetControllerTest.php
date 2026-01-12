@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,6 +17,7 @@ class SporkAssetControllerTest extends TestCase
 
         $response->assertStatus(200);
     }
+
     public function test_assets_route_loads_expected_data()
     {
         $response = $this->actingAsUser()->get('http://spork.localhost/-/assets');

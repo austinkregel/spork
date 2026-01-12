@@ -119,4 +119,3 @@ class PlaidServiceTest extends TestCase
         return new PlaidService($httpService, $logManager);
     }
 }
-

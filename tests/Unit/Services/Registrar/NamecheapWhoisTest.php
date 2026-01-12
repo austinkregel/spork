@@ -26,7 +26,7 @@ class NamecheapWhoisTest extends TestCase
 
     public function test_set_domain_contacts_hits_set_contacts_command(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -70,7 +70,7 @@ XML;
 
     public function test_enable_whois_guard_returns_false_when_not_available(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -91,5 +91,3 @@ XML;
         $this->assertFalse($service->enableWhoisGuardForDomain('example.com'));
     }
 }
-
-

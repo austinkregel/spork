@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Infrastructure;
 
+use App\Contracts\Services\DigitalOceanServiceContract;
 use App\Jobs\Infrastructure\ProvisionInfrastructureJob;
 use App\Models\Credential;
 use App\Models\Domain;
 use App\Models\InfrastructureProvisionRequest;
 use App\Models\User;
-use App\Contracts\Services\DigitalOceanServiceContract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Tests\Fakes\FakeDigitalOceanService;
@@ -56,7 +56,7 @@ class ProvisionInfrastructureTest extends TestCase
                 'expires_at' => now()->addYear(),
             ]);
 
-        app()->bind(DigitalOceanServiceContract::class, fn ($app, $params) => new FakeDigitalOceanService());
+        app()->bind(DigitalOceanServiceContract::class, fn ($app, $params) => new FakeDigitalOceanService);
 
         $this->actingAs($user, 'sanctum');
 
@@ -110,4 +110,3 @@ class ProvisionInfrastructureTest extends TestCase
         });
     }
 }
-

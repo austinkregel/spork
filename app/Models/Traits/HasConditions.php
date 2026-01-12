@@ -14,6 +14,8 @@ trait HasConditions
 {
     public function conditions(): MorphMany
     {
-        return $this->morphMany(Condition::class, 'conditionable')->orderByDesc('created_at');
+        // Deterministic ordering is important for stable condition evaluation and tests.
+        // Use ascending primary key order which reflects creation order.
+        return $this->morphMany(Condition::class, 'conditionable')->orderBy('id');
     }
 }

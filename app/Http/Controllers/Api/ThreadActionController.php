@@ -105,4 +105,3 @@ class ThreadActionController extends Controller
         $thread->save();
     }
 }
-

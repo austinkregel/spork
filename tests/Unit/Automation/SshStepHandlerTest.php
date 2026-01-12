@@ -42,5 +42,3 @@ class SshStepHandlerTest extends TestCase
         $this->assertSame(['output' => 'ok'], $res);
     }
 }
-
-

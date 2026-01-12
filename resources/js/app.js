@@ -12,6 +12,9 @@ import BuilderText from './Builder/Components/BuilderText.vue';
 import Notifications from 'notiwind';
 import Grid from './Components/Grid.vue';
 import TitleAndFooterTextCard from "./Builder/Components/Cards/TitleAndFooterTextCard.vue";
+import { buildMessageToastItemFromEvent } from './Conversations/message-toast';
+import { pushMessageToast } from './Conversations/message-toast-store';
+import { createSoundPlayer } from './Utils/sound-player';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import 'dayjs/locale/en';
@@ -28,16 +31,9 @@ const appName = window.document.getElementsByTagName('title')[0]?.innerText || '
 window.Spork = {
 
 };
-const playSound = (name) => {
-    // glitch-sound
-    // error-sound
-    // success-sound
-    // notification-sound
-    const v = document.getElementById(name+'-sound');
-    v.volume = 0.15;
-    v.currentTime = 0;
-    v.play();
-}
+
+const soundPlayer = createSoundPlayer();
+const playSound = (name) => soundPlayer.play(name);
 window.playSound = playSound;
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -109,6 +105,7 @@ createInertiaApp({
 
         if (props?.initialPage?.props?.auth?.user?.id) {
             const userId = props?.initialPage?.props?.auth?.user?.id;
+            const userPersonId = props?.initialPage?.props?.auth?.user?.person?.id ?? null;
             console.log('Subscribing to user channel', `App.Models.User.${userId}`);
             Echo.private(`App.Models.User.${userId}`)
                 .listen('Models\\Message\\EmailCreated', (e) => {
@@ -121,8 +118,24 @@ createInertiaApp({
                 .listen('Models\\Message\\MessageCreated', (e) => {
                     console.log('Models.Message from server', e);
                     playSound('notification');
+
+                    const toast = buildMessageToastItemFromEvent(e, {
+                        pathname: window.location.pathname,
+                        user_person_id: userPersonId,
+                    });
+
+                    if (toast) {
+                        pushMessageToast({
+                            thread_id: toast.thread_id,
+                            message_event_id: toast.message_event_id,
+                            from_person: toast.from_person,
+                            preview: toast.preview,
+                            reply_to: toast.reply_to,
+                        });
+                    }
+
                     router.reload({
-                        only: ['messages', 'unread_email_count', 'threads', 'thread'],
+                        only: ['messages', 'unread_email_count', 'threads', 'thread', 'activeThread'],
                     });
                 })
                 .listen('Models\\Message\\MessageUpdated', (e) => {

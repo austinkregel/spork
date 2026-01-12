@@ -11,8 +11,7 @@ class InfrastructureProvisionManager
     public function __construct(
         private readonly ServerProvisioningService $serverProvisioningService,
         private readonly ProvisioningDomainService $provisioningDomainService,
-    ) {
-    }
+    ) {}
 
     public function handle(InfrastructureProvisionRequest $request): array
     {
@@ -26,5 +25,3 @@ class InfrastructureProvisionManager
         ];
     }
 }
-
-

@@ -77,5 +77,3 @@ class MatrixInspectCommandTest extends TestCase
         parent::tearDown();
     }
 }
-
-

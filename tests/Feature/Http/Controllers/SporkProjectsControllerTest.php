@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Domain;
+use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\Project;
 
 class SporkProjectsControllerTest extends TestCase
 {
@@ -32,7 +34,6 @@ class SporkProjectsControllerTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Projects/Create')
             ->has('project_templates')
-            ->has('project_resource_registry')
         );
     }
 
@@ -64,7 +65,6 @@ class SporkProjectsControllerTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Projects/Project')
             ->has('project')
-            ->has('project_resource_registry')
         );
     }
 
@@ -125,12 +125,38 @@ class SporkProjectsControllerTest extends TestCase
         $response->assertRedirect();
 
         $project = Project::query()->where('name', 'My Project')->firstOrFail();
-        $this->assertSame('research_hub', $project->settings['template'] ?? null);
+        $this->assertSame('content_research', $project->settings['template'] ?? null);
 
         $this->assertDatabaseHas('project_resources', [
             'project_id' => $project->id,
             'resource_type' => \App\Models\Domain::class,
             'resource_id' => $domain->id,
+        ]);
+    }
+
+    public function test_can_quick_create_research_and_attach_to_project(): void
+    {
+        $project = Project::factory()->create();
+
+        $response = $this->actingAsUser()->postJson("http://spork.localhost/api/projects/{$project->id}/research", [
+            'topic' => 'Investigate ACME',
+            'notes' => 'Initial notes',
+        ]);
+
+        $response->assertCreated();
+        $response->assertJsonFragment(['topic' => 'Investigate ACME']);
+
+        $researchId = (int) $response->json('id');
+
+        $this->assertDatabaseHas('research', [
+            'id' => $researchId,
+            'topic' => 'Investigate ACME',
+        ]);
+
+        $this->assertDatabaseHas('project_resources', [
+            'project_id' => $project->id,
+            'resource_type' => \App\Models\Research::class,
+            'resource_id' => $researchId,
         ]);
     }
 }

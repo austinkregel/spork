@@ -10,7 +10,6 @@ use App\Models\Project;
 use App\Projects\ProjectTemplates;
 use App\Services\Development\DescribeTableService;
 use App\Services\Projects\ProjectAttachmentService;
-use App\Services\Projects\ProjectResourceRegistry;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -35,7 +34,7 @@ class ProjectsController extends Controller
         ]);
     }
 
-    public function show(Project $project, ProjectResourceRegistry $resource_registry)
+    public function show(Project $project)
     {
         $project->load([
             'pages.domain',
@@ -59,27 +58,6 @@ class ProjectsController extends Controller
 
         return Inertia::render('Projects/Project', [
             'project' => $project,
-            'project_resource_registry' => $resource_registry->forFrontend(),
-            'daily_tasks' => $project->tasks()
-                ->where('status', '!=', 'done')
-                ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
-                ->where('type', 'daily')
-                ->get(),
-            'today_tasks' => $project->tasks()
-                ->where('status', '!=', 'done')
-                ->where('status', '!=', 'Blocked')
-
-                ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
-                ->where(function ($query) {
-                    $query->where('start_date', '<=', now())
-                        ->orWhere('end_date', '>=', now())
-                        ->orWhereNull('end_date');
-                })
-                ->get(),
-            'future_tasks' => $project->tasks()
-                ->where('status', '=', 'Blocked')
-                ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
-                ->get(),
         ]);
     }
 
@@ -162,16 +140,13 @@ class ProjectsController extends Controller
 
     public function create(
         DescribeTableService $description_service,
-        ProjectResourceRegistry $resource_registry,
         ProjectTemplates $templates,
-    )
-    {
+    ) {
         $description = $description_service->describe(new Project);
 
         return Inertia::render('Projects/Create', [
             'description' => $description,
             'project_templates' => $templates->forFrontend(),
-            'project_resource_registry' => $resource_registry->forFrontend(),
         ]);
     }
 
@@ -179,14 +154,17 @@ class ProjectsController extends Controller
         StoreProjectRequest $request,
         ConnectionInterface $db,
         ProjectAttachmentService $attachment_service,
-    )
-    {
+        ProjectTemplates $templates,
+    ) {
         $data = $request->validated();
 
         $attachments = $data['attachments'] ?? [];
         unset($data['attachments']);
 
         $data['settings'] = $this->normalizeSettings($data['settings'] ?? null);
+        if (is_array($data['settings'] ?? null) && array_key_exists('template', $data['settings'])) {
+            $data['settings']['template'] = $templates->normalizeKey((string) $data['settings']['template']);
+        }
 
         /** @var Project $project */
         $project = null;

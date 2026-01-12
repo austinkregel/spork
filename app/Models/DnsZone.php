@@ -47,22 +47,3 @@ class DnsZone extends Model
         return $this->hasMany(DomainRecord::class);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

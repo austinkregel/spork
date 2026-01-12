@@ -54,22 +54,3 @@ class InfrastructureProvisionRequest extends Model
         return $this->belongsTo(Domain::class);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

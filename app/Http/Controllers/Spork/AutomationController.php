@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use App\Models\Tag;
+use App\Services\Automation\ConditionParameterOptionsService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
@@ -87,7 +88,12 @@ class AutomationController
 
     public function tags()
     {
-        $tags = auth()->user()->tags()->withSum('transactions', 'amount')
+        $user = request()->user();
+        abort_unless($user !== null, 404);
+
+        $tags = $user->tags()
+            ->withSum('transactions', 'amount')
+            ->withSum('privacyTransactions', 'amount_cents')
             ->with(['conditions'])
             ->orderBy('type')
             ->paginate(
@@ -100,6 +106,9 @@ class AutomationController
         $tagsWithCounts = array_map(
             function (Tag $tag) {
                 $tag->setAttribute('taggables_count', $tag->tagged()->count());
+                $plaid = (float) ($tag->transactions_sum_amount ?? 0);
+                $privacyCents = (float) ($tag->privacy_transactions_sum_amount_cents ?? 0);
+                $tag->setAttribute('transactions_sum_amount', $plaid + ($privacyCents / 100));
 
                 return $tag;
             },
@@ -121,38 +130,49 @@ class AutomationController
 
     public function show(Tag $tag)
     {
+        $user = request()->user();
+        abort_unless($user !== null, 404);
+
         abort_unless(
-            auth()->user()->tags()->whereKey($tag->getKey())->exists(),
+            $user->tags()->whereKey($tag->getKey())->exists(),
             404,
             'Tag not found'
         );
 
         $tag->setAttribute('taggables_count', $tag->tagged()->count());
 
+        $tag = $tag->loadSum('transactions', 'amount')
+            ->loadSum('privacyTransactions', 'amount_cents')
+            ->load([
+                'conditions',
+                'articles' => function ($q) {
+                    $q->latest('last_modified');
+                },
+                'feeds' => function ($q) {
+                    $q->latest('last_modified');
+                },
+                'servers',
+                'transactions' => function ($q) {
+                    $q->latest('date');
+                },
+                'projects',
+                'budgets',
+                'accounts',
+                'domains',
+                'people',
+                'messages',
+            ]);
+
+        $plaid = (float) ($tag->transactions_sum_amount ?? 0);
+        $privacyCents = (float) ($tag->privacy_transactions_sum_amount_cents ?? 0);
+        $tag->setAttribute('transactions_sum_amount', $plaid + ($privacyCents / 100));
+
         return Inertia::render('Automation/TagShow', [
             'title' => 'Automation tag detail',
             'subnavigation' => $this->navigation(),
-            'tag' => $tag->loadSum('transactions', 'amount')
-                ->load([
-                    'conditions',
-                    'articles' => function ($q) {
-                        $q->latest('last_modified');
-                    },
-                    'feeds' => function ($q) {
-                        $q->latest('last_modified');
-                    },
-                    'servers',
-                    'transactions' => function ($q) {
-                        $q->latest('date');
-                    },
-                    'projects',
-                    'budgets',
-                    'accounts',
-                    'domains',
-                    'people',
-                    'messages',
-                ]),
+            'tag' => $tag,
             'type' => Tag::class,
+            'condition_parameter_groups' => app(ConditionParameterOptionsService::class)->forAutomatedTagConditions(),
         ]);
     }
 

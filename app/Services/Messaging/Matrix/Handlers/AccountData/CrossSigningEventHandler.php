@@ -10,7 +10,9 @@ use App\Data\Matrix\MatrixEventContext;
 class CrossSigningEventHandler implements MatrixEventHandlerContract
 {
     protected const MASTER_TYPE = 'm.cross_signing.master';
+
     protected const SELF_SIGNING_TYPE = 'm.cross_signing.self_signing';
+
     protected const USER_SIGNING_TYPE = 'm.cross_signing.user_signing';
 
     public function supports(string $eventType): bool
@@ -41,23 +43,3 @@ class CrossSigningEventHandler implements MatrixEventHandlerContract
         $context->state->mergeSigningUser($payload);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

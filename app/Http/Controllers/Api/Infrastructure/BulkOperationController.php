@@ -41,22 +41,3 @@ class BulkOperationController extends Controller
         abort_if(auth()->id() !== $operation->user_id, 403);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

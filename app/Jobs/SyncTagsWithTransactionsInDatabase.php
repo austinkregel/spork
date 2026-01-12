@@ -9,13 +9,15 @@ use App\Models\Tag;
 use App\Services\ConditionService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Psr\Log\LoggerInterface;
 
 class SyncTagsWithTransactionsInDatabase implements ShouldQueue
 {
     use Queueable;
 
-    public function handle(): void
+    public function handle(LoggerInterface $logger): void
     {
+        $conditionService = new ConditionService($logger);
         $page = 1;
         $tags = Tag::with('conditions')->where('type', 'automatic')->get();
         do {
@@ -23,8 +25,6 @@ class SyncTagsWithTransactionsInDatabase implements ShouldQueue
                 ->paginate(100, ['*'], 'page', $page++);
 
             foreach ($paginator as $transaction) {
-                $conditionService = new ConditionService;
-
                 $tagsToApply = $tags->filter(fn (Tag $tag) => $conditionService->process($tag, [
                     'transaction' => $transaction,
                     'account' => $transaction->account,

@@ -13,6 +13,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
 
@@ -47,14 +48,15 @@ class MatrixEventSupport
 
         try {
             $response = Http::withHeaders([
-                'Accept' => 'application/json',
+                'Accept' => '*/*',
                 'Authorization' => 'Bearer '.$credential->access_token,
             ])->get(
                 $credential->settings['matrix_server'].sprintf('/_matrix/client/v1/media/thumbnail/%s?timeout_ms=500&width=64&height=64', $mxcUrl)
             )->body();
 
-            file_put_contents($path = storage_path('app/public/'.$key), $response);
+            Storage::disk('public')->put($key, $response);
 
+            // Keep this as a path (not a full URL) for consistency across the app/tests.
             return '/storage/'.$key;
         } catch (\Throwable $exception) {
             $this->logger->warning('Failed to download Matrix media', [
@@ -225,5 +227,3 @@ class MatrixEventSupport
         return (int) $participant->user_id === (int) $user->id;
     }
 }
-
-

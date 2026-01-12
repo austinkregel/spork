@@ -41,5 +41,3 @@ class ManualTransactionControllerTest extends TestCase
         ]);
     }
 }
-
-

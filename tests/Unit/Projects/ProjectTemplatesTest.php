@@ -18,9 +18,15 @@ class ProjectTemplatesTest extends TestCase
 
         $keys = collect($templates)->pluck('key')->all();
         $this->assertContains('custom', $keys);
-        $this->assertContains('infra_deployment', $keys);
-        $this->assertContains('research_hub', $keys);
-        $this->assertContains('personal_upkeep', $keys);
+        $this->assertContains('finance_tracking', $keys);
+        $this->assertContains('communication_hub', $keys);
+        $this->assertContains('automation_ops', $keys);
+        $this->assertContains('infrastructure_monitoring', $keys);
+        $this->assertContains('content_research', $keys);
+        $this->assertContains('personal_crm', $keys);
+        $this->assertContains('home_ops', $keys);
+
+        $this->assertCount(8, $keys);
 
         $first = $templates[0];
         $this->assertArrayHasKey('label', $first);
@@ -29,5 +35,3 @@ class ProjectTemplatesTest extends TestCase
         $this->assertArrayHasKey('preferred_resource_types', $first);
     }
 }
-
-

@@ -6,9 +6,9 @@ namespace Tests\Unit;
 
 use App\Services\Development\DescribeTable\PermissionAdvisor;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Mockery;
 use Tests\Fixtures\Models\ExampleModel;
 use Tests\TestCase;
@@ -21,9 +21,9 @@ class PermissionAdvisorTest extends TestCase
         parent::tearDown();
     }
 
-    public function testAdvisorFallsBackToDeveloperRole(): void
+    public function test_advisor_falls_back_to_developer_role(): void
     {
-        $user = new FakeDeveloperUser();
+        $user = new FakeDeveloperUser;
 
         $guard = Mockery::mock(Guard::class);
         $guard->shouldReceive('user')->andReturn($user);
@@ -32,7 +32,7 @@ class PermissionAdvisorTest extends TestCase
         $auth->shouldReceive('guard')->andReturn($guard);
 
         $advisor = new PermissionAdvisor($auth);
-        $permissions = $advisor->forModel(new ExampleModel());
+        $permissions = $advisor->forModel(new ExampleModel);
 
         $this->assertTrue($permissions['create']);
         $this->assertTrue($permissions['update']);
@@ -55,4 +55,3 @@ class FakeDeveloperUser implements Authenticatable
         return $role === 'developer';
     }
 }
-

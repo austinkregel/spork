@@ -84,6 +84,34 @@ describe('MessageContentRenderer', () => {
         expect(wrapper.text()).toContain('example.com');
     });
 
+    it('renders message text alongside link preview when message contains text + link', () => {
+        const wrapper = mount(MessageContentRenderer, {
+            props: {
+                message: {
+                    ...baseMessage(),
+                    message: 'Check this out https://example.com/article it is neat',
+                },
+            },
+        });
+
+        expect(wrapper.text()).toContain('Check this out');
+        expect(wrapper.text()).toContain('example.com');
+    });
+
+    it('renders message text alongside inline images when message contains text + image link', () => {
+        const wrapper = mount(MessageContentRenderer, {
+            props: {
+                message: {
+                    ...baseMessage(),
+                    message: 'Look at this cat https://example.com/cat.png wow',
+                },
+            },
+        });
+
+        expect(wrapper.find('img').exists()).toBe(true);
+        expect(wrapper.text()).toContain('Look at this cat');
+    });
+
     it('renders tenor share links as inline gifs', async () => {
         mockFetch.mockResolvedValueOnce({
             ok: true,

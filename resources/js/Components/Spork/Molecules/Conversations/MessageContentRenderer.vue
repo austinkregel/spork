@@ -147,10 +147,7 @@ const shouldRenderMarkdown = computed(() => {
 
 <template>
     <div class="flex flex-col gap-3 w-full">
-        <div
-            v-if="inlineMedia"
-            class="rounded-2xl overflow-hidden -my-3 -mx-4"
-        >
+        <div v-if="inlineMedia" class="rounded-2xl overflow-hidden -my-3 -mx-4">
             <template v-if="inlineMedia.kind === 'video'">
                 <video
                     class="w-full h-auto object-contain max-h-96 bg-stone-900/5 dark:bg-stone-100/5"
@@ -181,12 +178,13 @@ const shouldRenderMarkdown = computed(() => {
             </div>
         </div>
 
-        <LinkPreviewCard
-            v-else-if="preview"
-            :preview="preview"
-            class="-my-3 -mx-4"
+        <Markdown
+            v-if="shouldRenderMarkdown"
+            :class="[markdownClass, fontClass, 'whitespace-pre-wrap']"
+            :source="textBody.trim()"
         />
-        <pre v-else><Markdown :class="[markdownClass, fontClass, 'whitespace-pre-wrap']":source="textBody.trim()"/></pre>
+
+        <LinkPreviewCard v-if="preview" :preview="preview" class="-my-3 -mx-4" />
     </div>
 </template>
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Credential;
@@ -44,7 +46,7 @@ class SporkInboxControllerTest extends TestCase
             'credential_id' => $this->user->credentials()->create([
                 'name' => 'Test Credential',
                 'type' => 'email',
-                'service' => 'imap'
+                'service' => 'imap',
             ])->id,
             'thread_id' => $thread->id,
         ])->thread_id;

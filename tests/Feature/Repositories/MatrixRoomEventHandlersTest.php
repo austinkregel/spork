@@ -14,8 +14,8 @@ use App\Services\Messaging\Matrix\MatrixEventHandlerRegistry;
 use App\Services\Messaging\Matrix\MatrixEventSupport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use Tests\TestCase;
 use Psr\Log\LoggerInterface;
+use Tests\TestCase;
 
 class MatrixRoomEventHandlersTest extends TestCase
 {
@@ -399,5 +399,3 @@ class MatrixRoomEventHandlersTest extends TestCase
         ];
     }
 }
-
-

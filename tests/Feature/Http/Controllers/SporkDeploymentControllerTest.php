@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Credential;
@@ -33,7 +35,7 @@ class SporkDeploymentControllerTest extends TestCase
         $credential = \App\Models\Credential::factory()->create([
             'user_id' => $this->user->id,
         ]);
-        $response = $this->post('http://spork.localhost/-/deployment/'. $deployment->id .'/detach', [
+        $response = $this->post('http://spork.localhost/-/deployment/'.$deployment->id.'/detach', [
             'resource_type' => $credential::class,
             'resource_id' => $credential->id,
         ]);
@@ -57,7 +59,7 @@ class SporkDeploymentControllerTest extends TestCase
         ]);
         $this->assertDatabaseEmpty('deployment_resources');
 
-        $response = $this->post('http://spork.localhost/-/deployment/' . $deployment->id . '/attach', [
+        $response = $this->post('http://spork.localhost/-/deployment/'.$deployment->id.'/attach', [
             'resource_type' => $credential::class,
             'resource_id' => $credential->id,
         ]);

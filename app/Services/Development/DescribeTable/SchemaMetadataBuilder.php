@@ -11,8 +11,7 @@ class SchemaMetadataBuilder
 {
     public function __construct(
         private readonly ConnectionInterface $connection,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array{field_definitions: FieldDefinition[], filters: array, raw_description: array, raw_indexes: array}
@@ -30,4 +29,3 @@ class SchemaMetadataBuilder
         ];
     }
 }
-

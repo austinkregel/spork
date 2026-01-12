@@ -21,8 +21,7 @@ class ProvisionInfrastructureController extends Controller
 {
     public function __construct(
         private readonly ServerServiceFactory $serverServiceFactory,
-    ) {
-    }
+    ) {}
 
     public function store(ProvisionInfrastructureRequest $request): ProvisionRequestResource
     {
@@ -88,7 +87,7 @@ class ProvisionInfrastructureController extends Controller
     }
 
     /**
-     * @param array<int|string> $sshKeyIds
+     * @param  array<int|string>  $sshKeyIds
      * @return array<int|string>
      */
     protected function resolveProviderSshKeyIds(User $user, Credential $providerCredential, array $sshKeyIds): array
@@ -180,4 +179,3 @@ class ProvisionInfrastructureController extends Controller
         }
     }
 }
-

@@ -11,4 +11,3 @@ interface ProjectRepositoryContract
 {
     public function createJiraProject(JiraProject $jiraProject, $page = 1): Project;
 }
-

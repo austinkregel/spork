@@ -40,5 +40,3 @@ class BankingControllerTest extends TestCase
                 ->has('accountsData'));
     }
 }
-
-

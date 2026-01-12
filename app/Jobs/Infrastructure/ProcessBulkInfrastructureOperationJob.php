@@ -23,9 +23,7 @@ class ProcessBulkInfrastructureOperationJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(public int $operationId)
-    {
-    }
+    public function __construct(public int $operationId) {}
 
     public function handle(): void
     {
@@ -158,22 +156,3 @@ class ProcessBulkInfrastructureOperationJob implements ShouldQueue
         return $query->get();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

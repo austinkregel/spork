@@ -8,48 +8,25 @@ use Tests\TestCase;
 
 class PostLoginRedirectTest extends TestCase
 {
-	public function test_redirects_to_intended_after_login(): void
-	{
-		$this->withSession([
-			'url.intended' => 'http://spork.localhost/-/projects',
-		]);
+    public function test_redirects_to_intended_after_login(): void
+    {
+        $this->withSession([
+            'url.intended' => 'http://spork.localhost/-/projects',
+        ]);
 
-		$this->actingAsUser();
+        $this->actingAsUser();
 
-		$response = $this->get('http://spork.localhost/post-login');
+        $response = $this->get('http://spork.localhost/post-login');
 
-		$response->assertRedirect('http://spork.localhost/-/projects');
-	}
+        $response->assertRedirect('http://spork.localhost/-/projects');
+    }
 
-	public function test_redirects_to_home_when_no_intended(): void
-	{
-		$this->actingAsUser();
+    public function test_redirects_to_home_when_no_intended(): void
+    {
+        $this->actingAsUser();
 
-		$response = $this->get('http://spork.localhost/post-login');
+        $response = $this->get('http://spork.localhost/post-login');
 
-		$response->assertRedirect('http://spork.localhost/-/dashboard');
-	}
+        $response->assertRedirect('http://spork.localhost/-/dashboard');
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

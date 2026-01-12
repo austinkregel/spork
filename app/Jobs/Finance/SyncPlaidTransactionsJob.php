@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Jobs\Finance;
 
 use App\Contracts\Services\PlaidServiceContract;
+use App\Jobs\Finance\Concerns\UpsertsPlaidTransactions;
 use App\Models\Credential;
-use App\Models\Finance\Account;
 use App\Models\Finance\Transaction;
-use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,10 +15,12 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class SyncPlaidTransactionsJob implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use UpsertsPlaidTransactions;
 
     public function __construct(
         protected Credential $accessToken
@@ -28,182 +29,121 @@ class SyncPlaidTransactionsJob implements ShouldQueue
     public function handle(PlaidServiceContract $plaid): void
     {
         if ($this->batch()?->cancelled()) {
+            Log::info('SyncPlaidTransactionsJob: Batch cancelled, skipping', [
+                'credential_id' => $this->accessToken->id,
+            ]);
+
             return;
         }
 
-        $accounts = $plaid->getAccounts($this->accessToken->api_key)['accounts'];
+        Log::info('SyncPlaidTransactionsJob: Starting transaction sync', [
+            'credential_id' => $this->accessToken->id,
+            'user_id' => $this->accessToken->user_id,
+            'has_api_key' => ! empty($this->accessToken->api_key),
+            'current_cursor' => $this->accessToken->settings['cursor'] ?? null,
+        ]);
 
-        foreach ($accounts as $account) {
-            if (! is_array($account)) {
-                $account = (array) $account;
-            }
+        try {
+            $accountsResponse = $plaid->getAccounts($this->accessToken->api_key);
+            $accounts = $accountsResponse['accounts'] ?? [];
 
-            $accountId = $this->expectString($account, 'account_id');
-
-            /** @var Account $localAccount */
-            $localAccount = $this->accessToken->accounts()->firstOrCreate([
-                'account_id' => $accountId,
-            ], $data = [
-                'account_id' => $accountId,
-                'name' => Arr::get($account, 'name'),
-                'mask' => Arr::get($account, 'mask'),
-                'balance' => Arr::get($account, 'balances.current') ?? 0,
-                'available' => Arr::get($account, 'balances.available') ?? 0,
-                'type' => Arr::get($account, 'subtype') ?? Arr::get($account, 'type'),
+            Log::info('SyncPlaidTransactionsJob: Fetched accounts from Plaid', [
+                'credential_id' => $this->accessToken->id,
+                'account_count' => count($accounts),
             ]);
 
-            if (! $localAccount->wasRecentlyCreated) {
-                $localAccount->update($data);
-            }
-        }
-
-        do {
-            $transactionsResponse = $plaid->syncTransactions($this->accessToken->api_key, $this->accessToken->settings['cursor'] ?? null);
-
-            foreach ($transactionsResponse['added'] as $transaction) {
-                $this->updateLocalTransaction((array) $transaction);
+            if (empty($accounts)) {
+                Log::warning('SyncPlaidTransactionsJob: No accounts returned from Plaid', [
+                    'credential_id' => $this->accessToken->id,
+                ]);
             }
 
-            foreach ($transactionsResponse['modified'] as $transaction) {
-                $this->updateLocalTransaction((array) $transaction);
-            }
+            $this->syncAccountsFromPlaidPayload($accounts, $this->accessToken);
 
-            foreach ($transactionsResponse['removed'] as $transaction) {
-                $transactionId = Arr::get((array) $transaction, 'transaction_id');
-                if ($transactionId === null) {
-                    continue;
+            $iteration = 0;
+            $totalAdded = 0;
+            $totalModified = 0;
+            $totalRemoved = 0;
+
+            do {
+                $iteration++;
+                $cursor = $this->accessToken->settings['cursor'] ?? null;
+
+                Log::info('SyncPlaidTransactionsJob: Fetching transactions batch', [
+                    'credential_id' => $this->accessToken->id,
+                    'iteration' => $iteration,
+                    'cursor' => $cursor ? substr($cursor, 0, 20).'...' : 'null (initial sync)',
+                ]);
+
+                $transactionsResponse = $plaid->syncTransactions($this->accessToken->api_key, $cursor);
+
+                $added = $transactionsResponse['added'] ?? [];
+                $modified = $transactionsResponse['modified'] ?? [];
+                $removed = $transactionsResponse['removed'] ?? [];
+                $hasMore = $transactionsResponse['has_more'] ?? false;
+                $nextCursor = $transactionsResponse['next_cursor'] ?? null;
+
+                Log::info('SyncPlaidTransactionsJob: Received transactions batch', [
+                    'credential_id' => $this->accessToken->id,
+                    'iteration' => $iteration,
+                    'added_count' => count($added),
+                    'modified_count' => count($modified),
+                    'removed_count' => count($removed),
+                    'has_more' => $hasMore,
+                ]);
+
+                if (empty($added) && empty($modified) && empty($removed) && $iteration === 1) {
+                    Log::warning('SyncPlaidTransactionsJob: No transactions returned in first batch', [
+                        'credential_id' => $this->accessToken->id,
+                        'has_cursor' => ! empty($cursor),
+                    ]);
                 }
 
-                Transaction::query()->firstWhere('transaction_id', $transactionId)?->delete();
-            }
-            $this->accessToken->settings = array_merge($this->accessToken->settings, [
-                'cursor' => $transactionsResponse['next_cursor'],
+                foreach ($added as $transaction) {
+                    $this->updateLocalTransaction((array) $transaction);
+                    $totalAdded++;
+                }
+
+                foreach ($modified as $transaction) {
+                    $this->updateLocalTransaction((array) $transaction);
+                    $totalModified++;
+                }
+
+                foreach ($removed as $transaction) {
+                    $transactionId = Arr::get((array) $transaction, 'transaction_id');
+                    if ($transactionId === null) {
+                        continue;
+                    }
+
+                    Transaction::query()->firstWhere('transaction_id', $transactionId)?->delete();
+                    $totalRemoved++;
+                }
+
+                $this->accessToken->settings = array_merge($this->accessToken->settings, [
+                    'cursor' => $nextCursor,
+                ]);
+                $this->accessToken->save();
+
+            } while ($hasMore);
+
+            Log::info('SyncPlaidTransactionsJob: Completed transaction sync', [
+                'credential_id' => $this->accessToken->id,
+                'total_iterations' => $iteration,
+                'total_added' => $totalAdded,
+                'total_modified' => $totalModified,
+                'total_removed' => $totalRemoved,
+                'final_cursor' => $this->accessToken->settings['cursor'] ? substr($this->accessToken->settings['cursor'], 0, 20).'...' : 'null',
             ]);
-            $this->accessToken->save();
 
-        } while ($transactionsResponse['has_more'] ?? false);
-    }
+        } catch (\Throwable $e) {
+            Log::error('SyncPlaidTransactionsJob: Error during transaction sync', [
+                'credential_id' => $this->accessToken->id,
+                'error' => $e->getMessage(),
+                'exception' => get_class($e),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
-    protected function syncTags(array $transaction, Transaction $localTransaction): void
-    {
-        $categories = Arr::get($transaction, 'category', []);
-
-        $localTransaction->attachTags($categories, 'finance');
-
-        $counterParties = Arr::get($transaction, 'countyparties', []);
-
-        foreach ($counterParties as $party) {
-            $party = (array) $party;
-            $localTransaction->attachTag(Arr::get($party, 'name'), Arr::get($party, 'type'));
+            throw $e;
         }
-    }
-
-    protected function createLocalTransaction(array $transaction)
-    {
-        $accountId = $this->expectString($transaction, 'account_id');
-        $transactionId = $this->expectString($transaction, 'transaction_id');
-        $amount = $this->expectFloat($transaction, 'amount');
-        $date = $this->expectDate($transaction);
-
-        $localTransaction = Transaction::create([
-            'account_id' => $accountId,
-            'amount' => $amount,
-            'category_id' => Arr::get($transaction, 'category_id'),
-            'date' => Carbon::parse($date),
-            'name' => Arr::get($transaction, 'name'),
-            'pending' => (bool) Arr::get($transaction, 'pending', false),
-            'transaction_id' => $transactionId,
-            'transaction_type' => Arr::get($transaction, 'payment_channel'),
-
-            'personal_finance_category' => Arr::get($transaction, 'personal_finance_category.primary'),
-            'personal_finance_category_detailed' => Arr::get($transaction, 'personal_finance_category.detailed'),
-            'personal_finance_icon' => Arr::get($transaction, 'personal_finance_category_icon_url'),
-
-            'seller_icon' => Arr::get($transaction, 'logo_url'),
-
-            'data' => $transaction,
-        ]);
-        $this->syncTags($transaction, $localTransaction);
-
-        return $localTransaction;
-    }
-
-    protected function updateLocalTransaction(array $transaction)
-    {
-        $transactionId = Arr::get($transaction, 'transaction_id');
-
-        if ($transactionId === null) {
-            throw new \UnexpectedValueException('Transaction payload missing transaction_id');
-        }
-
-        $localTransaction = Transaction::query()->firstWhere('transaction_id', $transactionId);
-
-        if (empty($localTransaction)) {
-            $pendingId = Arr::get($transaction, 'pending_transaction_id');
-            if ($pendingId !== null) {
-                $localTransaction = Transaction::query()->firstWhere('transaction_id', $pendingId);
-            }
-        }
-
-        if (empty($localTransaction)) {
-            $localTransaction = $this->createLocalTransaction($transaction);
-        }
-
-        $accountId = $this->expectString($transaction, 'account_id');
-        $amount = $this->expectFloat($transaction, 'amount');
-        $date = $this->expectDate($transaction);
-
-        $localTransaction->update([
-            'account_id' => $accountId,
-            'amount' => $amount,
-            'category_id' => Arr::get($transaction, 'category_id'),
-            'date' => Carbon::parse($date),
-            'name' => Arr::get($transaction, 'name'),
-            'pending' => (bool) Arr::get($transaction, 'pending', false),
-            'transaction_id' => $transactionId,
-            'transaction_type' => Arr::get($transaction, 'payment_channel'),
-
-            'personal_finance_category' => Arr::get($transaction, 'personal_finance_category.primary'),
-            'personal_finance_category_detailed' => Arr::get($transaction, 'personal_finance_category.detailed'),
-            'personal_finance_icon' => Arr::get($transaction, 'personal_finance_category_icon_url'),
-
-            'seller_icon' => Arr::get($transaction, 'logo_url'),
-
-            'data' => $transaction,
-        ]);
-        $this->syncTags($transaction, $localTransaction);
-    }
-
-    protected function expectString(array $payload, string $key): string
-    {
-        $value = Arr::get($payload, $key);
-
-        if (! is_string($value) || $value === '') {
-            throw new \UnexpectedValueException(sprintf('Expected string value for [%s]', $key));
-        }
-
-        return $value;
-    }
-
-    protected function expectFloat(array $payload, string $key): float
-    {
-        $value = Arr::get($payload, $key);
-
-        if (! is_numeric($value)) {
-            throw new \UnexpectedValueException(sprintf('Expected numeric value for [%s]', $key));
-        }
-
-        return (float) $value;
-    }
-
-    protected function expectDate(array $transaction): string
-    {
-        $date = Arr::get($transaction, 'authorized_date') ?? Arr::get($transaction, 'date');
-
-        if (! is_string($date) || $date === '') {
-            throw new \UnexpectedValueException('Transaction payload missing date');
-        }
-
-        return $date;
     }
 }

@@ -95,5 +95,3 @@ class OperationStepHandler
         return $assoc;
     }
 }
-
-

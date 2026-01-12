@@ -19,9 +19,7 @@ class ProvisionInfrastructureJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(public int $provisionRequestId)
-    {
-    }
+    public function __construct(public int $provisionRequestId) {}
 
     public function handle(InfrastructureProvisionManager $manager): void
     {
@@ -52,22 +50,3 @@ class ProvisionInfrastructureJob implements ShouldQueue
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

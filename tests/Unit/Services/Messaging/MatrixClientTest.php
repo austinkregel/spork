@@ -50,5 +50,3 @@ class MatrixClientTest extends TestCase
         ], $devices);
     }
 }
-
-

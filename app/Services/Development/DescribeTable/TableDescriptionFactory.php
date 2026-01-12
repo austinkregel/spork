@@ -17,8 +17,7 @@ class TableDescriptionFactory
         private readonly ActionMetadataCollector $actionCollector,
         private readonly PermissionAdvisor $permissionAdvisor,
         private readonly TagMetadataCollector $tagCollector,
-    ) {
-    }
+    ) {}
 
     public function forModel(Model $model, bool $withPermissions = true): TableDescription
     {
@@ -72,4 +71,3 @@ class TableDescriptionFactory
         ]);
     }
 }
-

@@ -11,7 +11,7 @@ class RssFeedTest extends TestCase
 {
     public function test_get_data_maps_rss_items_to_feed_items(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
@@ -43,7 +43,7 @@ XML;
 
     public function test_get_data_returns_empty_array_when_no_items(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
@@ -61,5 +61,3 @@ XML;
         $this->assertSame([], $items);
     }
 }
-
-

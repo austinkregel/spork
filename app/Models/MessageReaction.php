@@ -31,4 +31,3 @@ class MessageReaction extends Model
         return $this->belongsTo(Person::class);
     }
 }
-

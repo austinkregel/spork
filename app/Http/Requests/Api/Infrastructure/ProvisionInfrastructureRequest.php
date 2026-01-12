@@ -41,4 +41,3 @@ class ProvisionInfrastructureRequest extends FormRequest
         ];
     }
 }
-

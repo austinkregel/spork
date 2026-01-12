@@ -10,7 +10,7 @@ use App\Data\Matrix\MatrixEventContext;
 class MatrixEventHandlerRegistry
 {
     /**
-     * @param MatrixEventHandlerContract[] $handlers
+     * @param  MatrixEventHandlerContract[]  $handlers
      */
     public function __construct(
         protected iterable $handlers,
@@ -35,23 +35,3 @@ class MatrixEventHandlerRegistry
         return false;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -15,8 +15,7 @@ class TagMetadataCollector
 {
     public function __construct(
         private readonly ?\Closure $tagQueryResolver = null,
-    ) {
-    }
+    ) {}
 
     public function collect(Model $model): Collection
     {
@@ -41,4 +40,3 @@ class TagMetadataCollector
         return Tag::query();
     }
 }
-

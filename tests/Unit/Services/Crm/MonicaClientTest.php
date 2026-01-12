@@ -136,16 +136,3 @@ class MonicaClientTest extends TestCase
         });
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

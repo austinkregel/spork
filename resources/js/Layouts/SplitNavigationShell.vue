@@ -41,6 +41,10 @@ const props = defineProps({
         type: String,
         default: 'max-w-5xl',
     },
+    contentPaddingClass: {
+        type: String,
+        default: 'px-4 lg:px-6 py-4',
+    },
 });
 
 const emit = defineEmits(['update:searchValue', 'search']);
@@ -88,7 +92,7 @@ const hasSidebarFooter = computed(() => Boolean(slots['sidebar-footer']));
 <template>
     <AppLayout :title="title">
         <div class="flex h-[calc(100vh-65px)] divide-x divide-stone-200 dark:divide-stone-800 bg-white dark:bg-stone-900">
-            <aside :class="[sidebarWidth, 'flex flex-col bg-stone-50 dark:bg-stone-950']">
+            <aside :class="[sidebarWidth, 'shrink-0 flex flex-col bg-stone-50 dark:bg-stone-950']">
                 <div v-if="hasSidebarHeader" class="border-b border-stone-200 dark:border-stone-800 p-4 space-y-3">
                     <slot name="sidebar-header">
                         <p v-if="subtitle" class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
@@ -152,12 +156,12 @@ const hasSidebarFooter = computed(() => Boolean(slots['sidebar-footer']));
                 </div>
             </aside>
 
-            <section class="flex-1 flex flex-col relative bg-stone-100/70 dark:bg-stone-900">
+            <section class="flex-1 min-w-0 flex flex-col relative bg-stone-100/70 dark:bg-stone-900 overflow-x-hidden">
                 <div v-if="$slots.header" class="border-b border-stone-200 dark:border-stone-800 px-6 py-4 bg-white/80 dark:bg-stone-900/80 backdrop-blur">
                     <slot name="header" />
                 </div>
 
-                <main class="flex-1 overflow-y-auto custom-scroll px-4 lg:px-6 py-4">
+                <main :class="['flex-1 overflow-y-auto overflow-x-hidden custom-scroll', contentPaddingClass]">
                     <div :class="['w-full', contentWidthClass, 'mx-auto']">
                         <slot />
                     </div>

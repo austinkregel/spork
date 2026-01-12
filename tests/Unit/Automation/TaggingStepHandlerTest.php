@@ -37,10 +37,8 @@ class TaggingStepHandlerTest extends TestCase
             ],
         ]);
 
-        $handler = new TaggingStepHandler();
+        $handler = new TaggingStepHandler;
         $res = $handler->execute($automation, $step);
         $this->assertArrayHasKey('output', $res);
     }
 }
-
-

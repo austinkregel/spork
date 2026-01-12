@@ -20,6 +20,27 @@ use App\Models\Finance\Transaction;
 
 return [
     /**
+     * When enabled, we will dynamically allow additional attachable model types by discovering
+     * classes that implement certain interfaces (e.g. ModelQuery / Taggable).
+     *
+     * This is what makes "Custom" projects feel truly unconstrained without having to manually
+     * curate every model in the app.
+     */
+    'dynamic' => [
+        // v2 KISS default: disabled. Enable when we have a lane-based UI that uses it thoughtfully.
+        'enabled' => false,
+        'interfaces' => [
+            \App\Contracts\ModelQuery::class,
+            \App\Models\Taggable::class,
+        ],
+        'deny' => [
+            \App\Models\Project::class,
+            \App\Models\User::class,
+        ],
+        'cache_ttl_seconds' => 60 * 60 * 24,
+    ],
+
+    /**
      * Allowed resource types that can be attached to projects.
      *
      * These power:
@@ -106,6 +127,7 @@ return [
         'rss' => 'RSS',
         'people' => 'People & Comms',
         'automation' => 'Automation',
+        'other' => 'Other',
     ],
 ];
 

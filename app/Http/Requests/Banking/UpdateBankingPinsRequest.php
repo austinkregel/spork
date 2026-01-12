@@ -23,8 +23,3 @@ class UpdateBankingPinsRequest extends FormRequest
         ];
     }
 }
-
-
-
-
-

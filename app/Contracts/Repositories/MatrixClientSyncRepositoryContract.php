@@ -15,4 +15,3 @@ interface MatrixClientSyncRepositoryContract
 
     public function processEvent(array $event, Credential $credential, User $user): void;
 }
-

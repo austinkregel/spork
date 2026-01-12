@@ -80,5 +80,3 @@ class RenameDirectMessageThreadsCommandTest extends TestCase
         $this->assertSame('Already Named', $thread->fresh()->name);
     }
 }
-
-

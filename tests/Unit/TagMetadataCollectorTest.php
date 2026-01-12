@@ -19,15 +19,15 @@ class TagMetadataCollectorTest extends TestCase
         parent::tearDown();
     }
 
-    public function testCollectReturnsEmptyCollectionForNonTaggableModels(): void
+    public function test_collect_returns_empty_collection_for_non_taggable_models(): void
     {
-        $collector = new TagMetadataCollector();
-        $result = $collector->collect(new ExampleModel());
+        $collector = new TagMetadataCollector;
+        $result = $collector->collect(new ExampleModel);
 
         $this->assertTrue($result->isEmpty());
     }
 
-    public function testCollectReturnsTagsForTaggableModels(): void
+    public function test_collect_returns_tags_for_taggable_models(): void
     {
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('whereNull')->with('type')->andReturnSelf();
@@ -35,10 +35,9 @@ class TagMetadataCollectorTest extends TestCase
         $query->shouldReceive('get')->andReturn(collect([['name' => 'alpha']]));
 
         $collector = new TagMetadataCollector(fn () => $query);
-        $result = $collector->collect(new ExampleTaggableModel());
+        $result = $collector->collect(new ExampleTaggableModel);
 
         $this->assertCount(1, $result);
         $this->assertSame('alpha', $result[0]['name']);
     }
 }
-

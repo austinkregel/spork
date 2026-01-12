@@ -23,6 +23,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
     protected string $email;
 
     protected string $accountId;
+
     protected string $accessToken;
 
     public function __construct(
@@ -161,11 +162,11 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
             'Authorization' => 'Bearer '.$this->accessToken,
         ])->post(static::CLOUDFLARE_URL."/zones/$domain/dns_records", $dnsRecordArray);
 
-info('Tried to create DNS record', [
-    'response' => $response->json(),
-    'dnsRecordArray' => $dnsRecordArray,
-    'domain' => $domain,
-]);
+        info('Tried to create DNS record', [
+            'response' => $response->json(),
+            'dnsRecordArray' => $dnsRecordArray,
+            'domain' => $domain,
+        ]);
 
         $id = $response->json('result.id');
 

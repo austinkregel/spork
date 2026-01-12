@@ -43,7 +43,3 @@ class MonitorBridgeTokenController extends Controller
         ]);
     }
 }
-
-
-
-

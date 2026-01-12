@@ -41,5 +41,3 @@ class BankingPreferenceController
         return back()->with('flash.banner', 'Preferences saved.');
     }
 }
-
-

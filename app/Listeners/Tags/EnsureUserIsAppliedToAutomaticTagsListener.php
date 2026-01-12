@@ -1,18 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners\Tags;
 
 use App\Events\Models\Tag\TagCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Http\Request;
-use Illuminate\Queue\InteractsWithQueue;
 
 class EnsureUserIsAppliedToAutomaticTagsListener
 {
     public function __construct(
         protected Request $request
-    ) {
-    }
+    ) {}
 
     public function handle(TagCreated $event): void
     {

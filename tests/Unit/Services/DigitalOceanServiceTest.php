@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Services;
 
 use App\Models\Credential;
-use App\Services\Server\DigitalOceanService;
 use App\Services\Server\DigitalOceanService as ConcreteDigitalOceanService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
@@ -119,5 +118,3 @@ class DigitalOceanServiceTest extends TestCase
         $this->assertSame($expected, $service->createDomain('example.com'));
     }
 }
-
-

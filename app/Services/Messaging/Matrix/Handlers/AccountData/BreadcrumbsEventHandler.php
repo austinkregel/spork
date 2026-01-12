@@ -19,23 +19,3 @@ class BreadcrumbsEventHandler implements MatrixEventHandlerContract
         $context->state->setBreadcrumbs($context->event['content'] ?? []);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

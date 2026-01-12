@@ -71,5 +71,3 @@ class CloudflareDomainServiceTest extends TestCase
         $service->getDns('zone-123');
     }
 }
-
-

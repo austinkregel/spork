@@ -20,18 +20,18 @@ class TableDescriptionRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->basePath = storage_path('framework/testing/crud-cache-'.Str::random(6));
-        (new Filesystem())->deleteDirectory($this->basePath);
+        (new Filesystem)->deleteDirectory($this->basePath);
     }
 
     protected function tearDown(): void
     {
-        (new Filesystem())->deleteDirectory($this->basePath);
+        (new Filesystem)->deleteDirectory($this->basePath);
         parent::tearDown();
     }
 
-    public function testRepositoryPersistsAndLoadsDescriptions(): void
+    public function test_repository_persists_and_loads_descriptions(): void
     {
-        $filesystem = new Filesystem();
+        $filesystem = new Filesystem;
         $repository = new TableDescriptionRepository($filesystem, $this->basePath);
         $description = new TableDescription(
             name: 'example_models',
@@ -53,4 +53,3 @@ class TableDescriptionRepositoryTest extends TestCase
         $this->assertTrue($repository->needsRefresh('example_models'));
     }
 }
-

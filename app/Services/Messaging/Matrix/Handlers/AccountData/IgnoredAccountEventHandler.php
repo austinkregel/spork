@@ -35,5 +35,3 @@ class IgnoredAccountEventHandler implements MatrixEventHandlerContract
         );
     }
 }
-
-

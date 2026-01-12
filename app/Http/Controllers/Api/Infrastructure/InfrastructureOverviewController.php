@@ -13,8 +13,7 @@ class InfrastructureOverviewController extends Controller
 {
     public function __construct(
         private readonly InfrastructureOverviewService $overviewService,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Request $request): JsonResponse
     {
@@ -23,4 +22,3 @@ class InfrastructureOverviewController extends Controller
         );
     }
 }
-

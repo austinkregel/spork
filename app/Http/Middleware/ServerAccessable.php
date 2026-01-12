@@ -19,8 +19,8 @@ class ServerAccessable
      */
     public function handle(Request $request, Closure $next): Response
     {
-        abort_unless(request()->hasHeader('Authentication'), 401, 'Unauthorized');
-        $token = explode(' ', request()->header('Authentication'), 2);
+        abort_unless(request()->hasHeader('Authorization'), 401, 'Unauthorized');
+        $token = explode(' ', request()->header('Authorization'), 2);
 
         abort_unless(count($token) === 2, 401, 'Unauthorized no token');
         $split = explode('|', $token[1], 2);

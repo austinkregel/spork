@@ -87,5 +87,3 @@ class RoomNameEventHandler implements MatrixEventHandlerContract
         return ! str_starts_with($name, '!');
     }
 }
-
-

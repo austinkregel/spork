@@ -6,8 +6,8 @@ namespace App\Services\Automation\Steps;
 
 use App\Models\Automation;
 use App\Models\AutomationStep;
-use App\Notifications\AutomationGenericNotification;
 use App\Models\User;
+use App\Notifications\AutomationGenericNotification;
 
 class NotifyStepHandler
 {
@@ -46,5 +46,3 @@ class NotifyStepHandler
         return ['output' => 'Notifications sent: '.$recipients->count()];
     }
 }
-
-

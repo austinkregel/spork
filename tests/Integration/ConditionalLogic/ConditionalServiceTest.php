@@ -53,7 +53,7 @@ class ConditionalServiceTest extends TestCase
             'value' => 'test',
         ]);
 
-        $this->assertFalse($service->process($tag, ['name' => 'test']));
+        $this->assertFalse($service->process($tag, ['transaction' => ['name' => null]]));
     }
 
     public function test_will_be_falsy_with_false_condition_but_when_data_is_set_we_log_value_correctly(): void

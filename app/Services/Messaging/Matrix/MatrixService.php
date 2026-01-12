@@ -59,5 +59,3 @@ class MatrixService implements MatrixServiceContract
         return $credential instanceof Credential ? $credential : null;
     }
 }
-
-

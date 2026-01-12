@@ -8,9 +8,6 @@ interface HtmlJsonDataLinkingServiceContract
 {
     /**
      * Fetch and extract JSON-LD structured data from HTML
-     *
-     * @return array
      */
     public function fetchDataLink(string $url): array;
 }
-

@@ -32,5 +32,3 @@ class PrivacyTransactionFactory extends Factory
         ];
     }
 }
-
-

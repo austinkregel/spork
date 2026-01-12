@@ -36,6 +36,17 @@ class StoreCredentialRequest extends FormRequest
 
         $uniqueForOwner = new UniqueCredentialForOwner($user);
 
+        // Historically, `type` is an organizational label while `service` is any supported provider.
+        // Keep validation permissive across all known providers so existing behavior stays stable.
+        $serviceOptions = array_values(array_unique(array_merge(
+            Credential::ALL_FINANCE_PROVIDERS,
+            Credential::ALL_DOMAIN_PROVIDERS,
+            Credential::ALL_REGISTRAR_PROVIDERS,
+            Credential::ALL_SERVER_PROVIDERS,
+            Credential::ALL_CRM_PROVIDERS,
+            Credential::ALL_SOURCE_PROVIDERS,
+        )));
+
         return [
             'name' => 'required|string',
             'type' => [
@@ -54,14 +65,14 @@ class StoreCredentialRequest extends FormRequest
             'service' => [
                 'required',
                 'string',
-                Rule::in(array_merge(Credential::ALL_SERVER_PROVIDERS, Credential::ALL_CRM_PROVIDERS)),
+                Rule::in($serviceOptions),
             ],
             'api_key' => ['nullable', $uniqueForOwner],
             'secret_key' => ['nullable'],
             'access_token' => ['nullable', 'string'],
             'refresh_token' => ['nullable', 'string'],
-            'settings' => [],
-            'settings.*' => 'nullable|string',
+            'settings' => ['nullable', 'array'],
+            'settings.*' => ['nullable'],
             'enabled_on' => 'nullable|date',
         ];
     }

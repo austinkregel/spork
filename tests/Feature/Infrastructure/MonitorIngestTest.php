@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Infrastructure;
 
 use App\Models\Credential;
@@ -296,5 +298,3 @@ class MonitorIngestTest extends TestCase
         $this->assertSame('machine-def', $providerServer->machine_id);
     }
 }
-
-

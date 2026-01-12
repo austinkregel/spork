@@ -76,5 +76,3 @@ class RoomMemberEventHandler implements MatrixEventHandlerContract
         }
     }
 }
-
-

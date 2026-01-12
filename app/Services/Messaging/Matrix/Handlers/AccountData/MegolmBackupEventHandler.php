@@ -19,23 +19,3 @@ class MegolmBackupEventHandler implements MatrixEventHandlerContract
         $context->state->mergeMegolmBackup($context->event['content']['encrypted'] ?? []);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

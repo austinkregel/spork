@@ -6,6 +6,7 @@ import Banner from '@/Components/Banner.vue';
 
 import ApplicationNavigation from "@/Components/ApplicationNavigation.vue";
 import ApplicationUserNavigation from "@/Components/ApplicationUserNavigation.vue";
+import NewMessageToastCenter from '@/Components/Spork/Molecules/Conversations/NewMessageToastCenter.vue';
 const page = usePage()
 defineProps({
     title: String,
@@ -50,5 +51,7 @@ const user = computed(() => page.props.auth.user);
         <audio id="notification-sound" src="/sounds/swiftly-610.ogg" preload="auto" type="audio/ogg" />
         <audio id="success-sound" src="/sounds/i-did-it-message-tone.ogg" preload="auto" type="audio/ogg" />
         <audio id="achievement-sound" src="/sounds/achievement-message-tone.ogg" preload="auto" type="audio/ogg" />
+
+        <NewMessageToastCenter />
     </div>
 </template>

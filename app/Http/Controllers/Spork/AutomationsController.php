@@ -10,9 +10,9 @@ use App\Models\AutomationStep;
 use App\Operations\AutomationOperation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -233,5 +233,3 @@ class AutomationsController extends Controller
         ]);
     }
 }
-
-

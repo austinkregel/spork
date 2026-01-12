@@ -23,4 +23,3 @@ class StoreReactionRequest extends FormRequest
         ];
     }
 }
-

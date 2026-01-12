@@ -21,8 +21,3 @@ class ManualTransactionController
         return back()->with('flash.banner', 'Manual transaction added.');
     }
 }
-
-
-
-
-

@@ -245,7 +245,7 @@
 }
 
 
-.spoiler {
+[data-mx-spoiler], .spoiler {
     @apply bg-slate-950 text-slate-950;
 
     &::selection {

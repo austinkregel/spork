@@ -20,6 +20,7 @@ use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Laravel\Scout\Searchable;
 use Spatie\Tags\HasTags;
@@ -27,8 +28,8 @@ use Spatie\Tags\HasTags;
 class Transaction extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
-    use HasTags;
     use HasProjectResource;
+    use HasTags;
     use ScopeQSearch;
     use ScopeRelativeSearch;
     use Searchable;
@@ -68,6 +69,34 @@ class Transaction extends Model implements Crud, ModelQuery, Taggable
         ];
     }
 
+    /**
+     * Compatibility accessor used by condition evaluation for `transaction.category.name`.
+     *
+     * Plaid provides an array of category labels (hierarchy) per transaction, stored in `data['category']`.
+     * We expose that as `category.name = [...]` so conditions can match against ANY vendor category label.
+     *
+     * @return array{name: array<int, string>}
+     */
+    public function getCategoryAttribute(): array
+    {
+        $categories = $this->data['category'] ?? [];
+
+        if (! is_array($categories)) {
+            $categories = [];
+        }
+
+        $categories = collect($categories)
+            ->map(fn ($value) => is_string($value) ? trim($value) : null)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        return [
+            'name' => $categories,
+        ];
+    }
+
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id', 'account_id');
@@ -83,5 +112,12 @@ class Transaction extends Model implements Crud, ModelQuery, Taggable
             'account_id',
             'account_id'
         );
+    }
+
+    public function privacyTransactions(): BelongsToMany
+    {
+        return $this->belongsToMany(PrivacyTransaction::class, 'privacy_transaction_matches', 'transaction_id', 'privacy_transaction_id')
+            ->withPivot(['match_method', 'confidence'])
+            ->withTimestamps();
     }
 }

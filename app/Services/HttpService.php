@@ -18,7 +18,7 @@ class HttpService implements HttpServiceContract
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client;
     }
 
     public function client(): Client

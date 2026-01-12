@@ -13,4 +13,3 @@ interface SshKeyGeneratorServiceContract
      */
     public static function generate(string $passKey): array;
 }
-

@@ -10,4 +10,3 @@ interface PdfReaderServiceContract
 {
     public function parseContent(string $content): Document;
 }
-

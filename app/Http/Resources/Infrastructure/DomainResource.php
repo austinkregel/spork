@@ -35,4 +35,3 @@ class DomainResource extends JsonResource
         ];
     }
 }
-

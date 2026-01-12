@@ -24,6 +24,7 @@
         "laravel/framework": "^12.7",
         "laravel/horizon": "^5.30",
         "laravel/jetstream": "^5.3",
+        "laravel/nightwatch": "^1.21",
         "laravel/reverb": "^1.4",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.12",

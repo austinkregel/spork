@@ -56,4 +56,3 @@ class DnsZoneRecordController extends Controller
         ]);
     }
 }
-

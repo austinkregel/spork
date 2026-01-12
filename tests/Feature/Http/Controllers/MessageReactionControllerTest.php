@@ -115,4 +115,3 @@ class MessageReactionControllerTest extends TestCase
         $this->assertDatabaseMissing('message_reactions', ['id' => $reaction->id]);
     }
 }
-

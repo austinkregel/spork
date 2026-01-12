@@ -69,5 +69,3 @@ class MatrixServiceTest extends TestCase
         $this->assertNull($service->fetchEvent('$event123'));
     }
 }
-
-

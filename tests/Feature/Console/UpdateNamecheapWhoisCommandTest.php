@@ -6,7 +6,6 @@ namespace Tests\Feature\Console;
 
 use App\Models\Credential;
 use App\Models\Person;
-use App\Services\Registrar\NamecheapService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -44,7 +43,7 @@ class UpdateNamecheapWhoisCommandTest extends TestCase
             ],
         ]);
 
-        $domainsXml = <<<XML
+        $domainsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -57,7 +56,7 @@ class UpdateNamecheapWhoisCommandTest extends TestCase
 </ApiResponse>
 XML;
 
-        $setContactsXml = <<<XML
+        $setContactsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -67,7 +66,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $whoisguardListXml = <<<XML
+        $whoisguardListXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -79,7 +78,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $whoisguardEnableXml = <<<XML
+        $whoisguardEnableXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -160,7 +159,7 @@ XML;
             'primary_address' => '123 Main St, Austin, TX 78701',
         ]);
 
-        $domainsXml = <<<XML
+        $domainsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -173,7 +172,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $setContactsXml = <<<XML
+        $setContactsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -183,7 +182,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $whoisguardListXml = <<<XML
+        $whoisguardListXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -254,7 +253,7 @@ XML;
             'primary_address' => '810 Grace St Owosso, MI 48867',
         ]);
 
-        $domainsXml = <<<XML
+        $domainsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -267,7 +266,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $setContactsXml = <<<XML
+        $setContactsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -277,7 +276,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $whoisguardListXml = <<<XML
+        $whoisguardListXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -354,7 +353,7 @@ XML;
             ],
         ]);
 
-        $domainsXml = <<<XML
+        $domainsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -368,7 +367,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $setContactsXml = <<<XML
+        $setContactsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -378,7 +377,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $whoisguardListXml = <<<XML
+        $whoisguardListXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -461,7 +460,7 @@ XML;
             ],
         ]);
 
-        $domainsXml = <<<XML
+        $domainsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -474,7 +473,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $setContactsXml = <<<XML
+        $setContactsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -484,7 +483,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $whoisguardListXml = <<<XML
+        $whoisguardListXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -562,7 +561,7 @@ XML;
             ],
         ]);
 
-        $domainsXml = <<<XML
+        $domainsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -575,7 +574,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $setContactsBlockedXml = <<<XML
+        $setContactsBlockedXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="ERROR">
   <Errors>
@@ -584,7 +583,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $whoisguardListXml = <<<XML
+        $whoisguardListXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -655,7 +654,7 @@ XML;
             ],
         ]);
 
-        $domainsXml = <<<XML
+        $domainsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -668,7 +667,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $setContactsXml = <<<XML
+        $setContactsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -678,7 +677,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $whoisguardListXml = <<<XML
+        $whoisguardListXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -757,7 +756,7 @@ XML;
             ],
         ]);
 
-        $domainsXml = <<<XML
+        $domainsXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -770,7 +769,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $rateLimitedXml = <<<XML
+        $rateLimitedXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="ERROR">
   <Errors>
@@ -779,7 +778,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $setContactsOkXml = <<<XML
+        $setContactsOkXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -789,7 +788,7 @@ XML;
 </ApiResponse>
 XML;
 
-        $whoisguardListXml = <<<XML
+        $whoisguardListXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -835,5 +834,3 @@ XML;
         $this->assertSame(2, $setContactsCalls);
     }
 }
-
-

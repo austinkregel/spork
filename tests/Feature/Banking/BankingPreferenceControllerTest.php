@@ -31,5 +31,3 @@ class BankingPreferenceControllerTest extends TestCase
         $this->assertSame(['acc_1', 'acc_2'], $user->fresh()->bankingPreference->pinned_accounts);
     }
 }
-
-

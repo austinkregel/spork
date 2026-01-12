@@ -51,7 +51,8 @@ class ServerProvisioningServiceTest extends TestCase
             ],
         ]);
 
-        $fakeServerService = new class implements ServerServiceContract {
+        $fakeServerService = new class implements ServerServiceContract
+        {
             public array $created = [];
 
             public function createServer(array $config): array
@@ -142,4 +143,3 @@ class ServerProvisioningServiceTest extends TestCase
         $this->assertNotNull($result['model']?->id);
     }
 }
-

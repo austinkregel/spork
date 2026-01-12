@@ -8,6 +8,7 @@ if [ ! -d /.composer ]; then
     mkdir /.composer
 fi
 
+php artisan optimize:clear
 
 if [ $# -gt 0 ]; then
     exec gosu $WWWUSER "$@"

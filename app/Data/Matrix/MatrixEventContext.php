@@ -18,23 +18,3 @@ final class MatrixEventContext
         public readonly ?array $room = null,
     ) {}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

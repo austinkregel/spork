@@ -17,6 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class FetchResourcesFromCredentials implements ShouldQueue
 {
@@ -40,11 +41,18 @@ class FetchResourcesFromCredentials implements ShouldQueue
             ->whereNotIn('service', ['matrix', 'ssh'])
             ->get();
 
+        Log::info('FetchResourcesFromCredentials: Starting batch job', [
+            'total_credentials' => $credentials->count(),
+            'plaid_credentials' => $credentials->where('type', Credential::TYPE_FINANCE)->where('service', Credential::PLAID)->count(),
+        ]);
+
         $jobs = $credentials->groupBy('user_id')
             ->map(fn (Collection $group) => $group->map(fn ($credential) => new FetchResourcesFromCredential($credential))->toArray())
             ->toArray();
 
         if (empty($jobs)) {
+            Log::warning('FetchResourcesFromCredentials: No credentials found to process');
+
             return;
         }
 

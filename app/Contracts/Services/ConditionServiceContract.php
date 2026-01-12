@@ -10,4 +10,3 @@ interface ConditionServiceContract
 {
     public function process(Conditionable $item, array $additionalValueData = []): bool;
 }
-

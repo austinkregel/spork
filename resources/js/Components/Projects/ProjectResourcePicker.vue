@@ -93,6 +93,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    allowedTypes: {
+        type: Array,
+        default: () => [],
+    },
     allowedGroups: {
         type: Array,
         default: () => [],
@@ -112,7 +116,12 @@ const results = ref([]);
 
 const allowedTypes = computed(() => {
     const resources = props.registry?.resources ?? [];
+    const types = props.allowedTypes ?? [];
     const groups = props.allowedGroups ?? [];
+
+    if (types.length) {
+        return resources.filter((r) => types.includes(r.type));
+    }
 
     if (!groups.length) {
         return resources;
@@ -163,7 +172,7 @@ watch([resourceType, query], async () => {
             loading.value = false;
         }
     }, 200);
-});
+}, { immediate: true });
 
 function isSelected(type, id) {
     return props.selected.some((i) => i.resource_type === type && i.resource_id === id);

@@ -278,6 +278,8 @@
                             <option value="digitalocean">DigitalOcean</option>
                             <option value="imap">IMAP Email</option>
                             <option value="http_api">HTTP API</option>
+                            <option value="plaid">Plaid</option>
+                            <option value="privacy">Privacy</option>
                         </template>
                     </SporkSelect>
                     <span v-if="valuesToSend.errors?.service" class="text-xs text-red-500 dark:text-red-400">
@@ -423,6 +425,12 @@ const fieldMappings = {
     http_api: [
         'url',
         'body',
+    ],
+    plaid: [
+        'access_token',
+    ],
+    privacy: [
+        'api_key',
     ]
 }
 

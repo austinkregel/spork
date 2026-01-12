@@ -45,4 +45,22 @@ return [
     'command_server' => [
         'ws_url' => env('COMMAND_SERVER_WS_URL', ''),
     ],
+
+    'openweather' => [
+        'api_key' => env('OPEN_WEATHER_KEY'),
+        'base_url' => env('OPEN_WEATHER_BASE_URL', 'https://api.openweathermap.org/data/2.5/weather'),
+        'cache_ttl_minutes' => env('OPEN_WEATHER_CACHE_TTL_MINUTES', 30),
+        'default_timezone' => env('OPEN_WEATHER_DEFAULT_TIMEZONE', 'America/Detroit'),
+        'units' => env('OPEN_WEATHER_UNITS', 'imperial'),
+        'timeout_seconds' => env('OPEN_WEATHER_TIMEOUT_SECONDS', 10),
+    ],
+
+    'google_maps' => [
+        'api_key' => env('GOOGLE_MAPS_API_KEY'),
+        'geocode_base_url' => env('GOOGLE_MAPS_GEOCODE_BASE_URL', 'https://maps.googleapis.com/maps/api/geocode/json'),
+        'places_base_url' => env('GOOGLE_MAPS_PLACES_BASE_URL', 'https://maps.googleapis.com/maps/api/place/textsearch/json'),
+        'business_search_cache_ttl_days' => env('GOOGLE_MAPS_BUSINESS_SEARCH_CACHE_TTL_DAYS', 1),
+        'business_search_radius' => env('GOOGLE_MAPS_BUSINESS_SEARCH_RADIUS', 321869),
+        'business_search_location' => env('GOOGLE_MAPS_BUSINESS_SEARCH_LOCATION', 'michigan'),
+    ],
 ];

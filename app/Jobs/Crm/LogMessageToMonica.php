@@ -21,8 +21,7 @@ class LogMessageToMonica implements ShouldQueue
 
     public function __construct(
         public Message $message,
-    ) {
-    }
+    ) {}
 
     public function handle(MonicaClientContract $monica): void
     {
@@ -66,16 +65,3 @@ class LogMessageToMonica implements ShouldQueue
         $monica->createConversation($credential, $contactId, $message, $recipient);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

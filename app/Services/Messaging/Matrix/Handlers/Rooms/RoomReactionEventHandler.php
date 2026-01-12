@@ -75,4 +75,3 @@ class RoomReactionEventHandler implements MatrixEventHandlerContract
         );
     }
 }
-

@@ -4,11 +4,20 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Console\Commands\Article\ResetDefaultArticleSocialFeedsCommand;
+use App\Console\Commands\CreateCredentialCommand;
 use App\Console\Commands\CrudCacheCommand;
+use App\Console\Commands\Finance\AnalyzeTransactionPatternsCommand;
+use App\Console\Commands\Finance\ResetStandardAutomatedTagsCommand;
+use App\Console\Commands\Finance\ResetStandardBudgetsCommand;
 use App\Console\Commands\Infrastructure\CreateMonitorBridgeCredentialCommand;
 use App\Console\Commands\Infrastructure\DumpNamecheapApiResponseCommand;
 use App\Console\Commands\Infrastructure\ListenToCommandServerCommand;
 use App\Console\Commands\Infrastructure\UpdateNamecheapWhoisCommand;
+use App\Console\Commands\Messaging\BackfillEmailMessageText;
+use App\Console\Commands\Messaging\RenameDirectMessageThreads;
+use App\Console\Commands\SyncPlaidTransactionsCommand;
+use App\Console\Commands\SyncPrivacyTransactionsCommand;
 use App\Contracts\Repositories\CredentialRepositoryContract;
 use App\Contracts\Repositories\MatrixClientSyncRepositoryContract;
 use App\Contracts\Repositories\ProjectRepositoryContract;
@@ -21,6 +30,7 @@ use App\Contracts\Services\DigitalOceanServiceContract;
 use App\Contracts\Services\Documents\HtmlJsonDataLinkingServiceContract;
 use App\Contracts\Services\Documents\PdfParserServiceContract;
 use App\Contracts\Services\Documents\PdfReaderServiceContract;
+use App\Contracts\Services\Finance\PrivacyServiceContract;
 use App\Contracts\Services\GeocodingServiceContract;
 use App\Contracts\Services\HttpServiceContract;
 use App\Contracts\Services\ImapServiceContract;
@@ -49,12 +59,12 @@ use App\Services\Documents\PdfParserService;
 use App\Services\Documents\PdfReaderService;
 use App\Services\Domain\CloudflareDomainService;
 use App\Services\Finance\PlaidService;
+use App\Services\Finance\PrivacyService;
 use App\Services\Geocoding\GoogleMapsGeocodingService;
 use App\Services\HttpService;
 use App\Services\JiraService;
 use App\Services\Messaging\ImapCredentialService;
 use App\Services\Messaging\ImapFactoryService;
-use App\Services\Messaging\Matrix\MatrixService;
 use App\Services\Messaging\Matrix\Handlers\AccountData\BreadcrumbsEventHandler;
 use App\Services\Messaging\Matrix\Handlers\AccountData\CrossSigningEventHandler;
 use App\Services\Messaging\Matrix\Handlers\AccountData\DirectChatsEventHandler;
@@ -80,6 +90,7 @@ use App\Services\Messaging\Matrix\Handlers\Rooms\RoomRedactionEventHandler;
 use App\Services\Messaging\Matrix\Handlers\Rooms\RoomTopicEventHandler;
 use App\Services\Messaging\Matrix\MatrixEventHandlerRegistry;
 use App\Services\Messaging\Matrix\MatrixEventSupport;
+use App\Services\Messaging\Matrix\MatrixService;
 use App\Services\MustacheService;
 use App\Services\News\NewsService;
 use App\Services\News\RssFeedService;
@@ -93,6 +104,7 @@ use App\Services\SshService;
 use App\Services\Weather\OpenWeatherService;
 use App\Services\Weather\WeatherApiService;
 use App\Services\Weather\WeatherGovApiService;
+use App\Services\Weather\WeatherServiceWithFailover;
 use App\Spork;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -104,8 +116,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Symfony\Component\Finder\SplFileInfo;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Finder\SplFileInfo;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -168,6 +180,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Services - Finance
         $this->app->bind(PlaidServiceContract::class, PlaidService::class);
+        $this->app->bind(PrivacyServiceContract::class, PrivacyService::class);
 
         // Services - Messaging
         $this->app->bind(ImapServiceContract::class, ImapCredentialService::class);
@@ -175,9 +188,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MatrixServiceContract::class, MatrixService::class);
 
         // Services - Weather
-        $this->app->bind(WeatherServiceContract::class, OpenWeatherService::class);
-        // Note: WeatherApiService and WeatherGovApiService also implement WeatherServiceContract
-        // but OpenWeatherService is the default implementation
+        $this->app->bind(WeatherServiceContract::class, WeatherServiceWithFailover::class);
+        // Note: WeatherServiceWithFailover uses OpenWeatherService as primary and WeatherApiService as fallback
+        // WeatherGovApiService also implements WeatherServiceContract but is not currently used
 
         // Services - Jira
         $this->app->bind(JiraServiceContract::class, JiraService::class);
@@ -227,8 +240,19 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CrudCacheCommand::class,
+                CreateCredentialCommand::class,
+                SyncPrivacyTransactionsCommand::class,
+                SyncPlaidTransactionsCommand::class,
+                AnalyzeTransactionPatternsCommand::class,
+                ResetStandardAutomatedTagsCommand::class,
+                ResetStandardBudgetsCommand::class,
+                ResetDefaultArticleSocialFeedsCommand::class,
+                BackfillEmailMessageText::class,
+                RenameDirectMessageThreads::class,
                 ListenToCommandServerCommand::class,
                 CreateMonitorBridgeCredentialCommand::class,
+                \App\Console\Commands\Infrastructure\CreateMonitorDashboardCredentialCommand::class,
+                \App\Console\Commands\Infrastructure\RefreshMonitorDashboardTokenCommand::class,
                 UpdateNamecheapWhoisCommand::class,
                 DumpNamecheapApiResponseCommand::class,
             ]);

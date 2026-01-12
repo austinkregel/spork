@@ -29,4 +29,3 @@ class MessageReactionFactory extends Factory
         ];
     }
 }
-

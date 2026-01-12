@@ -12,23 +12,3 @@ interface MatrixEventHandlerContract
 
     public function handle(MatrixEventContext $context): void;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -18,8 +18,7 @@ class ProvisioningDomainService
 {
     public function __construct(
         private readonly DomainServiceFactory $domainServiceFactory,
-    ) {
-    }
+    ) {}
 
     public function handle(InfrastructureProvisionRequest $request, array $serverResult): array
     {
@@ -213,4 +212,3 @@ class ProvisioningDomainService
         return null;
     }
 }
-

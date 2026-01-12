@@ -10,7 +10,6 @@ use App\Models\Credential;
 use App\Models\Server;
 use App\Models\Spork\Script;
 use App\Services\SshService;
-use Illuminate\Validation\ValidationException;
 
 class SshStepHandler
 {
@@ -90,5 +89,3 @@ class SshStepHandler
         }
     }
 }
-
-

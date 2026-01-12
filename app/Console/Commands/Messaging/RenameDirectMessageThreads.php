@@ -12,8 +12,9 @@ use Illuminate\Support\Collection;
 
 class RenameDirectMessageThreads extends Command
 {
-    protected $signature = 'spork:threads-rename-dms
+    protected $signature = 'spork:threads:rename-dms
         {--ignore= : Participant name to ignore (case-insensitive)}
+        {--only-placeholder : Only rename threads whose name looks like a placeholder (blank or starts with "!") }
         {--execute : Persist changes (default is dry-run)}
         {--chunk=200 : Chunk size for scanning threads}
         {--limit=0 : Max number of threads to rename (0 = unlimited)}';
@@ -23,6 +24,7 @@ class RenameDirectMessageThreads extends Command
     public function handle(): int
     {
         $ignore = $this->normalizeName((string) $this->option('ignore'));
+        $onlyPlaceholder = (bool) $this->option('only-placeholder');
         $execute = (bool) $this->option('execute');
         $chunkSize = max(1, (int) $this->option('chunk'));
         $limit = max(0, (int) $this->option('limit'));
@@ -47,11 +49,12 @@ class RenameDirectMessageThreads extends Command
             'Scanning 2-participant threads (%s). Ignore=%s',
             $execute ? 'EXECUTE' : 'DRY-RUN',
             $this->option('ignore'),
-            
+
         ));
 
         $query->chunkById($chunkSize, function (Collection $threads) use (
             $ignore,
+            $onlyPlaceholder,
             $execute,
             $limit,
             &$renamed,
@@ -68,12 +71,24 @@ class RenameDirectMessageThreads extends Command
                 if ($thread->participants->count() !== 2) {
                     $skipped++;
                     $this->warn(sprintf('Thread #%d has %d participants, skipping (participants_count=%d).', $thread->id, $thread->participants->count(), $thread->participants->count()));
+
                     continue;
                 }
 
-                if (! $this->shouldRenameThread($thread)) {
+                if (! $this->shouldRenameThread($thread, $onlyPlaceholder)) {
                     $skipped++;
                     $this->warn(sprintf('Thread #%d is not a placeholder, skipping.', $thread->id));
+
+                    continue;
+                }
+
+                $ignorePresent = $thread->participants->contains(function (Person $participant) use ($ignore): bool {
+                    return $this->normalizeName((string) ($participant->name ?? '')) === $ignore;
+                });
+
+                if (! $ignorePresent) {
+                    $skipped++;
+
                     continue;
                 }
 
@@ -84,13 +99,14 @@ class RenameDirectMessageThreads extends Command
 
                 if ($newName === null) {
                     $skipped++;
-                    $this->warn(sprintf('Thread #%d has the same name as the other participant, skipping (current_name=%s, new_name=%s).', $thread->id, $currentName, $newName));
+
                     continue;
                 }
 
                 $currentName = $this->normalizeThreadName($thread->name);
                 if ($currentName !== null && $this->normalizeName($currentName) === $this->normalizeName($newName)) {
                     $skipped++;
+
                     continue;
                 }
 
@@ -180,12 +196,16 @@ class RenameDirectMessageThreads extends Command
         return null;
     }
 
-    protected function shouldRenameThread(Thread $thread): bool
+    protected function shouldRenameThread(Thread $thread, bool $onlyPlaceholder): bool
     {
         $name = $this->normalizeThreadName($thread->name);
 
         if ($name === null) {
             return false;
+        }
+
+        if (! $onlyPlaceholder) {
+            return true;
         }
 
         if (blank($name)) {
@@ -195,5 +215,3 @@ class RenameDirectMessageThreads extends Command
         return str_starts_with($name, '!');
     }
 }
-
-

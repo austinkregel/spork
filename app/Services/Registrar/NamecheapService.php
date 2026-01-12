@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Registrar;
 
-use App\Data\Registrar\WhoisContactSetData;
 use App\Contracts\Services\NamecheapServiceContract;
+use App\Data\Registrar\WhoisContactSetData;
 use App\Models\Credential;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;

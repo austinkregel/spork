@@ -148,23 +148,3 @@ class MatrixSyncState
         return $this->notification_settings;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

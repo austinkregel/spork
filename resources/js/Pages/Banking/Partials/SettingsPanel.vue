@@ -25,11 +25,6 @@ const save = () => {
 
 <template>
   <div class="space-y-6">
-    <div>
-      <h1 class="text-2xl text-stone-900 dark:text-white font-semibold">Settings</h1>
-      <p class="text-sm text-stone-500 dark:text-stone-400">Customize your banking dashboard preferences.</p>
-    </div>
-
     <div class="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-6 space-y-6 shadow-sm">
       <div class="space-y-2">
         <label class="text-sm text-stone-700 dark:text-stone-300 font-medium">Default Tab</label>

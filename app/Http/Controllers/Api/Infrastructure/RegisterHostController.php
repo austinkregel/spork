@@ -72,5 +72,3 @@ class RegisterHostController extends Controller
         ]);
     }
 }
-
-

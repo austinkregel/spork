@@ -175,5 +175,3 @@ class ConditionStepHandler
         return (float) $actual <= (float) $expected;
     }
 }
-
-

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Services\Infrastructure;
 
 use App\Http\Resources\Infrastructure\ActivityResource;
+use App\Http\Resources\Infrastructure\DnsZoneResource;
 use App\Http\Resources\Infrastructure\DomainContactResource;
 use App\Http\Resources\Infrastructure\DomainResource;
-use App\Http\Resources\Infrastructure\DnsZoneResource;
 use App\Http\Resources\Infrastructure\ServerResource;
 use App\Models\Credential;
 use App\Models\DnsZone;
@@ -111,7 +111,7 @@ class InfrastructureOverviewService
                 $capabilities = $this->capabilitiesForCredential($credential);
 
                 if (empty($capabilities)) {
-                    return null;
+                    return;
                 }
 
                 return [
@@ -145,4 +145,3 @@ class InfrastructureOverviewService
         return array_values(array_unique($capabilities));
     }
 }
-

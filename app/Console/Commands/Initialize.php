@@ -24,7 +24,7 @@ class Initialize extends Command
         if (Credential::where('type', Credential::TYPE_SSH)->exists()) {
             $this->info('SSH key already exists');
 
-//            return;
+            //            return;
         }
 
         if (! User::exists()) {
@@ -33,39 +33,39 @@ class Initialize extends Command
 
         $randomName = Str::random(16);
         $passKey = Str::random(16);
-//
-//        [$privateKey, $publicKey] = SshKeyGeneratorService::generate($passKey);
-//
-//        $publicKeyFile = storage_path('app/keys/'.$randomName.'.pub');
-//        $privateKeyFile = storage_path('app/keys/'.$randomName);
-//
-//        file_put_contents($publicKeyFile, $publicKey);
-//        chmod($publicKeyFile, 0600);
-//        file_put_contents($privateKeyFile, $privateKey);
-//        chmod($privateKeyFile, 0600);
+        //
+        //        [$privateKey, $publicKey] = SshKeyGeneratorService::generate($passKey);
+        //
+        //        $publicKeyFile = storage_path('app/keys/'.$randomName.'.pub');
+        //        $privateKeyFile = storage_path('app/keys/'.$randomName);
+        //
+        //        file_put_contents($publicKeyFile, $publicKey);
+        //        chmod($publicKeyFile, 0600);
+        //        file_put_contents($privateKeyFile, $privateKey);
+        //        chmod($privateKeyFile, 0600);
 
         /** @var User $user */
         $user = User::first();
 
-//        $user->roles()->create([
-//            'name' => 'developer',
-//            'guard_name' => 'web',
-//        ]);
-//
-//        Credential::create([
-//            'service' => Credential::TYPE_SSH,
-//            'type' => Credential::TYPE_SSH,
-//            'name' => 'SSH',
-//            'user_id' => $user->id,
-//            'api_key' => Str::random(32),
-//            'settings' => [
-//                'pub_key' => $publicKey,
-//                'pub_key_file' => $publicKeyFile,
-//                'private_key' => encrypt($privateKey),
-//                'private_key_file' => $privateKeyFile,
-//                'pass_key' => ! empty($passKey) ? encrypt($passKey) : '',
-//            ],
-//        ]);
+        //        $user->roles()->create([
+        //            'name' => 'developer',
+        //            'guard_name' => 'web',
+        //        ]);
+        //
+        //        Credential::create([
+        //            'service' => Credential::TYPE_SSH,
+        //            'type' => Credential::TYPE_SSH,
+        //            'name' => 'SSH',
+        //            'user_id' => $user->id,
+        //            'api_key' => Str::random(32),
+        //            'settings' => [
+        //                'pub_key' => $publicKey,
+        //                'pub_key_file' => $publicKeyFile,
+        //                'private_key' => encrypt($privateKey),
+        //                'private_key_file' => $privateKeyFile,
+        //                'pass_key' => ! empty($passKey) ? encrypt($passKey) : '',
+        //            ],
+        //        ]);
         $role = Role::findOrCreate('developer');
 
         $crud = Code::instancesOf(Crud::class);

@@ -8,5 +8,3 @@ interface MatrixServiceContract
 {
     public function fetchEvent(string $event_id): ?array;
 }
-
-

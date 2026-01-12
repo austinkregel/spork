@@ -8,9 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Credential;
 use App\Models\Deployment;
 use App\Models\Domain;
-use App\Models\Project;
 use App\Models\Server;
-use Illuminate\Http\Request;
 
 class DeploymentController extends Controller
 {
@@ -18,7 +16,7 @@ class DeploymentController extends Controller
     {
         $deployment->load([
             'servers.tags', 'domains',
-            'credentials'
+            'credentials',
         ]);
 
         $cloudflareCredential = $deployment->credentials()->where('service', Credential::CLOUDFLARE)->first();

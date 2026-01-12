@@ -118,5 +118,3 @@ class CredentialCreationTest extends TestCase
             ->assertJsonValidationErrors(['api_key']);
     }
 }
-
-

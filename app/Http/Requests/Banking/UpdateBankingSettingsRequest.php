@@ -20,8 +20,3 @@ class UpdateBankingSettingsRequest extends FormRequest
         ];
     }
 }
-
-
-
-
-

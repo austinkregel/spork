@@ -11,13 +11,27 @@ class MonitorIngestRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        if (! $this->hasHeader('Authentication')) {
+        // Prefer standard Authorization header, fall back to Authentication for backwards compatibility
+        $authHeader = $this->header('Authorization') ?? $this->header('Authentication');
+
+        if (! $authHeader) {
+            \Log::warning('monitor.ingest.auth.missing_header', [
+                'ip' => $this->ip(),
+                'user_agent' => $this->userAgent(),
+            ]);
+
             return false;
         }
 
-        [$bearer, $token] = explode(' ', $this->header('Authentication'), 2) + [null, null];
+        [$bearer, $token] = explode(' ', $authHeader, 2) + [null, null];
 
         if (strtolower((string) $bearer) !== 'bearer' || empty($token)) {
+            \Log::warning('monitor.ingest.auth.invalid_format', [
+                'ip' => $this->ip(),
+                'user_agent' => $this->userAgent(),
+                'header_present' => true,
+            ]);
+
             return false;
         }
 
@@ -26,13 +40,31 @@ class MonitorIngestRequest extends FormRequest
             ->first();
 
         if (! $credential) {
+            \Log::warning('monitor.ingest.auth.invalid_token', [
+                'ip' => $this->ip(),
+                'user_agent' => $this->userAgent(),
+                'token_prefix' => substr($token, 0, 8).'...',
+            ]);
+
             return false;
         }
 
         // Keep this flexible for now: allow monitor bridge credentials.
         if (! in_array($credential->type, [Credential::TYPE_DEVELOPMENT, Credential::TYPE_BACKUP_AGENT], true)) {
+            \Log::warning('monitor.ingest.auth.invalid_credential_type', [
+                'credential_id' => $credential->id,
+                'credential_type' => $credential->type,
+                'ip' => $this->ip(),
+            ]);
+
             return false;
         }
+
+        \Log::debug('monitor.ingest.auth.success', [
+            'credential_id' => $credential->id,
+            'credential_type' => $credential->type,
+            'ip' => $this->ip(),
+        ]);
 
         $this->merge([
             'credential' => $credential,
@@ -58,11 +90,3 @@ class MonitorIngestRequest extends FormRequest
         return $credential;
     }
 }
-
-
-
-
-
-
-
-

@@ -28,7 +28,7 @@ class BudgetPeriodHelperTest extends TestCase
             'started_at' => Carbon::create(2024, 1, 1, 0, 0, 0, 'UTC'),
         ]);
 
-        $helper = new BudgetPeriodHelper();
+        $helper = new BudgetPeriodHelper;
 
         [$start, $end] = $helper->getCurrentPeriod($budget, Carbon::now('UTC'));
 
@@ -46,7 +46,7 @@ class BudgetPeriodHelperTest extends TestCase
             'started_at' => Carbon::create(2024, 1, 8, 0, 0, 0, 'UTC'),
         ]);
 
-        $helper = new BudgetPeriodHelper();
+        $helper = new BudgetPeriodHelper;
 
         // Pick a moment strictly inside the [2024-01-08, 2024-01-15) window.
         [$start, $end] = $helper->getCurrentPeriod($budget, Carbon::create(2024, 1, 14, 12, 0, 0, 'UTC'));
@@ -54,6 +54,22 @@ class BudgetPeriodHelperTest extends TestCase
         $this->assertTrue($start->equalTo(Carbon::create(2024, 1, 8, 0, 0, 0, 'UTC')));
         $this->assertTrue($end->equalTo(Carbon::create(2024, 1, 15, 0, 0, 0, 'UTC')));
     }
+
+    public function test_periods_can_be_computed_before_started_at_anchor(): void
+    {
+        $budget = new Budget([
+            'name' => 'Monthly Budget',
+            'amount' => 1000,
+            'frequency' => Budget::FREQUENCY_MONTHLY,
+            'interval' => 1,
+            'started_at' => Carbon::create(2024, 2, 1, 0, 0, 0, 'UTC'),
+        ]);
+
+        $helper = new BudgetPeriodHelper;
+
+        [$start, $end] = $helper->getCurrentPeriod($budget, Carbon::create(2024, 1, 15, 12, 0, 0, 'UTC'));
+
+        $this->assertTrue($start->equalTo(Carbon::create(2024, 1, 1, 0, 0, 0, 'UTC')));
+        $this->assertTrue($end->equalTo(Carbon::create(2024, 2, 1, 0, 0, 0, 'UTC')));
+    }
 }
-
-

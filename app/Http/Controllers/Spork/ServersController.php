@@ -14,8 +14,7 @@ class ServersController extends Controller
 {
     public function __construct(
         private readonly InfrastructureOverviewService $overviewService,
-    ) {
-    }
+    ) {}
 
     public function index()
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Email;
@@ -34,11 +36,11 @@ class SporkPostalControllerTest extends TestCase
                 'encryption' => 'ssl',
                 'username' => '',
                 'password' => '',
-            ]
+            ],
         ]);
 
-        $this->app->bind(ImapCredentialService::class, fn() => $this->mock(ImapCredentialService::class));
-        
+        $this->app->bind(ImapCredentialService::class, fn () => $this->mock(ImapCredentialService::class));
+
         $email = Email::factory()->create([
             'credential_id' => $credential->id,
         ]);

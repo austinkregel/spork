@@ -63,7 +63,7 @@ class OperationStepHandlerTest extends TestCase
             ],
         ]);
 
-        $handler = new OperationStepHandler();
+        $handler = new OperationStepHandler;
         $result = $handler->execute($automation, $step);
 
         $this->assertSame('Operation TestEchoOperation executed (ID 1)', $result['output']);
@@ -85,11 +85,9 @@ class OperationStepHandlerTest extends TestCase
         ]);
         $step = new AutomationStep(['config' => ['operation' => 'Foo\\Bar']]);
 
-        $handler = new OperationStepHandler();
+        $handler = new OperationStepHandler;
         $result = $handler->execute($automation, $step);
 
         $this->assertSame('Provided class is not a valid Operation', $result['error']);
     }
 }
-
-

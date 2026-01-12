@@ -34,11 +34,6 @@ const currency = (value) => {
 
 <template>
   <div class="space-y-6">
-    <div class="flex flex-col gap-1">
-      <h1 class="text-2xl font-semibold text-stone-900 dark:text-white">Banking Overview</h1>
-      <p class="text-sm text-stone-500 dark:text-stone-400">Link accounts, monitor budgets, and track spend in one place.</p>
-    </div>
-
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4 shadow-sm">
         <p class="text-xs uppercase text-stone-500">Total Income (current)</p>
@@ -162,7 +157,7 @@ const currency = (value) => {
 
       <div class="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4 shadow-sm">
         <p class="text-sm text-stone-900 dark:text-white font-medium mb-3">Link Additional Accounts</p>
-        <LinkAccount :accounts="overview?.accounts ?? []" />
+        <LinkAccount variant="button" :accounts="overview?.accounts ?? []" />
       </div>
     </div>
 

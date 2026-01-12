@@ -1,84 +1,100 @@
 <template>
-    <AppLayout title="Dashboard">
-        <div class="flex flex-wrap gap-4 m-4">
-            <div class="w-full font-medium text-stone-600 dark:text-stone-300 uppercase ml-4">Rss Feeds</div>
-
-            <div class="grid grid-cols-1 max-w-5xl mx-auto gap-4 ">
-                <div
-                    v-for="(topic, i) in feeds ?? []"
-                    class="max-h-64 overflow-hidden p-3 border border-stone-200 dark:border-stone-600 rounded-lg bg-white dark:bg-stone-600"
-                    :key="'research-'+i"
-                >
-                    <ContextMenu>
-                        <div>
-                            <a target="_blank" :href="topic.url" class="text-xl font-bold underline">{{ topic.headline }}</a>
-                            <div class="overflow-hidden max-h-32">
-                                <div v-html="topic.content"></div>
-                            </div>
-                            <div class="flex flex-wrap mt-2 gap-2">
-                                <div v-for="tag in topic.author?.tags" :key="tag.name"
-                                     class="py-1 px-2 rounded-full bg-blue-300 dark:bg-blue-600 text-xs">
-                                    {{ tag.name.en }}
-                                </div>
-
-                                <div class="py-1 px-2 rounded-full bg-slate-700 text-xs">{{ date(topic.last_modified)}}</div>
-                            </div>
-                        </div>
-
-                        <template #items>
-                            <Link :href="'/-/research/'+topic.id" class="flex items-center gap-2 text-stone-700 dark:text-stone-200 px-4 py-2" role="menuitem" tabindex="-1">
-                                <ArrowTopRightOnSquareIcon  class="w-4 h-4" />
-                                Open
-                            </Link>
-                        </template>
-                    </ContextMenu>
-                </div>
-            </div>
-            <div class="w-full dark:text-white flex justify-between flex-wrap px-4 py-2 mb-20">
-                <Link
-                    :href="pagination?.prev_page_url ?? '#'"
-                    :disabled="!pagination?.prev_page_url"
-                    :plain="true"
-                    :xlarge="true"
-                    :class="[!pagination?.prev_page_url ? 'opacity-50 cursor-not-allowed' : '']"
-                    :aria-disabled="!pagination?.prev_page_url"
-                >
-                    Previous
-                </Link>
-
-                <div class="py-2">
-                    {{ (pagination.current_page * pagination.per_page) - pagination.per_page }} total items, {{ pagination.current_page  }} of {{ pagination?.total}}
-                </div>
-                <Link
-                    :href="pagination?.next_page_url ?? '#'"
-                    :disabled="!pagination?.next_page_url"
-                    :class="[!pagination?.next_page_url ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer']"
-                    :aria-disabled="!pagination?.next_page_url"
-                >
-                    Next
-                </Link>
-            </div>
+  <AppLayout title="RSS Feeds">
+    <div class="p-4">
+      <div class="flex flex-col gap-4 lg:flex-row">
+        <!-- Left rail -->
+        <div class="w-full lg:w-80 shrink-0">
+          <SocialFeedSelector :social-feeds="social_feeds" :active-id="null" />
         </div>
-    </AppLayout>
+
+        <!-- Main -->
+        <div class="flex-1">
+          <div class="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-stone-200 dark:border-stone-800">
+              <div>
+                <div class="text-xs font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">Feed</div>
+                <div class="text-lg font-semibold text-stone-900 dark:text-white">Latest articles</div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <Link
+                  href="/-/manage/external-rss-feeds"
+                  class="px-3 py-2 text-sm rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800"
+                >
+                  Manage feeds
+                </Link>
+                <button
+                  type="button"
+                  class="px-3 py-2 text-sm rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white hover:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-stone-900"
+                  @click="createOpen = true"
+                >
+                  Create social feed
+                </button>
+              </div>
+            </div>
+
+            <div class="divide-y divide-stone-200 dark:divide-stone-800">
+              <ArticleCard v-for="topic in feeds ?? []" :key="topic.id" :article="topic" />
+            </div>
+
+            <div class="flex items-center justify-between gap-4 px-4 py-3">
+              <Link
+                :href="pagination?.prev_page_url ?? '#'"
+                :disabled="!pagination?.prev_page_url"
+                :class="[!pagination?.prev_page_url ? 'opacity-50 cursor-not-allowed' : '']"
+                class="px-3 py-2 text-sm rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800"
+              >
+                Previous
+              </Link>
+
+              <div class="text-xs text-stone-500 dark:text-stone-400">
+                Page {{ pagination?.current_page ?? 1 }} of {{ pagination?.last_page ?? 1 }}
+              </div>
+
+              <Link
+                :href="pagination?.next_page_url ?? '#'"
+                :disabled="!pagination?.next_page_url"
+                :class="[!pagination?.next_page_url ? 'opacity-50 cursor-not-allowed' : '']"
+                class="px-3 py-2 text-sm rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800"
+              >
+                Next
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <SocialFeedModal
+      :show="createOpen"
+      :available-tags="available_tags"
+      :parameter-groups="parameter_groups"
+      @close="createOpen = false"
+      @created="onCreated"
+    />
+  </AppLayout>
 </template>
 
 <script setup>
-import {
-    TrashIcon,
-    ArrowTopRightOnSquareIcon ,
-    DocumentDuplicateIcon,
-    PencilIcon,
-    UserPlusIcon
-} from '@heroicons/vue/24/outline';
 import AppLayout from "@/Layouts/AppLayout.vue";
-import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
-import { Link } from '@inertiajs/vue3'
-import LaravelVuePagination from "@/Components/Spork/LaravelVuePagination.vue";
+import { Link, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import ArticleCard from '@/Components/RssFeeds/ArticleCard.vue';
+import SocialFeedModal from '@/Components/RssFeeds/SocialFeedModal.vue';
+import SocialFeedSelector from '@/Components/RssFeeds/SocialFeedSelector.vue';
 
-const { feeds, pagination } = defineProps({
-    feeds: Array,
-    pagination: Object,
-})
-const date = (d) => dayjs(d).format('YYYY-MM-DD HH:mm:ss')
+const createOpen = ref(false);
 
+const { feeds, pagination, social_feeds, available_tags, parameter_groups } = defineProps({
+  feeds: Array,
+  pagination: Object,
+  social_feeds: Array,
+  available_tags: Array,
+  parameter_groups: Array,
+});
+
+const onCreated = () => {
+  createOpen.value = false;
+  router.reload({ only: ['social_feeds'] });
+};
 </script>

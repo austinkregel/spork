@@ -122,5 +122,3 @@ final class WhoisContactData
         );
     }
 }
-
-

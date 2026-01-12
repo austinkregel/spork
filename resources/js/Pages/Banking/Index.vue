@@ -5,6 +5,7 @@ import OverviewPanel from "@/Pages/Banking/Partials/OverviewPanel.vue";
 import AccountsPanel from "@/Pages/Banking/Partials/AccountsPanel.vue";
 import BudgetsPanel from "@/Pages/Banking/Partials/BudgetsPanel.vue";
 import TransactionsPanel from "@/Pages/Banking/Partials/TransactionsPanel.vue";
+import PrivacyPanel from "@/Pages/Banking/Partials/PrivacyPanel.vue";
 import SettingsPanel from "@/Pages/Banking/Partials/SettingsPanel.vue";
 
 const props = defineProps({
@@ -32,6 +33,10 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  privacyData: {
+    type: Object,
+    default: null,
+  },
   settingsData: {
     type: Object,
     default: null,
@@ -43,6 +48,7 @@ const panels = {
   accounts: AccountsPanel,
   budgets: BudgetsPanel,
   transactions: TransactionsPanel,
+  privacy: PrivacyPanel,
   settings: SettingsPanel,
 };
 
@@ -59,7 +65,13 @@ const activeNav = computed(() => navigationItems.value.find((item) => item.activ
 </script>
 
 <template>
-  <SplitNavigationShell title="Banking" subtitle="Finance cockpit" :nav-items="navigationItems">
+  <SplitNavigationShell
+    title="Banking"
+    subtitle="Finance cockpit"
+    :nav-items="navigationItems"
+    content-width-class="max-w-none"
+    content-padding-class="px-4 lg:px-6 pt-2 pb-4"
+  >
     <template #header>
       <div class="flex items-center justify-between gap-4">
         <div>
@@ -73,13 +85,14 @@ const activeNav = computed(() => navigationItems.value.find((item) => item.activ
       </div>
     </template>
 
-    <section class="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm min-h-[60vh]">
+    <section class="rounded-2xl bg-white dark:bg-stone-900 shadow-sm min-h-[60vh]">
       <component
         :is="CurrentPanel"
         :overview="overview"
         :accounts-data="accountsData"
         :budgets-data="budgetsData"
         :transactions-data="transactionsData"
+        :privacy-data="privacyData"
         :settings-data="settingsData"
       />
     </section>

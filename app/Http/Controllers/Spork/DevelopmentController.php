@@ -33,8 +33,8 @@ class DevelopmentController
                             'file_path' => base64_encode($file),
                             'is_directory' => false,
                         ])
-                    ->sortBy('name')
-                    ->values()
+                        ->sortBy('name')
+                        ->values()
                 ),
 
         ]);

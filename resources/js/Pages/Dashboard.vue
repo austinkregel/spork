@@ -21,6 +21,7 @@ const { weather, news, expiring_domains, job_batches, accounts } = defineProps({
     weather: Object,
     tasks_today: Number,
     news: Object,
+    news_tags: Array,
     expiring_domains: Object,
     job_batches: Object,
     accounts: Object,
@@ -107,6 +108,18 @@ onMounted(() => {
         <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 xl:px-8 px-4">
             <div class="">
                 <div class="text-xl tracking-wider leading-tight underline pb-4 pt-2">News</div>
+                <div class="px-2 pb-2 flex flex-wrap items-center gap-2">
+                    <div
+                        v-for="tag in (news_tags ?? [])"
+                        :key="tag.id"
+                        class="px-2 py-1 rounded-full bg-stone-100 dark:bg-stone-700 text-xs text-stone-700 dark:text-stone-200"
+                    >
+                        {{ tag?.name?.en ?? tag?.name }}
+                    </div>
+                    <Link href="/-/rss-feeds" class="text-xs text-indigo-600 dark:text-indigo-300 underline ml-auto">
+                        Open Social Feeds →
+                    </Link>
+                </div>
                 <div class="flex-col flex max-h-[50vh] overflow-auto dark:bg-stone-800 rounded-lg divide-y dark:divide-stone-600">
                     <CollapsibleArticle v-for="article in news.data" :article="article" />
                 </div>

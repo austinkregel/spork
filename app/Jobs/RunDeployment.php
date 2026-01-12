@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Jobs\Deployment\Steps\CompileNpmAssetsJob;
 use App\Jobs\Deployment\Steps\SetupCloudflareDns;
-use App\Jobs\Deployment\Steps\SetupLoadBalancerDnsRecordJob;
 use App\Models\Credential;
 use App\Models\Project;
 use Illuminate\Bus\Batch;

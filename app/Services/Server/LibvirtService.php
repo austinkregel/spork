@@ -8,7 +8,7 @@ use App\Contracts\Services\ServerServiceContract;
 use Illuminate\Support\Arr;
 use Nette\NotImplementedException;
 
-class LibvirtService //implements ServerServiceContract
+class LibvirtService // implements ServerServiceContract
 {
     protected $resource;
 

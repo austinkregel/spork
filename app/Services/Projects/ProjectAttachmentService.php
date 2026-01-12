@@ -16,8 +16,7 @@ class ProjectAttachmentService
     public function __construct(
         private readonly ProjectResourceRegistry $registry,
         private readonly ConnectionInterface $db,
-    ) {
-    }
+    ) {}
 
     public function attach(Project $project, string $resource_type, int $resource_id): void
     {
@@ -195,5 +194,3 @@ class ProjectAttachmentService
         ]);
     }
 }
-
-

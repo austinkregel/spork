@@ -125,7 +125,7 @@ class MediaUnfurlController
 
     private function metaContent(string $html, string $property): ?string
     {
-        $document = new \DOMDocument();
+        $document = new \DOMDocument;
         libxml_use_internal_errors(true);
         $document->loadHTML($html);
         libxml_clear_errors();
@@ -140,4 +140,3 @@ class MediaUnfurlController
         return $nodes->item(0)?->getAttribute('content') ?: null;
     }
 }
-

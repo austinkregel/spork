@@ -47,7 +47,7 @@ class MediaUnfurlControllerTest extends TestCase
 
         Http::fake([
             $url => Http::response(
-                <<<HTML
+                <<<'HTML'
                     <html>
                         <head>
                             <meta property="og:image" content="https://media.tenor.com/example.gif" />
@@ -86,4 +86,3 @@ class MediaUnfurlControllerTest extends TestCase
         $response->assertStatus(422);
     }
 }
-

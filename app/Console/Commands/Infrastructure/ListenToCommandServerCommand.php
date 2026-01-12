@@ -34,10 +34,10 @@ class ListenToCommandServerCommand extends Command
             $this->info(sprintf('Connecting to command server: %s', $url));
 
             $connector($url)->then(
-                function (WebSocket $connection) use ($loop, $url, &$connect): void {
+                function (WebSocket $connection) use ($loop, &$connect): void {
                     $this->info('Connected.');
 
-                    $connection->on('message', function ($message) use ($url): void {
+                    $connection->on('message', function ($message): void {
                         $payload = json_decode((string) $message, true);
 
                         if (! is_array($payload)) {
@@ -101,5 +101,3 @@ class ListenToCommandServerCommand extends Command
         return self::SUCCESS;
     }
 }
-
-

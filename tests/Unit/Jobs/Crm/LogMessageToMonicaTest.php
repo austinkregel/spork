@@ -111,16 +111,3 @@ class LogMessageToMonicaTest extends TestCase
         $this->assertNull($recipient->fresh()->monica_contact_id);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

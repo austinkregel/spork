@@ -63,4 +63,3 @@ class DomainContactController extends Controller
         ]);
     }
 }
-

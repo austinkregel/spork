@@ -209,6 +209,7 @@ class UpdateNamecheapWhoisCommand extends Command
 
                 if ($dryRun) {
                     $this->line('  - would attempt to enable privacy');
+
                     continue;
                 }
 
@@ -638,5 +639,3 @@ class UpdateNamecheapWhoisCommand extends Command
         return [$first, $last];
     }
 }
-
-

@@ -19,23 +19,3 @@ class DirectChatsEventHandler implements MatrixEventHandlerContract
         $context->state->setDms($context->event['content'] ?? []);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

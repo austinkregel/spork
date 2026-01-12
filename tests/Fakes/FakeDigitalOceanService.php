@@ -10,9 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class FakeDigitalOceanService implements DigitalOceanServiceContract
 {
-    public function __construct(...$args)
-    {
-    }
+    public function __construct(...$args) {}
 
     public function createServer(array $config): array
     {
@@ -36,29 +34,17 @@ class FakeDigitalOceanService implements DigitalOceanServiceContract
         return [];
     }
 
-    public function removeServerKey($identifier): void
-    {
-    }
+    public function removeServerKey($identifier): void {}
 
-    public function deleteServer(int|string $identifier): void
-    {
-    }
+    public function deleteServer(int|string $identifier): void {}
 
-    public function powerOnServer(int|string $identifier): void
-    {
-    }
+    public function powerOnServer(int|string $identifier): void {}
 
-    public function powerOffServer(int|string $identifier): void
-    {
-    }
+    public function powerOffServer(int|string $identifier): void {}
 
-    public function shutdownServer(int|string $identifier): void
-    {
-    }
+    public function shutdownServer(int|string $identifier): void {}
 
-    public function rebootServer(int|string $identifier): void
-    {
-    }
+    public function rebootServer(int|string $identifier): void {}
 
     public function waitForActiveServer(int $identifier, int $attempts = 30, int $sleepSeconds = 1): array
     {
@@ -110,12 +96,7 @@ class FakeDigitalOceanService implements DigitalOceanServiceContract
         return new Paginator([], 0, $limit, $page);
     }
 
-    public function deleteDnsRecord(string $domain, string $dnsRecordId): void
-    {
-    }
+    public function deleteDnsRecord(string $domain, string $dnsRecordId): void {}
 
-    public function createDnsRecord(string $domain, array $dnsRecordArray): void
-    {
-    }
+    public function createDnsRecord(string $domain, array $dnsRecordArray): void {}
 }
-

@@ -30,22 +30,3 @@ class DomainContact extends Model
         return $this->belongsTo(Domain::class);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

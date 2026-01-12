@@ -18,8 +18,8 @@ use Spatie\Tags\HasTags;
 class Automation extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
-    use HasTags;
     use HasProjectResource;
+    use HasTags;
     use ScopeQSearch;
     use ScopeRelativeSearch;
 
@@ -62,5 +62,3 @@ class Automation extends Model implements Crud, ModelQuery, Taggable
         return $this->hasMany(AutomationStep::class)->orderBy('order');
     }
 }
-
-

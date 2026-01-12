@@ -13,8 +13,7 @@ class ActionMetadata implements Arrayable, JsonSerializable
     public function __construct(
         public readonly string $className,
         public readonly array $payload = [],
-    ) {
-    }
+    ) {}
 
     public static function fromAction(ActionInterface $action): self
     {
@@ -51,4 +50,3 @@ class ActionMetadata implements Arrayable, JsonSerializable
         return $this->toArray();
     }
 }
-

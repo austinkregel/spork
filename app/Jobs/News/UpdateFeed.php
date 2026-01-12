@@ -43,10 +43,13 @@ class UpdateFeed implements ShouldQueue
 
         /** @var FeedItem $feedItem */
         foreach ($rssFeed->getData() as $feedItem) {
+            // Calculate the external_guid value that will be used for the unique constraint
+            $external_guid = $feedItem->getUuidIfExists() ?? $feedItem->getUrl();
+
             // If we already have the item's GUID, we must already have this item so we should stop,
             // as any items afterwards are probably already in our system as well.
             if ($this->feed->articles()
-                ->where('external_guid', $feedItem->getUuidIfExists() ?? $feedItem->getUrl())
+                ->where('external_guid', $external_guid)
                 ->exists()) {
                 break;
             }

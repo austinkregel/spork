@@ -10,10 +10,6 @@ import { spoiler } from '@/Support/markdown-it-spoiler'
 import { defineProps, computed } from 'vue';
 
 // Actual default values
-
-
-
-
 const props = defineProps({
     source: {
         type: String,

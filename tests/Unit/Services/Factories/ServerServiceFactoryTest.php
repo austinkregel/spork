@@ -32,7 +32,7 @@ class ServerServiceFactoryTest extends TestCase
             $mock->shouldReceive('authenticate')->once();
         }));
 
-        $factory = new ServerServiceFactory();
+        $factory = new ServerServiceFactory;
 
         $service = $factory->make($credential);
 
@@ -45,11 +45,10 @@ class ServerServiceFactoryTest extends TestCase
             'service' => 'unsupported-provider',
         ]);
 
-        $factory = new ServerServiceFactory();
+        $factory = new ServerServiceFactory;
 
         $this->expectException(RuntimeException::class);
 
         $factory->make($credential);
     }
 }
-

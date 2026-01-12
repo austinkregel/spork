@@ -12,11 +12,11 @@ class RegisterHostRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        if (! $this->hasHeader('Authentication')) {
+        if (! $this->hasHeader('Authorization')) {
             return false;
         }
 
-        [$bearer, $token] = explode(' ', $this->header('Authentication'), 2) + [null, null];
+        [$bearer, $token] = explode(' ', $this->header('Authorization'), 2) + [null, null];
 
         if (strtolower((string) $bearer) !== 'bearer' || empty($token)) {
             return false;
@@ -66,5 +66,3 @@ class RegisterHostRequest extends FormRequest
         return $credential;
     }
 }
-
-

@@ -8,11 +8,11 @@ use App\Contracts\Services\PlaidServiceContract;
 use App\Models\Finance\Account;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\ClientException;
-use Illuminate\Log\LogManager;
-use Psr\Log\LoggerInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
+use Illuminate\Log\LogManager;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Psr\Log\LoggerInterface;
 
 class PlaidService implements PlaidServiceContract
 {

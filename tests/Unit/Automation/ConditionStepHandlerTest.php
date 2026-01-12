@@ -18,7 +18,7 @@ class ConditionStepHandlerTest extends TestCase
     public function test_pass()
     {
         $this->actingAsUser();
-        $handler = new ConditionStepHandler();
+        $handler = new ConditionStepHandler;
 
         $automation = Automation::create([
             'user_id' => $this->user->id,
@@ -41,7 +41,7 @@ class ConditionStepHandlerTest extends TestCase
     public function test_fail_skip()
     {
         $this->actingAsUser();
-        $handler = new ConditionStepHandler();
+        $handler = new ConditionStepHandler;
 
         $automation = Automation::create([
             'user_id' => $this->user->id,
@@ -65,7 +65,7 @@ class ConditionStepHandlerTest extends TestCase
     public function test_fail_abort()
     {
         $this->actingAsUser();
-        $handler = new ConditionStepHandler();
+        $handler = new ConditionStepHandler;
 
         $automation = Automation::create([
             'user_id' => $this->user->id,
@@ -86,5 +86,3 @@ class ConditionStepHandlerTest extends TestCase
         $this->assertSame(['error' => 'Conditions failed'], $res);
     }
 }
-
-

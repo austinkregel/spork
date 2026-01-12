@@ -604,7 +604,13 @@ async function refreshDashboardAccessTokenFromDbCredential({ force } = { force: 
 
     return minted.accessToken;
   } catch (err) {
-    console.warn('[bridge] dashboard token mint failed', { message: err?.message });
+    console.error('[bridge] dashboard token mint failed', { 
+      message: err?.message,
+      credential_id: cred?.id || null,
+      token_url: cred?.settings?.oauth_token_url || cred?.settings?.token_url || null,
+      has_client_id: Boolean(cred?.api_key || cred?.settings?.client_id),
+      has_client_secret: Boolean(cred?.secret_key || cred?.settings?.client_secret),
+    });
     // Fall back to existing token even if expired, to preserve legacy behavior (server may still accept it).
     if (existing) return existing;
     return null;
@@ -837,20 +843,31 @@ function hmacSig(clientId, ts, token) {
 }
 
 async function ingest(eventType, payload) {
-  if (!SPORK_INGEST_URL) return;
+  if (!SPORK_INGEST_URL) {
+    console.warn('[bridge] ingest skipped: SPORK_INGEST_URL not configured');
+    return;
+  }
+  
   const credential = await getBridgeCredential({ force: false });
   const token = String(credential?.api_key || '').trim();
   if (!token) {
-    // Without a DB-provided token, we cannot authenticate to Spork ingest.
+    console.warn('[bridge] ingest skipped: no bridge credential token available', {
+      credential_id: credential?.id || null,
+      event_type: eventType,
+      client_id: payload?.clientId || payload?.client_id || null,
+    });
     return;
   }
+  
+  const clientId = payload?.clientId || payload?.client_id || null;
+  
   try {
     const res = await fetch(SPORK_INGEST_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authentication': `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`, // Standard HTTP header
       },
       body: JSON.stringify({
         event_type: eventType,
@@ -861,10 +878,26 @@ async function ingest(eventType, payload) {
 
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      console.warn('[bridge] ingest failed', { status: res.status, text: text.slice(0, 300) });
+      console.warn('[bridge] ingest failed', { 
+        status: res.status, 
+        event_type: eventType,
+        client_id: clientId,
+        text: text.slice(0, 300) 
+      });
+    } else {
+      console.log('[bridge] ingest success', { 
+        event_type: eventType,
+        client_id: clientId,
+        status: res.status,
+      });
     }
   } catch (err) {
-    console.warn('[bridge] ingest error', { message: err?.message });
+    console.warn('[bridge] ingest error', { 
+      message: err?.message,
+      event_type: eventType,
+      client_id: clientId,
+      url: SPORK_INGEST_URL,
+    });
   }
 }
 async function authenticate() {
@@ -977,23 +1010,42 @@ const auth = await authenticate();
   socket.on('connect', () => {
     bridgeState.monitor_connected = true;
     bridgeState.monitor_socket_id = socket.id;
-    console.log('[bridge] connected dashboard', { id: socket.id });
+    console.log('[bridge] connected dashboard', { 
+      id: socket.id,
+      url: MONITOR_URL,
+      timestamp: new Date().toISOString(),
+    });
     dashboardReconnectAttempts = 0;
     emitBridgeStatus();
   });
   socket.on('disconnect', (reason) => {
     bridgeState.monitor_connected = false;
     bridgeState.monitor_socket_id = null;
-    console.log('[bridge] dashboard disconnected', { reason });
+    console.warn('[bridge] dashboard disconnected', { 
+      reason: String(reason || 'unknown'),
+      socket_id: socket.id,
+      timestamp: new Date().toISOString(),
+      reconnect_attempts: dashboardReconnectAttempts,
+    });
     emitBridgeStatus();
   });
   socket.on('connect_error', async (err) => {
     const msg = String(err?.message || '');
-    console.warn('[bridge] dashboard connect_error (bridge -> server.mjs)', { message: msg });
+    console.warn('[bridge] dashboard connect_error (bridge -> server.mjs)', { 
+      message: msg,
+      url: MONITOR_URL,
+      timestamp: new Date().toISOString(),
+      has_token: Boolean(accessToken),
+      token_expiring: accessToken ? isJwtExpiredOrExpiring(accessToken) : false,
+    });
 
     // If token is expired/expiring or server says unauthorized, refresh and reconnect (rate-limited/backed off).
     const force = Boolean(accessToken && (isJwtExpiredOrExpiring(accessToken) || isAuthErrorMessage(msg)));
     if (force || isAuthErrorMessage(msg)) {
+      console.log('[bridge] scheduling dashboard reconnect', { 
+        reason: `connect_error:${msg}`,
+        force_token_refresh: force,
+      });
       scheduleDashboardReconnect(`connect_error:${msg}`, { forceTokenRefresh: force });
     }
   });
@@ -1005,18 +1057,36 @@ const auth = await authenticate();
     // Ingest: fan out a single client_list to per-client payloads so Spork can attach telemetry.
     try {
       const list = Array.isArray(msg?.clientIds) ? msg.clientIds : [];
+      console.log('[bridge] client_list received', { 
+        total_clients: list.length, 
+        timestamp: msg?.timestamp || null 
+      });
+      
       for (const entry of list) {
         const clientId = typeof entry?.clientId === 'string' ? entry.clientId : null;
         if (!clientId) continue;
+        
+        console.log('[bridge] discovered device', { 
+          clientId, 
+          machine_id: entry?.machine_id || entry?.machineId || null,
+          provider_server_id: entry?.provider_server_id || entry?.providerServerId || null,
+        });
+        
         ingest('client_list', { clientId, data: entry, timestamp: msg?.timestamp || null });
       }
-    } catch {
-      // ignore
+    } catch (err) {
+      console.warn('[bridge] client_list processing error', { message: err?.message });
     }
   });
   socket.on('stats', (msg) => {
     markMonitorEvent();
     uiNamespace.emit('stats', msg);
+    
+    const clientId = msg?.clientId || msg?.client_id || null;
+    if (clientId) {
+      console.log('[bridge] stats received', { clientId });
+    }
+    
     ingest('stats', msg);
   });
   socket.on('command_output', (msg) => {
@@ -1116,14 +1186,26 @@ async function connectAgents() {
 
   socket.on('stats', (msg) => {
     uiNamespace.emit('agent_stats', msg);
+    const clientId = msg?.clientId || msg?.client_id || null;
+    if (clientId) {
+      console.log('[bridge] agent_stats received', { clientId });
+    }
     ingest('agent_stats', msg);
   });
   socket.on('net_status', (msg) => {
     uiNamespace.emit('net_status', msg);
+    const clientId = msg?.clientId || msg?.client_id || null;
+    if (clientId) {
+      console.log('[bridge] net_status received', { clientId });
+    }
     ingest('net_status', msg);
   });
   socket.on('pong', (msg) => {
     uiNamespace.emit('pong', msg);
+    const clientId = msg?.clientId || msg?.client_id || null;
+    if (clientId) {
+      console.log('[bridge] pong received', { clientId });
+    }
     ingest('pong', msg);
   });
   socket.on('admin_result', (msg) => uiNamespace.emit('admin_result', msg));
@@ -1139,7 +1221,62 @@ console.log('[bridge] starting', {
   monitorUrl: MONITOR_URL,
   ingestUrl: SPORK_INGEST_URL || null,
   clientId: CLIENT_ID,
+  timestamp: new Date().toISOString(),
 });
+
+// Verify credentials are available at startup
+(async () => {
+  // Check bridge credential (for ingest authentication)
+  const bridgeCred = await getBridgeCredential({ force: true });
+  if (bridgeCred?.api_key) {
+    console.log('[bridge] bridge credential verified', {
+      credential_id: bridgeCred.id,
+      user_id: bridgeCred.user_id,
+      has_token: Boolean(bridgeCred.api_key),
+    });
+  } else {
+    console.error('[bridge] bridge credential missing or invalid', {
+      credential_id: bridgeCred?.id || null,
+      user_id: bridgeCred?.user_id || null,
+      message: 'Server syncs will fail until a valid monitor-bridge credential is created',
+      hint: 'Run: php artisan infrastructure:monitor-bridge-credential',
+    });
+  }
+
+  // Check dashboard credential (for OAuth JWT)
+  const dashboardCred = await getDashboardCredential({ force: true });
+  if (dashboardCred) {
+    const hasClientId = Boolean(dashboardCred.api_key || dashboardCred.settings?.client_id);
+    const hasClientSecret = Boolean(dashboardCred.secret_key || dashboardCred.settings?.client_secret);
+    const hasTokenUrl = Boolean(dashboardCred.settings?.oauth_token_url || dashboardCred.settings?.token_url);
+    const hasAccessToken = Boolean(dashboardCred.access_token);
+
+    if (hasClientId && hasClientSecret && hasTokenUrl) {
+      console.log('[bridge] dashboard credential verified', {
+        credential_id: dashboardCred.id,
+        user_id: dashboardCred.user_id,
+        has_oauth_config: true,
+        has_access_token: hasAccessToken,
+        token_url: dashboardCred.settings?.oauth_token_url || dashboardCred.settings?.token_url || null,
+      });
+    } else {
+      console.error('[bridge] dashboard credential missing OAuth configuration', {
+        credential_id: dashboardCred.id,
+        user_id: dashboardCred.user_id,
+        has_client_id: hasClientId,
+        has_client_secret: hasClientSecret,
+        has_token_url: hasTokenUrl,
+        message: 'Dashboard connection will fail until OAuth is configured',
+        hint: 'Run: php artisan infrastructure:monitor-dashboard-credential (reads from OIDC_* env vars)',
+      });
+    }
+  } else {
+    console.error('[bridge] dashboard credential missing', {
+      message: 'Dashboard connection will fail until monitor-dashboard credential is created',
+      hint: 'Run: php artisan infrastructure:monitor-dashboard-credential (reads from MONITOR_DASHBOARD_OAUTH_* env vars)',
+    });
+  }
+})();
 
 const httpServer = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });

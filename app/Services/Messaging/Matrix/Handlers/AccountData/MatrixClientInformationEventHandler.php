@@ -25,23 +25,3 @@ class MatrixClientInformationEventHandler implements MatrixEventHandlerContract
         $context->state->mergeDevice($deviceId, $context->event['content'] ?? []);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

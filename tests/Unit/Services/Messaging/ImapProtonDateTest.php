@@ -44,5 +44,3 @@ class ImapProtonDateTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $result);
     }
 }
-
-

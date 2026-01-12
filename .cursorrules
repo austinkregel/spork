@@ -46,6 +46,53 @@ Our interface is partially located in `resources/js/Pages` and `resources/js/Com
 
 This project features an unusual class called `Code` that uses reflection and various other libraries to modify, update, or get various metadata about code. This might be all concretes that extend an interface, or all instances of models in a code base, all without keeping an explicit list. This should be used sparingly as it's often powerful and slow. We currently use it to automatically register CRUD management routes, discover and modify code en masse (for example: creating a temporary command to add traits, properties, or other attributes to one or more classes).
 
+6. System Capabilities and Architecture:
+
+  - **Automatic CRUD System**: 
+    - Models implementing the `Crud` interface automatically get full CRUD routes at `/api/crud/{table_name}`
+    - Routes are auto-generated via `routes/crud.php` using the `Code` class to discover all Crud models
+    - A dynamic CRUD management UI is available at `/-/manage/{table_name}` via `ManageController` and `LocalAdminController`
+    - The UI automatically discovers models, generates forms, and provides full CRUD functionality
+    - When creating new models that need CRUD, simply implement `Crud` interface - no manual route registration needed
+    - Policies are automatically checked via `AbstractPolicy` and permission naming conventions
+
+  - **Tagging System**:
+    - Uses Spatie Tags package with `HasTags` trait
+    - All taggable models share the same `taggables` polymorphic table
+    - Models implement `Taggable` interface and use `HasTags` trait
+    - No need for separate pivot tables when models need tagging - use the existing `taggables` table
+    - Tags can be applied to any model (Article, ExternalRssFeed, Transaction, etc.)
+    - Tags support multilingual names stored as JSON
+
+  - **Conditions System**:
+    - Models can use `HasConditions` trait to have filterable conditions
+    - Conditions are stored in the `conditions` polymorphic table
+    - Conditions support various comparators (EQUALS, LIKE, STARTS_WITH, etc.)
+    - `ConditionService` evaluates conditions against data payloads
+    - Used for automatic tagging, automation steps, and filtering logic
+    - When models need filtering/rules, use `HasConditions` trait instead of JSON blobs
+
+  - **RSS Feed Architecture**:
+    - `ExternalRssFeed` model stores feed metadata (URL, name, profile photo, owner)
+    - `Article` model stores individual feed items (headline, content, URL, etc.)
+    - Articles have a polymorphic `author` relationship pointing to `ExternalRssFeed`
+    - Tags are automatically applied to articles via `ApplyUserAutomatedTagsToArticle` listener
+    - Articles are created from feed items via `Article::fromFeedItem()` static method
+    - Articles use `created_at` to store the published date from the feed
+
+  - **Event-Driven Architecture**:
+    - Models dispatch events on create/update/delete (e.g., `ArticleCreated`, `ArticleUpdating`)
+    - Listeners automatically apply business logic (e.g., auto-tagging articles)
+    - Event classes are organized in `app/Events/Models/{ModelName}/` directories
+    - Listeners are in `app/Listeners/` and auto-register with events
+
+  - **Best Practices**:
+    - When creating models that need tagging, use `HasTags` trait - don't create new tag tables
+    - When models need filtering/rules, use `HasConditions` trait - don't store criteria as JSON
+    - When models need CRUD UI, implement `Crud` interface - routes and UI are auto-generated
+    - Leverage existing infrastructure (taggables, conditions, CRUD) rather than creating new systems
+    - Use the dynamic CRUD UI at `/-/manage` for admin interfaces instead of building custom ones
+
 In this repository, follow these environment and tooling rules:
 
 1. **Working directory**

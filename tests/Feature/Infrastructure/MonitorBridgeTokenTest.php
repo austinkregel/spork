@@ -56,7 +56,3 @@ class MonitorBridgeTokenTest extends TestCase
         $this->assertSame($first->json('token'), $second->json('token'));
     }
 }
-
-
-
-

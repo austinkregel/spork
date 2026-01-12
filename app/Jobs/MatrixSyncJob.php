@@ -38,6 +38,7 @@ class MatrixSyncJob implements ShouldQueue
                 'timeout' => 30000,
             ])
             ->json();
+
         $nextBatch = $rooms['next_batch'];
 
         $repository->process($rooms, $credential, $credential->user);
