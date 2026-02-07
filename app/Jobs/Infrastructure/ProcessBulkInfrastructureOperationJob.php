@@ -66,7 +66,7 @@ class ProcessBulkInfrastructureOperationJob implements ShouldQueue
     private function handleUpdateContact(InfrastructureBulkOperation $operation): array
     {
         $payload = $operation->payload;
-        $domains = $this->filterDomains($operation->filter);
+        $domains = $this->filterDomains($operation->filter, $operation->user_id);
 
         $count = 0;
 
@@ -137,9 +137,12 @@ class ProcessBulkInfrastructureOperationJob implements ShouldQueue
         ];
     }
 
-    private function filterDomains(?string $filter): Collection
+    private function filterDomains(?string $filter, int $userId): Collection
     {
-        $query = Domain::query();
+        $query = Domain::query()
+            ->whereHas('credential', function (Builder $query) use ($userId): void {
+                $query->where('user_id', $userId);
+            });
 
         if ($filter) {
             $terms = collect(explode(',', $filter))

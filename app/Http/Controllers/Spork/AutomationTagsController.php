@@ -35,7 +35,7 @@ class AutomationTagsController
         $existing = $user
             ->tags()
             ->when($type === null, fn ($q) => $q->whereNull('type'), fn ($q) => $q->where('type', $type))
-            ->where('slug', $slug)
+            ->where('slug->en', $slug)
             ->first();
 
         if ($existing) {
@@ -47,7 +47,7 @@ class AutomationTagsController
         /** @var Tag $tag */
         $tag = Tag::query()->create([
             'name' => ['en' => $payload['name']],
-            'slug' => $slug,
+            'slug' => ['en' => $slug],
             'type' => $type,
             'must_all_conditions_pass' => $mustAll,
         ]);
@@ -69,7 +69,8 @@ class AutomationTagsController
         if (array_key_exists('name', $payload)) {
             $existing = is_array($tag->name) ? $tag->name : [];
             $tag->name = array_merge($existing, ['en' => $payload['name']]);
-            $tag->slug = Str::slug($payload['name']);
+            $existingSlug = is_array($tag->slug) ? $tag->slug : [];
+            $tag->slug = array_merge($existingSlug, ['en' => Str::slug($payload['name'])]);
         }
 
         if (array_key_exists('type', $payload)) {

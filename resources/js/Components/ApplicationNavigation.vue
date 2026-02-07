@@ -32,6 +32,7 @@ const appNavigation = {
     return i;
   }),
   tools: [
+    { name: 'Calendar', href: '/-/calendar', icon: 'CalendarIcon', active: false, },
     { name: 'Banking', href: '/-/banking', icon: 'WalletIcon', active: false, },
     { name: 'RSS Feeds', href: '/-/rss-feeds', icon: 'RssIcon', active: false, },
     { name: 'Infrastructure', href: '/-/servers', icon: 'ServerStackIcon', active: false, },

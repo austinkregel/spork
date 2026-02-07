@@ -248,6 +248,15 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');
 
     Route::get('/assets', [Controllers\Spork\AssetController::class, 'index'])->name('assets.index');
+
+    Route::prefix('/calendar')->name('calendar.')->group(function () {
+        Route::get('/', [Controllers\Spork\CalendarController::class, 'index'])->name('index');
+        Route::get('/fullscreen', [Controllers\Spork\CalendarController::class, 'fullscreen'])->name('fullscreen');
+        Route::get('/events', [Controllers\Spork\CalendarController::class, 'events'])->name('events');
+        Route::post('/events', [Controllers\Spork\CalendarController::class, 'store'])->name('events.store');
+        Route::put('/events/{event}', [Controllers\Spork\CalendarController::class, 'update'])->name('events.update');
+        Route::delete('/events/{event}', [Controllers\Spork\CalendarController::class, 'destroy'])->name('events.destroy');
+    });
 });
 Route::middleware([
     'web',

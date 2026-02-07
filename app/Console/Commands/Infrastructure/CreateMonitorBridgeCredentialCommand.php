@@ -31,7 +31,7 @@ class CreateMonitorBridgeCredentialCommand extends Command
 
         $existing = Credential::query()
             ->where('user_id', $user->id)
-            ->where('type', Credential::TYPE_DEVELOPMENT)
+            ->where('type', Credential::TYPE_BACKUP_AGENT)
             ->where('service', 'monitor-bridge')
             ->first();
 
@@ -45,7 +45,7 @@ class CreateMonitorBridgeCredentialCommand extends Command
 
         $credential = Credential::query()->create([
             'user_id' => $user->id,
-            'type' => Credential::TYPE_DEVELOPMENT,
+            'type' => Credential::TYPE_BACKUP_AGENT,
             'service' => 'monitor-bridge',
             'name' => (string) $this->option('name'),
             'api_key' => $apiKey,

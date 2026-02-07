@@ -65,9 +65,14 @@ class ResetStandardAutomatedTagsCommandTest extends TestCase
         $this->assertTrue($transaction->tags->contains('id', $oldTagId));
         $this->assertTrue($privacyTransaction->tags->contains('id', $oldTagId));
 
+        // Verify command executes successfully and produces expected output
+        // Using expectsOutput ensures the command actually ran, not just exited with code 0
         $this->artisan('finance:reset-standard-automated-tags', [
             '--user' => (string) $this->user->id,
-        ])->assertExitCode(0);
+        ])
+            ->expectsOutput(sprintf('User #%d <%s>', $this->user->id, $this->user->email ?? ''))
+            ->expectsOutput('Done.')
+            ->assertSuccessful();
 
         // Verify the old tag was deleted
         $this->assertDatabaseMissing('tags', ['id' => $oldTagId]);

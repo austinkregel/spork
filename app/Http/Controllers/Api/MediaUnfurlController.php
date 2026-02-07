@@ -22,17 +22,27 @@ class MediaUnfurlController
         $host = parse_url($url, PHP_URL_HOST) ?: '';
         $provider = $this->resolveProvider($host);
 
-        abort_unless($provider, 422, 'Unsupported media host.');
+        abort_unless($provider !== null, 422, 'Unsupported media host.');
 
         $cacheKey = 'media_unfurl:'.md5($url);
 
-        $payload = Cache::rememberForever($cacheKey, function () use ($provider, $url) {
-            return match ($provider) {
+        // Check cache first
+        $payload = Cache::get($cacheKey);
+
+        if ($payload === null) {
+            // Not in cache, fetch fresh data
+            $payload = match ($provider) {
                 'giphy' => $this->unfurlGiphy($url),
                 'tenor' => $this->unfurlTenor($url),
                 default => null,
             };
-        });
+
+            // Only cache successful responses permanently
+            // Failures are not cached to allow retry on transient errors
+            if ($payload !== null) {
+                Cache::forever($cacheKey, $payload);
+            }
+        }
 
         abort_unless($payload, 404, 'Unable to unfurl media.');
 
@@ -137,6 +147,12 @@ class MediaUnfurlController
             return null;
         }
 
-        return $nodes->item(0)?->getAttribute('content') ?: null;
+        $node = $nodes->item(0);
+
+        if (! $node instanceof \DOMElement) {
+            return null;
+        }
+
+        return $node->getAttribute('content') ?: null;
     }
 }

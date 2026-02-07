@@ -22,9 +22,9 @@ class ReplyController extends Controller
          * @var User $user
          */
         $user = Auth::user();
-        abort_unless($user, 403);
+        abort_unless(Auth::check(), 403);
 
-        $thread = $this->assertThreadBelongsToUser($request->get('thread_id'), $user->person?->id);
+        $thread = $this->assertThreadBelongsToUser($request->get('thread_id'), $user);
 
         $credential = $user->credentials()->where('service', 'matrix')->firstOrFail();
         $person = $user->person;
@@ -46,16 +46,25 @@ class ReplyController extends Controller
         return response()->json(['status' => 'sent']);
     }
 
-    protected function assertThreadBelongsToUser(string|int $threadId, ?int $personId): Thread
+    protected function assertThreadBelongsToUser(string|int $threadId, User $user): Thread
     {
         $thread = Thread::query()
             ->where('id', $threadId)
-            ->whereHas('participants', function (Builder $query) use ($personId) {
-                $query->where('people.id', $personId);
-            })
             ->firstOrFail();
 
-        abort_if(is_null($thread), 403, 'You are not a participant of this thread.');
+        $personId = $user->person?->id;
+
+        $isParticipant = $thread->participants()
+            ->where(function (Builder $query) use ($user, $personId) {
+                $query->where('people.user_id', $user->id);
+
+                if ($personId) {
+                    $query->orWhere('people.id', $personId);
+                }
+            })
+            ->exists();
+
+        abort_unless($isParticipant, 403, 'You are not a participant of this thread.');
 
         return $thread;
     }
