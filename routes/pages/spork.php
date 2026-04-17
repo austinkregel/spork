@@ -65,6 +65,11 @@ Route::middleware([
     Route::post('/api/projects/{project}/research', Controllers\Api\Projects\CreateResearchController::class);
     Route::post('/api/credentials', [Controllers\Api\CredentialController::class, 'store']);
 
+    Route::get('/api/calendar/events', [Controllers\Spork\CalendarController::class, 'events'])->name('api.calendar.events');
+    Route::post('/api/calendar/events', [Controllers\Spork\CalendarController::class, 'store'])->name('api.calendar.events.store');
+    Route::put('/api/calendar/events/{event}', [Controllers\Spork\CalendarController::class, 'update'])->name('api.calendar.events.update');
+    Route::delete('/api/calendar/events/{event}', [Controllers\Spork\CalendarController::class, 'destroy'])->name('api.calendar.events.destroy');
+
     Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
 
 
@@ -252,11 +257,8 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
     Route::prefix('/calendar')->name('calendar.')->group(function () {
         Route::get('/', [Controllers\Spork\CalendarController::class, 'index'])->name('index');
         Route::get('/fullscreen', [Controllers\Spork\CalendarController::class, 'fullscreen'])->name('fullscreen');
-        Route::get('/events', [Controllers\Spork\CalendarController::class, 'events'])->name('events');
-        Route::post('/events', [Controllers\Spork\CalendarController::class, 'store'])->name('events.store');
-        Route::put('/events/{event}', [Controllers\Spork\CalendarController::class, 'update'])->name('events.update');
-        Route::delete('/events/{event}', [Controllers\Spork\CalendarController::class, 'destroy'])->name('events.destroy');
     });
+
 });
 Route::middleware([
     'web',
