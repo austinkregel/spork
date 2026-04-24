@@ -20,7 +20,7 @@ const accounts = computed(() => {
 const isPinned = (accountId) => pinnedOrder.value.includes(accountId);
 
 const persistPins = () => {
-  router.put(route('banking.preferences.pins'), {
+  router.put(route('finance.banking.preferences.pins'), {
     type: 'accounts',
     order: pinnedOrder.value,
   }, {
@@ -72,7 +72,7 @@ const linkNewAccount = async () => {
       <div class="flex justify-end">
         <button
           type="button"
-          class="px-3 py-2 rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+          class="px-3 py-2 rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
           @click="linkNewAccount"
         >
           Link new account
@@ -99,7 +99,7 @@ const linkNewAccount = async () => {
           </div>
           <button
             type="button"
-            class="text-xs px-3 py-1 rounded-lg border bg-white dark:bg-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+            class="text-xs px-3 py-1 rounded-lg border bg-white dark:bg-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
             :class="isPinned(account.account_id) ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300'"
             @click="togglePin(account.account_id)"
           >

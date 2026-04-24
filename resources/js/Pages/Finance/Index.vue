@@ -2,70 +2,74 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import { computed } from "vue";
-import { usePage, Link, router } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import AppLayout from "@/Layouts/AppLayout.vue";
-import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
 import LinkAccount from "@/Components/Spork/Finance/LinkAccount.vue";
-import SporkTable from "@/Components/Spork/Atoms/SporkTable.vue";
+import GlassCard from "@/Components/Glass/GlassCard.vue";
+import GlassTable from "@/Components/Glass/GlassTable.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
+
 const page = usePage();
 dayjs.extend(utc);
-const accounts = computed(() => page.props.accounts)
+
+const accounts = computed(() => page.props.accounts);
 
 const transactionHeaders = [
-    {
-        name: 'Name',
-        accessor:'name'
-    },
+    { name: 'Name', accessor: 'name' },
     {
         name: 'Amount',
-        accessor: value => value?.amount ? value.amount.toLocaleString('en-US', {style: 'currency', currency: 'USD'}) : null
+        accessor: value => value?.amount ? value.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : null,
+        align: 'right',
     },
     {
         name: 'Date',
-        accessor: (value) => value?.date ? dayjs.utc(value.date).format("MMM DD, YYYY") : null
+        accessor: (value) => value?.date ? dayjs.utc(value.date).format("MMM DD, YYYY") : null,
     },
     {
-        name : 'Tags',
-        accessor: value => value?.tags?.map(tag => tag.name.en)?.join(', ')
-    }
-]
-
+        name: 'Tags',
+        accessor: value => value?.tags?.map(tag => tag.name.en)?.join(', '),
+    },
+];
 </script>
 
 <template>
-  <AppLayout title="Profile">
-    <div>
-      <div class="text-2xl my-4 w-full flex flex-col px-4">
-        Banking
-        <span class="text-xs">Link your account, and tag your transactions</span>
-      </div>
+    <AppLayout title="Banking">
+        <div class="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+            <GlassCard
+                title="Banking"
+                subtitle="Link your account, and tag your transactions"
+            />
 
-      <div class="px-4 ">
-        <LinkAccount :accounts="accounts" />
-      </div>
-      <SporkTable
-        :headers="transactionHeaders"
-        :items="page.props.transactions.data"
-        header="All your transactions"
-        description="Transactions"
-      />
-        <div class="flow-root">
-            <div class="flex justify-between mx-8 -mt-4">
+            <LinkAccount :accounts="accounts" />
 
-            <Link class="text-white border px-4 py-2 rounded"
-                  :class="[page.props?.transactions?.prev_page_url ? 'border-stone-300 dark:border-stone-600' : 'border-stone-300 dark:border-stone-700 bg-stone-200 dark:bg-stone-800/70 text-stone-100/50']"
-                  :disabled="!page.props?.transactions?.prev_page_url"
-                  :href="page.props?.transactions?.prev_page_url ?? '#'"
+            <GlassTable
+                header="All your transactions"
+                description="Transactions"
+                :headers="transactionHeaders"
+                :items="page.props.transactions.data"
+                empty-message="No transactions yet."
             >
-                Previous</Link>
-            <Link class="text-white border px-4 py-2 rounded"
-                  :class="[page.props?.transactions?.next_page_url ? 'border-stone-300 dark:border-stone-600' : 'border-stone-300 dark:border-stone-700 bg-stone-200 dark:bg-stone-800/70 text-stone-100/50']"
-                  :disabled="!page.props?.transactions?.next_page_url"
-                  :href="page.props?.transactions?.next_page_url"
-            >
-                Next</Link>
+                <template #pagination>
+                    <div class="flex items-center justify-between">
+                        <GlassButton
+                            variant="secondary"
+                            size="sm"
+                            :disabled="!page.props?.transactions?.prev_page_url"
+                            :href="page.props?.transactions?.prev_page_url ?? undefined"
+                        >
+                            Previous
+                        </GlassButton>
+                        <GlassButton
+                            variant="secondary"
+                            size="sm"
+                            :disabled="!page.props?.transactions?.next_page_url"
+                            :href="page.props?.transactions?.next_page_url ?? undefined"
+                        >
+                            Next
+                        </GlassButton>
+                    </div>
+                </template>
+            </GlassTable>
         </div>
-        </div>
-    </div>
-  </AppLayout>
+    </AppLayout>
 </template>

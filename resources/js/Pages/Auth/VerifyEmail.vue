@@ -1,9 +1,8 @@
 <script setup>
 import { computed } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import { Link, useForm } from '@inertiajs/vue3';
+import GlassAuthLayout from '@/Layouts/GlassAuthLayout.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
 
 const props = defineProps({
     status: String,
@@ -19,44 +18,46 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
 </script>
 
 <template>
-    <Head title="Email Verification" />
+    <GlassAuthLayout
+        title="Email Verification"
+        heading="Verify your email"
+        subheading="Check your inbox for a confirmation link."
+    >
+        <p class="mb-4 text-sm text-stone-600 dark:text-stone-300">
+            Before continuing, please verify your email address by clicking on the link we just emailed to you. If you didn't receive it, we'll happily send another.
+        </p>
 
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <div class="mb-4 text-sm text-stone-600 dark:text-stone-400">
-            Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
-        </div>
-
-        <div v-if="verificationLinkSent" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-            A new verification link has been sent to the email address you provided in your profile settings.
-        </div>
+        <p
+            v-if="verificationLinkSent"
+            class="mb-4 rounded-md bg-emerald-100 px-3 py-2 text-sm font-medium text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200"
+            role="status"
+        >
+            A new verification link has been sent to your email address.
+        </p>
 
         <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Resend Verification Email
-                </PrimaryButton>
-
-                <div>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3 text-sm">
                     <Link
                         :href="route('profile.show')"
-                        class="underline text-sm text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-stone-800"
+                        class="text-indigo-600 underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:text-indigo-400 dark:focus-visible:ring-offset-stone-950 rounded-sm"
                     >
-                        Edit Profile</Link>
-
+                        Edit profile
+                    </Link>
                     <Link
                         :href="route('logout')"
                         method="post"
                         as="button"
-                        class="underline text-sm text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-stone-800 ml-2"
+                        class="text-stone-600 underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:text-stone-300 dark:focus-visible:ring-offset-stone-950 rounded-sm"
                     >
-                        Log Out
+                        Log out
                     </Link>
                 </div>
+
+                <GlassButton type="submit" :disabled="form.processing">
+                    Resend verification email
+                </GlassButton>
             </div>
         </form>
-    </AuthenticationCard>
+    </GlassAuthLayout>
 </template>

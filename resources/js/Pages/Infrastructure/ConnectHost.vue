@@ -1,40 +1,31 @@
 <template>
     <AppLayout title="Connect existing host">
-        <div class="px-4 py-6 sm:px-6 lg:px-8 space-y-6">
-            <div class="flex items-start justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-semibold text-stone-900 dark:text-white">
-                        Connect existing host
-                    </h1>
-                    <p class="mt-1 text-sm text-stone-500 dark:text-stone-400 max-w-3xl">
-                        Enroll a bare metal machine or existing VM. This registers the host under your SSH credential and binds it using the OS machine-id.
-                    </p>
-                </div>
+        <div class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+            <GlassCard
+                title="Connect existing host"
+                subtitle="Bare metal &amp; existing VMs"
+            >
+                <template #actions>
+                    <GlassButton variant="secondary" @click="router.visit(route('infrastructure.servers.index'))">
+                        Back to Infrastructure
+                    </GlassButton>
+                </template>
+                <p class="max-w-3xl text-sm text-stone-600 dark:text-stone-300">
+                    Enroll a bare metal machine or existing VM. This registers the host under your SSH credential and binds it using the OS machine-id.
+                </p>
+            </GlassCard>
 
-                <SporkButton secondary @click="() => router.visit(route('servers.index'))">
-                    Back to Infrastructure
-                </SporkButton>
-            </div>
+            <GlassCard
+                title="One-line enrollment"
+                subtitle="Run this on the host as root (or with sudo)."
+            >
+                <template #actions>
+                    <GlassButton @click="copy">Copy</GlassButton>
+                </template>
 
-            <div class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-4 shadow-sm space-y-4">
-                <div class="flex items-center justify-between gap-3">
-                    <div>
-                        <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                            One-line enrollment
-                        </p>
-                        <p class="text-sm text-stone-600 dark:text-stone-300 mt-1">
-                            Run this on the host as root (or with sudo).
-                        </p>
-                    </div>
+                <pre class="overflow-x-auto rounded-lg border border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-stone-50/70 dark:bg-stone-900/70 p-3 font-mono text-xs text-stone-700 dark:text-stone-100">{{ command }}</pre>
 
-                    <SporkButton primary @click="copy">
-                        Copy
-                    </SporkButton>
-                </div>
-
-                <pre class="text-xs font-mono rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-100 p-3 overflow-x-auto">{{ command }}</pre>
-
-                <div class="text-xs text-stone-500 dark:text-stone-400 space-y-1">
+                <div class="mt-3 space-y-1 text-xs text-stone-500 dark:text-stone-400">
                     <p>
                         The host will call back to Spork with <span class="font-mono">machine_id</span>, hostname, and IP. No provider is required.
                     </p>
@@ -42,20 +33,24 @@
                         Next step: wire your external command server + websocket listener so heartbeats and inventory update automatically.
                     </p>
                 </div>
-            </div>
+            </GlassCard>
 
-            <div v-if="!canEnroll" class="border border-dashed border-amber-400 rounded-lg p-4 bg-amber-50 dark:bg-amber-900/30">
-                <p class="text-sm text-amber-800 dark:text-amber-100">
+            <GlassCard
+                v-if="!canEnroll"
+                class="border-amber-400/50 dark:border-amber-500/40"
+            >
+                <p class="text-sm text-amber-800 dark:text-amber-200">
                     No SSH credential is available for enrollment yet. Create an SSH credential first, then return here.
                 </p>
-            </div>
+            </GlassCard>
         </div>
     </AppLayout>
 </template>
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
+import GlassCard from "@/Components/Glass/GlassCard.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
 import { computed } from "vue";
 import { router } from "@inertiajs/vue3";
 
@@ -76,5 +71,3 @@ const copy = () => {
     navigator.clipboard?.writeText(props.command);
 };
 </script>
-
-

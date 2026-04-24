@@ -18,7 +18,7 @@ class AutomationTagsCrudTest extends TestCase
     {
         $this->actingAsUser();
 
-        $response = $this->post('http://spork.localhost/-/automation/tags', [
+        $response = $this->post('http://spork.localhost/-/automations/tags', [
             'name' => 'My Custom Tag',
             'type' => 'automatic',
             'must_all_conditions_pass' => false,
@@ -26,7 +26,7 @@ class AutomationTagsCrudTest extends TestCase
 
         $response->assertStatus(302);
         $location = (string) $response->headers->get('Location');
-        $this->assertStringContainsString('http://spork.localhost/-/automation/tags/', $location);
+        $this->assertStringContainsString('http://spork.localhost/-/automations/tags/', $location);
 
         $tagId = (int) basename($location);
         $tag = Tag::query()->find($tagId);
@@ -36,21 +36,21 @@ class AutomationTagsCrudTest extends TestCase
         $name = is_array($tag->name) ? ($tag->name['en'] ?? null) : $tag->name;
         $this->assertSame('My Custom Tag', $name);
 
-        $response->assertRedirect("http://spork.localhost/-/automation/tags/{$tag->id}");
+        $response->assertRedirect("http://spork.localhost/-/automations/tags/{$tag->id}");
     }
 
     public function test_creating_a_duplicate_user_tag_redirects_instead_of_erroring(): void
     {
         $this->actingAsUser();
 
-        $response = $this->post('http://spork.localhost/-/automation/tags', [
+        $response = $this->post('http://spork.localhost/-/automations/tags', [
             'name' => 'subscriptions',
             'type' => 'automatic',
             'must_all_conditions_pass' => false,
         ]);
 
         $response->assertStatus(302);
-        $this->assertStringContainsString('http://spork.localhost/-/automation/tags/', (string) $response->headers->get('Location'));
+        $this->assertStringContainsString('http://spork.localhost/-/automations/tags/', (string) $response->headers->get('Location'));
     }
 
     public function test_user_can_update_their_tag_name_type_and_match_mode(): void
@@ -66,7 +66,7 @@ class AutomationTagsCrudTest extends TestCase
 
         $this->user->tags()->attach($tag);
 
-        $response = $this->patch("http://spork.localhost/-/automation/tags/{$tag->id}", [
+        $response = $this->patch("http://spork.localhost/-/automations/tags/{$tag->id}", [
             'name' => 'New Name',
             'type' => '',
             'must_all_conditions_pass' => true,
@@ -94,7 +94,7 @@ class AutomationTagsCrudTest extends TestCase
         ]);
         $this->user->tags()->attach($tag);
 
-        $create = $this->postJson("http://spork.localhost/-/automation/tags/{$tag->id}/conditions", [
+        $create = $this->postJson("http://spork.localhost/-/automations/tags/{$tag->id}/conditions", [
             'parameter' => 'transaction.name',
             'comparator' => 'LIKE',
             'value' => 'power',
@@ -108,13 +108,13 @@ class AutomationTagsCrudTest extends TestCase
         $this->assertSame(Tag::class, $condition->conditionable_type);
         $this->assertSame($tag->id, (int) $condition->conditionable_id);
 
-        $update = $this->putJson("http://spork.localhost/-/automation/tags/{$tag->id}/conditions/{$conditionId}", [
+        $update = $this->putJson("http://spork.localhost/-/automations/tags/{$tag->id}/conditions/{$conditionId}", [
             'value' => 'electric',
         ]);
 
         $update->assertOk()->assertJsonFragment(['value' => 'electric']);
 
-        $delete = $this->delete("http://spork.localhost/-/automation/tags/{$tag->id}/conditions/{$conditionId}");
+        $delete = $this->delete("http://spork.localhost/-/automations/tags/{$tag->id}/conditions/{$conditionId}");
         $delete->assertStatus(204);
 
         $this->assertNull(Condition::query()->find($conditionId));
@@ -134,11 +134,11 @@ class AutomationTagsCrudTest extends TestCase
 
         $this->actingAs($attacker);
 
-        $this->patch("http://spork.localhost/-/automation/tags/{$tag->id}", [
+        $this->patch("http://spork.localhost/-/automations/tags/{$tag->id}", [
             'name' => 'Hacked',
         ])->assertStatus(404);
 
-        $this->postJson("http://spork.localhost/-/automation/tags/{$tag->id}/conditions", [
+        $this->postJson("http://spork.localhost/-/automations/tags/{$tag->id}/conditions", [
             'parameter' => 'transaction.name',
             'comparator' => 'LIKE',
             'value' => 'x',

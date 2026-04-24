@@ -1,112 +1,75 @@
 <template>
-    <div class="space-y-4">
-        <div
-            v-for="(contact, index) in localContacts"
-            :key="contact.id ?? index"
-            class="border border-stone-200 dark:border-stone-800 rounded-lg p-4 bg-white dark:bg-stone-900 shadow-sm space-y-3"
-        >
-            <div class="grid gap-3 md:grid-cols-2">
-                <div>
-                    <label class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                        Role
-                    </label>
-                    <select
-                        v-model="contact.role"
-                        class="mt-1 block w-full rounded-md border-stone-300 dark:border-stone-700 dark:bg-stone-800 text-sm text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-stone-500 focus:border-stone-500"
-                        @change="emitUpdate(contact)"
-                    >
-                        <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                        Name
-                    </label>
-                    <SporkInput v-model="contact.name" class="mt-1 w-full" @blur="emitUpdate(contact)" />
-                </div>
-                <div>
-                    <label class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                        Email
-                    </label>
-                    <SporkInput v-model="contact.email" class="mt-1 w-full" @blur="emitUpdate(contact)" />
-                </div>
-                <div>
-                    <label class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                        Phone
-                    </label>
-                    <SporkInput v-model="contact.phone" class="mt-1 w-full" @blur="emitUpdate(contact)" />
-                </div>
-            </div>
-        </div>
+  <div class="space-y-4">
+    <GlassSurface
+      v-for="(contact, index) in localContacts"
+      :key="contact.id ?? index"
+      class="space-y-3 p-4"
+    >
+      <div class="grid gap-3 md:grid-cols-2">
+        <GlassField v-slot="{ id, describedby, invalid }" label="Role">
+          <GlassSelect
+            :id="id"
+            v-model="contact.role"
+            :invalid="invalid"
+            :describedby="describedby"
+            @change="emitUpdate(contact)"
+          >
+            <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+          </GlassSelect>
+        </GlassField>
+        <GlassField v-slot="{ id, describedby, invalid }" label="Name">
+          <GlassInput :id="id" v-model="contact.name" :invalid="invalid" :describedby="describedby" @blur="emitUpdate(contact)" />
+        </GlassField>
+        <GlassField v-slot="{ id, describedby, invalid }" label="Email">
+          <GlassInput :id="id" v-model="contact.email" type="email" :invalid="invalid" :describedby="describedby" @blur="emitUpdate(contact)" />
+        </GlassField>
+        <GlassField v-slot="{ id, describedby, invalid }" label="Phone">
+          <GlassInput :id="id" v-model="contact.phone" type="tel" :invalid="invalid" :describedby="describedby" @blur="emitUpdate(contact)" />
+        </GlassField>
+      </div>
+    </GlassSurface>
 
-        <SporkButton secondary xsmall @click="addContact">
-            Add contact
-        </SporkButton>
-    </div>
+    <GlassButton variant="secondary" size="sm" @click="addContact">Add contact</GlassButton>
+  </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue';
-import SporkButton from "@/Components/Spork/SporkButton.vue";
-import SporkInput from "@/Components/Spork/SporkInput.vue";
+import GlassSurface from '@/Components/Glass/GlassSurface.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
+import GlassSelect from '@/Components/Glass/GlassSelect.vue';
 
 const props = defineProps({
-    contacts: {
-        type: Array,
-        default: () => [],
-    },
-    roles: {
-        type: Array,
-        default: () => ['Registrant', 'Admin', 'Tech', 'Billing'],
-    },
+  contacts: { type: Array, default: () => [] },
+  roles: { type: Array, default: () => ['Registrant', 'Admin', 'Tech', 'Billing'] },
 });
 
 const emit = defineEmits(['update']);
 
 const localContacts = ref(props.contacts.map((contact) => ({ ...contact })));
 
-watch(() => props.contacts, (contacts) => {
+watch(
+  () => props.contacts,
+  (contacts) => {
     localContacts.value = contacts.map((contact) => ({ ...contact }));
-});
+  },
+);
 
-const emitUpdate = (contact) => {
-    emit('update', { ...contact });
-};
+function emitUpdate(contact) {
+  emit('update', { ...contact });
+}
 
-const addContact = () => {
-    const contact = {
-        id: `${Date.now()}-${localContacts.value.length}`,
-        role: props.roles[0],
-        name: '',
-        email: '',
-        phone: '',
-    };
-    localContacts.value.push(contact);
-    emitUpdate(contact);
-};
+function addContact() {
+  const contact = {
+    id: `${Date.now()}-${localContacts.value.length}`,
+    role: props.roles[0],
+    name: '',
+    email: '',
+    phone: '',
+  };
+  localContacts.value.push(contact);
+  emitUpdate(contact);
+}
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

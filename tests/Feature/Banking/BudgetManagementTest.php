@@ -25,7 +25,7 @@ class BudgetManagementTest extends TestCase
         $user->attachTag($tag);
 
         $this->actingAs($user)
-            ->post('http://spork.localhost/-/banking/budgets', [
+            ->post('http://spork.localhost/-/finance/banking/budgets', [
                 'name' => 'Groceries',
                 'amount' => 500,
                 'frequency' => 'MONTHLY',
@@ -76,7 +76,7 @@ class BudgetManagementTest extends TestCase
         $budget->tags()->sync([$tagA->id]);
 
         $this->actingAs($user)
-            ->put('http://spork.localhost/-/banking/budgets/'.$budget->id, [
+            ->put('http://spork.localhost/-/finance/banking/budgets/'.$budget->id, [
                 'name' => 'Bills Updated',
                 'amount' => 250,
                 'frequency' => 'MONTHLY',
@@ -115,7 +115,7 @@ class BudgetManagementTest extends TestCase
         $unowned = Tag::factory()->create(['type' => 'automatic']);
 
         $this->actingAs($user)
-            ->post('http://spork.localhost/-/banking/budgets', [
+            ->post('http://spork.localhost/-/finance/banking/budgets', [
                 'name' => 'Bad Budget',
                 'amount' => 10,
                 'frequency' => 'MONTHLY',

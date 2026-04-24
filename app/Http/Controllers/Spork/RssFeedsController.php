@@ -79,6 +79,24 @@ class RssFeedsController
         ]);
     }
 
+    public function article(Request $request, Article $article): Response
+    {
+        /** @var User|null $user */
+        $user = $request->user();
+        abort_unless($user !== null, 404);
+
+        $article->load(['author.tags', 'tags']);
+
+        return Inertia::render('Articles/Show', [
+            'article' => $article,
+            'social_feeds' => SocialFeed::query()
+                ->visibleTo($user)
+                ->with(['tags', 'conditions'])
+                ->orderBy('name')
+                ->get(),
+        ]);
+    }
+
     public function makePublic(Request $request, SocialFeed $socialFeed): RedirectResponse
     {
         /** @var User|null $user */

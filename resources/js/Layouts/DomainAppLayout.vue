@@ -15,7 +15,7 @@ defineProps({
         <Banner />
 
 
-        <main class=""  style="max-height: calc(100vh - 65px); min-height: calc(100vh - 65px);">
+        <main class="h-[calc(100vh-4rem)]">
             <slot/>
         </main>
     </div>

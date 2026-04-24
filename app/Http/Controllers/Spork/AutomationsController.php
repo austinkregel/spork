@@ -10,7 +10,6 @@ use App\Models\AutomationStep;
 use App\Operations\AutomationOperation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -28,7 +27,6 @@ class AutomationsController extends Controller
         return Inertia::render('Automation/List', [
             'title' => 'Automations',
             'automations' => $automations,
-            'subnavigation' => $this->navigation(),
         ]);
     }
 
@@ -36,7 +34,6 @@ class AutomationsController extends Controller
     {
         return Inertia::render('Automation/Create', [
             'title' => 'Create Automation',
-            'subnavigation' => $this->navigation(),
         ]);
     }
 
@@ -79,7 +76,7 @@ class AutomationsController extends Controller
             }
         });
 
-        return redirect()->route('automation.automations.show', $automation);
+        return redirect()->route('automations.automations.show', $automation);
     }
 
     public function show(Automation $automation): Response
@@ -92,7 +89,6 @@ class AutomationsController extends Controller
             'title' => $automation->name,
             'automation' => $automation,
             'steps' => $automation->steps,
-            'subnavigation' => $this->navigation(),
         ]);
     }
 
@@ -106,7 +102,6 @@ class AutomationsController extends Controller
             'title' => 'Edit Automation',
             'automation' => $automation,
             'steps' => $automation->steps,
-            'subnavigation' => $this->navigation(),
         ]);
     }
 
@@ -134,7 +129,7 @@ class AutomationsController extends Controller
             $automation->tags()->sync($attach);
         }
 
-        return redirect()->route('automation.automations.show', $automation);
+        return redirect()->route('automations.automations.show', $automation);
     }
 
     public function destroy(Automation $automation): RedirectResponse
@@ -142,7 +137,19 @@ class AutomationsController extends Controller
         Gate::authorize('delete', $automation);
         $automation->delete();
 
-        return redirect()->route('automation.automations.index');
+        return redirect()->route('automations.automations.index');
+    }
+
+    public function runNow(Automation $automation): RedirectResponse
+    {
+        Gate::authorize('run', $automation);
+
+        AutomationOperation::create([
+            'automation_id' => $automation->getKey(),
+            'should_run_at' => now(),
+        ]);
+
+        return redirect()->route('automations.automations.show', $automation);
     }
 
     public function storeStep(Request $request, Automation $automation): RedirectResponse
@@ -156,7 +163,7 @@ class AutomationsController extends Controller
 
         $automation->steps()->create($data);
 
-        return redirect()->route('automation.automations.edit', $automation);
+        return redirect()->route('automations.automations.edit', $automation);
     }
 
     public function updateStep(Request $request, Automation $automation, AutomationStep $step): RedirectResponse
@@ -172,7 +179,7 @@ class AutomationsController extends Controller
 
         $step->update($data);
 
-        return redirect()->route('automation.automations.edit', $automation);
+        return redirect()->route('automations.automations.edit', $automation);
     }
 
     public function destroyStep(Automation $automation, AutomationStep $step): RedirectResponse
@@ -182,54 +189,6 @@ class AutomationsController extends Controller
 
         $step->delete();
 
-        return redirect()->route('automation.automations.edit', $automation);
-    }
-
-    public function runNow(Automation $automation): RedirectResponse
-    {
-        Gate::authorize('run', $automation);
-
-        AutomationOperation::create([
-            'automation_id' => $automation->getKey(),
-            'should_run_at' => now(),
-        ]);
-
-        return redirect()->route('automation.automations.show', $automation);
-    }
-
-    protected function navigation(): Collection
-    {
-        return Collection::make([
-            [
-                'name' => 'Overview',
-                'href' => '/-/automation',
-                'icon' => 'Cog8ToothIcon',
-                'slug' => 'overview',
-            ],
-            [
-                'name' => 'Automations',
-                'href' => '/-/automation/automations',
-                'icon' => 'BoltIcon',
-                'slug' => 'automations',
-            ],
-            [
-                'name' => 'Tags + routing',
-                'href' => '/-/automation/tags',
-                'icon' => 'TagIcon',
-                'slug' => 'tags',
-            ],
-            [
-                'name' => 'Playbooks (planned)',
-                'href' => '/-/automation#playbooks',
-                'icon' => 'DocumentTextIcon',
-                'slug' => 'playbooks',
-            ],
-            [
-                'name' => 'Schedules (planned)',
-                'href' => '/-/automation#scheduling',
-                'icon' => 'CalendarDaysIcon',
-                'slug' => 'scheduling',
-            ],
-        ]);
+        return redirect()->route('automations.automations.edit', $automation);
     }
 }

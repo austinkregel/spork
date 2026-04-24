@@ -15,7 +15,7 @@ const settings = reactive({
 });
 
 const save = () => {
-  router.put(route('banking.preferences.settings'), {
+  router.put(route('finance.banking.preferences.settings'), {
     settings,
   }, {
     preserveScroll: true,
@@ -61,7 +61,7 @@ const save = () => {
 
       <button
         type="button"
-        class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+        class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
         @click="save"
       >
         Save Preferences

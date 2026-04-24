@@ -1,53 +1,46 @@
 <template>
     <ServerInfrastucture title="Logs" :server="server" :navigation="navigation">
         <div class="space-y-6">
-            <section class="border border-stone-200 dark:border-stone-800 rounded-lg bg-black text-green-400 shadow-inner">
-                <header class="px-4 py-2 border-b border-stone-800 flex items-center justify-between text-xs uppercase tracking-widest text-stone-400">
+            <GlassSurface class="overflow-hidden bg-stone-950 text-emerald-400">
+                <header class="flex items-center justify-between border-b border-stone-800 px-4 py-2 text-xs uppercase tracking-widest text-stone-400">
                     <span>Live tail</span>
                     <span>{{ server.ip_address }}</span>
                 </header>
-                <div class="px-4 py-6 h-80 overflow-y-auto font-mono text-xs leading-relaxed">
+                <div class="h-80 overflow-y-auto px-4 py-6 font-mono text-xs leading-relaxed">
                     <p v-for="line in logLines" :key="line.id">
                         <span class="text-stone-500">{{ line.timestamp }}</span>
                         <span class="ml-2">{{ line.message }}</span>
                     </p>
                     <p v-if="!logLines.length">No log entries streamed yet.</p>
                 </div>
-            </section>
+            </GlassSurface>
 
-            <section class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm">
-                <header class="mb-4">
-                    <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                        Saved snapshots
-                    </p>
-                    <h2 class="text-lg font-semibold text-stone-900 dark:text-white">
-                        Recent log bundles
-                    </h2>
-                </header>
-                <ul class="divide-y divide-stone-200 dark:divide-stone-800">
-                    <li v-for="bundle in bundles" :key="bundle.id" class="py-3 flex items-center justify-between text-sm">
+            <GlassCard
+                title="Recent log bundles"
+                subtitle="Saved snapshots"
+            >
+                <ul class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)]">
+                    <li v-for="bundle in bundles" :key="bundle.id" class="flex items-center justify-between py-3 text-sm">
                         <div>
-                            <p class="font-semibold text-stone-800 dark:text-white">{{ bundle.label }}</p>
-                            <p class="text-xs text-stone-500 dark:text-stone-400">
-                                {{ bundle.size }} · {{ bundle.created }}
-                            </p>
+                            <p class="font-semibold text-stone-800 dark:text-stone-50">{{ bundle.label }}</p>
+                            <p class="text-xs text-stone-500 dark:text-stone-400">{{ bundle.size }} · {{ bundle.created }}</p>
                         </div>
-                        <SporkButton secondary xsmall>
-                            Download
-                        </SporkButton>
+                        <GlassButton variant="secondary" size="sm">Download</GlassButton>
                     </li>
                     <li v-if="!bundles.length" class="py-4 text-sm text-stone-500 dark:text-stone-400">
                         No log bundles archived yet.
                     </li>
                 </ul>
-            </section>
+            </GlassCard>
         </div>
     </ServerInfrastucture>
 </template>
 
 <script setup>
 import ServerInfrastucture from "@/Layouts/ServerInfrastucture.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
+import GlassCard from "@/Components/Glass/GlassCard.vue";
+import GlassSurface from "@/Components/Glass/GlassSurface.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
 import { computed } from "vue";
 import dayjs from "dayjs";
 import { buildServerNavigation } from '@/Pages/Infrastructure/serverNavigation';

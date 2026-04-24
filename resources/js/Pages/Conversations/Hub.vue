@@ -387,7 +387,7 @@ const participantSummary = computed(() => {
 const isMuted = computed(() => Boolean(activeThread.value?.settings?.muted));
 
 const openThread = (threadId) => {
-    router.visit(route('chat.show', threadId), {
+    router.visit(route('communication.chat.show', threadId), {
         preserveScroll: true,
         preserveState: true,
         only: ['threads', 'activeThread'],

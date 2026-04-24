@@ -10,7 +10,7 @@ describe('message-toast', () => {
                 subject: 'Hello',
             },
             {
-                pathname: '/-/chat/99',
+                pathname: '/-/communication/chat/99',
                 user_person_id: 1,
             }
         );
@@ -30,7 +30,7 @@ describe('message-toast', () => {
                 },
             },
             {
-                pathname: '/-/chat/99',
+                pathname: '/-/communication/chat/99',
                 user_person_id: 1,
             }
         );
@@ -42,7 +42,7 @@ describe('message-toast', () => {
     it('suppresses the toast when already viewing the same thread', () => {
         expect(
             shouldToastNewMessage({
-                pathname: '/-/chat/10',
+                pathname: '/-/communication/chat/10',
                 thread_id: 10,
                 is_user: false,
             })
@@ -50,7 +50,7 @@ describe('message-toast', () => {
 
         expect(
             shouldToastNewMessage({
-                pathname: '/-/chat/10/',
+                pathname: '/-/communication/chat/10/',
                 thread_id: 10,
                 is_user: false,
             })
@@ -60,7 +60,7 @@ describe('message-toast', () => {
     it('suppresses the toast for outbound (user-authored) messages', () => {
         const toast = buildMessageToastItemFromEvent(
             { thread_id: 10, from_person: 1 },
-            { pathname: '/-/chat/99', user_person_id: 1 }
+            { pathname: '/-/communication/chat/99', user_person_id: 1 }
         );
 
         expect(toast).toBeNull();
@@ -77,7 +77,7 @@ describe('message-toast', () => {
                     preview: 'Prior message preview',
                 },
             },
-            { pathname: '/-/chat/99', user_person_id: 1 }
+            { pathname: '/-/communication/chat/99', user_person_id: 1 }
         );
 
         expect(toast?.reply_to?.preview).toBe('Prior message preview');
@@ -92,7 +92,7 @@ describe('message-toast', () => {
                 subject: 'Hello',
             },
             {
-                pathname: '/-/chat/99',
+                pathname: '/-/communication/chat/99',
                 user_person_id: 1,
             }
         );

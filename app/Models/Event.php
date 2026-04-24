@@ -17,12 +17,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use RRule\RRule;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
 class Event extends Model implements Crud, Taggable
 {
     use HasFactory;
     use HasTags;
+    use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;
 
@@ -34,6 +37,7 @@ class Event extends Model implements Crud, Taggable
         'end_at',
         'rrule',
         'color',
+        'identifiers',
     ];
 
     public $dispatchesEvents = [
@@ -50,12 +54,30 @@ class Event extends Model implements Crud, Taggable
         return [
             'start_at' => 'datetime',
             'end_at' => 'datetime',
+            'identifiers' => 'array',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'title',
+                'description',
+                'start_at',
+                'end_at',
+                'rrule',
+                'color',
+                'identifiers',
+            ])
+            ->useLogName('event')
+            ->dontSubmitEmptyLogs()
+            ->logOnlyDirty();
     }
 
     /**

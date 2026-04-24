@@ -8,7 +8,8 @@ use App\Models\Event;
 use App\Models\Finance\Budget;
 use App\Models\Task;
 use App\Models\User;
-use App\Operations\Operation;
+use App\Operations\AutomationOperation;
+use App\Operations\ServerAction;
 use App\Services\Finance\BudgetPeriodHelper;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -51,9 +52,11 @@ class CalendarService
                     'start' => $occurrence['start'],
                     'end' => $occurrence['end'],
                     'type' => 'event',
-                    'color' => $eventModel->color ?? '#3b82f6', // Default indigo
+                    'color' => $eventModel->color ?? '#3b82f6',
                     'rrule' => $eventModel->rrule,
                     'recurring' => $eventModel->isRecurring(),
+                    'display' => 'auto',
+                    'all_day' => false,
                     'model_id' => $eventModel->id,
                     'model_type' => Event::class,
                 ]);
@@ -93,9 +96,11 @@ class CalendarService
                     'start' => $taskStart,
                     'end' => $taskEnd,
                     'type' => 'task',
-                    'color' => '#10b981', // Default green
+                    'color' => '#10b981',
                     'rrule' => null,
                     'recurring' => false,
+                    'display' => 'auto',
+                    'all_day' => false,
                     'model_id' => $task->id,
                     'model_type' => Task::class,
                 ]);
@@ -127,14 +132,16 @@ class CalendarService
                     if (! $events->contains('id', $periodId)) {
                         $events->push([
                             'id' => $periodId,
-                            'title' => 'Budget: '.$budget->name,
+                            'title' => $budget->name,
                             'description' => '$'.number_format($budget->amount, 2),
                             'start' => $periodStart,
-                            'end' => $periodEnd,
+                            'end' => $periodStart->copy()->addDay(),
                             'type' => 'budget',
-                            'color' => '#8b5cf6', // Default purple
+                            'color' => '#8b5cf6',
                             'rrule' => null,
                             'recurring' => true,
+                            'display' => 'auto',
+                            'all_day' => true,
                             'model_id' => $budget->id,
                             'model_type' => Budget::class,
                         ]);
@@ -164,27 +171,37 @@ class CalendarService
             }
         }
 
-        // Get Operation events
-        $operations = Operation::query()
-            ->whereNotNull('should_run_at')
-            ->whereBetween('should_run_at', [$start, $end])
-            ->get();
+        // Get Operation events from each concrete Operation subclass
+        $operationClasses = [AutomationOperation::class, ServerAction::class];
 
-        foreach ($operations as $operation) {
-            $runAt = Carbon::parse($operation->should_run_at);
-            $events->push([
-                'id' => 'operation_'.$operation->id,
-                'title' => 'Operation: '.class_basename($operation),
-                'description' => 'Scheduled operation',
-                'start' => $runAt,
-                'end' => $runAt->copy()->addHour(),
-                'type' => 'operation',
-                'color' => '#f59e0b', // Default amber
-                'rrule' => null,
-                'recurring' => false,
-                'model_id' => $operation->id,
-                'model_type' => get_class($operation),
-            ]);
+        foreach ($operationClasses as $operationClass) {
+            try {
+                $operations = $operationClass::query()
+                    ->whereNotNull('should_run_at')
+                    ->whereBetween('should_run_at', [$start, $end])
+                    ->get();
+
+                foreach ($operations as $operation) {
+                    $runAt = Carbon::parse($operation->should_run_at);
+                    $events->push([
+                        'id' => 'operation_'.class_basename($operationClass).'_'.$operation->id,
+                        'title' => 'Operation: '.class_basename($operation),
+                        'description' => 'Scheduled operation',
+                        'start' => $runAt,
+                        'end' => $runAt->copy()->addHour(),
+                        'type' => 'operation',
+                        'color' => '#f59e0b',
+                        'rrule' => null,
+                        'recurring' => false,
+                        'display' => 'auto',
+                        'all_day' => false,
+                        'model_id' => $operation->id,
+                        'model_type' => $operationClass,
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                // Table may not exist; skip silently
+            }
         }
 
         return $events->sortBy('start');

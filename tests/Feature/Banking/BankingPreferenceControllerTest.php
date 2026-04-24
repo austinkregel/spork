@@ -17,12 +17,12 @@ class BankingPreferenceControllerTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)
-            ->from('http://spork.localhost/-/banking/settings')
-            ->put('http://spork.localhost/-/banking/preferences/pins', [
+            ->from('http://spork.localhost/-/finance/banking/settings')
+            ->put('http://spork.localhost/-/finance/banking/preferences/pins', [
                 'type' => 'accounts',
                 'order' => ['acc_1', 'acc_2'],
             ])
-            ->assertRedirect('http://spork.localhost/-/banking/settings');
+            ->assertRedirect('http://spork.localhost/-/finance/banking/settings');
 
         $this->assertDatabaseHas('banking_preferences', [
             'user_id' => $user->id,

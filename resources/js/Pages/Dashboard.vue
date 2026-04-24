@@ -3,7 +3,6 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Welcome from '@/Components/Welcome.vue';
 import MetricCard from '@/Components/Spork/Atoms/MetricCard.vue';
 import MetricApiCard from '@/Components/Spork/Molecules/MetricApiCard.vue';
-import WeatherHeader from "@/Pages/Petoskey/WeatherHeader.vue";
 import { ref, onMounted } from 'vue';
 import dayjs from 'dayjs';
 import { Link } from '@inertiajs/vue3';
@@ -69,11 +68,8 @@ onMounted(() => {
             </h2>
         </template>
 
-        <div class="mx-auto max-w-7xl px-4 ">
-          <WeatherHeader
-              :weather="weather"
-              :now="now"
-          />
+        <div v-if="weather" class="mx-auto max-w-7xl px-4 py-2 text-sm text-stone-600 dark:text-stone-300">
+          Weather data available (legacy Petoskey widget removed).
         </div>
         <div class="py-2">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-5 gap-4">
@@ -98,7 +94,7 @@ onMounted(() => {
                 </div>
             </div>
 
-            <Link href="/-/banking" class="text-white text-sm px-6 underline pt-2">
+            <Link href="/-/finance/banking" class="text-white text-sm px-6 underline pt-2">
                 More Banking Details...
             </Link>
 
@@ -116,7 +112,7 @@ onMounted(() => {
                     >
                         {{ tag?.name?.en ?? tag?.name }}
                     </div>
-                    <Link href="/-/rss-feeds" class="text-xs text-indigo-600 dark:text-indigo-300 underline ml-auto">
+                    <Link href="/-/feeds/rss-feeds" class="text-xs text-indigo-600 dark:text-indigo-300 underline ml-auto">
                         Open Social Feeds →
                     </Link>
                 </div>

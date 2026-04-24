@@ -1,5 +1,5 @@
 export const buildServerNavigation = (server: { id: number }) => {
-    const base = server?.id ? `/-/servers/${server.id}` : '/-/servers';
+    const base = server?.id ? `/-/infrastructure/servers/${server.id}` : '/-/infrastructure/servers';
 
     return [
         { id: 'overview', name: 'Overview', href: base, icon: 'HomeModernIcon' },

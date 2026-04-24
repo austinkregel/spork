@@ -18,7 +18,7 @@ const budgetModal = ref(null);
 const isPinned = (budgetId) => pinnedOrder.value.includes(budgetId);
 
 const persistPins = () => {
-  router.put(route('banking.preferences.pins'), {
+  router.put(route('finance.banking.preferences.pins'), {
     type: 'budgets',
     order: pinnedOrder.value,
   }, {
@@ -57,7 +57,7 @@ const deleteBudget = (budget) => {
     return;
   }
 
-  router.delete(route('banking.budgets.destroy', budget.id), {
+  router.delete(route('finance.banking.budgets.destroy', budget.id), {
     preserveScroll: true,
   });
 };
@@ -73,7 +73,7 @@ const deleteBudget = (budget) => {
       </div>
       <button
         type="button"
-        class="px-3 py-2 text-sm rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+        class="px-3 py-2 text-sm rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
         @click="openNewBudget"
       >
         New Budget
@@ -89,7 +89,7 @@ const deleteBudget = (budget) => {
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
               <Link
-                :href="route('banking.budgets.show', budget.id)"
+                :href="route('finance.banking.budgets.show', budget.id)"
                 class="text-stone-900 dark:text-white font-semibold hover:underline"
               >
                 {{ budget.name }}

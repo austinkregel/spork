@@ -1,29 +1,25 @@
 <script setup>
-import Button from "@/Components/Button.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
-import Modal from "@/Components/Modal.vue";
-import DynamicIcon from "@/Components/DynamicIcon.vue";
-import {ref} from "vue";
+import { ref } from "vue";
+import axios from "axios";
 import Multiselect from 'vue-multiselect';
+import GlassModal from "@/Components/Glass/GlassModal.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
+import GlassPill from "@/Components/Glass/GlassPill.vue";
 
-const {
-    show,
-    type,
-    identifiers,
-    name,
-} = defineProps({
+const props = defineProps({
     show: Boolean,
     type: String,
     name: String,
     identifiers: Array,
-})
+});
 
-const $emit = defineEmits(['close', 'save', 'open']);
+const emit = defineEmits(['close', 'save', 'open']);
 
 const tags = ref([]);
 const tagsToApply = ref(null);
 const loading = ref(false);
-const search= ref('');
+const search = ref('');
+
 const asyncFind = async (query) => {
     loading.value = true;
     try {
@@ -32,95 +28,82 @@ const asyncFind = async (query) => {
     } finally {
         loading.value = false;
     }
-}
-const applyTags = async () => {
-  console.log({identifiers, tagToApply: tagsToApply.value});
-  if (identifiers.length === 0) {
-    console.log('No identifiers to apply tags to', {... tagsToApply.value});
-    return;
-  }
+};
 
-  console.log({identifiers, tagToApply: tagsToApply.value});
-    await Promise.all(identifiers.map(async (identifier) => {
-        return await axios.post(`/api/crud/${name}/${identifier.id}/tags`, {
-            tags: [...tagsToApply.value].map((tag) => tag.id)
-        })
-    }));
-}
-const clearAll= () => {
-    tagsToApply.value = null;
-    search.value = '';
-}
-const close = () => $emit('close');
+const applyTags = async () => {
+    if (props.identifiers.length === 0) return;
+
+    await Promise.all(props.identifiers.map(async (identifier) => axios.post(
+        `/api/crud/${props.name}/${identifier.id}/tags`,
+        { tags: [...tagsToApply.value].map((tag) => tag.id) },
+    )));
+
+    emit('save');
+    close();
+};
+
+const close = () => emit('close');
 </script>
 
 <template>
-    <div>
-        <Modal :show="show" @close="close">
-            <div class="text-xl flex justify-between p-4">
-                <slot name="modal-title">Create Modal</slot>
-                <button @click="close" class="focus:outline-none">
-                    <DynamicIcon icon-name="XMarkIcon" class="w-6 h-6 stroke-current" />
-                </button>
-            </div>
-            <div class="flex flex-col gap-8 border-t border-stone-200 dark:border-stone-700 mt-2 p-4">
-                <div class="flex flex-col w-full gap-2">
-                    <div>Applying tag to</div>
-                    <div class="flex gap-2">
-                        <div v-for="identifier in identifiers" :key="identifier" class="bg-stone-200 dark:bg-stone-600 py-1 px-2 rounded-lg">
-                            {{ identifier.name }}
-                        </div>
-                    </div>
-                </div>
+    <GlassModal :open="show" size="md" @close="close">
+        <template #title>
+            <slot name="modal-title">Apply tag</slot>
+        </template>
 
-                <div>
-                    <Multiselect
-                        v-model="tagsToApply"
-                        id="ajax"
-                        label="name"
-                        track-by="code"
-                        placeholder="Type to search"
-                        open-direction="bottom"
-                        :options="tags"
-                        :multiple="true"
-                        :searchable="true"
-                        :loading="loading"
-                        :internal-search="false"
-                        :clear-on-select="false"
-                        :close-on-select="false"
-                        :options-limit="300"
-                        :limit="5"
-                        :max-height="300"
-                        :show-no-results="true"
-                        :hide-selected="true"
-                        @search-change="asyncFind"
-                        class="bg-white dark:bg-stone-600 px-4 py-2 text-black dark:text-white"
-
-                    >
-                        <template #option="{ option, remove }">
-                            <span class="custom__tag"><span>{{ option.name?.en }}</span></span>
-                        </template>
-
-                        <template #tag="{ option, remove }">
-                          <span class="custom__tag"><span>{{ option.name?.en }}</span>
-                          <span class="custom__remove" @click="remove(option)">❌</span></span>
-                        </template>
-
-                        <template #no-result>
-                            <span>Oops! No elements found. Consider changing the search query.</span>
-                        </template>
-                    </Multiselect>
-                </div>
-
-                <div class="mt-4 flex justify-end gap-4">
-                    <SporkButton @click.prevent="close" primary medium>
-                        Close
-                    </SporkButton>
-                    <SporkButton @click="applyTags" primary medium type="button">
-                        Apply Tag<span v-if="tagsToApply?.length > 0">s</span>
-                    </SporkButton>
+        <div class="space-y-6">
+            <div class="space-y-2">
+                <div class="text-sm font-medium text-stone-700 dark:text-stone-200">Applying tag to</div>
+                <div class="flex flex-wrap gap-2">
+                    <GlassPill v-for="identifier in identifiers" :key="identifier.id" size="sm">
+                        {{ identifier.name }}
+                    </GlassPill>
                 </div>
             </div>
-        </Modal>
-    </div>
+
+            <div>
+                <Multiselect
+                    id="ajax"
+                    v-model="tagsToApply"
+                    label="name"
+                    track-by="code"
+                    placeholder="Type to search"
+                    open-direction="bottom"
+                    :options="tags"
+                    :multiple="true"
+                    :searchable="true"
+                    :loading="loading"
+                    :internal-search="false"
+                    :clear-on-select="false"
+                    :close-on-select="false"
+                    :options-limit="300"
+                    :limit="5"
+                    :max-height="300"
+                    :show-no-results="true"
+                    :hide-selected="true"
+                    @search-change="asyncFind"
+                >
+                    <template #option="{ option }">
+                        <span class="custom__tag"><span>{{ option.name?.en }}</span></span>
+                    </template>
+                    <template #tag="{ option, remove }">
+                        <span class="custom__tag">
+                            <span>{{ option.name?.en }}</span>
+                            <button type="button" class="custom__remove" aria-label="Remove" @click="remove(option)">×</button>
+                        </span>
+                    </template>
+                    <template #no-result>
+                        <span>Oops! No elements found. Consider changing the search query.</span>
+                    </template>
+                </Multiselect>
+            </div>
+        </div>
+
+        <template #footer>
+            <GlassButton variant="secondary" size="sm" @click="close">Close</GlassButton>
+            <GlassButton size="sm" @click="applyTags">
+                Apply Tag<span v-if="tagsToApply?.length > 0">s</span>
+            </GlassButton>
+        </template>
+    </GlassModal>
 </template>

@@ -1,76 +1,70 @@
 <template>
     <ContextMenu>
         <div
-            class="flex flex-col gap-1 bg-stone-800 p-2 rounded-lg my-2 border-t-4"
+            class="my-2 flex flex-col gap-1 rounded-lg border-t-4 bg-[var(--color-glass-surface-light)] dark:bg-[var(--color-glass-surface-dark)] backdrop-blur-glass border-x border-b border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] p-2"
             :class="[color]"
         >
-            <button @click="() => { createTask = true;}" class="text-left">{{ task.name}}</button>
-            <SporkChecklist v-model="task.checklist" :can-add-more="true"/>
-            <div class="text-xs justify-end flex -mt-4">
+            <button type="button" class="text-left text-sm font-medium text-stone-900 dark:text-stone-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-sm" @click="createTask = true">{{ task.name }}</button>
+            <SporkChecklist v-model="task.checklist" :can-add-more="true" />
+            <div class="-mt-4 flex justify-end text-xs text-stone-500 dark:text-stone-400">
                 {{ checklistStatus }}
             </div>
         </div>
 
-        <DialogModal
-            :show="createTask"
-            :closeable="true"
-            @close="createTask = false"
-        >
-            <template #title>
-                <div class="dark:text-stone-200 p-4">
-                    Create a task
-                </div>
-            </template>
-            <template #content>
-                <div class="dark:text-stone-200 p-4 flex flex-col gap-4 border dark:border-stone-600 rounded-lg">
-                    <SporkField v-model="form.name" label="Name" placeholder="hello there" />
-                    <SporkField v-model="form.type" label="Type" />
-                    <SporkField v-model="form.status" label="Status" />
-                    <SporkField v-model="form.notes" label="Notes" type="textarea"/>
-                    <SporkField v-model="form.start_date" label="Start Date" type="date"/>
-                    <SporkChecklist v-model="form.checklist" label="Checklist"/>
-                </div>
-            </template>
+        <GlassModal :open="createTask" title="Edit task" size="md" @close="createTask = false">
+            <div class="space-y-4">
+                <GlassField label="Name">
+                    <GlassInput v-model="form.name" placeholder="hello there" />
+                </GlassField>
+                <GlassField label="Type">
+                    <GlassInput v-model="form.type" />
+                </GlassField>
+                <GlassField label="Status">
+                    <GlassInput v-model="form.status" />
+                </GlassField>
+                <GlassField label="Notes">
+                    <textarea
+                        v-model="form.notes"
+                        rows="3"
+                        class="block w-full rounded-md border border-stone-300 bg-white/70 px-3 py-2 text-sm text-stone-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-stone-600 dark:bg-stone-800/70 dark:text-stone-100"
+                    />
+                </GlassField>
+                <GlassField label="Start Date">
+                    <GlassInput v-model="form.start_date" type="date" />
+                </GlassField>
+                <SporkChecklist v-model="form.checklist" label="Checklist" />
+            </div>
             <template #footer>
-                <div class="dark:text-stone-200 p-4 flex justify-between gap-4">
-                    <spork-button @click="createTask = !createTask" small secondary>
-                        Close
-                    </spork-button>
-                    <spork-button @click="updateTask(form); createTask = !createTask" small primary>
-                        Save
-                    </spork-button>
-                </div>
+                <GlassButton variant="secondary" size="sm" @click="createTask = false">Close</GlassButton>
+                <GlassButton size="sm" @click="updateTask(form); createTask = false">Save</GlassButton>
             </template>
-        </DialogModal>
+        </GlassModal>
 
         <template #items="{ close }">
-
-            <ContextMenuItem @click="() => createTask = true">
-                <DynamicIcon icon-name="ArrowTopRightOnSquareIcon"  class="w-4 h-4" />
+            <ContextMenuItem @click="createTask = true">
+                <DynamicIcon icon-name="ArrowTopRightOnSquareIcon" class="h-4 w-4" />
                 Open
             </ContextMenuItem>
             <ContextMenuItem
                 v-if="task.status !== 'In Progress'"
-                @click="() => {task.status = 'In Progress'; close() }"
+                @click="task.status = 'In Progress'; close()"
             >
-                <DynamicIcon icon-name="BriefcaseIcon"  class="w-4 h-4" />
+                <DynamicIcon icon-name="BriefcaseIcon" class="h-4 w-4" />
                 Start Work
             </ContextMenuItem>
-
-            <ContextMenuItem v-if="task.status !== 'To Do'" @click="() => {task.status = 'To Do'; close() }">
-                <DynamicIcon icon-name="ClockIcon" class="w-4 h-4" />
+            <ContextMenuItem v-if="task.status !== 'To Do'" @click="task.status = 'To Do'; close()">
+                <DynamicIcon icon-name="ClockIcon" class="h-4 w-4" />
                 Back to the start
             </ContextMenuItem>
-            <ContextMenuItem v-if="task.status !== 'Done'" @click="() => {task.status = 'Done'; close() }" >
-                <DynamicIcon icon-name="CheckCircleIcon" class="w-4 h-4" />
+            <ContextMenuItem v-if="task.status !== 'Done'" @click="task.status = 'Done'; close()">
+                <DynamicIcon icon-name="CheckCircleIcon" class="h-4 w-4" />
                 Mark as Done
             </ContextMenuItem>
 
-            <!-- Actions I could take with a single task. Mark as in progress or done, adding a checklist,  -->
-            <hr class="border-t border-stone-200 dark:border-stone-500" />
+            <hr class="border-t border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)]">
 
-            <button @click="deleteTask" class="flex items-center gap-2 px-4 py-2 ">
-                <TrashIcon class="w-4 h-4 text-red-500" />
+            <button type="button" class="flex w-full items-center gap-2 px-4 py-2 text-left" @click="deleteTask">
+                <TrashIcon class="h-4 w-4 text-red-500" aria-hidden="true" />
                 Delete
             </button>
         </template>
@@ -80,64 +74,45 @@
 <script setup>
 import SporkChecklist from "@/Components/Spork/SporkChecklist.vue";
 import { watch, computed, reactive, ref } from 'vue';
-import {Link, router} from "@inertiajs/vue3";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
-import SporkField from "@/Components/Spork/SporkField.vue";
-import DialogModal from "@/Components/DialogModal.vue";
+import { router } from "@inertiajs/vue3";
+import GlassModal from "@/Components/Glass/GlassModal.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
+import GlassField from "@/Components/Glass/GlassField.vue";
+import GlassInput from "@/Components/Glass/GlassInput.vue";
 import ContextMenu from "@/Components/ContextMenus/ContextMenu.vue";
-import {
-    ArrowTopRightOnSquareIcon,
-    DocumentDuplicateIcon,
-    PencilIcon,
-    TrashIcon,
-    UserPlusIcon
-} from "@heroicons/vue/24/outline/index.js";
+import { TrashIcon } from "@heroicons/vue/24/outline";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 import ContextMenuItem from "@/Components/ContextMenus/ContextMenuButton.vue";
+import axios from 'axios';
 
 const { task } = defineProps({
     task: {
         type: Object,
-        default: () => ({
-            checklist: []
-        })
-    }
-})
-const form = reactive(task);
+        default: () => ({ checklist: [] }),
+    },
+});
 
+const form = reactive(task);
 const createTask = ref(false);
 
-watch(() => task, (newVal, oldValue) => {
-    const task = Object.assign({}, newVal);
-
-    axios.put('/api/crud/tasks/' + task.id, task)
-        .then((response) => {
+watch(() => task, (newVal) => {
+    const updated = Object.assign({}, newVal);
+    axios.put('/api/crud/tasks/' + updated.id, updated)
+        .then(() => {
             createTask.value = false;
-            router.reload({
-                only: [
-                    'project',
-                    'daily_tasks',
-                    'today_tasks',
-                    'future_tasks',
-                ]
-            })
-
-        })
+            router.reload({ only: ['project', 'daily_tasks', 'today_tasks', 'future_tasks'] });
+        });
 });
 
 const checklistStatus = computed(() => {
-    if (! task?.checklist || task.checklist.length === 0) {
-        return '';
-    }
+    if (!task?.checklist || task.checklist.length === 0) return '';
     const completed = task.checklist.filter((item) => item.checked).length;
-    const total = task.checklist.length;
-    return  completed + '/' + total ;
-})
-const status = computed(() => {
-    return task.status
-})
+    return completed + '/' + task.checklist.length;
+});
+
+const status = computed(() => task.status);
 const color = computed(() => {
-    switch(status.value) {
+    switch (status.value) {
         case 'todo':
         case 'To Do':
             return 'border-red-500';
@@ -149,43 +124,20 @@ const color = computed(() => {
         case 'Done':
             return 'border-green-500';
         default:
-            if (! task?.checklist || task.checklist.length === 0) {
-                return 'border-stone-950';
-            }
-
-            if (task.checklist.filter((item) => item.checked).length === task.checklist.length) {
-                return 'border-green-500';
-            }
-
-            if (task.checklist.filter((item) => item.checked).length > 0) {
-                return 'border-yellow-500';
-            }
+            if (!task?.checklist || task.checklist.length === 0) return 'border-stone-300 dark:border-stone-700';
+            if (task.checklist.filter((item) => item.checked).length === task.checklist.length) return 'border-green-500';
+            if (task.checklist.filter((item) => item.checked).length > 0) return 'border-yellow-500';
+            return 'border-stone-300 dark:border-stone-700';
     }
-})
+});
 
 const updateTask = async () => {
-    await axios.put('/api/crud/tasks/' + form.id, {
-        ...form,
-    });
-    router.reload({
-        only: [
-            'project',
-            'daily_tasks',
-            'today_tasks',
-            'future_tasks',
-        ]
-    })
-}
+    await axios.put('/api/crud/tasks/' + form.id, { ...form });
+    router.reload({ only: ['project', 'daily_tasks', 'today_tasks', 'future_tasks'] });
+};
+
 const deleteTask = async () => {
     await axios.delete('/api/crud/tasks/' + task.id);
-    router.reload({
-        only: [
-            'project',
-            'daily_tasks',
-            'today_tasks',
-            'future_tasks',
-        ]
-    })
-}
-
+    router.reload({ only: ['project', 'daily_tasks', 'today_tasks', 'future_tasks'] });
+};
 </script>

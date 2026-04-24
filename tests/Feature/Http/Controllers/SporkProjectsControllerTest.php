@@ -15,7 +15,7 @@ class SporkProjectsControllerTest extends TestCase
 
     public function test_projects_route_is_accessible()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects/list');
 
         $response->assertStatus(200);
     }
@@ -48,7 +48,7 @@ class SporkProjectsControllerTest extends TestCase
 
     public function test_projects_route_loads_expected_data()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects/list');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Projects/Index')
@@ -73,7 +73,7 @@ class SporkProjectsControllerTest extends TestCase
         $project = Project::factory()->create();
         $domain = Domain::factory()->create();
 
-        $response = $this->actingAsUser()->post("http://spork.localhost/-/project/{$project->id}/attach", [
+        $response = $this->actingAsUser()->post("http://spork.localhost/-/projects/{$project->id}/attach", [
             'resource_type' => \App\Models\Domain::class,
             'resource_id' => $domain->id,
         ]);
@@ -93,7 +93,7 @@ class SporkProjectsControllerTest extends TestCase
 
         $this->actingAsUser();
 
-        $response = $this->postJson("http://spork.localhost/-/project/{$project->id}/attach", [
+        $response = $this->postJson("http://spork.localhost/-/projects/{$project->id}/attach", [
             'resource_type' => \App\Models\User::class,
             'resource_id' => $this->user->id,
         ]);

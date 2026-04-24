@@ -1,50 +1,38 @@
 <template>
     <ServerInfrastucture title="Crontab" :server="server" :navigation="navigation">
         <div class="space-y-6">
-            <section class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm">
-                <header class="mb-4">
-                    <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                        Scheduled tasks
-                    </p>
-                    <h2 class="text-xl font-semibold text-stone-900 dark:text-white">
-                        Current crontab entries
-                    </h2>
-                </header>
-
+            <GlassCard
+                title="Current crontab entries"
+                subtitle="Scheduled tasks"
+            >
                 <textarea
-                    class="w-full min-h-[320px] text-sm font-mono rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-100 p-4"
+                    class="block min-h-[320px] w-full rounded-lg border border-stone-300 bg-white/70 p-4 font-mono text-sm text-stone-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-stone-600 dark:bg-stone-800/70 dark:text-stone-100"
                     readonly
                 >{{ cronContent }}</textarea>
 
-                <div class="flex gap-3">
-                    <SporkButton secondary @click="copyCrontab">
-                        Copy crontab
-                    </SporkButton>
-                    <SporkButton primary>
-                        Open editor
-                    </SporkButton>
+                <div class="mt-4 flex gap-2">
+                    <GlassButton variant="secondary" @click="copyCrontab">Copy crontab</GlassButton>
+                    <GlassButton>Open editor</GlassButton>
                 </div>
-            </section>
+            </GlassCard>
 
-            <section class="border border-dashed border-stone-300 dark:border-stone-700 rounded-lg p-6 bg-stone-50 dark:bg-stone-900/40 space-y-3">
-                <p class="text-sm font-semibold text-stone-800 dark:text-stone-100">
-                    Upcoming runs
-                </p>
-                <ul class="text-sm text-stone-600 dark:text-stone-300 space-y-2">
+            <GlassCard title="Upcoming runs">
+                <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-300">
                     <li v-for="item in nextRuns" :key="item.command">
                         <span class="font-medium text-stone-800 dark:text-stone-100">{{ item.command }}</span>
-                        <span class="text-xs text-stone-500 dark:text-stone-400 ml-2">Next: {{ item.next }}</span>
+                        <span class="ml-2 text-xs text-stone-500 dark:text-stone-400">Next: {{ item.next }}</span>
                     </li>
                     <li v-if="!nextRuns.length">Unable to calculate future runs yet.</li>
                 </ul>
-            </section>
+            </GlassCard>
         </div>
     </ServerInfrastucture>
 </template>
 
 <script setup>
 import ServerInfrastucture from "@/Layouts/ServerInfrastucture.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
+import GlassCard from "@/Components/Glass/GlassCard.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
 import { computed } from "vue";
 import dayjs from "dayjs";
 import { buildServerNavigation } from '@/Pages/Infrastructure/serverNavigation';

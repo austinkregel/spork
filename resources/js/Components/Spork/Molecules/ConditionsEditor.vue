@@ -97,7 +97,7 @@ const addCondition = () => {
 
 const apiForCreate = () => {
   if (isTagConditionsEditor.value) {
-    return route("automation.tags.conditions.store", id);
+    return route("automations.tags.conditions.store", id);
   }
 
   return "/api/crud/conditions";
@@ -105,7 +105,7 @@ const apiForCreate = () => {
 
 const apiForUpdate = (conditionId) => {
   if (isTagConditionsEditor.value) {
-    return route("automation.tags.conditions.update", { tag: id, condition: conditionId });
+    return route("automations.tags.conditions.update", { tag: id, condition: conditionId });
   }
 
   return `/api/crud/conditions/${conditionId}`;
@@ -113,7 +113,7 @@ const apiForUpdate = (conditionId) => {
 
 const apiForDelete = (conditionId) => {
   if (isTagConditionsEditor.value) {
-    return route("automation.tags.conditions.destroy", { tag: id, condition: conditionId });
+    return route("automations.tags.conditions.destroy", { tag: id, condition: conditionId });
   }
 
   return `/api/crud/conditions/${conditionId}`;
@@ -193,7 +193,7 @@ const deleteCondition = async (index, condition) => {
       </div>
       <button
         type="button"
-        class="px-3 py-2 text-sm rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+        class="px-3 py-2 text-sm rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
         @click="addCondition"
       >
         Add condition
@@ -269,7 +269,7 @@ const deleteCondition = async (index, condition) => {
             <button
               v-if="condition?.id"
               type="button"
-              class="px-3 py-2 text-sm rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white shadow-sm disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+              class="px-3 py-2 text-sm rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white shadow-sm disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
               :disabled="rowSaving?.[index]"
               @click="updateCondition(index, condition)"
             >
@@ -279,7 +279,7 @@ const deleteCondition = async (index, condition) => {
             <button
               v-else
               type="button"
-              class="px-3 py-2 text-sm rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white shadow-sm disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+              class="px-3 py-2 text-sm rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white shadow-sm disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
               :disabled="rowSaving?.[index]"
               @click="createCondition(index, condition)"
             >

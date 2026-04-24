@@ -4,7 +4,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "test": "vitest run"
+        "test": "vitest run",
+    "ziggy": "php artisan ziggy:generate"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^2.0.11",

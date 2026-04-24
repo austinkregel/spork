@@ -1,0 +1,69 @@
+---
+description: Spork Vue/Inertia component patterns and Tailwind styling tokens.
+globs:
+  - "resources/js/**/*.vue"
+  - "resources/js/**/*.js"
+  - "resources/js/**/*.ts"
+---
+
+See [AGENTS.md](mdc:AGENTS.md) for the full picture. Quick rules for the frontend:
+
+## Stack & layout
+
+- Vue 3 with `<script setup>` Composition API; Inertia v2; Tailwind v4; Vite 6.
+- Pages: `resources/js/Pages/`. Layout: `resources/js/Layouts/AppLayout.vue`.
+- Components follow atomic design under `resources/js/Components/Spork/`:
+  - `Atoms/` — basic building blocks (`SporkButton`, `SporkInput`, `SporkLabel`, `SporkTable`).
+  - `Molecules/` — composed pieces (`Cards/`, `Containers/`, `Notifications/`).
+  - `{Domain}/` — domain-specific (e.g. `Finance/`).
+- Pass data through Inertia props from controllers — avoid extra `fetch()` calls when first-render data will do.
+- Real-time: subscribe with Echo on private channels named `App.Models.{Model}.{id}`; on receipt prefer `router.reload({ only: [...] })` over manual mutation.
+
+## Imports
+
+```vue
+<script setup>
+import { ref, computed } from 'vue'
+import { Head, Link, router, usePage } from '@inertiajs/vue3'
+import AppLayout from '@/Layouts/AppLayout.vue'
+</script>
+```
+
+## Spork UI styling
+
+These tokens are load-bearing for dark mode and visual consistency.
+
+### Palette
+
+- Surfaces: `bg-white dark:bg-stone-800`, text `text-stone-700 dark:text-stone-200`, dividers `divide-stone-200 dark:divide-stone-600`.
+- Primary action: `bg-indigo-500 dark:bg-indigo-600`. Destructive: `bg-red-500` / `text-red-500`. `slate` is reserved for focus chrome.
+- Every color choice must include a `dark:` counterpart.
+
+### Spacing
+
+- Inline controls (buttons, dropdown rows): `px-3 py-2 text-sm`. Compact: `px-2 py-1 text-xs`. Headers/panels: `px-4 py-2`.
+- Form fields, cards, modals: `p-4` bodies with `gap-4` or `gap-2` between stacked elements. Tables reserve `px-4 py-2` for top/bottom toolbars.
+- Vertical rhythm uses Tailwind's even steps (`mt-2`, `mt-4`, `mb-4`). No arbitrary pixel values.
+
+### Borders, corners, dividers
+
+- Inputs / selects / textareas: `border border-stone-300 dark:border-stone-700` + `rounded-md`. Disabled: `bg-stone-200` or `dark:bg-slate-800/50`.
+- Cards / tables / modals: `border-stone-200 dark:border-stone-800` + `rounded-lg` + `shadow` / `shadow-sm`.
+- Stacked rows: prefer `divide-y divide-stone-200 dark:divide-stone-600` over per-row borders.
+
+### Focus & interaction
+
+- Always `focus:outline-none` plus a Tailwind ring helper. Data-entry: `focus:ring-stone-500 focus:border-stone-500`. CTA buttons: `focus:ring-indigo-500 focus:ring-offset-2`.
+- Hover should nudge background opacity, not swap colors drastically.
+
+### Feedback
+
+- Errors: `text-red-500 dark:text-red-400`, with `bg-red-100` when emphasis is needed.
+- Selection / highlight pills: subtle neutral fills (`bg-stone-100 dark:bg-stone-700`) so they remain readable in tables and dropdowns.
+
+## JS conventions
+
+- Use `const` and `let`; no `var`.
+- Prefer arrow functions and template literals.
+- Destructure props and imports.
+- Define props with `defineProps()`, emits with `defineEmits()`.

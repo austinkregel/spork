@@ -22,12 +22,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Scout\Searchable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Tags\HasTags;
 
 #[ObservedBy([ApplyCredentialsObserver::class])]
-class Person extends Model implements Crud, ModelQuery
+class Person extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
     use HasProjectResource;
+    use HasTags;
+    use LogsActivity;
     use ScopeRelativeSearch;
     use Searchable;
 
@@ -97,5 +102,30 @@ class Person extends Model implements Crud, ModelQuery
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'primary_email',
+                'primary_number',
+                'primary_address',
+                'birthdate',
+                'pronouns',
+                'photo_url',
+                'phone_numbers',
+                'addresses',
+                'emails',
+                'names',
+                'identifiers',
+                'locality',
+                'jobs',
+                'education',
+            ])
+            ->useLogName('person')
+            ->dontSubmitEmptyLogs()
+            ->logOnlyDirty();
     }
 }

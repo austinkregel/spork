@@ -69,6 +69,7 @@ class ResetStandardAutomatedTagsCommandTest extends TestCase
         // Using expectsOutput ensures the command actually ran, not just exited with code 0
         $this->artisan('finance:reset-standard-automated-tags', [
             '--user' => (string) $this->user->id,
+            '--force-shared' => true,
         ])
             ->expectsOutput(sprintf('User #%d <%s>', $this->user->id, $this->user->email ?? ''))
             ->expectsOutput('Done.')

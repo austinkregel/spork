@@ -1,59 +1,51 @@
 <template>
-    <AppLayout :title="'Searching through ' + table + ' for '">
-        <div class="px-4">
-            <div class="mt-4 px-4 font-medium text-stone-600 dark:text-stone-300 uppercase">
-                <Link :href="route('search')+queryString" class="underline">
-                    Search
-                </Link>
-                <span class="mx-2">&gt;</span>
-                <Link :href="route('search.show', [table])" class="">
-                    {{table}}
-                </Link>
-            </div>
-            <hr class="border-stone-300 dark:border-stone-700 mt-4 -mx-4 -mb-2" />
-            <SporkTable
+    <AppLayout :title="'Searching ' + table">
+        <div class="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
+            <nav class="flex items-center gap-2 text-sm font-medium uppercase tracking-wide text-stone-500 dark:text-stone-300" aria-label="Breadcrumb">
+                <Link :href="route('search')+queryString" class="hover:text-stone-700 dark:hover:text-stone-100 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-sm">Search</Link>
+                <span aria-hidden="true">&gt;</span>
+                <Link :href="route('search.show', [table])" class="text-stone-700 dark:text-stone-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-sm">{{ table }}</Link>
+            </nav>
+
+            <GlassTable
                 :headers="headers"
                 :items="data"
-                :header="'Results from your query ' +queryString"
+                :header="'Results for ' + queryString"
                 :description="plural"
-                class="-mx-4"
+                empty-message="No results."
             >
-                <template #context-items="{ item }">
-                    <div class="p-2 flex-col flex gap-1">
-                        <pre>{{ item }}</pre>
+                <template #pagination>
+                    <div class="flex items-center justify-between">
+                        <GlassButton
+                            variant="secondary"
+                            size="sm"
+                            :disabled="!paginator?.prev_page_url"
+                            :href="paginator?.prev_page_url ?? undefined"
+                        >
+                            Previous
+                        </GlassButton>
+                        <GlassButton
+                            variant="secondary"
+                            size="sm"
+                            :disabled="!paginator?.next_page_url"
+                            :href="paginator?.next_page_url ?? undefined"
+                        >
+                            Next
+                        </GlassButton>
                     </div>
                 </template>
-            </SporkTable>
-
-            <div class="flow-root">
-                <div class="flex justify-between mx-4 -mt-4">
-                    <Link class="border px-4 py-2 rounded"
-                          :class="[paginator?.prev_page_url ? 'border-stone-300 dark:border-stone-600 text-white' : 'text-stone-400 border-stone-300 dark:border-stone-700 bg-stone-200 dark:bg-stone-800/70 cursor-not-allowed']"
-                          :disabled="!(paginator?.prev_page_url)"
-                          :href="paginator?.prev_page_url ?? '#'"
-
-                    >
-                        Previous
-                    </Link>
-                    <Link class="text-white border px-4 py-2 rounded"
-                          :class="[paginator?.next_page_url ? 'border-stone-300 dark:border-stone-600' : 'border-stone-300 dark:border-stone-700 bg-stone-200 dark:bg-stone-800/70 text-stone-100/50']"
-                          :disabled="!paginator?.next_page_url"
-                          :href="paginator?.next_page_url"
-                    >
-                        Next
-                    </Link>
-                </div>
-            </div>
+            </GlassTable>
         </div>
     </AppLayout>
 </template>
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import SearchResultPreview from "@/Pages/Search/SearchResultPreview.vue";
-import SporkTable from "@/Components/Spork/Atoms/SporkTable.vue";
-import {Link} from "@inertiajs/vue3";
+import GlassTable from "@/Components/Glass/GlassTable.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
+import { Link } from "@inertiajs/vue3";
 import { computed } from 'vue';
+import dayjs from 'dayjs';
 
 const { data, paginator, table, description, model } = defineProps({
     paginator: {

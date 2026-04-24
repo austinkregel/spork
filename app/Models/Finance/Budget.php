@@ -16,6 +16,7 @@ use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use App\Models\User;
+use App\Navigation\Pillar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -106,5 +107,13 @@ class Budget extends Model implements Crud, Taggable
     public function isFinite(): bool
     {
         return $this->count !== null;
+    }
+
+    /**
+     * Opt-in: surface this model under Finance pillar → Manage in the glass sub-nav.
+     */
+    public static function pillar(): ?Pillar
+    {
+        return Pillar::FINANCE;
     }
 }

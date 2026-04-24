@@ -13,14 +13,14 @@ class SporkResearchControllerTest extends TestCase
 
     public function test_research_route_is_accessible()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/research');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects/research');
 
         $response->assertStatus(200);
     }
 
     public function test_research_route_loads_expected_data()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/research');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/projects/research');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Research/Dashboard')
@@ -36,7 +36,7 @@ class SporkResearchControllerTest extends TestCase
             'sources' => [],
         ]);
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/research/{$research->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/projects/research/{$research->id}");
 
         $response->assertStatus(200);
     }
@@ -49,7 +49,7 @@ class SporkResearchControllerTest extends TestCase
             'sources' => [],
         ]);
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/research/{$research->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/projects/research/{$research->id}");
 
         $response->assertInertia(fn ($page) => $page
             ->component('Research/Topic')

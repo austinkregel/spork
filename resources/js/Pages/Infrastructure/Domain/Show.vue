@@ -2,13 +2,13 @@
     <AppLayout :title="`Domain · ${domain.name}`">
         <div class="px-4 py-6 sm:px-6 lg:px-8">
             <div class="lg:grid lg:grid-cols-3 lg:gap-6">
-                <aside class="space-y-6 mb-8 lg:mb-0">
-                    <section class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm space-y-3">
+                <aside class="mb-8 space-y-6 lg:mb-0">
+                    <GlassCard>
                         <div>
-                            <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
+                            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400">
                                 Domain
                             </p>
-                            <h1 class="text-2xl font-semibold text-stone-900 dark:text-white">
+                            <h1 class="text-2xl font-semibold text-stone-900 dark:text-stone-50">
                                 {{ domain.name }}
                             </h1>
                             <p class="text-xs text-stone-500 dark:text-stone-400">
@@ -16,69 +16,43 @@
                             </p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3 text-sm">
+                        <dl class="mt-4 grid grid-cols-2 gap-3 text-sm">
                             <div>
-                                <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
-                                    Status
-                                </p>
-                                <p class="text-stone-800 dark:text-stone-200 font-semibold">
-                                    {{ domain.status ?? 'Active' }}
-                                </p>
+                                <dt class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">Status</dt>
+                                <dd class="font-semibold text-stone-800 dark:text-stone-200">{{ domain.status ?? 'Active' }}</dd>
                             </div>
                             <div>
-                                <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
-                                    Expires
-                                </p>
-                                <p class="text-stone-800 dark:text-stone-200 font-semibold">
-                                    {{ formattedExpiry }}
-                                </p>
+                                <dt class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">Expires</dt>
+                                <dd class="font-semibold text-stone-800 dark:text-stone-200">{{ formattedExpiry }}</dd>
                             </div>
                             <div>
-                                <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
-                                    Auto renew
-                                </p>
-                                <p class="text-stone-800 dark:text-stone-200 font-semibold">
-                                    {{ domain.auto_renew ? 'Enabled' : 'Disabled' }}
-                                </p>
+                                <dt class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">Auto renew</dt>
+                                <dd class="font-semibold text-stone-800 dark:text-stone-200">{{ domain.auto_renew ? 'Enabled' : 'Disabled' }}</dd>
                             </div>
                             <div>
-                                <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
-                                    DNS Provider
-                                </p>
-                                <p class="text-stone-800 dark:text-stone-200 font-semibold">
-                                    {{ domain.dns_provider ?? 'Unknown' }}
-                                </p>
+                                <dt class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">DNS Provider</dt>
+                                <dd class="font-semibold text-stone-800 dark:text-stone-200">{{ domain.dns_provider ?? 'Unknown' }}</dd>
                             </div>
-                        </div>
+                        </dl>
 
-                        <div class="text-xs text-stone-500 dark:text-stone-400">
+                        <p class="mt-3 text-xs text-stone-500 dark:text-stone-400">
                             Managed by {{ domain.contact_email ?? 'unspecified contact' }}
-                        </div>
-                    </section>
-
-                    <section class="border border-dashed border-stone-300 dark:border-stone-700 rounded-lg p-6 bg-stone-50 dark:bg-stone-900/40 space-y-4">
-                        <p class="text-sm font-semibold text-stone-800 dark:text-stone-100">
-                            Contact roles
                         </p>
+                    </GlassCard>
+
+                    <GlassCard title="Contact roles">
                         <ContactRoleManager :contacts="contacts" @update="handleContactUpdate" />
-                    </section>
+                    </GlassCard>
                 </aside>
 
-                <div class="lg:col-span-2 space-y-6">
-                    <section class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm space-y-4">
-                        <header class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                                    Cloudflare & DNS
-                                </p>
-                                <h2 class="text-xl font-semibold text-stone-900 dark:text-white">
-                                    Edge configuration
-                                </h2>
-                            </div>
-                            <SporkButton primary xsmall>
-                                Manage on infrastructure hub
-                            </SporkButton>
-                        </header>
+                <div class="space-y-6 lg:col-span-2">
+                    <GlassCard
+                        title="Edge configuration"
+                        subtitle="Cloudflare &amp; DNS"
+                    >
+                        <template #actions>
+                            <GlassButton size="sm">Manage on infrastructure hub</GlassButton>
+                        </template>
 
                         <div class="grid gap-4 md:grid-cols-2">
                             <CloudflareFeatureCard
@@ -88,61 +62,53 @@
                                 @toggle="(value) => toggleFeature(index, value)"
                             />
                         </div>
-                    </section>
+                    </GlassCard>
 
-                    <section class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 shadow-sm">
-                        <header class="px-4 py-4 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between">
-                            <div>
-                                <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                                    DNS records
-                                </p>
-                                <h2 class="text-xl font-semibold text-stone-900 dark:text-white">
-                                    {{ records.length }} records synced
-                                </h2>
-                            </div>
-                            <SporkButton primary xsmall @click="startRecordCreate">
-                                Add record
-                            </SporkButton>
-                        </header>
+                    <GlassCard
+                        :title="`${records.length} records synced`"
+                        subtitle="DNS records"
+                    >
+                        <template #actions>
+                            <GlassButton size="sm" @click="startRecordCreate">Add record</GlassButton>
+                        </template>
 
-                        <div class="p-4 space-y-4">
-                            <DnsRecordTable :records="records" @edit="startRecordEdit" @delete="handleRecordDelete" />
+                        <DnsRecordTable :records="records" @edit="startRecordEdit" @delete="handleRecordDelete" />
 
-                            <div v-if="pendingChanges.length" class="border border-dashed border-amber-400 rounded-lg p-4 bg-amber-50 dark:bg-amber-900/30">
-                                <p class="text-xs uppercase tracking-wide text-amber-700 dark:text-amber-200 font-semibold mb-2">
-                                    Pending changes
-                                </p>
-                                <ul class="text-sm text-amber-800 dark:text-amber-100 space-y-1">
-                                    <li v-for="change in pendingChanges" :key="change.id">
-                                        {{ change.description }}
-                                    </li>
-                                </ul>
-                            </div>
+                        <div
+                            v-if="pendingChanges.length"
+                            class="mt-4 rounded-lg border border-dashed border-amber-400/60 bg-amber-50/60 p-4 dark:bg-amber-500/10"
+                        >
+                            <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-200">
+                                Pending changes
+                            </p>
+                            <ul class="space-y-1 text-sm text-amber-800 dark:text-amber-100">
+                                <li v-for="change in pendingChanges" :key="change.id">{{ change.description }}</li>
+                            </ul>
                         </div>
-                    </section>
+                    </GlassCard>
                 </div>
             </div>
         </div>
 
-        <DialogModal :show="recordFormOpen" max-width="3xl" @close="closeRecordForm">
-            <template #title>
-                {{ editingRecord ? 'Edit DNS record' : 'Create DNS record' }}
-            </template>
-
-            <template #content>
-                <DnsRecordForm :record="editingRecord" @save="handleRecordSave" @cancel="closeRecordForm" />
-            </template>
-        </DialogModal>
+        <GlassModal
+            :open="recordFormOpen"
+            :title="editingRecord ? 'Edit DNS record' : 'Create DNS record'"
+            size="lg"
+            @close="closeRecordForm"
+        >
+            <DnsRecordForm :record="editingRecord" @save="handleRecordSave" @cancel="closeRecordForm" />
+        </GlassModal>
     </AppLayout>
 </template>
 
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
+import GlassCard from "@/Components/Glass/GlassCard.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
+import GlassModal from "@/Components/Glass/GlassModal.vue";
 import CloudflareFeatureCard from "@/Components/Infrastructure/CloudflareFeatureCard.vue";
 import DnsRecordTable from "@/Components/Infrastructure/DnsRecordTable.vue";
 import DnsRecordForm from "@/Components/Infrastructure/DnsRecordForm.vue";
-import DialogModal from "@/Components/DialogModal.vue";
 import ContactRoleManager from "@/Components/Infrastructure/ContactRoleManager.vue";
 import { computed, ref } from "vue";
 import dayjs from "dayjs";
@@ -253,4 +219,3 @@ const handleContactUpdate = (contact) => {
     addChange(`Updated ${contact.role} contact ${contact.name || contact.email || ''}`);
 };
 </script>
-

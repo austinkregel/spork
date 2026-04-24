@@ -24,10 +24,6 @@ Route::prefix('api')
     ->group(base_path('routes/crud.php'));
 
 Route::middleware('web')
-    ->domain(config('app.env') == 'production' ? 'petoskey.today' : 'petoskey.localhost')
-    ->group(base_path('routes/pages/petoskey.php'));
-
-Route::middleware('web')
     ->domain(config('app.env') == 'production' ? 'spork.zone' : 'spork.localhost')
     ->group(base_path('routes/pages/spork.php'));
 

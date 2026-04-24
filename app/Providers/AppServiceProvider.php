@@ -16,6 +16,7 @@ use App\Console\Commands\Infrastructure\ListenToCommandServerCommand;
 use App\Console\Commands\Infrastructure\UpdateNamecheapWhoisCommand;
 use App\Console\Commands\Messaging\BackfillEmailMessageText;
 use App\Console\Commands\Messaging\RenameDirectMessageThreads;
+use App\Console\Commands\Navigation\CacheNavigationCommand;
 use App\Console\Commands\SyncPlaidTransactionsCommand;
 use App\Console\Commands\SyncPrivacyTransactionsCommand;
 use App\Contracts\Repositories\CredentialRepositoryContract;
@@ -39,6 +40,7 @@ use App\Contracts\Services\Messaging\ImapFactoryServiceContract;
 use App\Contracts\Services\Messaging\MatrixServiceContract;
 use App\Contracts\Services\MustacheTemplateService;
 use App\Contracts\Services\NamecheapServiceContract;
+use App\Contracts\Services\Navigation\NavigationRegistryContract;
 use App\Contracts\Services\News\NewsServiceContract;
 use App\Contracts\Services\News\RssServiceContract;
 use App\Contracts\Services\PlaidServiceContract;
@@ -53,6 +55,7 @@ use App\Repositories\ProjectRepository;
 use App\Services\Code;
 use App\Services\ConditionService;
 use App\Services\Crm\MonicaClient;
+use App\Services\Dav\Support\CurrentDavAuth;
 use App\Services\Development\DescribeTableService;
 use App\Services\Documents\HtmlJsonDataLinkingService;
 use App\Services\Documents\PdfParserService;
@@ -92,6 +95,8 @@ use App\Services\Messaging\Matrix\MatrixEventHandlerRegistry;
 use App\Services\Messaging\Matrix\MatrixEventSupport;
 use App\Services\Messaging\Matrix\MatrixService;
 use App\Services\MustacheService;
+use App\Services\Navigation\CrudPillarNavigationCollector;
+use App\Services\Navigation\NavigationRegistry;
 use App\Services\News\NewsService;
 use App\Services\News\RssFeedService;
 use App\Services\Registrar\CloudflareRegistrarService;
@@ -135,6 +140,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(CrudPillarNavigationCollector::class, fn () => CrudPillarNavigationCollector::discover());
+        $this->app->singleton(NavigationRegistryContract::class, function ($app) {
+            return new NavigationRegistry($app->make(CrudPillarNavigationCollector::class));
+        });
+
         // Repositories
         $this->app->bind(CredentialRepositoryContract::class, CredentialRepository::class);
         $this->app->bind(ProjectRepositoryContract::class, ProjectRepository::class);
@@ -228,6 +238,9 @@ class AppServiceProvider extends ServiceProvider
         // Services - Template
         $this->app->bind(MustacheTemplateService::class, MustacheService::class);
 
+        // Services - Dav
+        $this->app->singleton(CurrentDavAuth::class);
+
         // Other
         $this->app->alias(Operator::class, 'operator');
         $this->app->singleton(Spork::class, fn () => new Spork);
@@ -255,8 +268,12 @@ class AppServiceProvider extends ServiceProvider
                 \App\Console\Commands\Infrastructure\RefreshMonitorDashboardTokenCommand::class,
                 UpdateNamecheapWhoisCommand::class,
                 DumpNamecheapApiResponseCommand::class,
+                CacheNavigationCommand::class,
             ]);
         }
+
+        // Warm Crud→pillar navigation once at boot (reflection), not per-request.
+        $this->app->make(CrudPillarNavigationCollector::class);
 
         // Policies
         Gate::policy(\App\Models\Automation::class, \App\Policies\AutomationPolicy::class);

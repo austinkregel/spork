@@ -1,13 +1,12 @@
 <script setup>
 import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import CalendarView from '@/Components/Spork/Calendar/CalendarView.vue';
 import EventModal from '@/Components/Spork/Calendar/EventModal.vue';
-import SporkButton from '@/Components/Spork/SporkButton.vue';
-import { ArrowsPointingOutIcon } from '@heroicons/vue/24/outline';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import { ArrowsPointingOutIcon, PlusIcon } from '@heroicons/vue/24/outline';
 
-const props = defineProps({
+defineProps({
     title: String,
 });
 
@@ -33,6 +32,12 @@ const handleEventSaved = () => {
     }
 };
 
+const openCreateModal = () => {
+    selectedEvent.value = null;
+    selectedDate.value = null;
+    eventModalOpen.value = true;
+};
+
 const closeModal = () => {
     eventModalOpen.value = false;
     selectedEvent.value = null;
@@ -44,21 +49,22 @@ const closeModal = () => {
     <AppLayout :title="title">
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
-                    Calendar
-                </h2>
-                <Link
-                    href="/-/calendar/fullscreen"
-                    class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-md hover:bg-stone-50 dark:hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                    <ArrowsPointingOutIcon class="h-5 w-5" />
-                    Full Screen
-                </Link>
+                <h2 class="text-xl font-semibold leading-tight text-stone-800 dark:text-stone-200">Calendar</h2>
+                <div class="flex items-center gap-2">
+                    <GlassButton :icon-left="PlusIcon" @click="openCreateModal">New Event</GlassButton>
+                    <GlassButton
+                        variant="secondary"
+                        :icon-left="ArrowsPointingOutIcon"
+                        href="/-/communication/calendar/fullscreen"
+                    >
+                        Full Screen
+                    </GlassButton>
+                </div>
             </div>
         </template>
 
         <div class="py-6">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <CalendarView
                     ref="calendarRef"
                     @event-click="handleEventClick"

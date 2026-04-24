@@ -60,7 +60,7 @@ class PrivacyTabTest extends TestCase
         $tx->tags()->attach($tag);
 
         $this->actingAs($user)
-            ->get('http://spork.localhost/-/banking/privacy')
+            ->get('http://spork.localhost/-/finance/banking/privacy')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Banking/Index')
@@ -99,7 +99,7 @@ class PrivacyTabTest extends TestCase
         ]);
 
         $this->actingAs($member)
-            ->get('http://spork.localhost/-/banking/privacy')
+            ->get('http://spork.localhost/-/finance/banking/privacy')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Banking/Index')
@@ -135,7 +135,7 @@ class PrivacyTabTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('http://spork.localhost/-/banking/privacy')
+            ->get('http://spork.localhost/-/finance/banking/privacy')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Banking/Index')

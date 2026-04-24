@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Spork;
 use App\Models\Tag;
 use App\Services\Automation\ConditionParameterOptionsService;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Inertia\Inertia;
 
 class AutomationController
@@ -16,7 +15,6 @@ class AutomationController
     {
         return Inertia::render('Automation/Index', [
             'title' => 'Automation control center',
-            'subnavigation' => $this->navigation(),
             'blueprints' => [
                 [
                     'name' => 'Automation operations',
@@ -117,7 +115,6 @@ class AutomationController
 
         return Inertia::render('Automation/Tags', [
             'title' => 'Automation tags',
-            'subnavigation' => $this->navigation(),
             'tags' => new LengthAwarePaginator(
                 $tagsWithCounts,
                 $tags->total(),
@@ -169,46 +166,9 @@ class AutomationController
 
         return Inertia::render('Automation/TagShow', [
             'title' => 'Automation tag detail',
-            'subnavigation' => $this->navigation(),
             'tag' => $tag,
             'type' => Tag::class,
             'condition_parameter_groups' => app(ConditionParameterOptionsService::class)->forAutomatedTagConditions(),
-        ]);
-    }
-
-    protected function navigation(): Collection
-    {
-        return Collection::make([
-            [
-                'name' => 'Overview',
-                'href' => '/-/automation',
-                'icon' => 'Cog8ToothIcon',
-                'slug' => 'overview',
-            ],
-            [
-                'name' => 'Automations',
-                'href' => '/-/automation/automations',
-                'icon' => 'BoltIcon',
-                'slug' => 'automations',
-            ],
-            [
-                'name' => 'Tags + routing',
-                'href' => '/-/automation/tags',
-                'icon' => 'TagIcon',
-                'slug' => 'tags',
-            ],
-            [
-                'name' => 'Playbooks (planned)',
-                'href' => '/-/automation#playbooks',
-                'icon' => 'DocumentTextIcon',
-                'slug' => 'playbooks',
-            ],
-            [
-                'name' => 'Schedules (planned)',
-                'href' => '/-/automation#scheduling',
-                'icon' => 'CalendarDaysIcon',
-                'slug' => 'scheduling',
-            ],
         ]);
     }
 }

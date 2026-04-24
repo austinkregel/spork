@@ -5,7 +5,7 @@
             <button
                 type="button"
                 @click="() => linkAccount()"
-                class="px-3 py-2 rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+                class="px-3 py-2 rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
             >
                 {{ buttonText }}
             </button>
@@ -15,7 +15,7 @@
             <button
                 type="button"
                 @click="() => linkAccount()"
-                class="px-3 py-2 rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+                class="px-3 py-2 rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
             >
                 {{ buttonText }}
             </button>

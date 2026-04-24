@@ -1,81 +1,58 @@
 <template>
     <section
-        class="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden shadow-sm"
-        :class="session ? 'bg-black' : 'bg-white dark:bg-stone-900'"
+        class="overflow-hidden rounded-lg border border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] shadow-sm"
+        :class="session ? 'bg-black' : 'bg-[var(--color-glass-surface-light)] dark:bg-[var(--color-glass-surface-dark)] backdrop-blur-glass'"
         :style="session ? { height: `${panelHeight}px`, minHeight: `${MIN_HEIGHT}px` } : {}"
     >
-        <!-- Resize handle (active only when session is running) -->
         <div
             v-if="session"
-            class="w-full h-2 cursor-row-resize bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 dark:hover:bg-stone-600 transition-colors"
+            class="h-2 w-full cursor-row-resize bg-stone-200 transition-colors motion-reduce:transition-none hover:bg-stone-300 dark:bg-stone-700 dark:hover:bg-stone-600"
             title="Drag to resize"
             @mousedown="beginResize"
         />
 
-        <!-- Header -->
         <header
-            class="px-4 py-2 border-b border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-3"
-            :class="session ? 'bg-stone-950 text-stone-200 border-stone-800' : 'bg-white dark:bg-stone-900'"
+            class="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2"
+            :class="session ? 'border-stone-800 bg-stone-950 text-stone-200' : 'border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)]'"
         >
             <div class="flex items-center gap-3">
-                <h2 class="text-sm font-semibold" :class="session ? 'text-stone-100' : 'text-stone-900 dark:text-white'">
+                <h2 class="text-sm font-semibold" :class="session ? 'text-stone-100' : 'text-stone-900 dark:text-stone-50'">
                     Interactive shell
                 </h2>
 
-                <span class="text-[10px] font-mono text-stone-500 dark:text-stone-400">
+                <span class="font-mono text-[10px] text-stone-500 dark:text-stone-400">
                     {{ serverLabel }}
                 </span>
 
-                <span
-                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border"
-                    :class="connectedPillClass"
-                >
+                <GlassPill :tone="bridgeTone" size="sm" dot>
                     {{ connectedLabel }}
-                </span>
+                </GlassPill>
 
-                <span v-if="session" class="text-[10px] font-mono text-stone-500 dark:text-stone-400">
+                <span v-if="session" class="font-mono text-[10px] text-stone-500 dark:text-stone-400">
                     session: {{ session }}
                 </span>
             </div>
 
             <div class="flex items-center gap-2">
-                <SporkButton
-                    primary
-                    xsmall
+                <GlassButton
+                    size="sm"
                     :disabled="starting || !!session || !bridgeConnected"
                     @click="start"
                 >
                     {{ session ? 'Session active' : (starting ? 'Starting…' : 'Start session') }}
-                </SporkButton>
+                </GlassButton>
 
-                <SporkButton
-                    v-if="session"
-                    secondary
-                    xsmall
-                    @click="clear"
-                >
-                    Clear
-                </SporkButton>
-
-                <SporkButton
-                    v-if="session"
-                    secondary
-                    xsmall
-                    @click="close"
-                >
-                    Close
-                </SporkButton>
+                <GlassButton v-if="session" variant="secondary" size="sm" @click="clear">Clear</GlassButton>
+                <GlassButton v-if="session" variant="secondary" size="sm" @click="close">Close</GlassButton>
             </div>
         </header>
 
-        <!-- Terminal -->
-        <div v-if="session" ref="terminalWrapper" class="bg-black h-full overflow-hidden">
+        <div v-if="session" ref="terminalWrapper" class="h-full overflow-hidden bg-black">
             <div ref="termContainer" class="h-full w-full font-hack" />
         </div>
 
-        <!-- Placeholder -->
         <div v-else class="p-6">
-            <p class="text-sm text-stone-600 dark:text-stone-300">
+            <p class="text-sm text-stone-700 dark:text-stone-200">
                 No active shell session. Click “Start session” to open a monitor-backed PTY.
             </p>
             <p class="mt-2 text-xs text-stone-500 dark:text-stone-400">
@@ -93,7 +70,8 @@ import { WebLinksAddon } from 'xterm-addon-web-links';
 import { Unicode11Addon } from 'xterm-addon-unicode11';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { Socket } from 'socket.io-client';
-import SporkButton from '@/Components/Spork/SporkButton.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassPill from '@/Components/Glass/GlassPill.vue';
 import { useMonitorBridge } from '@/composables/useMonitorBridge';
 
 type ShellStartedPayload = { session?: string | null; clientId?: string | null };
@@ -204,16 +182,10 @@ const connectedLabel = computed(() => {
     return 'Online';
 });
 
-const connectedPillClass = computed(() => {
-    if (!connected.value) {
-        return 'border-red-300 text-red-700 bg-red-50 dark:border-red-600 dark:text-red-200 dark:bg-red-900/30';
-    }
-
-    if (!isMonitorConnected.value) {
-        return 'border-amber-300 text-amber-700 bg-amber-50 dark:border-amber-600 dark:text-amber-200 dark:bg-amber-900/30';
-    }
-
-    return 'border-green-300 text-green-700 bg-green-50 dark:border-green-600 dark:text-green-200 dark:bg-green-900/30';
+const bridgeTone = computed<'danger' | 'warning' | 'success'>(() => {
+    if (!connected.value) return 'danger';
+    if (!isMonitorConnected.value) return 'warning';
+    return 'success';
 });
 
 const serverLabel = computed(() => props.serverLabel || props.clientId);

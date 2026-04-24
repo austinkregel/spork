@@ -1,54 +1,42 @@
 <template>
     <ServerInfrastucture title="SSH Keys" :server="server" :navigation="navigation">
         <div class="space-y-6">
-            <section class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm space-y-4">
-                <header>
-                    <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                        Authorized key
-                    </p>
-                    <h2 class="text-xl font-semibold text-stone-900 dark:text-white">
-                        Current automation credential
-                    </h2>
-                </header>
-
+            <GlassCard
+                title="Current automation credential"
+                subtitle="Authorized key"
+            >
                 <textarea
-                    class="w-full h-40 text-xs font-mono rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-100 p-3"
+                    class="block h-40 w-full rounded-lg border border-stone-300 bg-white/70 p-3 font-mono text-xs text-stone-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-stone-600 dark:bg-stone-800/70 dark:text-stone-100"
                     readonly
                 >{{ publicKey }}</textarea>
 
-                <div class="flex flex-wrap gap-3 text-xs text-stone-500 dark:text-stone-400">
+                <div class="mt-3 flex flex-wrap gap-3 text-xs text-stone-500 dark:text-stone-400">
                     <span>Fingerprint: {{ fingerprint }}</span>
                     <span v-if="server.credential?.updated_at">Updated {{ formatDate(server.credential.updated_at) }}</span>
                 </div>
 
-                <div class="flex gap-3">
-                    <SporkButton secondary @click="copyKey">
-                        Copy public key
-                    </SporkButton>
-                    <SporkButton primary>
-                        Rotate key
-                    </SporkButton>
+                <div class="mt-4 flex gap-2">
+                    <GlassButton variant="secondary" @click="copyKey">Copy public key</GlassButton>
+                    <GlassButton>Rotate key</GlassButton>
                 </div>
-            </section>
+            </GlassCard>
 
-            <section class="border border-dashed border-stone-300 dark:border-stone-700 rounded-lg p-6 bg-stone-50 dark:bg-stone-900/40 space-y-3">
-                <p class="text-sm font-semibold text-stone-800 dark:text-stone-100">
-                    How rotation works
-                </p>
-                <ol class="list-decimal list-inside text-sm text-stone-600 dark:text-stone-300 space-y-2">
-                    <li>Click “Rotate key” and confirm the action.</li>
+            <GlassCard title="How rotation works">
+                <ol class="list-inside list-decimal space-y-2 text-sm text-stone-600 dark:text-stone-300">
+                    <li>Click "Rotate key" and confirm the action.</li>
                     <li>Spork generates a new SSH keypair scoped to this server.</li>
                     <li>Add the new public key to <code class="font-mono text-xs">~/.ssh/authorized_keys</code>.</li>
                     <li>We validate connectivity and retire the previous key automatically.</li>
                 </ol>
-            </section>
+            </GlassCard>
         </div>
     </ServerInfrastucture>
 </template>
 
 <script setup>
 import ServerInfrastucture from "@/Layouts/ServerInfrastucture.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
+import GlassCard from "@/Components/Glass/GlassCard.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
 import { computed } from "vue";
 import dayjs from "dayjs";
 import { buildServerNavigation } from '@/Pages/Infrastructure/serverNavigation';

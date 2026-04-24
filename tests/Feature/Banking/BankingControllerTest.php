@@ -18,7 +18,7 @@ class BankingControllerTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)
-            ->get('http://spork.localhost/-/banking')
+            ->get('http://spork.localhost/-/finance/banking')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Banking/Index')
@@ -32,7 +32,7 @@ class BankingControllerTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)
-            ->get('http://spork.localhost/-/banking/accounts')
+            ->get('http://spork.localhost/-/finance/banking/accounts')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Banking/Index')

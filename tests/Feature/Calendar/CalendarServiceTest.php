@@ -76,7 +76,7 @@ class CalendarServiceTest extends TestCase
     public function test_get_events_includes_tasks(): void
     {
         $user = User::factory()->create();
-        $project = $user->projects()->create(['name' => 'Test Project']);
+        $project = $user->personalProjects()->create(['name' => 'Test Project']);
 
         $start = Carbon::now()->startOfMonth();
         $end = Carbon::now()->endOfMonth();

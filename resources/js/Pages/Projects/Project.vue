@@ -1,233 +1,199 @@
 <template>
-    <AppLayout title="Project">
-        <div class="w-full border-b dark:border-stone-700 dark:bg-stone-950">
-            <div class="max-w-7xl mx-auto px-8 py-4 flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
-                <Link href="/-/projects" class="underline">Projects</Link>
-                <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-stone-400" aria-hidden="true" />
-                {{ project.name }}
+  <AppLayout :title="project?.name ?? 'Project'">
+    <template #header>
+      <div class="flex items-center gap-2 text-sm font-medium text-stone-700 dark:text-stone-200">
+        <Link href="/-/projects/list" class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-sm">
+          Projects
+        </Link>
+        <ChevronRightIcon class="h-4 w-4 text-stone-400" aria-hidden="true" />
+        <span class="text-stone-900 dark:text-stone-50">{{ project?.name }}</span>
+      </div>
+    </template>
+
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 sm:p-6 lg:p-8">
+      <GlassCard v-if="goal" subtitle="Goal">
+        <p class="text-sm text-stone-800 dark:text-stone-100">{{ goal }}</p>
+      </GlassCard>
+
+      <GlassCard title="Automations" subtitle="Run playbooks, monitor behavior, and iterate on steps.">
+        <template #actions>
+          <GlassButton variant="secondary" size="sm" @click="openAttach('Attach automations', automationType)">Attach</GlassButton>
+          <GlassButton :href="route('automations.automations.create')" size="sm">Create</GlassButton>
+        </template>
+
+        <ul v-if="project.automations?.length" class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)] -mx-1">
+          <li v-for="a in project.automations" :key="a.id" class="flex flex-wrap items-center justify-between gap-3 px-1 py-3">
+            <div class="min-w-0">
+              <div class="truncate text-sm font-medium text-stone-900 dark:text-stone-100">{{ a.name }}</div>
+              <div class="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+                <GlassPill :tone="a.enabled ? 'success' : 'neutral'" size="sm" dot>
+                  {{ a.enabled ? 'Enabled' : 'Disabled' }}
+                </GlassPill>
+                <span>Cron: {{ a.cron_expression ?? '—' }}</span>
+              </div>
             </div>
-        </div>
-
-        <div class="py-8">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-6">
-                <div v-if="goal" class="rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm p-4">
-                    <div class="text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">Goal</div>
-                    <div class="mt-1 text-stone-800 dark:text-stone-100">{{ goal }}</div>
-                </div>
-
-                <!-- Automations (hero) -->
-                <div class="rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm p-4">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <div class="text-xs uppercase tracking-widest text-stone-500 dark:text-stone-400">Hero</div>
-                            <div class="mt-1 text-xl font-semibold text-stone-900 dark:text-stone-100">Automations</div>
-                            <div class="mt-1 text-sm text-stone-600 dark:text-stone-300">
-                                Run playbooks, monitor behavior, and iterate on steps.
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2">
-                            <SporkButton small secondary @click="openAttach('Attach automations', automationType)">Attach</SporkButton>
-                            <Link :href="route('automation.automations.create')" class="px-3 py-2 text-sm rounded-md bg-indigo-500 dark:bg-indigo-600 text-white">
-                                Create
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 divide-y divide-stone-200 dark:divide-stone-700 border border-stone-200 dark:border-stone-800 rounded-lg">
-                        <div v-if="project.automations?.length === 0" class="p-4 text-sm text-stone-500 dark:text-stone-400">
-                            No automations attached yet.
-                        </div>
-                        <div v-for="a in project.automations" :key="a.id" class="p-4 flex items-center justify-between gap-4">
-                            <div class="min-w-0">
-                                <div class="font-medium text-stone-900 dark:text-stone-100 truncate">{{ a.name }}</div>
-                                <div class="text-sm text-stone-600 dark:text-stone-300">
-                                    Enabled: {{ a.enabled ? 'yes' : 'no' }} · Cron: {{ a.cron_expression ?? '—' }}
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <Link :href="route('automation.automations.show', a.id)" class="px-2 py-1.5 text-xs rounded-md border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200">
-                                    View
-                                </Link>
-                                <Link :href="route('automation.automations.edit', a.id)" class="px-2 py-1.5 text-xs rounded-md border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200">
-                                    Edit steps
-                                </Link>
-                                <Link :href="route('automation.automations.run-now', a.id)" method="post" as="button" class="px-2 py-1.5 text-xs rounded-md bg-indigo-500 dark:bg-indigo-600 text-white">
-                                    Run now
-                                </Link>
-                                <button
-                                    type="button"
-                                    class="px-2 py-1.5 text-xs rounded-md text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900"
-                                    @click="detachResource(automationType, a.id)"
-                                >
-                                    Remove
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tasks -->
-                <div class="rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm p-4">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <div class="text-xl font-semibold text-stone-900 dark:text-stone-100">Tasks</div>
-                            <div class="mt-1 text-sm text-stone-600 dark:text-stone-300">Keep a small queue of concrete next actions.</div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <SporkButton small secondary @click="openAttach('Attach tasks', taskType)">Attach</SporkButton>
-                            <SporkButton small primary @click="createTaskOpen = true">New task</SporkButton>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 divide-y divide-stone-200 dark:divide-stone-700 border border-stone-200 dark:border-stone-800 rounded-lg">
-                        <div v-if="project.tasks?.length === 0" class="p-4 text-sm text-stone-500 dark:text-stone-400">
-                            No tasks yet.
-                        </div>
-                        <div v-for="t in project.tasks" :key="t.id" class="p-4 flex items-center justify-between gap-4">
-                            <div class="min-w-0">
-                                <div class="font-medium text-stone-900 dark:text-stone-100 truncate">{{ t.name }}</div>
-                                <div class="text-sm text-stone-600 dark:text-stone-300">
-                                    {{ t.status ?? '—' }} · {{ t.type ?? '—' }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Research -->
-                <div class="rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm p-4">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <div class="text-xl font-semibold text-stone-900 dark:text-stone-100">Research</div>
-                            <div class="mt-1 text-sm text-stone-600 dark:text-stone-300">
-                                Capture sources and questions, then turn them into tasks or automation.
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <SporkButton small secondary @click="openAttach('Attach research', researchType)">Attach</SporkButton>
-                            <SporkButton small secondary @click="openAttach('Attach pages', pageType)">Attach pages</SporkButton>
-                            <SporkButton small secondary @click="openAttach('Attach RSS feeds', feedType)">Attach feeds</SporkButton>
-                            <SporkButton small primary @click="createResearchOpen = true">New research</SporkButton>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <div class="rounded-lg border border-stone-200 dark:border-stone-800 p-4">
-                            <div class="text-sm font-semibold text-stone-900 dark:text-stone-100">Research</div>
-                            <div class="mt-2 space-y-2">
-                                <div v-if="project.research?.length === 0" class="text-sm text-stone-500 dark:text-stone-400">
-                                    None yet.
-                                </div>
-                                <div v-for="r in project.research" :key="r.id" class="text-sm text-stone-800 dark:text-stone-100">
-                                    {{ r.topic }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="rounded-lg border border-stone-200 dark:border-stone-800 p-4">
-                            <div class="text-sm font-semibold text-stone-900 dark:text-stone-100">Pages</div>
-                            <div class="mt-2 space-y-2">
-                                <div v-if="project.pages?.length === 0" class="text-sm text-stone-500 dark:text-stone-400">
-                                    None yet.
-                                </div>
-                                <div v-for="p in project.pages" :key="p.id" class="text-sm text-stone-800 dark:text-stone-100">
-                                    {{ p.title }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="flex shrink-0 items-center gap-2">
+              <GlassButton :href="route('automations.automations.show', a.id)" variant="outline" size="sm">View</GlassButton>
+              <GlassButton :href="route('automations.automations.edit', a.id)" variant="outline" size="sm">Edit steps</GlassButton>
+              <Link
+                :href="route('automations.run-now', a.id)"
+                method="post"
+                as="button"
+                class="inline-flex items-center justify-center rounded-md bg-indigo-500 px-2.5 py-1 text-xs font-medium text-white shadow-sm transition-colors motion-reduce:transition-none hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
+              >
+                Run now
+              </Link>
+              <GlassButton variant="destructive" size="sm" @click="detachResource(automationType, a.id)">Remove</GlassButton>
             </div>
+          </li>
+        </ul>
+        <GlassEmptyState
+          v-else
+          icon="BoltIcon"
+          title="No automations attached"
+          description="Attach an existing playbook or create a new one."
+        />
+      </GlassCard>
 
-            <!-- Attach modal (fixed type per lane) -->
-            <DialogModal :show="attachOpen" :closeable="true" @close="attachOpen = false">
-                <template #title>
-                    <div class="p-4 dark:text-stone-200">{{ attachTitle }}</div>
-                </template>
-                <template #content>
-                    <div class="p-4 flex flex-col gap-3">
-                        <SporkField v-model="attachQuery" label="Search" placeholder="Search…" />
-                        <div v-if="attachLoading" class="text-sm text-stone-500 dark:text-stone-400">Searching…</div>
-                        <div v-else class="divide-y divide-stone-200 dark:divide-stone-700 border border-stone-200 dark:border-stone-800 rounded-lg">
-                            <div v-if="attachResults.length === 0" class="p-4 text-sm text-stone-500 dark:text-stone-400">No results.</div>
-                            <div v-for="item in attachResults" :key="item.id" class="p-3 flex items-center justify-between gap-3">
-                                <div class="min-w-0">
-                                    <div class="text-sm text-stone-900 dark:text-stone-100 truncate">{{ item.label }}</div>
-                                    <div class="text-xs text-stone-500 dark:text-stone-400">#{{ item.id }}</div>
-                                </div>
-                                <SporkButton xsmall primary @click="attachResource(item.id)">Attach</SporkButton>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-                <template #footer>
-                    <div class="p-4 flex justify-end gap-2">
-                        <SporkButton small secondary @click="attachOpen = false">Close</SporkButton>
-                    </div>
-                </template>
-            </DialogModal>
+      <GlassCard title="Tasks" subtitle="Keep a small queue of concrete next actions.">
+        <template #actions>
+          <GlassButton variant="secondary" size="sm" @click="openAttach('Attach tasks', taskType)">Attach</GlassButton>
+          <GlassButton size="sm" @click="createTaskOpen = true">New task</GlassButton>
+        </template>
 
-            <!-- Create task modal -->
-            <DialogModal :show="createTaskOpen" :closeable="true" @close="createTaskOpen = false">
-                <template #title>
-                    <div class="p-4 dark:text-stone-200">New task</div>
-                </template>
-                <template #content>
-                    <div class="p-4 flex flex-col gap-4">
-                        <SporkField v-model="taskForm.name" label="Name" />
-                        <SporkField v-model="taskForm.type" label="Type" />
-                        <SporkField v-model="taskForm.status" label="Status" />
-                    </div>
-                </template>
-                <template #footer>
-                    <div class="p-4 flex justify-end gap-2">
-                        <SporkButton small secondary @click="createTaskOpen = false">Cancel</SporkButton>
-                        <SporkButton small primary @click="saveTask">Save</SporkButton>
-                    </div>
-                </template>
-            </DialogModal>
+        <ul v-if="project.tasks?.length" class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)] -mx-1">
+          <li v-for="t in project.tasks" :key="t.id" class="flex items-center justify-between gap-3 px-1 py-3">
+            <div class="min-w-0">
+              <div class="truncate text-sm font-medium text-stone-900 dark:text-stone-100">{{ t.name }}</div>
+              <div class="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+                <GlassPill size="sm" tone="indigo">{{ t.status ?? '—' }}</GlassPill>
+                <span>{{ t.type ?? '—' }}</span>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <GlassEmptyState
+          v-else
+          icon="ClipboardDocumentListIcon"
+          title="No tasks yet"
+          description="Add a quick task to get started."
+        />
+      </GlassCard>
 
-            <!-- Create research modal -->
-            <DialogModal :show="createResearchOpen" :closeable="true" @close="createResearchOpen = false">
-                <template #title>
-                    <div class="p-4 dark:text-stone-200">New research</div>
-                </template>
-                <template #content>
-                    <div class="p-4 flex flex-col gap-4">
-                        <SporkField v-model="researchForm.topic" label="Topic" />
-                        <SporkField v-model="researchForm.notes" label="Notes" type="textarea" />
-                    </div>
-                </template>
-                <template #footer>
-                    <div class="p-4 flex justify-end gap-2">
-                        <SporkButton small secondary @click="createResearchOpen = false">Cancel</SporkButton>
-                        <SporkButton small primary @click="saveResearch">Save</SporkButton>
-                    </div>
-                </template>
-            </DialogModal>
+      <GlassCard title="Research" subtitle="Capture sources and questions, then turn them into tasks or automation.">
+        <template #actions>
+          <GlassButton variant="secondary" size="sm" @click="openAttach('Attach research', researchType)">Attach research</GlassButton>
+          <GlassButton variant="secondary" size="sm" @click="openAttach('Attach pages', pageType)">Attach pages</GlassButton>
+          <GlassButton variant="secondary" size="sm" @click="openAttach('Attach RSS feeds', feedType)">Attach feeds</GlassButton>
+          <GlassButton size="sm" @click="createResearchOpen = true">New research</GlassButton>
+        </template>
+
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <GlassSurface class="p-4">
+            <h4 class="text-sm font-semibold text-stone-900 dark:text-stone-100">Research</h4>
+            <ul v-if="project.research?.length" class="mt-2 space-y-1.5 text-sm text-stone-800 dark:text-stone-100">
+              <li v-for="r in project.research" :key="r.id">{{ r.topic }}</li>
+            </ul>
+            <p v-else class="mt-2 text-sm text-stone-500 dark:text-stone-400">None yet.</p>
+          </GlassSurface>
+          <GlassSurface class="p-4">
+            <h4 class="text-sm font-semibold text-stone-900 dark:text-stone-100">Pages</h4>
+            <ul v-if="project.pages?.length" class="mt-2 space-y-1.5 text-sm text-stone-800 dark:text-stone-100">
+              <li v-for="p in project.pages" :key="p.id">{{ p.title }}</li>
+            </ul>
+            <p v-else class="mt-2 text-sm text-stone-500 dark:text-stone-400">None yet.</p>
+          </GlassSurface>
         </div>
-    </AppLayout>
+      </GlassCard>
+    </div>
+
+    <GlassModal :open="attachOpen" :title="attachTitle" size="md" @close="attachOpen = false">
+      <div class="flex flex-col gap-3">
+        <GlassField v-slot="{ id, describedby, invalid }" label="Search">
+          <GlassInput :id="id" v-model="attachQuery" placeholder="Search…" :invalid="invalid" :describedby="describedby" />
+        </GlassField>
+        <p v-if="attachLoading" class="text-sm text-stone-500 dark:text-stone-400">Searching…</p>
+        <ul v-else-if="attachResults.length" class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)] rounded-md border border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)]">
+          <li v-for="item in attachResults" :key="item.id" class="flex items-center justify-between gap-3 px-3 py-2">
+            <div class="min-w-0">
+              <div class="truncate text-sm text-stone-900 dark:text-stone-100">{{ item.label }}</div>
+              <div class="text-xs text-stone-500 dark:text-stone-400">#{{ item.id }}</div>
+            </div>
+            <GlassButton size="sm" @click="attachResource(item.id)">Attach</GlassButton>
+          </li>
+        </ul>
+        <GlassEmptyState v-else title="No results" description="Try a different search term." />
+      </div>
+      <template #footer>
+        <GlassButton variant="secondary" size="sm" @click="attachOpen = false">Close</GlassButton>
+      </template>
+    </GlassModal>
+
+    <GlassModal :open="createTaskOpen" title="New task" size="md" @close="createTaskOpen = false">
+      <div class="flex flex-col gap-4">
+        <GlassField v-slot="{ id, describedby, invalid }" label="Name" required>
+          <GlassInput :id="id" v-model="taskForm.name" :invalid="invalid" :describedby="describedby" required />
+        </GlassField>
+        <GlassField v-slot="{ id, describedby, invalid }" label="Type">
+          <GlassInput :id="id" v-model="taskForm.type" :invalid="invalid" :describedby="describedby" />
+        </GlassField>
+        <GlassField v-slot="{ id, describedby, invalid }" label="Status">
+          <GlassInput :id="id" v-model="taskForm.status" :invalid="invalid" :describedby="describedby" />
+        </GlassField>
+      </div>
+      <template #footer>
+        <GlassButton variant="secondary" size="sm" @click="createTaskOpen = false">Cancel</GlassButton>
+        <GlassButton size="sm" @click="saveTask">Save</GlassButton>
+      </template>
+    </GlassModal>
+
+    <GlassModal :open="createResearchOpen" title="New research" size="md" @close="createResearchOpen = false">
+      <div class="flex flex-col gap-4">
+        <GlassField v-slot="{ id, describedby, invalid }" label="Topic" required>
+          <GlassInput :id="id" v-model="researchForm.topic" :invalid="invalid" :describedby="describedby" required />
+        </GlassField>
+        <GlassField label="Notes">
+          <textarea
+            v-model="researchForm.notes"
+            rows="4"
+            class="block w-full rounded-md border border-stone-300 bg-white/70 px-3 py-2 text-sm text-stone-900 shadow-sm placeholder:text-stone-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-stone-600 dark:bg-stone-800/70 dark:text-stone-100 dark:placeholder:text-stone-500"
+          />
+        </GlassField>
+      </div>
+      <template #footer>
+        <GlassButton variant="secondary" size="sm" @click="createResearchOpen = false">Cancel</GlassButton>
+        <GlassButton size="sm" @click="saveResearch">Save</GlassButton>
+      </template>
+    </GlassModal>
+  </AppLayout>
 </template>
 
 <script setup>
 import { computed, ref, watch } from 'vue';
+import axios from 'axios';
 import { Link, router, usePage } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue';
-import DialogModal from '@/Components/DialogModal.vue';
-import SporkButton from '@/Components/Spork/SporkButton.vue';
-import SporkField from '@/Components/Spork/SporkField.vue';
 import { ChevronRightIcon } from '@heroicons/vue/24/solid';
 
-const $page = usePage();
+import AppLayout from '@/Layouts/AppLayout.vue';
+import GlassCard from '@/Components/Glass/GlassCard.vue';
+import GlassSurface from '@/Components/Glass/GlassSurface.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassPill from '@/Components/Glass/GlassPill.vue';
+import GlassEmptyState from '@/Components/Glass/GlassEmptyState.vue';
+import GlassModal from '@/Components/Glass/GlassModal.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
 
-const project = computed(() => $page.props.project);
+const page = usePage();
+
+const project = computed(() => page.props.project);
 const goal = computed(() => project.value?.settings?.goal ?? null);
 
-const automationType = 'App\\\\Models\\\\Automation';
-const taskType = 'App\\\\Models\\\\Task';
-const researchType = 'App\\\\Models\\\\Research';
-const pageType = 'App\\\\Models\\\\Page';
-const feedType = 'App\\\\Models\\\\ExternalRssFeed';
+const automationType = 'App\\Models\\Automation';
+const taskType = 'App\\Models\\Task';
+const researchType = 'App\\Models\\Research';
+const pageType = 'App\\Models\\Page';
+const feedType = 'App\\Models\\ExternalRssFeed';
 
 const attachOpen = ref(false);
 const attachTitle = ref('Attach');
@@ -242,77 +208,70 @@ const taskForm = ref({ name: '', type: 'today', status: 'To Do' });
 const createResearchOpen = ref(false);
 const researchForm = ref({ topic: '', notes: '' });
 
-const openAttach = (title, type) => {
-    attachTitle.value = title;
-    attachType.value = type;
-    attachQuery.value = '';
-    attachOpen.value = true;
-};
+function openAttach(title, type) {
+  attachTitle.value = title;
+  attachType.value = type;
+  attachQuery.value = '';
+  attachOpen.value = true;
+}
 
 let debounce = null;
-watch([attachOpen, attachQuery, attachType], async () => {
+watch(
+  [attachOpen, attachQuery, attachType],
+  async () => {
     attachResults.value = [];
     if (!attachOpen.value || !attachType.value) {
-        return;
+      return;
     }
 
-    if (debounce) {
-        clearTimeout(debounce);
-    }
+    if (debounce) clearTimeout(debounce);
 
     debounce = setTimeout(async () => {
-        attachLoading.value = true;
-        try {
-            const { data } = await axios.get('/api/suggest/models', {
-                params: {
-                    type: attachType.value,
-                    q: attachQuery.value || undefined,
-                    limit: 20,
-                },
-            });
-            attachResults.value = data?.data ?? [];
-        } finally {
-            attachLoading.value = false;
-        }
+      attachLoading.value = true;
+      try {
+        const { data } = await axios.get('/api/suggest/models', {
+          params: {
+            type: attachType.value,
+            q: attachQuery.value || undefined,
+            limit: 20,
+          },
+        });
+        attachResults.value = data?.data ?? [];
+      } finally {
+        attachLoading.value = false;
+      }
     }, 200);
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
-const attachResource = async (id) => {
-    await axios.post(route('project.attach', [project.value.id]), {
-        resource_type: attachType.value,
-        resource_id: id,
-    });
-    router.reload({ only: ['project'] });
-};
+async function attachResource(id) {
+  await axios.post(route('projects.attach', [project.value.id]), {
+    resource_type: attachType.value,
+    resource_id: id,
+  });
+  router.reload({ only: ['project'] });
+}
 
-const detachResource = async (type, id) => {
-    await axios.post(route('project.detach', [project.value.id]), {
-        resource_type: type,
-        resource_id: id,
-    });
-    router.reload({ only: ['project'] });
-};
+async function detachResource(type, id) {
+  await axios.post(route('projects.detach', [project.value.id]), {
+    resource_type: type,
+    resource_id: id,
+  });
+  router.reload({ only: ['project'] });
+}
 
-const saveTask = async () => {
-    await axios.post(`/api/projects/${project.value.id}/tasks`, {
-        ...taskForm.value,
-    });
-    createTaskOpen.value = false;
-    taskForm.value = { name: '', type: 'today', status: 'To Do' };
-    router.reload({ only: ['project'] });
-};
+async function saveTask() {
+  await axios.post(`/api/projects/${project.value.id}/tasks`, { ...taskForm.value });
+  createTaskOpen.value = false;
+  taskForm.value = { name: '', type: 'today', status: 'To Do' };
+  router.reload({ only: ['project'] });
+}
 
-const saveResearch = async () => {
-    await axios.post(`/api/projects/${project.value.id}/research`, {
-        ...researchForm.value,
-    });
-    createResearchOpen.value = false;
-    researchForm.value = { topic: '', notes: '' };
-    router.reload({ only: ['project'] });
-};
+async function saveResearch() {
+  await axios.post(`/api/projects/${project.value.id}/research`, { ...researchForm.value });
+  createResearchOpen.value = false;
+  researchForm.value = { topic: '', notes: '' };
+  router.reload({ only: ['project'] });
+}
 </script>
-
-
-
-
-

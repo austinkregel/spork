@@ -26,7 +26,7 @@ class ManualTransactionControllerTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->post('http://spork.localhost/-/banking/manual-transactions', [
+            ->post('http://spork.localhost/-/finance/banking/manual-transactions', [
                 'account_id' => $account->account_id,
                 'name' => 'Manual Entry',
                 'amount' => -42.5,

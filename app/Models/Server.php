@@ -14,6 +14,7 @@ use App\Events\Models\Server\ServerUpdating;
 use App\Models\Traits\HasOwner;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Navigation\Pillar;
 use App\Observers\ApplyCredentialsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -117,5 +118,13 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     public function domains(): HasMany
     {
         return $this->hasMany(Domain::class);
+    }
+
+    /**
+     * Opt-in: surface this model under Infrastructure pillar → Manage in the glass sub-nav.
+     */
+    public static function pillar(): ?Pillar
+    {
+        return Pillar::INFRASTRUCTURE;
     }
 }

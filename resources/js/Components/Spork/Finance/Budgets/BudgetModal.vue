@@ -72,14 +72,14 @@ const close = () => {
 
 const submit = () => {
   if (editingBudgetId.value) {
-    form.put(route('banking.budgets.update', editingBudgetId.value), {
+    form.put(route('finance.banking.budgets.update', editingBudgetId.value), {
       preserveScroll: true,
       onSuccess: close,
     });
     return;
   }
 
-  form.post(route('banking.budgets.store'), {
+  form.post(route('finance.banking.budgets.store'), {
     preserveScroll: true,
     onSuccess: close,
   });
@@ -219,7 +219,7 @@ defineExpose({ open });
                   </button>
                   <button
                     type="submit"
-                    class="px-4 py-2 text-sm rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+                    class="px-4 py-2 text-sm rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
                     :disabled="form.processing"
                   >
                     {{ submitLabel }}

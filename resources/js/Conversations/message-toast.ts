@@ -42,7 +42,7 @@ export function shouldToastNewMessage(args: {
     const pathname = args.pathname.endsWith('/') && args.pathname.length > 1 ? args.pathname.slice(0, -1) : args.pathname;
 
     // Suppress when already viewing this exact thread.
-    if (pathname === `/-/chat/${args.thread_id}`) {
+    if (pathname === `/-/communication/chat/${args.thread_id}`) {
         return false;
     }
 

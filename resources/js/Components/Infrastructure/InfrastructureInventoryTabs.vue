@@ -1,16 +1,22 @@
 <template>
     <div class="space-y-4">
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2" role="tablist">
             <button
                 v-for="tab in tabs"
                 :key="tab.id"
                 type="button"
-                class="px-4 py-2 rounded-full border text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900"
-                :class="activeTab === tab.id ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700'"
+                role="tab"
+                :aria-selected="activeTab === tab.id"
+                :class="[
+                    'inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950',
+                    activeTab === tab.id
+                        ? 'border-indigo-500 bg-indigo-500 text-white shadow-sm dark:bg-indigo-600'
+                        : 'border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-[var(--color-glass-surface-light)] dark:bg-[var(--color-glass-surface-dark)] backdrop-blur-glass text-stone-700 dark:text-stone-200 hover:bg-stone-100/60 dark:hover:bg-stone-800/40',
+                ]"
                 @click="() => emit('change-tab', tab.id)"
             >
-                {{ tab.label }}
-                <span class="ml-2 text-xs font-normal opacity-80">{{ tab.count }}</span>
+                <span>{{ tab.label }}</span>
+                <span class="text-xs font-normal opacity-80">{{ tab.count }}</span>
             </button>
         </div>
 
@@ -24,7 +30,7 @@
         >
             <template #column-name="{ row }">
                 <div class="flex flex-col">
-                    <Link :href="`/-/servers/${row.id}`" class="text-sm font-semibold text-indigo-600 dark:text-indigo-300">
+                    <Link :href="`/-/infrastructure/servers/${row.id}`" class="text-sm font-semibold text-indigo-600 dark:text-indigo-300">
                         {{ row.name }}
                     </Link>
                     <p class="text-xs text-stone-500 dark:text-stone-400">{{ row.ip_address ?? 'No IP on file' }}</p>
@@ -47,14 +53,14 @@
 
             <template #column-links="{ row }">
                 <div class="flex flex-wrap gap-1">
-                    <span
+                    <GlassPill
                         v-for="domain in resolveServerLinks(row)"
                         :key="domain.id ?? domain"
-                        class="px-2 py-1 text-xs rounded-full bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-200"
+                        size="sm"
                     >
                         {{ domain.name ?? domain }}
-                    </span>
-                    <span v-if="!resolveServerLinks(row).length" class="text-xs text-stone-400 dark:text-stone-500">
+                    </GlassPill>
+                    <span v-if="!resolveServerLinks(row).length" class="text-xs text-stone-500 dark:text-stone-400">
                         Not linked yet
                     </span>
                 </div>
@@ -62,12 +68,12 @@
 
             <template #actions="{ row }">
                 <div class="flex gap-2 justify-end">
-                    <SporkButton secondary xsmall @click="() => emit('view', { type: 'server', record: row })">
+                    <GlassButton variant="secondary" size="sm" @click="() => emit('view', { type: 'server', record: row })">
                         View
-                    </SporkButton>
-                    <SporkButton primary xsmall @click="() => emit('link', { type: 'server', record: row })">
+                    </GlassButton>
+                    <GlassButton size="sm" @click="() => emit('link', { type: 'server', record: row })">
                         Link domains
-                    </SporkButton>
+                    </GlassButton>
                 </div>
             </template>
         </InfrastructureDataTable>
@@ -95,23 +101,23 @@
 
             <template #column-links="{ row }">
                 <div class="flex flex-wrap gap-2 text-xs">
-                    <span class="px-2 py-1 rounded-full bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-200">
+                    <GlassPill size="sm">
                         Server: {{ resolveDomainLink(row)?.name ?? 'Unlinked' }}
-                    </span>
-                    <span class="px-2 py-1 rounded-full bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-200">
+                    </GlassPill>
+                    <GlassPill size="sm">
                         DNS: {{ resolveDomainDns(row)?.name ?? row.dns_provider ?? 'Unknown' }}
-                    </span>
+                    </GlassPill>
                 </div>
             </template>
 
             <template #actions="{ row }">
                 <div class="flex gap-2 justify-end">
-                    <SporkButton secondary xsmall @click="() => emit('view', { type: 'domain', record: row })">
+                    <GlassButton variant="secondary" size="sm" @click="() => emit('view', { type: 'domain', record: row })">
                         View
-                    </SporkButton>
-                    <SporkButton primary xsmall @click="() => emit('link', { type: 'domain', record: row })">
+                    </GlassButton>
+                    <GlassButton size="sm" @click="() => emit('link', { type: 'domain', record: row })">
                         Link assets
-                    </SporkButton>
+                    </GlassButton>
                 </div>
             </template>
         </InfrastructureDataTable>
@@ -136,20 +142,15 @@
             </template>
 
             <template #column-status="{ row }">
-                <span
-                    class="px-2 py-1 rounded-full text-xs font-semibold"
-                    :class="row.cloudflare_status === 'active'
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                        : 'bg-stone-100 text-stone-600 dark:bg-stone-700 dark:text-stone-200'"
-                >
+                <GlassPill :tone="row.cloudflare_status === 'active' ? 'success' : 'neutral'" size="sm" dot>
                     {{ row.cloudflare_status ?? 'Unknown' }}
-                </span>
+                </GlassPill>
             </template>
 
             <template #actions="{ row }">
-                <SporkButton primary xsmall @click="() => emit('link', { type: 'dns', record: row })">
+                <GlassButton size="sm" @click="() => emit('link', { type: 'dns', record: row })">
                     Manage records
-                </SporkButton>
+                </GlassButton>
             </template>
         </InfrastructureDataTable>
 
@@ -169,9 +170,7 @@
             </template>
 
             <template #column-role="{ row }">
-                <span class="text-xs uppercase tracking-wide px-2 py-1 rounded-full bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-200">
-                    {{ row.role ?? 'Unassigned' }}
-                </span>
+                <GlassPill size="sm">{{ row.role ?? 'Unassigned' }}</GlassPill>
             </template>
 
             <template #column-provider="{ row }">
@@ -179,9 +178,9 @@
             </template>
 
             <template #actions="{ row }">
-                <SporkButton primary xsmall @click="() => emit('link', { type: 'contact', record: row })">
+                <GlassButton size="sm" @click="() => emit('link', { type: 'contact', record: row })">
                     Assign roles
-                </SporkButton>
+                </GlassButton>
             </template>
         </InfrastructureDataTable>
     </div>
@@ -189,7 +188,8 @@
 
 <script setup>
 import InfrastructureDataTable from '@/Components/Infrastructure/InfrastructureDataTable.vue';
-import SporkButton from '@/Components/Spork/SporkButton.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassPill from '@/Components/Glass/GlassPill.vue';
 import Status from '@/Components/Spork/Atoms/Status.vue';
 import DynamicIcon from '@/Components/DynamicIcon.vue';
 import { computed } from 'vue';

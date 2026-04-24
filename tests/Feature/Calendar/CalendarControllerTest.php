@@ -25,7 +25,7 @@ class CalendarControllerTest extends TestCase
 
     public function test_calendar_index_route_is_accessible(): void
     {
-        $response = $this->actingAsUser()->get('/-/calendar');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/communication/calendar');
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -36,7 +36,7 @@ class CalendarControllerTest extends TestCase
 
     public function test_calendar_fullscreen_route_is_accessible(): void
     {
-        $response = $this->actingAsUser()->get('/-/calendar/fullscreen');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/communication/calendar/fullscreen');
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -60,10 +60,12 @@ class CalendarControllerTest extends TestCase
             'end_at' => $start->copy()->addDays(5)->addHours(2),
         ]);
 
-        $response = $this->getJson('/api/calendar/events', [
-            'start' => $start->toIso8601String(),
-            'end' => $end->toIso8601String(),
-        ]);
+        $response = $this->getJson(
+            'http://spork.localhost/api/calendar/events?'.http_build_query([
+                'start' => $start->toIso8601String(),
+                'end' => $end->toIso8601String(),
+            ])
+        );
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -78,7 +80,7 @@ class CalendarControllerTest extends TestCase
     {
         $this->actingAsUser();
 
-        $response = $this->getJson('/api/calendar/events');
+        $response = $this->getJson('http://spork.localhost/api/calendar/events');
 
         $response->assertStatus(422);
     }
@@ -91,7 +93,7 @@ class CalendarControllerTest extends TestCase
         $start = Carbon::now()->addDays(1);
         $end = $start->copy()->addHours(2);
 
-        $response = $this->postJson('/api/calendar/events', [
+        $response = $this->postJson('http://spork.localhost/api/calendar/events', [
             'title' => 'New Event',
             'description' => 'Event description',
             'start_at' => $start->toIso8601String(),
@@ -117,7 +119,7 @@ class CalendarControllerTest extends TestCase
         $start = Carbon::now()->addDays(1);
         $end = $start->copy()->addHours(2);
 
-        $response = $this->postJson('/api/calendar/events', [
+        $response = $this->postJson('http://spork.localhost/api/calendar/events', [
             'title' => 'Recurring Event',
             'start_at' => $start->toIso8601String(),
             'end_at' => $end->toIso8601String(),
@@ -142,7 +144,7 @@ class CalendarControllerTest extends TestCase
             'title' => 'Original Title',
         ]);
 
-        $response = $this->putJson("/api/calendar/events/{$event->id}", [
+        $response = $this->putJson("http://spork.localhost/api/calendar/events/{$event->id}", [
             'title' => 'Updated Title',
             'start_at' => $event->start_at->toIso8601String(),
             'end_at' => $event->end_at->toIso8601String(),
@@ -166,7 +168,7 @@ class CalendarControllerTest extends TestCase
             'title' => 'Other User Event',
         ]);
 
-        $response = $this->putJson("/api/calendar/events/{$event->id}", [
+        $response = $this->putJson("http://spork.localhost/api/calendar/events/{$event->id}", [
             'title' => 'Hacked Title',
             'start_at' => $event->start_at->toIso8601String(),
             'end_at' => $event->end_at->toIso8601String(),
@@ -184,7 +186,7 @@ class CalendarControllerTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $response = $this->deleteJson("/api/calendar/events/{$event->id}");
+        $response = $this->deleteJson("http://spork.localhost/api/calendar/events/{$event->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('events', ['id' => $event->id]);
@@ -200,7 +202,7 @@ class CalendarControllerTest extends TestCase
             'user_id' => $otherUser->id,
         ]);
 
-        $response = $this->deleteJson("/api/calendar/events/{$event->id}");
+        $response = $this->deleteJson("http://spork.localhost/api/calendar/events/{$event->id}");
 
         $response->assertStatus(403);
     }
@@ -210,7 +212,7 @@ class CalendarControllerTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $project = $user->projects()->create(['name' => 'Test Project']);
+        $project = $user->personalProjects()->create(['name' => 'Test Project']);
         $task = Task::factory()->create([
             'project_id' => $project->id,
             'name' => 'Test Task',
@@ -221,10 +223,12 @@ class CalendarControllerTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end = Carbon::now()->endOfMonth();
 
-        $response = $this->getJson('/api/calendar/events', [
-            'start' => $start->toIso8601String(),
-            'end' => $end->toIso8601String(),
-        ]);
+        $response = $this->getJson(
+            'http://spork.localhost/api/calendar/events?'.http_build_query([
+                'start' => $start->toIso8601String(),
+                'end' => $end->toIso8601String(),
+            ])
+        );
 
         $response->assertStatus(200);
         $events = $response->json('events');
@@ -249,10 +253,12 @@ class CalendarControllerTest extends TestCase
         $start = Carbon::now()->startOfMonth();
         $end = Carbon::now()->endOfMonth();
 
-        $response = $this->getJson('/api/calendar/events', [
-            'start' => $start->toIso8601String(),
-            'end' => $end->toIso8601String(),
-        ]);
+        $response = $this->getJson(
+            'http://spork.localhost/api/calendar/events?'.http_build_query([
+                'start' => $start->toIso8601String(),
+                'end' => $end->toIso8601String(),
+            ])
+        );
 
         $response->assertStatus(200);
         $events = $response->json('events');

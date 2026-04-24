@@ -41,7 +41,7 @@ class TransactionTaggingTest extends TestCase
         $user->attachTag($tag);
 
         $this->actingAs($user)
-            ->put('http://spork.localhost/-/banking/transactions/'.$transaction->id.'/tags', [
+            ->put('http://spork.localhost/-/finance/banking/transactions/'.$transaction->id.'/tags', [
                 'tag_ids' => [$tag->id],
             ])
             ->assertRedirect();
@@ -73,7 +73,7 @@ class TransactionTaggingTest extends TestCase
         $user->attachTag($tag);
 
         $this->actingAs($user)
-            ->put('http://spork.localhost/-/banking/transactions/'.$transaction->id.'/tags', [
+            ->put('http://spork.localhost/-/finance/banking/transactions/'.$transaction->id.'/tags', [
                 'tag_ids' => [$tag->id],
             ])
             ->assertNotFound();
@@ -120,7 +120,7 @@ class TransactionTaggingTest extends TestCase
         $this->assertEquals(0.0, $statsBefore['total_spend']);
 
         $this->actingAs($user)
-            ->put('http://spork.localhost/-/banking/transactions/'.$transaction->id.'/tags', [
+            ->put('http://spork.localhost/-/finance/banking/transactions/'.$transaction->id.'/tags', [
                 'tag_ids' => [$tag->id],
             ])
             ->assertRedirect();

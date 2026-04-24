@@ -1,13 +1,12 @@
 <script setup>
 import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 import CalendarView from '@/Components/Spork/Calendar/CalendarView.vue';
 import EventModal from '@/Components/Spork/Calendar/EventModal.vue';
-import SporkButton from '@/Components/Spork/SporkButton.vue';
-import { XMarkIcon } from '@heroicons/vue/24/outline';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import { XMarkIcon, PlusIcon } from '@heroicons/vue/24/outline';
 
-const props = defineProps({
+defineProps({
     title: String,
 });
 
@@ -33,6 +32,12 @@ const handleEventSaved = () => {
     }
 };
 
+const openCreateModal = () => {
+    selectedEvent.value = null;
+    selectedDate.value = null;
+    eventModalOpen.value = true;
+};
+
 const closeModal = () => {
     eventModalOpen.value = false;
     selectedEvent.value = null;
@@ -41,17 +46,18 @@ const closeModal = () => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-stone-50 dark:bg-stone-900">
+    <div class="min-h-screen bg-stone-50 dark:bg-stone-950">
         <Head :title="title" />
 
-        <div class="fixed top-4 right-4 z-50">
-            <Link
-                href="/-/calendar"
-                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-md shadow-lg hover:bg-stone-50 dark:hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        <div class="fixed right-4 top-4 z-50 flex items-center gap-2">
+            <GlassButton :icon-left="PlusIcon" @click="openCreateModal">New Event</GlassButton>
+            <GlassButton
+                variant="secondary"
+                :icon-left="XMarkIcon"
+                href="/-/communication/calendar"
             >
-                <XMarkIcon class="h-5 w-5" />
                 Exit Full Screen
-            </Link>
+            </GlassButton>
         </div>
 
         <div class="p-6">

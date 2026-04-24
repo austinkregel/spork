@@ -64,8 +64,8 @@ const currency = (value) => {
             <p class="text-lg text-stone-900 dark:text-white font-semibold">{{ pinnedAccounts.length || overview?.accounts?.length || 0 }}</p>
           </div>
           <Link
-            href="/-/banking/accounts"
-            class="text-xs text-emerald-600 dark:text-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900 rounded-md"
+            href="/-/finance/banking/accounts"
+            class="text-xs text-emerald-600 dark:text-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950 rounded-md"
           >
             Manage
           </Link>
@@ -96,8 +96,8 @@ const currency = (value) => {
             <p class="text-lg text-stone-900 dark:text-white font-semibold">{{ pinnedBudgets.length || overview?.budgets?.length || 0 }}</p>
           </div>
           <Link
-            href="/-/banking/budgets"
-            class="text-xs text-emerald-600 dark:text-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900 rounded-md"
+            href="/-/finance/banking/budgets"
+            class="text-xs text-emerald-600 dark:text-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950 rounded-md"
           >
             Manage
           </Link>
@@ -135,20 +135,20 @@ const currency = (value) => {
         <div class="flex flex-wrap gap-3">
           <button
             type="button"
-            class="px-4 py-2 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/30 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+            class="px-4 py-2 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/30 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
             @click="openManualModal"
           >
             Add Manual Transaction
           </button>
           <Link
-            href="/-/banking/accounts"
-            class="px-4 py-2 rounded-lg bg-sky-50 text-sky-700 border border-sky-100 dark:bg-sky-500/10 dark:text-sky-300 dark:border-sky-500/30 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+            href="/-/finance/banking/accounts"
+            class="px-4 py-2 rounded-lg bg-sky-50 text-sky-700 border border-sky-100 dark:bg-sky-500/10 dark:text-sky-300 dark:border-sky-500/30 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
           >
             Link Accounts
           </Link>
           <Link
-            href="/-/banking/budgets"
-            class="px-4 py-2 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 dark:bg-indigo-500/10 dark:text-indigo-300 dark:border-indigo-500/30 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+            href="/-/finance/banking/budgets"
+            class="px-4 py-2 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 dark:bg-indigo-500/10 dark:text-indigo-300 dark:border-indigo-500/30 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
           >
             View Budgets
           </Link>

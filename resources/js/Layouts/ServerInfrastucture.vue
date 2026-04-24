@@ -1,99 +1,86 @@
 <template>
-    <AppLayout :title="title">
-        <div class="px-4 py-6 sm:px-6 lg:px-8">
-            <div class="lg:flex lg:items-start lg:gap-6">
-                <aside class="w-full lg:w-80 xl:w-96 lg:sticky lg:top-24 lg:self-start space-y-6 mb-8 lg:mb-0">
-                    <div class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-4 shadow-sm space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                                    Server
-                                </p>
-                                <h2 class="text-2xl font-semibold text-stone-900 dark:text-white">
-                                    {{ server.name }}
-                                </h2>
-                                <p class="text-xs text-stone-500 dark:text-stone-400">
-                                    {{ server.ip_address ?? 'IP unknown' }}
-                                </p>
-                            </div>
-                            <div class="flex flex-col items-end gap-2">
-                                <Status :status="server.status" />
-                                <ClientStatusBadge :timestamp="server.last_ping_at" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3 text-sm">
-                            <div v-for="item in summaryItems" :key="item.label">
-                                <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
-                                    {{ item.label }}
-                                </p>
-                                <p class="text-stone-800 dark:text-stone-200 font-medium">
-                                    {{ item.value }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div v-if="(server.tags ?? []).length" class="flex flex-wrap gap-2">
-                            <span
-                                v-for="tag in server.tags"
-                                :key="tag.id ?? tag.name"
-                                class="px-2 py-1 text-xs rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
-                            >
-                                {{ tag.name ?? tag }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <nav class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 shadow-sm divide-y divide-stone-200 dark:divide-stone-800">
-                        <Link
-                            v-for="item in navItems"
-                            :key="item.id"
-                            :href="item.href"
-                            class="flex items-center gap-3 px-4 py-3 text-sm font-semibold transition"
-                            :class="item.href === currentPath
-                                ? 'text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 border-l-2 border-indigo-600'
-                                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'"
-                        >
-                            <DynamicIcon v-if="item.icon" :icon-name="item.icon" class="w-5 h-5" />
-                            {{ item.name }}
-                        </Link>
-                    </nav>
-
-                    <BridgeStatusIndicator />
-                </aside>
-
-                <main class="flex-1">
-                    <slot />
-                </main>
+  <AppLayout :title="title">
+    <div class="px-4 py-6 sm:px-6 lg:px-8">
+      <div class="lg:flex lg:items-start lg:gap-6">
+        <aside class="mb-8 w-full space-y-4 lg:mb-0 lg:sticky lg:top-24 lg:w-80 lg:self-start xl:w-96">
+          <GlassCard>
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-xs font-semibold uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400">
+                  Server
+                </p>
+                <h2 class="truncate text-xl font-semibold text-stone-900 dark:text-stone-50">{{ server.name }}</h2>
+                <p class="text-xs text-stone-500 dark:text-stone-400">{{ server.ip_address ?? 'IP unknown' }}</p>
+              </div>
+              <div class="flex shrink-0 flex-col items-end gap-2">
+                <Status :status="server.status" />
+                <ClientStatusBadge :timestamp="server.last_ping_at" />
+              </div>
             </div>
-        </div>
-    </AppLayout>
+
+            <dl class="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div v-for="item in summaryItems" :key="item.label">
+                <dt class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">{{ item.label }}</dt>
+                <dd class="font-medium text-stone-800 dark:text-stone-200">{{ item.value }}</dd>
+              </div>
+            </dl>
+
+            <div v-if="(server.tags ?? []).length" class="mt-4 flex flex-wrap gap-2">
+              <GlassPill v-for="tag in server.tags" :key="tag.id ?? tag.name" size="sm">
+                {{ tag.name ?? tag }}
+              </GlassPill>
+            </div>
+          </GlassCard>
+
+          <GlassSurface>
+            <nav class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)]">
+              <Link
+                v-for="item in navItems"
+                :key="item.id"
+                :href="item.href"
+                :class="[
+                  'flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors motion-reduce:transition-none focus:outline-none focus-visible:bg-indigo-500/10',
+                  item.href === currentPath
+                    ? 'border-l-2 border-indigo-500 bg-indigo-500/10 text-indigo-700 dark:text-indigo-200'
+                    : 'text-stone-700 dark:text-stone-200 hover:bg-stone-100/60 dark:hover:bg-stone-800/40',
+                ]"
+              >
+                <DynamicIcon v-if="item.icon" :icon-name="item.icon" class="h-5 w-5" />
+                <span>{{ item.name }}</span>
+              </Link>
+            </nav>
+          </GlassSurface>
+
+          <BridgeStatusIndicator />
+        </aside>
+
+        <main class="flex-1">
+          <slot />
+        </main>
+      </div>
+    </div>
+  </AppLayout>
 </template>
 
 <script setup>
-import AppLayout from "@/Layouts/AppLayout.vue";
+import { computed, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import DynamicIcon from "@/Components/DynamicIcon.vue";
-import Status from "@/Components/Spork/Atoms/Status.vue";
-import BridgeStatusIndicator from "@/Components/Infrastructure/BridgeStatusIndicator.vue";
-import ClientStatusBadge from "@/Components/Infrastructure/ClientStatusBadge.vue";
-import { computed, ref } from "vue";
 import dayjs from 'dayjs';
+
+import AppLayout from '@/Layouts/AppLayout.vue';
+import GlassCard from '@/Components/Glass/GlassCard.vue';
+import GlassSurface from '@/Components/Glass/GlassSurface.vue';
+import GlassPill from '@/Components/Glass/GlassPill.vue';
+import DynamicIcon from '@/Components/DynamicIcon.vue';
+import Status from '@/Components/Spork/Atoms/Status.vue';
+import BridgeStatusIndicator from '@/Components/Infrastructure/BridgeStatusIndicator.vue';
+import ClientStatusBadge from '@/Components/Infrastructure/ClientStatusBadge.vue';
 import { buildServerNavigation } from '@/Pages/Infrastructure/serverNavigation';
 
 const props = defineProps({
-    server: {
-        type: Object,
-        required: true,
-    },
-    title: {
-        type: String,
-        default: 'Server',
-    },
-    navigation: {
-        type: Array,
-        default: () => [],
-    },
+  server: { type: Object, required: true },
+  title: { type: String, default: 'Server' },
+  navigation: { type: Array, default: () => [] },
 });
 
 const currentPath = ref(window.location.pathname);
@@ -102,11 +89,11 @@ const navItems = computed(() => (props.navigation.length ? props.navigation : bu
 const formatTimestamp = (value) => (value ? dayjs(value).format('MMM D, YYYY h:mm A') : 'Never');
 
 const summaryItems = computed(() => [
-    { label: 'Provider', value: props.server.provider_label ?? props.server.provider ?? props.server.credential?.provider ?? 'Unspecified' },
-    { label: 'vCPU', value: props.server.vcpu ?? '—' },
-    { label: 'Memory', value: props.server.memory ? `${props.server.memory} GB` : '—' },
-    { label: 'Storage', value: props.server.disk ? `${props.server.disk} GB` : '—' },
-    { label: 'Last ping', value: formatTimestamp(props.server.last_ping_at) },
-    { label: 'Cost/hr', value: props.server.cost_per_hour ? `$${Number(props.server.cost_per_hour).toFixed(2)}` : '—' },
+  { label: 'Provider', value: props.server.provider_label ?? props.server.provider ?? props.server.credential?.provider ?? 'Unspecified' },
+  { label: 'vCPU', value: props.server.vcpu ?? '—' },
+  { label: 'Memory', value: props.server.memory ? `${props.server.memory} GB` : '—' },
+  { label: 'Storage', value: props.server.disk ? `${props.server.disk} GB` : '—' },
+  { label: 'Last ping', value: formatTimestamp(props.server.last_ping_at) },
+  { label: 'Cost/hr', value: props.server.cost_per_hour ? `$${Number(props.server.cost_per_hour).toFixed(2)}` : '—' },
 ]);
 </script>

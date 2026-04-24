@@ -47,9 +47,9 @@ class BankingDashboardService
             'transactions' => $this->recentTransactions($user),
             'preferences' => $preferences,
             'quick_links' => [
-                ['label' => 'Link New Account', 'route' => route('banking.accounts')],
-                ['label' => 'Manage Budgets', 'route' => route('banking.budgets')],
-                ['label' => 'Transactions', 'route' => route('banking.transactions')],
+                ['label' => 'Link New Account', 'route' => route('finance.banking.accounts')],
+                ['label' => 'Manage Budgets', 'route' => route('finance.banking.budgets')],
+                ['label' => 'Transactions', 'route' => route('finance.banking.transactions')],
             ],
             'tags' => $this->tagOptions($user),
         ];
@@ -217,12 +217,12 @@ class BankingDashboardService
     public function navigation(string $active): array
     {
         $items = [
-            ['label' => 'Overview', 'tab' => 'overview', 'href' => route('banking.overview')],
-            ['label' => 'Accounts', 'tab' => 'accounts', 'href' => route('banking.accounts')],
-            ['label' => 'Budgets', 'tab' => 'budgets', 'href' => route('banking.budgets')],
-            ['label' => 'Transactions', 'tab' => 'transactions', 'href' => route('banking.transactions')],
-            ['label' => 'Privacy', 'tab' => 'privacy', 'href' => route('banking.privacy')],
-            ['label' => 'Settings', 'tab' => 'settings', 'href' => route('banking.settings')],
+            ['label' => 'Overview', 'tab' => 'overview', 'href' => route('finance.banking.overview')],
+            ['label' => 'Accounts', 'tab' => 'accounts', 'href' => route('finance.banking.accounts')],
+            ['label' => 'Budgets', 'tab' => 'budgets', 'href' => route('finance.banking.budgets')],
+            ['label' => 'Transactions', 'tab' => 'transactions', 'href' => route('finance.banking.transactions')],
+            ['label' => 'Privacy', 'tab' => 'privacy', 'href' => route('finance.banking.privacy')],
+            ['label' => 'Settings', 'tab' => 'settings', 'href' => route('finance.banking.settings')],
         ];
 
         return array_map(function (array $item) use ($active) {

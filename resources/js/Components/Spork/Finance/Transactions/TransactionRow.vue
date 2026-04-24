@@ -47,7 +47,7 @@ const hasPrivacyDetails = (transaction) => privacyDetailsFor(transaction).length
             <button
                 v-if="props.onEditTags"
                 type="button"
-                class="px-2 py-1 text-xs rounded-md border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+                class="px-2 py-1 text-xs rounded-md border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
                 @click="props.onEditTags(transaction)"
             >
                 Edit tags

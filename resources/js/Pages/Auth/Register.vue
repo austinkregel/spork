@@ -1,12 +1,13 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import GlassAuthLayout from '@/Layouts/GlassAuthLayout.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
+
+const page = usePage();
+const showsTerms = computed(() => Boolean(page.props.jetstream?.hasTermsAndPrivacyPolicyFeature));
 
 const form = useForm({
     name: '',
@@ -24,89 +25,113 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Register" />
-
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
-                <TextInput
-                    id="name"
+    <GlassAuthLayout
+        title="Register"
+        heading="Create your account"
+        subheading="Spin up a personal Spork workspace in seconds."
+    >
+        <form class="space-y-4" @submit.prevent="submit">
+            <GlassField
+                v-slot="{ id, describedby, invalid }"
+                label="Name"
+                :error="form.errors.name"
+                required
+            >
+                <GlassInput
+                    :id="id"
                     v-model="form.name"
                     type="text"
-                    class="mt-1 block w-full"
+                    autocomplete="name"
                     required
                     autofocus
-                    autocomplete="name"
+                    :invalid="invalid"
+                    :describedby="describedby"
                 />
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
+            </GlassField>
 
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
+            <GlassField
+                v-slot="{ id, describedby, invalid }"
+                label="Email"
+                :error="form.errors.email"
+                required
+            >
+                <GlassInput
+                    :id="id"
                     v-model="form.email"
                     type="email"
-                    class="mt-1 block w-full"
-                    required
                     autocomplete="username"
+                    required
+                    :invalid="invalid"
+                    :describedby="describedby"
                 />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+            </GlassField>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
+            <GlassField
+                v-slot="{ id, describedby, invalid }"
+                label="Password"
+                :error="form.errors.password"
+                required
+            >
+                <GlassInput
+                    :id="id"
                     v-model="form.password"
                     type="password"
-                    class="mt-1 block w-full"
-                    required
                     autocomplete="new-password"
+                    required
+                    :invalid="invalid"
+                    :describedby="describedby"
                 />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+            </GlassField>
 
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
+            <GlassField
+                v-slot="{ id, describedby, invalid }"
+                label="Confirm password"
+                :error="form.errors.password_confirmation"
+                required
+            >
+                <GlassInput
+                    :id="id"
                     v-model="form.password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
-                    required
                     autocomplete="new-password"
+                    required
+                    :invalid="invalid"
+                    :describedby="describedby"
                 />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+            </GlassField>
+
+            <div v-if="showsTerms" class="space-y-1">
+                <label class="flex items-start gap-2 text-sm text-stone-700 dark:text-stone-200">
+                    <input
+                        v-model="form.terms"
+                        type="checkbox"
+                        required
+                        class="mt-0.5 h-4 w-4 rounded border-stone-300 text-indigo-600 focus:ring-indigo-500 dark:border-stone-600 dark:bg-stone-800"
+                    />
+                    <span>
+                        I agree to the
+                        <a target="_blank" :href="route('terms.show')" class="text-indigo-600 underline-offset-4 hover:underline dark:text-indigo-400">Terms of Service</a>
+                        and
+                        <a target="_blank" :href="route('policy.show')" class="text-indigo-600 underline-offset-4 hover:underline dark:text-indigo-400">Privacy Policy</a>.
+                    </span>
+                </label>
+                <p v-if="form.errors.terms" class="text-xs text-red-600 dark:text-red-400">
+                    {{ form.errors.terms }}
+                </p>
             </div>
 
-            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
-                <InputLabel for="terms">
-                    <div class="flex items-center">
-                        <Checkbox id="terms" v-model:checked="form.terms" name="terms" required />
-
-                        <div class="ml-2">
-                            I agree to the <a target="_blank" :href="route('terms.show')" class="underline text-sm text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-stone-800">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="underline text-sm text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-stone-800">Privacy Policy</a>
-                        </div>
-                    </div>
-                    <InputError class="mt-2" :message="form.errors.terms" />
-                </InputLabel>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link :href="route('login')" class="underline text-sm text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-stone-800">
+            <div class="flex items-center justify-between gap-3 pt-2">
+                <Link
+                    :href="route('login')"
+                    class="text-sm text-indigo-600 underline-offset-4 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:text-indigo-400 dark:focus-visible:ring-offset-stone-950 rounded-sm"
+                >
                     Already registered?
                 </Link>
 
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <GlassButton type="submit" :disabled="form.processing">
                     Register
-                </PrimaryButton>
+                </GlassButton>
             </div>
         </form>
-    </AuthenticationCard>
+    </GlassAuthLayout>
 </template>

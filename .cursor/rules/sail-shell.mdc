@@ -1,0 +1,23 @@
+---
+description: Sail-only shell conventions for Laravel / Docker commands.
+alwaysApply: true
+---
+
+Always use the Sail binary at `/usr/local/bin/sail` for anything that touches the Laravel app, the database, the queue, the containers, or the JS toolchain. Do not rely on `$PATH` resolution.
+
+Allowed:
+
+- `cd /-/reforged-spork && /usr/local/bin/sail up -d`
+- `cd /-/reforged-spork && /usr/local/bin/sail artisan migrate`
+- `cd /-/reforged-spork && /usr/local/bin/sail npm run dev`
+- `cd /-/reforged-spork && /usr/local/bin/sail bin pint`
+- `cd /-/reforged-spork && /usr/local/bin/sail phpunit`
+- `cd /-/reforged-spork && /usr/local/bin/sail phpunit tests/Feature/Foo/BarTest.php`
+
+Disallowed:
+
+- `./vendor/bin/sail …`
+- bare `php artisan …` / bare `php …`
+- `sail test` / `php artisan test` (the `test` alias does not work here — only `phpunit` does)
+
+Always run from the project root `/-/reforged-spork`.

@@ -68,7 +68,7 @@ class AutomationTagsTransactionTotalTest extends TestCase
         $privacyTx->attachTag($tag);
 
         $this->actingAs($user)
-            ->get('http://spork.localhost/-/automation/tags')
+            ->get('http://spork.localhost/-/automations/tags')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Automation/Tags')
@@ -129,7 +129,7 @@ class AutomationTagsTransactionTotalTest extends TestCase
         $privacyTx->attachTag($tag);
 
         $this->actingAs($user)
-            ->get('http://spork.localhost/-/automation/tags/'.$tag->id)
+            ->get('http://spork.localhost/-/automations/tags/'.$tag->id)
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Automation/TagShow')

@@ -17,11 +17,11 @@ vi.mock('@/Layouts/ServerInfrastucture.vue', () => ({
     },
 }));
 
-vi.mock('@/Components/Spork/SporkButton.vue', () => ({
+vi.mock('@/Components/Glass/GlassButton.vue', () => ({
     default: {
-        name: 'SporkButton',
+        name: 'GlassButton',
         template: '<button><slot /></button>',
-        props: ['primary', 'secondary', 'xsmall', 'disabled'],
+        props: ['variant', 'size', 'href', 'disabled', 'block', 'iconLeft', 'iconRight', 'type'],
     },
 }));
 

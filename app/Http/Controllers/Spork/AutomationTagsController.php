@@ -40,7 +40,7 @@ class AutomationTagsController
 
         if ($existing) {
             return redirect()
-                ->route('automation.tags.show', $existing)
+                ->route('automations.tags.show', $existing)
                 ->with('flash.banner', 'Tag already exists.');
         }
 
@@ -54,7 +54,7 @@ class AutomationTagsController
 
         $user->tags()->syncWithoutDetaching([$tag->getKey()]);
 
-        return redirect()->route('automation.tags.show', $tag);
+        return redirect()->route('automations.tags.show', $tag);
     }
 
     public function update(UpdateAutomationTagRequest $request, Tag $tag): RedirectResponse

@@ -117,7 +117,7 @@ onBeforeUnmount(() => {
             <button
               v-if="canScrollLeft"
               type="button"
-              class="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-stone-200 dark:border-stone-800 bg-white/90 dark:bg-stone-950/90 text-stone-700 dark:text-stone-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900 cursor-pointer"
+              class="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-stone-200 dark:border-stone-800 bg-white/90 dark:bg-stone-950/90 text-stone-700 dark:text-stone-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950 cursor-pointer"
               @click="scrollCardsBy('left')"
               aria-label="Scroll cards left"
             >
@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
             <button
               v-if="canScrollRight"
               type="button"
-              class="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-stone-200 dark:border-stone-800 bg-white/90 dark:bg-stone-950/90 text-stone-700 dark:text-stone-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900 cursor-pointer"
+              class="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full border border-stone-200 dark:border-stone-800 bg-white/90 dark:bg-stone-950/90 text-stone-700 dark:text-stone-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950 cursor-pointer"
               @click="scrollCardsBy('right')"
               aria-label="Scroll cards right"
             >
@@ -243,7 +243,7 @@ onBeforeUnmount(() => {
           <button
             v-if="txPaginator().prev_page_url"
             @click="router.visit(txPaginator().prev_page_url, { preserveScroll: true, preserveState: true })"
-            class="px-3 py-2 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-300 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+            class="px-3 py-2 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-300 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
           >
             Previous
           </button>
@@ -251,7 +251,7 @@ onBeforeUnmount(() => {
           <button
             v-if="txPaginator().next_page_url"
             @click="router.visit(txPaginator().next_page_url, { preserveScroll: true, preserveState: true })"
-            class="px-3 py-2 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-300 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+            class="px-3 py-2 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-300 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
           >
             Next
           </button>

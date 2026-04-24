@@ -39,7 +39,7 @@ const submit = () => {
     return;
   }
 
-  form.put(route('banking.transactions.tags.update', transactionId), {
+  form.put(route('finance.banking.transactions.tags.update', transactionId), {
     preserveScroll: true,
     onSuccess: close,
   });
@@ -112,7 +112,7 @@ defineExpose({ open });
                   </button>
                   <button
                     type="submit"
-                    class="px-4 py-2 text-sm rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+                    class="px-4 py-2 text-sm rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
                     :disabled="form.processing"
                   >
                     Save Tags

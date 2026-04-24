@@ -1,361 +1,272 @@
 <template>
     <ServerInfrastucture :title="`Server · ${server.name}`" :server="server">
         <div class="space-y-6">
-            <section class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm space-y-4">
-                <header class="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                            Overview
-                        </p>
-                        <h2 class="text-2xl font-semibold text-stone-900 dark:text-white">
-                            Operational snapshot
-                        </h2>
-                    </div>
-                    <div class="flex gap-2">
-                        <SporkButton secondary @click="() => router.visit('/-/servers')">
-                            Back to infrastructure
-                        </SporkButton>
-                        <SporkButton primary>
-                            Trigger deploy
-                        </SporkButton>
-                    </div>
-                </header>
+            <GlassCard
+                title="Operational snapshot"
+                subtitle="Overview"
+            >
+                <template #actions>
+                    <GlassButton variant="secondary" @click="router.visit('/-/infrastructure/servers')">
+                        Back to infrastructure
+                    </GlassButton>
+                    <GlassButton>Trigger deploy</GlassButton>
+                </template>
 
                 <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    <div v-for="metric in overviewMetrics" :key="metric.label" class="p-4 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
-                        <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                            {{ metric.label }}
-                        </p>
-                        <p class="mt-2 text-2xl font-semibold text-stone-900 dark:text-white">
-                            {{ metric.value }}
-                        </p>
-                        <p class="mt-1 text-xs text-stone-500 dark:text-stone-400">
-                            {{ metric.caption }}
-                        </p>
-                    </div>
+                    <GlassMetricCard
+                        v-for="metric in overviewMetrics"
+                        :key="metric.label"
+                        :label="metric.label"
+                        :value="metric.value"
+                        :description="metric.caption"
+                    />
                 </div>
-            </section>
+            </GlassCard>
 
-            <section
+            <GlassCard
                 v-if="statsTelemetry"
-                class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm space-y-4"
+                title="Live stats snapshot"
+                subtitle="Agent telemetry"
             >
-                <header class="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                            Agent telemetry
-                        </p>
-                        <h3 class="text-lg font-semibold text-stone-900 dark:text-white">
-                            Live stats snapshot
-                        </h3>
-                        <p class="mt-1 text-sm text-stone-600 dark:text-stone-300">
-                            From the latest ingested <code class="font-mono text-xs">stats</code> event.
-                        </p>
-                    </div>
+                <template #actions>
                     <div class="text-xs text-stone-500 dark:text-stone-400">
                         <div v-if="telemetrySampleAt">Sampled {{ telemetrySampleAt }}</div>
                         <div v-if="telemetryReceivedAt">Ingested {{ telemetryReceivedAt }}</div>
                     </div>
-                </header>
+                </template>
 
-                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    <div class="p-4 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
-                        <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">Host</p>
-                        <p class="mt-2 text-base font-semibold text-stone-900 dark:text-white">
-                            {{ statsTelemetry.hostname ?? server.name }}
-                        </p>
-                        <p class="mt-1 text-xs text-stone-500 dark:text-stone-400">
-                            {{ statsTelemetry.platform ?? 'unknown' }} {{ statsTelemetry.release ?? '' }} · {{ statsTelemetry.arch ?? '' }} · {{ statsTelemetry.cpus ?? '—' }} CPU(s)
-                        </p>
-                    </div>
+                <p class="text-sm text-stone-600 dark:text-stone-300">
+                    From the latest ingested <code class="font-mono text-xs">stats</code> event.
+                </p>
 
-                    <div class="p-4 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
-                        <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">Kernel</p>
-                        <p class="mt-2 text-base font-semibold text-stone-900 dark:text-white">
-                            {{ statsTelemetry.kernelVersion ?? '—' }}
-                        </p>
-                        <p class="mt-1 text-xs text-stone-500 dark:text-stone-400">
-                            {{ statsTelemetry.agentVersion ?? 'unknown agent' }}
-                        </p>
-                    </div>
-
-                    <div class="p-4 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
-                        <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">Uptime</p>
-                        <p class="mt-2 text-base font-semibold text-stone-900 dark:text-white">
-                            {{ uptimeLabel ?? '—' }}
-                        </p>
-                        <p class="mt-1 text-xs text-stone-500 dark:text-stone-400">
-                            Last reboot {{ statsTelemetry.lastReboot ?? '—' }}
-                        </p>
-                    </div>
-
-                    <div class="p-4 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/50">
-                        <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">Network</p>
-                        <p class="mt-2 text-base font-semibold text-stone-900 dark:text-white">
-                            {{ publicIpLabel ?? 'No public IP' }}
-                        </p>
-                        <p class="mt-1 text-xs text-stone-500 dark:text-stone-400">
-                            Internal {{ internalIpLabel ?? '—' }}
-                        </p>
-                    </div>
+                <div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                    <GlassMetricCard
+                        :label="'Host'"
+                        :value="statsTelemetry.hostname ?? server.name"
+                        :description="`${statsTelemetry.platform ?? 'unknown'} ${statsTelemetry.release ?? ''} · ${statsTelemetry.arch ?? ''} · ${statsTelemetry.cpus ?? '—'} CPU(s)`"
+                    />
+                    <GlassMetricCard
+                        :label="'Kernel'"
+                        :value="statsTelemetry.kernelVersion ?? '—'"
+                        :description="statsTelemetry.agentVersion ?? 'unknown agent'"
+                    />
+                    <GlassMetricCard
+                        :label="'Uptime'"
+                        :value="uptimeLabel ?? '—'"
+                        :description="`Last reboot ${statsTelemetry.lastReboot ?? '—'}`"
+                    />
+                    <GlassMetricCard
+                        :label="'Network'"
+                        :value="publicIpLabel ?? 'No public IP'"
+                        :description="`Internal ${internalIpLabel ?? '—'}`"
+                    />
                 </div>
 
-                <div class="grid gap-4 lg:grid-cols-2">
-                    <div class="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
-                        <div class="px-4 py-2 bg-stone-50 dark:bg-stone-800/50 border-b border-stone-200 dark:border-stone-800">
-                            <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                                Disks
-                            </p>
+                <div class="mt-6 grid gap-4 lg:grid-cols-2">
+                    <GlassSurface class="overflow-hidden">
+                        <div class="border-b border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-stone-100/40 dark:bg-stone-800/40 px-4 py-2">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">Disks</p>
                         </div>
-                        <div class="divide-y divide-stone-200 dark:divide-stone-800">
+                        <div class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)]">
                             <div
                                 v-if="diskPressureCount > 0"
-                                class="px-4 py-2 text-xs font-semibold bg-amber-50 text-amber-800 border-b border-amber-200 dark:bg-amber-900/30 dark:text-amber-100 dark:border-amber-800"
+                                class="border-b border-amber-300/60 bg-amber-50/60 px-4 py-2 text-xs font-semibold text-amber-800 dark:bg-amber-500/10 dark:text-amber-100"
                             >
                                 High disk usage: {{ diskPressureCount }} mount(s) above 85%
                             </div>
                             <div
                                 v-for="disk in diskRows"
                                 :key="disk.mount"
-                                class="px-4 py-2 text-sm flex items-center justify-between gap-4"
-                                :class="disk.isHighUsage ? 'bg-amber-50/60 dark:bg-amber-900/20' : ''"
+                                :class="['flex items-center justify-between gap-4 px-4 py-2 text-sm', disk.isHighUsage ? 'bg-amber-50/40 dark:bg-amber-500/5' : '']"
                             >
                                 <div class="min-w-0">
-                                    <p class="font-medium text-stone-800 dark:text-stone-100 truncate">
-                                        {{ disk.mount }}
-                                    </p>
-                                    <p class="text-xs text-stone-500 dark:text-stone-400 truncate">
-                                        {{ disk.fsname }} · {{ disk.fstype }}
-                                    </p>
+                                    <p class="truncate font-medium text-stone-800 dark:text-stone-100">{{ disk.mount }}</p>
+                                    <p class="truncate text-xs text-stone-500 dark:text-stone-400">{{ disk.fsname }} · {{ disk.fstype }}</p>
                                 </div>
-                                <div class="text-right shrink-0">
-                                    <p class="font-semibold text-stone-800 dark:text-stone-100">
-                                        {{ disk.usedLabel }}
-                                    </p>
-                                    <p class="text-xs text-stone-500 dark:text-stone-400">
-                                        {{ disk.availLabel }} free · {{ disk.capacityLabel }}
-                                    </p>
+                                <div class="shrink-0 text-right">
+                                    <p class="font-semibold text-stone-800 dark:text-stone-100">{{ disk.usedLabel }}</p>
+                                    <p class="text-xs text-stone-500 dark:text-stone-400">{{ disk.availLabel }} free · {{ disk.capacityLabel }}</p>
                                 </div>
                             </div>
                             <div v-if="!diskRows.length" class="px-4 py-3 text-sm text-stone-500 dark:text-stone-400">
                                 No disk stats reported.
                             </div>
                         </div>
-                    </div>
+                    </GlassSurface>
 
-                    <div class="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
-                        <div class="px-4 py-2 bg-stone-50 dark:bg-stone-800/50 border-b border-stone-200 dark:border-stone-800">
-                            <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                                Updates & health
-                            </p>
+                    <GlassSurface class="overflow-hidden">
+                        <div class="border-b border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-stone-100/40 dark:bg-stone-800/40 px-4 py-2">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">Updates &amp; health</p>
                         </div>
-                        <div class="p-4 space-y-3 text-sm">
+                        <dl class="space-y-3 p-4 text-sm">
                             <div class="flex items-center justify-between gap-3">
-                                <span class="text-stone-600 dark:text-stone-300">Updates available</span>
-                                <span class="font-semibold text-stone-800 dark:text-stone-100">{{ updatesAvailableLabel }}</span>
+                                <dt class="text-stone-600 dark:text-stone-300">Updates available</dt>
+                                <dd class="font-semibold text-stone-800 dark:text-stone-100">{{ updatesAvailableLabel }}</dd>
                             </div>
                             <div class="flex items-center justify-between gap-3">
-                                <span class="text-stone-600 dark:text-stone-300">Security</span>
-                                <span class="font-semibold text-stone-800 dark:text-stone-100">{{ securityPatchStatusLabel }}</span>
+                                <dt class="text-stone-600 dark:text-stone-300">Security</dt>
+                                <dd class="font-semibold text-stone-800 dark:text-stone-100">{{ securityPatchStatusLabel }}</dd>
                             </div>
                             <div class="flex items-center justify-between gap-3">
-                                <span class="text-stone-600 dark:text-stone-300">Service health</span>
-                                <span class="font-semibold text-stone-800 dark:text-stone-100">{{ serviceHealthLabel }}</span>
+                                <dt class="text-stone-600 dark:text-stone-300">Service health</dt>
+                                <dd class="font-semibold text-stone-800 dark:text-stone-100">{{ serviceHealthLabel }}</dd>
                             </div>
                             <div class="flex items-center justify-between gap-3">
-                                <span class="text-stone-600 dark:text-stone-300">Time sync</span>
-                                <span class="font-semibold text-stone-800 dark:text-stone-100">{{ timeSyncLabel }}</span>
+                                <dt class="text-stone-600 dark:text-stone-300">Time sync</dt>
+                                <dd class="font-semibold text-stone-800 dark:text-stone-100">{{ timeSyncLabel }}</dd>
                             </div>
-                        </div>
-                    </div>
+                        </dl>
+                    </GlassSurface>
                 </div>
 
-                <div class="grid gap-4 lg:grid-cols-2">
-                    <div class="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
-                        <div class="px-4 py-2 bg-stone-50 dark:bg-stone-800/50 border-b border-stone-200 dark:border-stone-800">
-                            <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                                Network interfaces
-                            </p>
+                <div class="mt-6 grid gap-4 lg:grid-cols-2">
+                    <GlassSurface class="overflow-hidden">
+                        <div class="border-b border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-stone-100/40 dark:bg-stone-800/40 px-4 py-2">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">Network interfaces</p>
                         </div>
-                        <div class="divide-y divide-stone-200 dark:divide-stone-800">
+                        <div class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)]">
                             <div
                                 v-for="iface in netInterfaceRows"
                                 :key="iface.key"
-                                class="px-4 py-2 text-sm flex items-center justify-between gap-4"
+                                class="flex items-center justify-between gap-4 px-4 py-2 text-sm"
                             >
                                 <div class="min-w-0">
-                                    <p class="font-medium text-stone-800 dark:text-stone-100 truncate">
+                                    <p class="truncate font-medium text-stone-800 dark:text-stone-100">
                                         {{ iface.name }}
-                                        <span class="ml-2 text-xs font-mono text-stone-500 dark:text-stone-400">{{ iface.family }}</span>
+                                        <span class="ml-2 font-mono text-xs text-stone-500 dark:text-stone-400">{{ iface.family }}</span>
                                     </p>
-                                    <p class="text-xs text-stone-500 dark:text-stone-400 truncate">
+                                    <p class="truncate text-xs text-stone-500 dark:text-stone-400">
                                         {{ iface.address }} <span v-if="iface.cidr" class="font-mono">({{ iface.cidr }})</span>
                                     </p>
                                 </div>
-                                <div class="flex flex-wrap gap-1 justify-end shrink-0">
-                                    <span
+                                <div class="flex shrink-0 flex-wrap justify-end gap-1">
+                                    <GlassPill
                                         v-for="pill in iface.pills"
                                         :key="pill"
-                                        class="px-2 py-0.5 text-[10px] font-semibold rounded-full border"
-                                        :class="pillClass(pill)"
+                                        :tone="pillTone(pill)"
+                                        size="sm"
                                     >
                                         {{ pill }}
-                                    </span>
+                                    </GlassPill>
                                 </div>
                             </div>
                             <div v-if="!netInterfaceRows.length" class="px-4 py-3 text-sm text-stone-500 dark:text-stone-400">
                                 No network interfaces reported.
                             </div>
                         </div>
-                    </div>
+                    </GlassSurface>
 
-                    <div class="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
-                        <div class="px-4 py-2 bg-stone-50 dark:bg-stone-800/50 border-b border-stone-200 dark:border-stone-800">
-                            <p class="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400 font-semibold">
-                                Thermal sensors
-                            </p>
+                    <GlassSurface class="overflow-hidden">
+                        <div class="border-b border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-stone-100/40 dark:bg-stone-800/40 px-4 py-2">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">Thermal sensors</p>
                         </div>
-                        <div class="divide-y divide-stone-200 dark:divide-stone-800">
+                        <div class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)]">
                             <div
                                 v-for="sensor in thermalRows"
                                 :key="sensor.key"
-                                class="px-4 py-2 text-sm flex items-center justify-between gap-4"
+                                class="flex items-center justify-between gap-4 px-4 py-2 text-sm"
                             >
                                 <div class="min-w-0">
-                                    <p class="font-medium text-stone-800 dark:text-stone-100 truncate">
-                                        {{ sensor.label }}
-                                    </p>
-                                    <p class="text-xs text-stone-500 dark:text-stone-400 truncate">
-                                        {{ sensor.component }}
-                                    </p>
+                                    <p class="truncate font-medium text-stone-800 dark:text-stone-100">{{ sensor.label }}</p>
+                                    <p class="truncate text-xs text-stone-500 dark:text-stone-400">{{ sensor.component }}</p>
                                 </div>
-                                <div class="text-right shrink-0">
-                                    <p class="font-semibold text-stone-800 dark:text-stone-100">
-                                        {{ sensor.tempC }}
-                                    </p>
-                                    <p class="text-xs text-stone-500 dark:text-stone-400">
-                                        {{ sensor.thresholds }}
-                                    </p>
+                                <div class="shrink-0 text-right">
+                                    <p class="font-semibold text-stone-800 dark:text-stone-100">{{ sensor.tempC }}</p>
+                                    <p class="text-xs text-stone-500 dark:text-stone-400">{{ sensor.thresholds }}</p>
                                 </div>
                             </div>
                             <div v-if="!thermalRows.length" class="px-4 py-3 text-sm text-stone-500 dark:text-stone-400">
                                 No thermal sensors reported.
                             </div>
                         </div>
-                    </div>
+                    </GlassSurface>
                 </div>
-            </section>
+            </GlassCard>
 
-            <section class="grid gap-6 lg:grid-cols-2">
-                <div class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm">
-                    <header class="flex items-center justify-between mb-4">
-                        <div>
-                            <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                                Linked domains
-                            </p>
-                            <h3 class="text-lg font-semibold text-stone-900 dark:text-white">
-                                Traffic targets
-                            </h3>
-                        </div>
-                        <SporkButton secondary xsmall @click="() => router.visit('/-/servers')">
+            <div class="grid gap-6 lg:grid-cols-2">
+                <GlassCard
+                    title="Traffic targets"
+                    subtitle="Linked domains"
+                >
+                    <template #actions>
+                        <GlassButton variant="secondary" size="sm" @click="router.visit('/-/infrastructure/servers')">
                             Manage links
-                        </SporkButton>
-                    </header>
+                        </GlassButton>
+                    </template>
 
-                    <ul class="divide-y divide-stone-200 dark:divide-stone-800">
+                    <ul class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)]">
                         <li
                             v-for="domain in linkedDomains"
                             :key="domain.id ?? domain.name"
-                            class="py-3 flex items-center justify-between text-sm"
+                            class="flex items-center justify-between py-3 text-sm"
                         >
                             <div>
                                 <p class="font-medium text-stone-800 dark:text-stone-100">{{ domain.name }}</p>
-                                <p class="text-xs text-stone-500 dark:text-stone-400">
-                                    {{ domain.provider ?? 'Registrar unknown' }}
-                                </p>
+                                <p class="text-xs text-stone-500 dark:text-stone-400">{{ domain.provider ?? 'Registrar unknown' }}</p>
                             </div>
-                            <span class="text-xs px-2 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-200">
-                                {{ domain.dns_provider ?? 'DNS TBD' }}
-                            </span>
+                            <GlassPill size="sm">{{ domain.dns_provider ?? 'DNS TBD' }}</GlassPill>
                         </li>
-                        <li v-if="!linkedDomains.length" class="py-6 text-sm text-stone-500 dark:text-stone-400 text-center">
+                        <li v-if="!linkedDomains.length" class="py-6 text-center text-sm text-stone-500 dark:text-stone-400">
                             No domains linked yet. Use the infrastructure hub to attach traffic.
                         </li>
                     </ul>
-                </div>
+                </GlassCard>
 
-                <div class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm space-y-4">
-                    <header>
-                        <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                            Services & agents
-                        </p>
-                        <h3 class="text-lg font-semibold text-stone-900 dark:text-white">
-                            Observed workloads
-                        </h3>
-                    </header>
-
+                <GlassCard
+                    title="Observed workloads"
+                    subtitle="Services &amp; agents"
+                >
                     <div class="flex flex-wrap gap-2">
-                        <span
+                        <GlassPill
                             v-for="service in services"
                             :key="service.id ?? service.service"
-                            class="px-3 py-1.5 text-xs rounded-full border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-200 bg-stone-50 dark:bg-stone-800/60"
+                            size="sm"
                         >
                             {{ service.service ?? service.name }}
                             <span v-if="service.status" class="ml-1 text-[10px] uppercase tracking-wide text-stone-400 dark:text-stone-500">
                                 {{ service.status }}
                             </span>
-                        </span>
+                        </GlassPill>
                         <p v-if="!services.length" class="text-sm text-stone-500 dark:text-stone-400">
                             No agents have reported running services yet.
                         </p>
                     </div>
 
-                    <div class="border border-dashed border-stone-300 dark:border-stone-700 rounded-lg p-4 space-y-2">
-                        <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
+                    <div class="mt-4 space-y-2 rounded-lg border border-dashed border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] p-4">
+                        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400">
                             Automation hooks
                         </p>
                         <p class="text-sm text-stone-600 dark:text-stone-300">
                             Register deployment or monitoring automations here to roll out updates, rotate keys, or push config.
                         </p>
                     </div>
-                </div>
-            </section>
+                </GlassCard>
+            </div>
 
-            <section class="border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 p-6 shadow-sm">
-                <header class="mb-4">
-                    <p class="text-xs uppercase tracking-[0.25em] text-stone-500 dark:text-stone-400 font-semibold">
-                        Activity
-                    </p>
-                    <h3 class="text-lg font-semibold text-stone-900 dark:text-white">
-                        Recent events
-                    </h3>
-                </header>
-
-                <ol class="relative border-l border-stone-200 dark:border-stone-800 pl-6 space-y-6">
+            <GlassCard title="Recent events" subtitle="Activity">
+                <ol class="relative space-y-6 border-l border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] pl-6">
                     <li v-for="event in activityTimeline" :key="event.id" class="relative">
-                        <span class="absolute -left-2 top-1 w-3 h-3 rounded-full bg-indigo-500"></span>
-                        <p class="text-sm font-semibold text-stone-800 dark:text-white">
-                            {{ event.title }}
-                        </p>
-                        <p class="text-xs text-stone-500 dark:text-stone-400">
-                            {{ event.timestamp }}
-                        </p>
-                        <p class="mt-1 text-sm text-stone-600 dark:text-stone-300">
-                            {{ event.description }}
-                        </p>
+                        <span class="absolute -left-2 top-1 h-3 w-3 rounded-full bg-indigo-500" aria-hidden="true"></span>
+                        <p class="text-sm font-semibold text-stone-800 dark:text-stone-50">{{ event.title }}</p>
+                        <p class="text-xs text-stone-500 dark:text-stone-400">{{ event.timestamp }}</p>
+                        <p class="mt-1 text-sm text-stone-600 dark:text-stone-300">{{ event.description }}</p>
                     </li>
                     <li v-if="!activityTimeline.length" class="text-sm text-stone-500 dark:text-stone-400">
                         No recent events recorded for this server.
                     </li>
                 </ol>
-            </section>
+            </GlassCard>
         </div>
     </ServerInfrastucture>
 </template>
 
 <script setup>
 import ServerInfrastucture from "@/Layouts/ServerInfrastucture.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
+import GlassCard from "@/Components/Glass/GlassCard.vue";
+import GlassSurface from "@/Components/Glass/GlassSurface.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
+import GlassMetricCard from "@/Components/Glass/GlassMetricCard.vue";
+import GlassPill from "@/Components/Glass/GlassPill.vue";
 import { computed } from "vue";
 import dayjs from "dayjs";
 import { router } from "@inertiajs/vue3";
@@ -541,17 +452,10 @@ function isOverlayInterfaceName(name) {
     return typeof name === 'string' && /^(zt|wg|tailscale|docker|br-|cni|flannel)/.test(name);
 }
 
-function pillClass(pill) {
-    if (pill === 'public') {
-        return 'border-green-300 text-green-700 bg-green-50 dark:border-green-700 dark:text-green-200 dark:bg-green-900/30';
-    }
-    if (pill === 'internal') {
-        return 'border-stone-300 text-stone-700 bg-stone-50 dark:border-stone-700 dark:text-stone-200 dark:bg-stone-800/60';
-    }
-    if (pill === 'overlay') {
-        return 'border-indigo-300 text-indigo-700 bg-indigo-50 dark:border-indigo-700 dark:text-indigo-200 dark:bg-indigo-900/30';
-    }
-    return 'border-stone-300 text-stone-700 bg-stone-50 dark:border-stone-700 dark:text-stone-200 dark:bg-stone-800/60';
+function pillTone(pill) {
+    if (pill === 'public') return 'success';
+    if (pill === 'overlay') return 'info';
+    return 'neutral';
 }
 
 const netInterfaceRows = computed(() => {

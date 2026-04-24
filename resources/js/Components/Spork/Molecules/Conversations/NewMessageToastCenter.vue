@@ -15,7 +15,7 @@ const reply_draft_by_group_id = ref({});
 const reply_sending_by_group_id = ref({});
 
 const viewThread = (threadId) => {
-    router.visit(window.route('chat.show', threadId), {
+    router.visit(window.route('communication.chat.show', threadId), {
         preserveScroll: true,
         preserveState: true,
     });

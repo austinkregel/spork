@@ -35,7 +35,7 @@ class SporkDeploymentControllerTest extends TestCase
         $credential = \App\Models\Credential::factory()->create([
             'user_id' => $this->user->id,
         ]);
-        $response = $this->post('http://spork.localhost/-/deployment/'.$deployment->id.'/detach', [
+        $response = $this->post('http://spork.localhost/-/infrastructure/deployment/'.$deployment->id.'/detach', [
             'resource_type' => $credential::class,
             'resource_id' => $credential->id,
         ]);
@@ -59,7 +59,7 @@ class SporkDeploymentControllerTest extends TestCase
         ]);
         $this->assertDatabaseEmpty('deployment_resources');
 
-        $response = $this->post('http://spork.localhost/-/deployment/'.$deployment->id.'/attach', [
+        $response = $this->post('http://spork.localhost/-/infrastructure/deployment/'.$deployment->id.'/attach', [
             'resource_type' => $credential::class,
             'resource_id' => $credential->id,
         ]);
@@ -103,7 +103,7 @@ class SporkDeploymentControllerTest extends TestCase
         ]);
         $deployment->load('credentials');
         $this->assertCount(2, $deployment->credentials);
-        $response = $this->post('http://spork.localhost/-/deployment/'.$deployment->id.'/deploy');
+        $response = $this->post('http://spork.localhost/-/infrastructure/deployment/'.$deployment->id.'/deploy');
 
         $response->assertStatus(200);
     }

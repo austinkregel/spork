@@ -26,6 +26,8 @@ class EventResource extends JsonResource
             'color' => $this->resource['color'],
             'rrule' => $this->resource['rrule'],
             'recurring' => $this->resource['recurring'],
+            'display' => $this->resource['display'] ?? 'auto',
+            'allDay' => $this->resource['all_day'] ?? false,
             'model_id' => $this->resource['model_id'] ?? null,
             'model_type' => $this->resource['model_type'] ?? null,
         ];

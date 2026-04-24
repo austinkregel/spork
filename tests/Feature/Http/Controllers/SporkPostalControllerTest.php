@@ -15,7 +15,7 @@ class SporkPostalControllerTest extends TestCase
 
     public function test_postal_route_is_accessible()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/postal');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/communication/postal');
 
         $response->assertStatus(200);
     }
@@ -45,14 +45,14 @@ class SporkPostalControllerTest extends TestCase
             'credential_id' => $credential->id,
         ]);
 
-        $response = $this->get("http://spork.localhost/-/postal/{$email->id}");
+        $response = $this->get("http://spork.localhost/-/communication/postal/{$email->id}");
 
         $response->assertStatus(200);
     }
 
     public function test_postal_route_loads_expected_data()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/postal');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/communication/postal');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Postal/Inbox')

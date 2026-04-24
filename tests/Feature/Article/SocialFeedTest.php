@@ -26,7 +26,7 @@ class SocialFeedTest extends TestCase
             'name' => 'My Feed',
         ]);
 
-        $response = $this->get('http://spork.localhost/-/rss-feeds');
+        $response = $this->get('http://spork.localhost/-/feeds/rss-feeds');
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -55,7 +55,7 @@ class SocialFeedTest extends TestCase
 
         Article::factory()->create(); // untagged, should not match
 
-        $response = $this->get('http://spork.localhost/-/rss-feeds/'.$feed->id);
+        $response = $this->get('http://spork.localhost/-/feeds/rss-feeds/'.$feed->id);
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -92,7 +92,7 @@ class SocialFeedTest extends TestCase
             'conditionable_id' => $feed->id,
         ]);
 
-        $response = $this->get('http://spork.localhost/-/rss-feeds/'.$feed->id);
+        $response = $this->get('http://spork.localhost/-/feeds/rss-feeds/'.$feed->id);
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
@@ -112,10 +112,10 @@ class SocialFeedTest extends TestCase
             'is_public' => false,
         ]);
 
-        $this->get('http://spork.localhost/-/rss-feeds/'.$feed->id)->assertStatus(403);
+        $this->get('http://spork.localhost/-/feeds/rss-feeds/'.$feed->id)->assertStatus(403);
 
         $feed->update(['is_public' => true]);
 
-        $this->get('http://spork.localhost/-/rss-feeds/'.$feed->id)->assertStatus(200);
+        $this->get('http://spork.localhost/-/feeds/rss-feeds/'.$feed->id)->assertStatus(200);
     }
 }

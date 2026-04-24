@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -169,6 +170,42 @@ class Project extends Model implements Crud, ModelQuery, Taggable
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(ProjectMembership::class);
+    }
+
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'project_memberships')
+            ->withPivot(['role', 'invited_at', 'accepted_at', 'declined_at'])
+            ->withTimestamps();
+    }
+
+    public function isOwnedBy(User $user): bool
+    {
+        return $this->user_id === $user->getKey();
+    }
+
+    public function membershipFor(User $user): ?ProjectMembership
+    {
+        return $this->memberships()
+            ->where('user_id', $user->getKey())
+            ->first();
+    }
+
+    public function hasAcceptedMember(User $user): bool
+    {
+        if ($this->isOwnedBy($user)) {
+            return true;
+        }
+
+        return $this->memberships()
+            ->where('user_id', $user->getKey())
+            ->whereNotNull('accepted_at')
+            ->exists();
     }
 
     public function deployments(): HasMany

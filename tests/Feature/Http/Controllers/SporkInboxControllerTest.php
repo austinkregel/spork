@@ -24,7 +24,7 @@ class SporkInboxControllerTest extends TestCase
 
     public function test_chat_route_is_accessible(): void
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/chat');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/communication/chat');
 
         $response->assertStatus(200);
     }
@@ -51,14 +51,14 @@ class SporkInboxControllerTest extends TestCase
             'thread_id' => $thread->id,
         ])->thread_id;
 
-        $response = $this->get("http://spork.localhost/-/chat/$thread->id");
+        $response = $this->get("http://spork.localhost/-/communication/chat/$thread->id");
 
         $response->assertStatus(200);
     }
 
     public function test_chat_route_loads_expected_data(): void
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/chat');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/communication/chat');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Conversations/Hub')
@@ -82,7 +82,7 @@ class SporkInboxControllerTest extends TestCase
         $this->createMessageForThread($myThread);
         $this->createMessageForThread($otherThread, $otherUser);
 
-        $response = $this->get('http://spork.localhost/-/chat');
+        $response = $this->get('http://spork.localhost/-/communication/chat');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Conversations/Hub')
@@ -113,7 +113,7 @@ class SporkInboxControllerTest extends TestCase
             'credential_id' => $credentialId,
             'thread_id' => $thread->id,
         ])->thread_id;
-        $response = $this->get("http://spork.localhost/-/chat/{$thread->id}");
+        $response = $this->get("http://spork.localhost/-/communication/chat/{$thread->id}");
 
         $response->assertStatus(200);
     }

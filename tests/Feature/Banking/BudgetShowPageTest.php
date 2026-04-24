@@ -80,7 +80,7 @@ class BudgetShowPageTest extends TestCase
         $privacyTx->attachTag($tag);
 
         $this->actingAs($user)
-            ->get('http://spork.localhost/-/banking/budgets/'.$budget->id)
+            ->get('http://spork.localhost/-/finance/banking/budgets/'.$budget->id)
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Banking/BudgetShow')
@@ -145,7 +145,7 @@ class BudgetShowPageTest extends TestCase
         $lastMonth->attachTag($tag);
 
         $this->actingAs($user)
-            ->get('http://spork.localhost/-/banking/budgets/'.$budget->id)
+            ->get('http://spork.localhost/-/finance/banking/budgets/'.$budget->id)
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Banking/BudgetShow')

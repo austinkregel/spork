@@ -3,11 +3,9 @@ import { ref } from 'vue';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
 
 const props = defineProps({
     user: Object,
@@ -86,9 +84,7 @@ const clearPhotoFileInput = () => {
         </template>
 
         <template #form>
-            <!-- Profile Photo -->
             <div v-if="$page.props.jetstream.managesProfilePhotos" class="col-span-6 sm:col-span-4">
-                <!-- Profile Photo File Input -->
                 <input
                     ref="photoInput"
                     type="file"
@@ -96,78 +92,79 @@ const clearPhotoFileInput = () => {
                     @change="updatePhotoPreview"
                 >
 
-                <InputLabel for="photo" value="Photo" />
+                <div class="block text-sm font-medium text-stone-700 dark:text-stone-200">Photo</div>
 
-                <!-- Current Profile Photo -->
                 <div v-show="! photoPreview" class="mt-2">
-                    <img :src="user.profile_photo_url" :alt="user.name" class="rounded-full h-20 w-20 object-cover">
+                    <img :src="user.profile_photo_url" :alt="user.name" class="rounded-full h-20 w-20 object-cover ring-1 ring-stone-200 dark:ring-stone-700">
                 </div>
 
-                <!-- New Profile Photo Preview -->
                 <div v-show="photoPreview" class="mt-2">
                     <span
-                        class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center"
+                        class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center ring-1 ring-stone-200 dark:ring-stone-700"
                         :style="'background-image: url(\'' + photoPreview + '\');'"
                     />
                 </div>
 
-                <SecondaryButton class="mt-2 mr-2" type="button" @click.prevent="selectNewPhoto">
-                    Select A New Photo
-                </SecondaryButton>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <GlassButton variant="secondary" size="sm" type="button" @click.prevent="selectNewPhoto">
+                        Select A New Photo
+                    </GlassButton>
 
-                <SecondaryButton
-                    v-if="user.profile_photo_path"
-                    type="button"
-                    class="mt-2"
-                    @click.prevent="deletePhoto"
-                >
-                    Remove Photo
-                </SecondaryButton>
+                    <GlassButton
+                        v-if="user.profile_photo_path"
+                        variant="ghost"
+                        size="sm"
+                        type="button"
+                        @click.prevent="deletePhoto"
+                    >
+                        Remove Photo
+                    </GlassButton>
+                </div>
 
-                <InputError :message="form.errors.photo" class="mt-2" />
+                <p v-if="form.errors.photo" class="mt-2 text-xs text-red-500 dark:text-red-400">{{ form.errors.photo }}</p>
             </div>
 
-            <!-- Name -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Name" />
-                <TextInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    autocomplete="name"
-                />
-                <InputError :message="form.errors.name" class="mt-2" />
+                <GlassField v-slot="{ id, describedby, invalid }" label="Name" :error="form.errors.name">
+                    <GlassInput
+                        :id="id"
+                        v-model="form.name"
+                        type="text"
+                        autocomplete="name"
+                        :invalid="invalid"
+                        :describedby="describedby"
+                    />
+                </GlassField>
             </div>
 
-            <!-- Email -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    autocomplete="username"
-                />
-                <InputError :message="form.errors.email" class="mt-2" />
+                <GlassField v-slot="{ id, describedby, invalid }" label="Email" :error="form.errors.email">
+                    <GlassInput
+                        :id="id"
+                        v-model="form.email"
+                        type="email"
+                        autocomplete="username"
+                        :invalid="invalid"
+                        :describedby="describedby"
+                    />
+                </GlassField>
 
                 <div v-if="$page.props.jetstream.hasEmailVerification && user.email_verified_at === null">
-                    <p class="text-sm mt-2 dark:text-white">
+                    <p class="text-sm mt-2 text-stone-700 dark:text-stone-200">
                         Your email address is unverified.
 
                         <Link
                             :href="route('verification.send')"
                             method="post"
                             as="button"
-                            class="underline text-sm text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 dark:focus:ring-offset-stone-800"
+                            class="underline text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
                             @click.prevent="sendEmailVerification"
                         >
                             Click here to re-send the verification email.
                         </Link>
                     </p>
 
-                    <div v-show="verificationLinkSent" class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
+                    <div v-show="verificationLinkSent" class="mt-2 font-medium text-sm text-emerald-600 dark:text-emerald-400">
                         A new verification link has been sent to your email address.
                     </div>
                 </div>
@@ -179,9 +176,9 @@ const clearPhotoFileInput = () => {
                 Saved.
             </ActionMessage>
 
-            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <GlassButton type="submit" :disabled="form.processing">
                 Save
-            </PrimaryButton>
+            </GlassButton>
         </template>
     </FormSection>
 </template>

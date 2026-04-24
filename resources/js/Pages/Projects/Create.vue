@@ -1,112 +1,120 @@
 <template>
-    <AppLayout title="Dashboard">
-        <div class="w-full border-b dark:border-stone-700 dark:bg-stone-950">
-            <div  class="max-w-7xl mx-auto px-8 py-4 flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
-                <Link href="/-/projects" class="underline">
-                    Projects
-                </Link>
-                <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-stone-400" aria-hidden="true" />
-                <span>Create</span>
-            </div>
+  <AppLayout title="Create Project">
+    <template #header>
+      <div class="flex items-center gap-2 text-sm font-medium text-stone-700 dark:text-stone-200">
+        <Link href="/-/projects/list" class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-sm">
+          Projects
+        </Link>
+        <ChevronRightIcon class="h-4 w-4 text-stone-400" aria-hidden="true" />
+        <span class="text-stone-900 dark:text-stone-50">Create</span>
+      </div>
+    </template>
+
+    <div class="mx-auto flex w-full max-w-3xl flex-col gap-6 p-4 sm:p-6 lg:p-8">
+      <GlassCard
+        title="Create a Project"
+        subtitle="Pick a starting template and jump into the project workspace."
+      />
+
+      <GlassCard v-if="hasAnyErrors" :tone="'strong'" class="border-red-300 dark:border-red-500/40">
+        <div class="text-sm font-semibold text-red-700 dark:text-red-300">Fix the highlighted fields</div>
+        <pre class="mt-2 overflow-auto text-xs text-red-700 dark:text-red-300">{{ errors }}</pre>
+      </GlassCard>
+
+      <GlassCard title="Details">
+        <div class="grid grid-cols-1 gap-4">
+          <GlassField v-slot="{ id, describedby, invalid }" label="Project name" required>
+            <GlassInput
+              :id="id"
+              v-model="name"
+              placeholder="e.g. Automation Ops"
+              :invalid="invalid"
+              :describedby="describedby"
+              required
+            />
+          </GlassField>
+
+          <GlassField label="Goal" hint="What outcome are you driving toward?">
+            <textarea
+              v-model="goal"
+              rows="3"
+              placeholder="What outcome are you driving toward?"
+              class="block w-full rounded-md border border-stone-300 bg-white/70 px-3 py-2 text-sm text-stone-900 shadow-sm placeholder:text-stone-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-stone-600 dark:bg-stone-800/70 dark:text-stone-100 dark:placeholder:text-stone-500"
+            />
+          </GlassField>
         </div>
+      </GlassCard>
 
-        <div class="max-w-5xl w-full mx-auto py-8 px-4 flex flex-col gap-6">
-            <div class="rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm p-4">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <div class="text-lg font-semibold text-stone-800 dark:text-stone-100">
-                            Create a Project
-                        </div>
-                        <div class="mt-1 text-sm text-stone-600 dark:text-stone-300">
-                            Pick a starting template and jump into the Project workspace.
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <GlassCard title="Template" subtitle="Choose how this project starts.">
+        <ProjectTemplatePicker v-model="templateKey" :templates="project_templates" />
+      </GlassCard>
 
-            <div v-if="hasAnyErrors" class="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-500/10 p-4">
-                <div class="text-sm font-semibold text-red-700 dark:text-red-300">Fix the highlighted fields</div>
-                <pre class="mt-2 text-xs text-red-700 dark:text-red-300 overflow-auto">{{ errors }}</pre>
-            </div>
-
-            <div class="rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm p-4">
-                <div class="grid grid-cols-1 gap-4">
-                    <SporkField v-model="name" label="Project name" placeholder="e.g. Automation Ops" />
-                    <SporkField v-model="goal" label="Goal" type="textarea" placeholder="What outcome are you driving toward?" />
-                </div>
-            </div>
-
-            <div class="rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-sm p-4">
-                <div class="text-sm font-semibold text-stone-800 dark:text-stone-100">
-                    Template
-                </div>
-                <div class="mt-3">
-                    <ProjectTemplatePicker v-model="templateKey" :templates="project_templates" />
-                </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-2">
-                <SporkButton small secondary :disabled="saving" @click="router.visit('/-/projects')">
-                    Cancel
-                </SporkButton>
-                <SporkButton small primary :disabled="saving || !name" @click="createProject">
-                    {{ saving ? 'Creating…' : 'Create project' }}
-                </SporkButton>
-            </div>
-        </div>
-    </AppLayout>
+      <div class="flex items-center justify-end gap-2">
+        <GlassButton variant="secondary" :disabled="saving" @click="router.visit('/-/projects/list')">
+          Cancel
+        </GlassButton>
+        <GlassButton :disabled="saving || !name" @click="createProject">
+          {{ saving ? 'Creating…' : 'Create project' }}
+        </GlassButton>
+      </div>
+    </div>
+  </AppLayout>
 </template>
 
 <script setup>
-import {usePage, Link, router} from "@inertiajs/vue3";
-import AppLayout from "@/Layouts/AppLayout.vue";
-import { ChevronRightIcon } from "@heroicons/vue/24/solid";
-import { computed, ref } from "vue";
-import SporkField from "@/Components/Spork/SporkField.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
-import ProjectTemplatePicker from "@/Components/Projects/ProjectTemplatePicker.vue";
+import { computed, ref } from 'vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import { ChevronRightIcon } from '@heroicons/vue/24/solid';
 
-const $page = usePage()
+import AppLayout from '@/Layouts/AppLayout.vue';
+import GlassCard from '@/Components/Glass/GlassCard.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import ProjectTemplatePicker from '@/Components/Projects/ProjectTemplatePicker.vue';
 
-const { description, project_templates } = defineProps({
-    description: Object,
-    project_templates: Array,
-})
+const page = usePage();
+
+const props = defineProps({
+  description: Object,
+  project_templates: Array,
+});
 
 const errors = ref(null);
 const saving = ref(false);
 
 const name = ref('');
-const templateKey = ref(project_templates?.[0]?.key ?? 'custom');
+const templateKey = ref(props.project_templates?.[0]?.key ?? 'custom');
 const goal = ref('');
 
 const hasAnyErrors = computed(() => !!errors.value && Object.keys(errors.value).length > 0);
 
-const createProject = () => {
-    saving.value = true;
-    errors.value = null;
+function createProject() {
+  saving.value = true;
+  errors.value = null;
 
-    router.post('/-/projects', {
-        name: name.value,
-        user_id: $page?.props?.auth?.user?.id,
-        settings: {
-            template: templateKey.value,
-            goal: goal.value || null,
-        },
-    }, {
-        preserveScroll: true,
-        onError: (error) => {
-            errors.value = Object.keys(error).reduce((acc, key) => {
-                return {
-                    ...acc,
-                    [key]: [error[key]],
-                };
-            }, {});
-        },
-        onFinish: () => {
-            saving.value = false;
-        },
-    });
-};
-
+  router.post(
+    '/-/projects',
+    {
+      name: name.value,
+      user_id: page?.props?.auth?.user?.id,
+      settings: {
+        template: templateKey.value,
+        goal: goal.value || null,
+      },
+    },
+    {
+      preserveScroll: true,
+      onError: (error) => {
+        errors.value = Object.keys(error).reduce(
+          (acc, key) => ({ ...acc, [key]: [error[key]] }),
+          {},
+        );
+      },
+      onFinish: () => {
+        saving.value = false;
+      },
+    },
+  );
+}
 </script>

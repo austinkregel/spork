@@ -14,14 +14,14 @@ class SporkAutomationControllerTest extends TestCase
 
     public function test_automation_route_is_accessible()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/automation');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/automations/workspace');
 
         $response->assertStatus(200);
     }
 
     public function test_automation_tags_route_is_accessible()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/automation/tags');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/automations/tags');
 
         $response->assertStatus(200);
     }
@@ -33,14 +33,14 @@ class SporkAutomationControllerTest extends TestCase
 
         $this->user->tags()->attach($tag);
 
-        $response = $this->get("http://spork.localhost/-/automation/tags/{$tag->id}");
+        $response = $this->get("http://spork.localhost/-/automations/tags/{$tag->id}");
 
         $response->assertStatus(200);
     }
 
     public function test_automation_route_loads_expected_data()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/automation');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/automations/workspace');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Automation/Index')
@@ -55,7 +55,7 @@ class SporkAutomationControllerTest extends TestCase
         $this->actingAsUser();
         $this->user->tags()->attach($tag);
 
-        $response = $this->get("http://spork.localhost/-/automation/tags/{$tag->id}");
+        $response = $this->get("http://spork.localhost/-/automations/tags/{$tag->id}");
 
         $response->assertInertia(fn ($page) => $page
             ->component('Automation/TagShow')

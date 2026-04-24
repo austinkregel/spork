@@ -16,7 +16,7 @@ class AutomationsControllerTest extends TestCase
     {
         $this->actingAsUser();
 
-        $response = $this->get('http://spork.localhost/-/automation/automations');
+        $response = $this->get('http://spork.localhost/-/automations/automations');
         $response->assertStatus(200);
     }
 
@@ -33,13 +33,13 @@ class AutomationsControllerTest extends TestCase
             ],
         ];
 
-        $response = $this->post('http://spork.localhost/-/automation/automations', $payload);
+        $response = $this->post('http://spork.localhost/-/automations/automations', $payload);
         $response->assertRedirect();
 
         $automation = Automation::first();
         $this->assertNotNull($automation);
 
-        $show = $this->get('http://spork.localhost/-/automation/automations/'.$automation->id);
+        $show = $this->get('http://spork.localhost/-/automations/automations/'.$automation->id);
         $show->assertStatus(200);
     }
 
@@ -53,7 +53,7 @@ class AutomationsControllerTest extends TestCase
             'cron_expression' => '*/10 * * * *',
         ]);
 
-        $response = $this->post('http://spork.localhost/-/automation/automations/'.$automation->id.'/run-now');
+        $response = $this->post('http://spork.localhost/-/automations/automations/'.$automation->id.'/run-now');
         $response->assertRedirect();
 
         $this->assertDatabaseHas('automation_operations', [
