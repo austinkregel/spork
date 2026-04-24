@@ -11,6 +11,7 @@ use App\Events\Models\User\UserDeleted;
 use App\Events\Models\User\UserDeleting;
 use App\Events\Models\User\UserUpdated;
 use App\Events\Models\User\UserUpdating;
+use App\Models\Article\SocialFeed;
 use App\Models\Finance\Account;
 use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
@@ -40,11 +41,11 @@ class User extends Authenticatable implements ModelQuery, Taggable
     use HasApiTokens;
     use HasFactory;
     use HasPermissions;
-    use HasTeams;
     use HasProfilePhoto;
     use HasProjectResource;
     use HasRoles;
     use HasTags;
+    use HasTeams;
     use LogsActivity;
     use Notifiable;
     use ScopeQSearch;
@@ -155,6 +156,11 @@ class User extends Authenticatable implements ModelQuery, Taggable
     public function externalRssFeeds(): MorphMany
     {
         return $this->morphMany(ExternalRssFeed::class, 'owner');
+    }
+
+    public function socialFeeds(): HasMany
+    {
+        return $this->hasMany(SocialFeed::class);
     }
 
     public function person(): HasOne

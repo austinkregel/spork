@@ -14,7 +14,7 @@ class RssParserFactoryTest extends TestCase
 {
     public function test_parse_returns_rss_feed_for_rss_body(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
@@ -26,7 +26,7 @@ class RssParserFactoryTest extends TestCase
 </rss>
 XML;
 
-        $factory = new RssParserFactory();
+        $factory = new RssParserFactory;
 
         $feed = $factory->parse([
             'body' => $xml,
@@ -39,7 +39,7 @@ XML;
 
     public function test_parse_returns_atom_feed_for_atom_body(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Example Feed</title>
@@ -53,7 +53,7 @@ XML;
 </feed>
 XML;
 
-        $factory = new RssParserFactory();
+        $factory = new RssParserFactory;
 
         $feed = $factory->parse([
             'body' => $xml,
@@ -66,12 +66,12 @@ XML;
 
     public function test_parse_throws_for_unsupported_feed_type(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="utf-8"?>
 <root><title>Unknown</title></root>
 XML;
 
-        $factory = new RssParserFactory();
+        $factory = new RssParserFactory;
 
         $this->expectException(DomainException::class);
 
@@ -82,5 +82,3 @@ XML;
         ]);
     }
 }
-
-

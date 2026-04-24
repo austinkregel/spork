@@ -23,9 +23,16 @@ class BudgetPeriodHelper
         }
 
         if ($now->lessThan($start)) {
-            $nextStart = $this->nextOccurrenceStart($budget, $start);
+            // If we're querying before the anchor, walk backwards until we find the period containing "now".
+            $periodEnd = $start;
+            $periodStart = $this->previousOccurrenceStart($budget, $periodEnd);
 
-            return [$start, $nextStart];
+            while ($now->lessThan($periodStart)) {
+                $periodEnd = $periodStart;
+                $periodStart = $this->previousOccurrenceStart($budget, $periodEnd);
+            }
+
+            return [$periodStart, $periodEnd];
         }
 
         $periodStart = $start;
@@ -48,7 +55,7 @@ class BudgetPeriodHelper
      */
     public function getPreviousPeriod(Budget $budget, Carbon $now): array
     {
-        [$currentStart, ] = $this->getCurrentPeriod($budget, $now);
+        [$currentStart] = $this->getCurrentPeriod($budget, $now);
         $previousEnd = $currentStart;
 
         $previousStart = $this->previousOccurrenceStart($budget, $previousEnd);
@@ -90,8 +97,3 @@ class BudgetPeriodHelper
         };
     }
 }
-
-
-
-
-

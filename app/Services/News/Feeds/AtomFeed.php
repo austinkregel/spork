@@ -58,7 +58,7 @@ class AtomFeed extends AbstractFeed
 
             if (! isset($post['id'])) {
                 // Skip entries without an id instead of failing.
-                return null;
+                return;
             }
 
             $feedItem = new FeedItem;

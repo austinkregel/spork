@@ -1,6 +1,6 @@
 <template>
     <draggable
-        class="px-4 pt-4 flex flex-wrap"
+        class="flex flex-wrap px-4 pt-4"
         style="min-width:300px;"
         tag="ul"
         :list="items"
@@ -8,43 +8,45 @@
         item-key="name"
     >
         <template #item="{ element }">
-            <li class="w-full p-2 flex flex-col">
-                <div class="font-bold flex justify-between p-2 border border-stone-500" style="width:400px;">
-                    <div>{{element.name}}</div>
-                    <button @click="open = !open"  v-if="open">&gt; <span v-if="open" class="underline">Close</span></button>
-                    <button @click="open = !open"  v-if="!open">&lt; <span v-if="!open" class="underline">Open</span></button>
+            <li class="flex w-full flex-col p-2">
+                <div class="flex w-[400px] justify-between rounded-md border border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-[var(--color-glass-surface-light)] dark:bg-[var(--color-glass-surface-dark)] backdrop-blur-glass p-2 font-semibold">
+                    <div>{{ element.name }}</div>
+                    <button
+                        type="button"
+                        class="text-sm text-stone-700 dark:text-stone-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-sm"
+                        :aria-expanded="open"
+                        @click="open = !open"
+                    >
+                        {{ open ? '> Close' : '< Open' }}
+                    </button>
                 </div>
-                <div class="flex gap-2 flex-wrap p-4 w-full" v-if="open">
-                    <label for="">Navigation Label</label>
-                    <input class="w-full dark:bg-stone-700 w-full" v-model="element.name" />
-                    <label for="">URL</label>
-                    <input class="w-full dark:bg-stone-700" v-model="element.path" />
+                <div v-if="open" class="flex w-full flex-col gap-2 p-4">
+                    <GlassField label="Navigation Label">
+                        <GlassInput v-model="element.name" />
+                    </GlassField>
+                    <GlassField label="URL">
+                        <GlassInput v-model="element.path" />
+                    </GlassField>
                 </div>
                 <nested-draggable :items="element.items" />
             </li>
         </template>
     </draggable>
 </template>
+
 <script>
 import draggable from "vuedraggable";
-import SporkInput from "@/Components/Spork/SporkInput.vue";
+import GlassField from "@/Components/Glass/GlassField.vue";
+import GlassInput from "@/Components/Glass/GlassInput.vue";
 
 export default {
-    props: {
-        items: {
-            required: true,
-            type: Array
-        }
-    },
-    components: {
-        SporkInput,
-        draggable
-    },
     name: "nested-draggable",
+    components: { GlassField, GlassInput, draggable },
+    props: {
+        items: { required: true, type: Array },
+    },
     data() {
-        return {
-            open: false,
-        };
-    }
+        return { open: false };
+    },
 };
 </script>

@@ -10,12 +10,14 @@ use App\Services\Filters\DigitalOceanServerFilter;
 use DigitalOceanV2\Client;
 use DigitalOceanV2\Entity\Domain;
 use DigitalOceanV2\Entity\DomainRecord;
+use DigitalOceanV2\Entity\Droplet as DigitalOceanDroplet;
 use DigitalOceanV2\Entity\Droplet as DigitalOceanServer;
 use DigitalOceanV2\Entity\Key;
 use DigitalOceanV2\Entity\Region;
 use DigitalOceanV2\Entity\Region as DigitalOceanRegion;
 use DigitalOceanV2\Entity\Size as DigitalOceanSize;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Throwable;
 
 class DigitalOceanService implements DigitalOceanServiceContract
 {
@@ -34,7 +36,45 @@ class DigitalOceanService implements DigitalOceanServiceContract
 
     public function createServer(array $config): array
     {
-        return [];
+        $droplet = $this->digitalOcean->droplet()->create(
+            $config['name'],
+            $config['region'],
+            $config['size'],
+            $config['image'] ?? 'ubuntu-22-04-x64',
+            (bool) ($config['backups'] ?? false),
+            (bool) ($config['ipv6'] ?? false),
+            $config['private_networking'] ?? false,
+            $config['ssh_keys'] ?? [],
+            $config['user_data'] ?? '',
+            (bool) ($config['monitoring'] ?? true),
+            $config['volumes'] ?? [],
+            $config['tags'] ?? [],
+            (bool) ($config['disable_agent'] ?? false)
+        );
+
+        return $droplet->toArray();
+    }
+
+    public function createSshKey(string $name, string $publicKey): array
+    {
+        $key = $this->digitalOcean->key()->create($name, $publicKey);
+
+        return $key->toArray();
+    }
+
+    public function findSshKeyByFingerprint(?string $fingerprint): ?array
+    {
+        if (empty($fingerprint)) {
+            return null;
+        }
+
+        try {
+            $key = $this->digitalOcean->key()->getByFingerprint($fingerprint);
+
+            return $key->toArray();
+        } catch (Throwable $exception) {
+            return null;
+        }
     }
 
     public function findAllRegions(): array
@@ -62,6 +102,35 @@ class DigitalOceanService implements DigitalOceanServiceContract
         return array_map(function (DigitalOceanServer $server) {
             return $this->serverFilter->filter($server);
         }, $servers);
+    }
+
+    public function findServer(int $identifier): array
+    {
+        $server = $this->digitalOcean->droplet()->getById($identifier);
+
+        return $this->serverFilter->filter($server);
+    }
+
+    public function waitForActiveServer(int $identifier, int $attempts = 30, int $sleepSeconds = 10): array
+    {
+        $latest = [];
+
+        for ($attempt = 0; $attempt < $attempts; $attempt++) {
+            /** @var DigitalOceanDroplet $droplet */
+            $droplet = $this->digitalOcean->droplet()->getById($identifier);
+            $latest = $this->serverFilter->filter($droplet);
+
+            $isActive = ($latest['status'] ?? null) === 'active';
+            $hasIp = ! empty($latest['networks']['public_v4'] ?? null);
+
+            if ($isActive && $hasIp) {
+                break;
+            }
+
+            sleep($sleepSeconds);
+        }
+
+        return $latest;
     }
 
     public function removeServerKey($identifier): void
@@ -146,11 +215,17 @@ class DigitalOceanService implements DigitalOceanServiceContract
 
     public function createDnsRecord(string $domain, array $dnsRecordArray): void
     {
+        $data = $dnsRecordArray['data'] ?? $dnsRecordArray['content'] ?? null;
+
+        if ($data === null) {
+            return;
+        }
+
         $this->digitalOcean->domainRecord()->create(
             $domain,
             $dnsRecordArray['type'],
             $dnsRecordArray['name'],
-            $dnsRecordArray['data'],
+            $data,
             $dnsRecordArray['priority'] ?? null,
         );
     }

@@ -1,11 +1,9 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { useForm } from '@inertiajs/vue3';
+import GlassAuthLayout from '@/Layouts/GlassAuthLayout.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
 
 const props = defineProps({
     email: String,
@@ -27,59 +25,69 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Reset Password" />
-
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
+    <GlassAuthLayout
+        title="Reset Password"
+        heading="Choose a new password"
+        subheading="Make it long, unique, and stored in a password manager."
+    >
+        <form class="space-y-4" @submit.prevent="submit">
+            <GlassField
+                v-slot="{ id, describedby, invalid }"
+                label="Email"
+                :error="form.errors.email"
+                required
+            >
+                <GlassInput
+                    :id="id"
                     v-model="form.email"
                     type="email"
-                    class="mt-1 block w-full"
+                    autocomplete="username"
                     required
                     autofocus
-                    autocomplete="username"
+                    :invalid="invalid"
+                    :describedby="describedby"
                 />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+            </GlassField>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
+            <GlassField
+                v-slot="{ id, describedby, invalid }"
+                label="New password"
+                :error="form.errors.password"
+                required
+            >
+                <GlassInput
+                    :id="id"
                     v-model="form.password"
                     type="password"
-                    class="mt-1 block w-full"
-                    required
                     autocomplete="new-password"
+                    required
+                    :invalid="invalid"
+                    :describedby="describedby"
                 />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+            </GlassField>
 
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
+            <GlassField
+                v-slot="{ id, describedby, invalid }"
+                label="Confirm new password"
+                :error="form.errors.password_confirmation"
+                required
+            >
+                <GlassInput
+                    :id="id"
                     v-model="form.password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
-                    required
                     autocomplete="new-password"
+                    required
+                    :invalid="invalid"
+                    :describedby="describedby"
                 />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
+            </GlassField>
 
-            <div class="flex items-center justify-end mt-4">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Reset Password
-                </PrimaryButton>
+            <div class="flex justify-end pt-2">
+                <GlassButton type="submit" :disabled="form.processing">
+                    Reset password
+                </GlassButton>
             </div>
         </form>
-    </AuthenticationCard>
+    </GlassAuthLayout>
 </template>

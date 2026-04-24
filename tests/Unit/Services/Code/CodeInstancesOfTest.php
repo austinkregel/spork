@@ -17,5 +17,3 @@ class CodeInstancesOfTest extends TestCase
         $this->assertSame([], $code->getClasses());
     }
 }
-
-

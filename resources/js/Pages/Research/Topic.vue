@@ -116,9 +116,9 @@
 <script setup>
 import {PlusIcon, HomeIcon, PencilIcon, ShoppingCartIcon, CheckIcon} from "@heroicons/vue/24/outline";
 import 'highlight.js/styles/monokai.css';
-import Markdown from 'vue3-markdown-it';
 import { ref, onMounted, computed } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
+import Markdown from '@/Components/Spork/Molecules/Markdown.vue';
 
 const { topic } = defineProps({
   'topic': Object,

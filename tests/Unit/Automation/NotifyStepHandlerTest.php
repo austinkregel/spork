@@ -33,10 +33,8 @@ class NotifyStepHandlerTest extends TestCase
             ],
         ]);
 
-        $handler = new NotifyStepHandler();
+        $handler = new NotifyStepHandler;
         $res = $handler->execute($automation, $step);
         $this->assertSame(['output' => 'Notifications sent: 1'], $res);
     }
 }
-
-

@@ -18,7 +18,6 @@ use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use App\Observers\ApplyCredentialsObserver;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -64,11 +63,15 @@ class Credential extends Model implements Crud, ModelQuery, Owner
 
     public const TYPE_SERVER = 'server';
 
+    public const TYPE_CRM = 'crm';
+
     public const TYPE_DOMAIN = 'domain';
 
     public const TYPE_REGISTRAR = 'registrar';
 
     public const TYPE_DEVELOPMENT = 'development';
+
+    public const TYPE_BACKUP_AGENT = 'backup_agent';
 
     public const TYPE_SOURCE = 'source';
 
@@ -77,6 +80,17 @@ class Credential extends Model implements Crud, ModelQuery, Owner
     public const TYPE_SSH = 'ssh';
 
     public const TYPE_EMAIL = 'email';
+
+    public const MONICA = 'monica';
+
+    public const PLAID = 'plaid';
+
+    public const PRIVACY = 'privacy';
+
+    public const ALL_FINANCE_PROVIDERS = [
+        self::PLAID,
+        self::PRIVACY,
+    ];
 
     public const ALL_DOMAIN_PROVIDERS = [
         self::DIGITAL_OCEAN,
@@ -88,6 +102,10 @@ class Credential extends Model implements Crud, ModelQuery, Owner
         self::GOOGLE_DOMAINS,
         self::AWS_ROUTE_53,
         self::TYPE_EMAIL,
+    ];
+
+    public const ALL_CRM_PROVIDERS = [
+        self::MONICA,
     ];
 
     public const ALL_SERVER_PROVIDERS = [self::DIGITAL_OCEAN, self::OVH_CLOUD, self::VULTR, self::LINODE, self::IMAP];

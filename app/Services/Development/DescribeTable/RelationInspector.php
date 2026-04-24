@@ -84,4 +84,3 @@ class RelationInspector
         return false;
     }
 }
-

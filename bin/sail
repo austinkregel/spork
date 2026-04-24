@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -e
+export X86Ugy=""
 
 export WWWUSER=${WWWUSER:-$UID}
 export WWWGROUP=${WWWGROUP:-$(id -g)}
-
+if [ ! -f .envl ]; then
+   cp .env.example .env
+fi
 if [ ! -f vendor/bin/sail ]; then
     docker run --rm \
         --pull=always \

@@ -26,7 +26,6 @@ class OperationJobTest extends TestCase
         Queue::fake();
     }
 
-     
     public function test_it_can_hold_an_operation(): void
     {
         $operation = new ExampleOperation;
@@ -36,7 +35,6 @@ class OperationJobTest extends TestCase
         $this->assertSame($operation, $operationJob->getOperation());
     }
 
-     
     public function test_handle_successfully_runs_operation(): void
     {
         $operation = new ExampleOperation;
@@ -55,7 +53,6 @@ class OperationJobTest extends TestCase
         $this->assertNotNull($operation->finished_run_at);
     }
 
-     
     public function test_handle_successfully_binds_dependencies(): void
     {
         $operation = new DependantOperation;
@@ -68,7 +65,6 @@ class OperationJobTest extends TestCase
         $this->assertNotNull($operation->fresh()->finished_run_at);
     }
 
-     
     public function test_it_has_the_proper_display_name(): void
     {
         $exampleOperation = new ExampleOperation;
@@ -79,7 +75,7 @@ class OperationJobTest extends TestCase
         $anotherOperationJob = new OperationJob($anotherOperation);
         $this->assertSame(AnotherOperation::class, $anotherOperationJob->displayName());
     }
-    
+
     public function test_it_has_the_proper_tags(): void
     {
         $exampleOperation = new ExampleOperation;
@@ -101,7 +97,6 @@ class OperationJobTest extends TestCase
         $this->assertSame($expectedAnotherTags, $anotherOperationJob->tags());
     }
 
-     
     public function test_it_uses_custom_tags_from_operation_instead_of_default_tags(): void
     {
         $taggedOperation = new TaggedOperation;

@@ -1,33 +1,25 @@
 <template>
-    <div>
-        <div class="mx-4">{{ name }}</div>
-        <div v-if="tasks.length > 0" class="py-2 mx-2  flex-col gap-4">
-            <Task v-for="task in tasks" :key="task.id+task.name" :task="task"></Task>
+    <div class="space-y-2">
+        <div class="px-4 text-sm font-semibold text-stone-700 dark:text-stone-200">{{ name }}</div>
+        <div v-if="tasks.length > 0" class="flex flex-col gap-2 px-2 py-2">
+            <Task v-for="task in tasks" :key="task.id+task.name" :task="task" />
         </div>
-        <div v-else>
-            <div class="text-center italic py-4 ">No tasks</div>
-        </div>
+        <div v-else class="px-4 py-4 text-center text-sm italic text-stone-500 dark:text-stone-400">No tasks</div>
 
-        <div class="mx-4">
-            <SporkButton xsmall secondary @click="() => $emit('open')">Add Task</SporkButton>
+        <div class="px-4">
+            <GlassButton variant="secondary" size="sm" @click="$emit('open')">Add Task</GlassButton>
         </div>
     </div>
 </template>
 
 <script setup>
-import SporkChecklist from "@/Components/Spork/SporkChecklist.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
-import { watch } from 'vue';
+import GlassButton from "@/Components/Glass/GlassButton.vue";
 import Task from "@/Components/Task.vue";
 
-const { tasks, name } = defineProps({
-    name: {
-        type: String,
-        default: null
-    },
-    tasks: {
-        type: Array,
-        default: () => []
-    }
-})
+defineProps({
+    name: { type: String, default: null },
+    tasks: { type: Array, default: () => [] },
+});
+
+defineEmits(['open']);
 </script>

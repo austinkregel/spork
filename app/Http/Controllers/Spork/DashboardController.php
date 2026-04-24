@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
 use App\Models\JobBatch;
 use App\Models\User;
 use Carbon\Carbon;
@@ -17,7 +18,9 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
-        $person = auth()->user()->person;
+        /** @var User $user */
+        $user = auth()->user();
+        $person = $user->person;
         $batchJobs = JobBatch::query()
             ->orderByDesc('created_at')
             ->paginate(request('job_limit', 10), ['*'], 'job_page', request('job_page', 1));
@@ -60,24 +63,37 @@ class DashboardController extends Controller
             $weatherReport = null;
         }
 
+        $newsTags = $user->tags()
+            ->with('conditions')
+            ->where('type', 'automatic')
+            ->whereHas('conditions', fn ($q) => $q->where('parameter', 'like', 'article.%'))
+            ->orderBy('order_column')
+            ->get();
+
+        $newsQuery = Article::query()
+            ->with('externalRssFeed.tags')
+            ->whereHas('externalRssFeed', function ($query) use ($user) {
+                $query
+                    ->where('owner_type', User::class)
+                    ->where('owner_id', $user->id);
+            })
+            ->distinct(['headline']);
+
+        if ($newsTags->isNotEmpty()) {
+            $newsQuery->withAnyTags($newsTags);
+        }
+
         return Inertia::render('Dashboard', [
-            'accounts' => auth()->user()->accounts()
+            'accounts' => $user->accounts()
                 ->where('accounts.type', 'checking')
                 ->get(),
             'weather' => $weatherReport,
-            'news' => (\App\Models\Article::query()
-                ->with('externalRssFeed.tags')
-                ->whereHas('externalRssFeed', function ($query) {
-                    $query->where('owner_type', User::class)
-                        ->where('owner_id', auth()->id());
+            'news_tags' => $newsTags,
+            'news' => $newsQuery
+                ->orderByDesc('created_at')
+                ->paginate(request('news_limit', 15), ['*'], 'news_page', request('news_page', 1)),
 
-                    $query->whereHas('tags', fn ($q) => $q->where('name->en', 'news'));
-                })
-                ->distinct(['headline'])
-                ->orderByDesc('last_modified')
-                ->paginate(request('news_limit', 15), ['*'], 'news_page', request('news_page', 1))),
-
-            'video_feed' => \App\Models\Article::query()
+            'video_feed' => Article::query()
                 ->with('externalRssFeed.tags')
                 ->whereHas('externalRssFeed', function ($query) {
                     $query->where('owner_type', User::class)

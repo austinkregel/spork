@@ -22,4 +22,3 @@ interface SshServiceContract
      */
     public static function factory(string $host, User $user): Credential;
 }
-

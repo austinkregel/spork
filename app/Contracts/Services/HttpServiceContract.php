@@ -18,4 +18,3 @@ interface HttpServiceContract
 
     public function toArray();
 }
-

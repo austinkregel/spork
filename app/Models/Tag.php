@@ -14,6 +14,7 @@ use App\Events\Models\Tag\TagUpdated;
 use App\Events\Models\Tag\TagUpdating;
 use App\Models\Finance\Account;
 use App\Models\Finance\Budget;
+use App\Models\Finance\PrivacyTransaction;
 use App\Models\Finance\Transaction;
 use App\Models\Traits\HasConditions;
 use App\Models\Traits\ScopeQSearch;
@@ -48,6 +49,7 @@ class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
     {
         return [
             'name' => 'json',
+            'slug' => 'json',
         ];
     }
 
@@ -76,6 +78,11 @@ class Tag extends \Spatie\Tags\Tag implements Conditionable, Crud, ModelQuery
     public function transactions(): MorphToMany
     {
         return $this->morphedByMany(Transaction::class, 'taggable');
+    }
+
+    public function privacyTransactions(): MorphToMany
+    {
+        return $this->morphedByMany(PrivacyTransaction::class, 'taggable');
     }
 
     public function projects(): MorphToMany

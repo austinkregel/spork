@@ -11,7 +11,9 @@ use Illuminate\Support\Carbon;
 class TableDescriptionRepository
 {
     private const VERSION = 1;
+
     private ?string $migrationHashCache = null;
+
     private string $basePath;
 
     public function __construct(
@@ -140,4 +142,3 @@ class TableDescriptionRepository
         return $decoded;
     }
 }
-

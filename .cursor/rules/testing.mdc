@@ -1,0 +1,32 @@
+---
+description: Testing conventions and how to run PHPUnit under Sail.
+globs:
+  - "tests/**/*.php"
+---
+
+See [AGENTS.md](mdc:AGENTS.md) for the full picture. Quick rules for tests:
+
+## Coverage requirements
+
+- **Required** for any meaningful domain logic.
+- **Required** basic feature tests for new routes (at minimum to assert they load and respond as expected for an authorized + unauthorized user).
+- Cover the happy path **plus** at least one failure branch — missing data, exception path, broken dependency, etc. One-test PRs for non-trivial logic are not enough.
+- Use factories and the `RefreshDatabase` trait. Don't hand-build fixtures when a factory exists.
+
+## Layout
+
+- `tests/Unit/` — isolated logic.
+- `tests/Feature/` — HTTP routes, jobs, and end-to-end controller flows.
+- `tests/Integration/` — multi-system workflows.
+
+## Running tests
+
+Only `phpunit` works under Sail in this project. The `test` alias does **not**. Always run from the project root.
+
+- Full suite: `cd /-/reforged-spork && /usr/local/bin/sail phpunit`
+- One file: `cd /-/reforged-spork && /usr/local/bin/sail phpunit tests/Feature/Foo/BarTest.php`
+- One method: `cd /-/reforged-spork && /usr/local/bin/sail phpunit --filter=test_name tests/Feature/Foo/BarTest.php`
+
+## Environment
+
+PHPUnit runs in the `testing` env with a MySQL test database, `sync` queue, and `array` cache + mail. Tests should not depend on real third-party services — mock them at the contract boundary.

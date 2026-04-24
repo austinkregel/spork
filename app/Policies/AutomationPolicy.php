@@ -39,5 +39,3 @@ class AutomationPolicy
         return $automation->user_id === $user->id;
     }
 }
-
-

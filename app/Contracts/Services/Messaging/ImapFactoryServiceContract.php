@@ -11,4 +11,3 @@ interface ImapFactoryServiceContract
 {
     public function make(Credential $credential): ImapServiceContract;
 }
-

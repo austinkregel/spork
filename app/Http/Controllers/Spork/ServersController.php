@@ -7,21 +7,70 @@ namespace App\Http\Controllers\Spork;
 use App\Http\Controllers\Controller;
 use App\Models\Credential;
 use App\Models\Server;
+use App\Services\Infrastructure\InfrastructureOverviewService;
 use Inertia\Inertia;
 
 class ServersController extends Controller
 {
+    public function __construct(
+        private readonly InfrastructureOverviewService $overviewService,
+    ) {}
+
     public function index()
     {
-        $servers = auth()->user()
-            ->servers()
-            ->with('tags', 'services')
-            ->paginate(10);
+        $overview = $this->overviewService->build(auth()->user());
 
-        return Inertia::render('Infrastructure/Index', [
-            'servers' => $servers->items(),
-            'pagination' => $servers,
+        return Inertia::render('Infrastructure/Index', array_merge($overview, [
             'sshCredential' => auth()->user()->credentials()->firstWhere('type', Credential::TYPE_SSH),
+            'quickActions' => [],
+        ]));
+    }
+
+    public function create()
+    {
+        $overview = $this->overviewService->build(auth()->user());
+        $sshKeys = auth()->user()->credentials()
+            ->where('type', Credential::TYPE_SSH)
+            ->get()
+            ->map(fn (Credential $credential) => [
+                'id' => $credential->id,
+                'name' => $credential->name,
+                'resolved_key_id' => $credential->settings['digital_ocean_key_id']
+                    ?? $credential->settings['key_id']
+                    ?? $credential->settings['droplet_key_id']
+                    ?? null,
+            ])
+            ->map(function ($key) {
+                $key['resolved_key_id'] = $key['resolved_key_id'] ?? (string) $key['id'];
+
+                return $key;
+            })
+            ->values();
+
+        return Inertia::render('Infrastructure/Create', [
+            'providers' => $overview['providers'],
+            'domains' => $overview['domains'],
+            'sshKeys' => $sshKeys,
+        ]);
+    }
+
+    public function connectHost()
+    {
+        $sshCredential = auth()->user()
+            ->credentials()
+            ->firstWhere('type', Credential::TYPE_SSH);
+
+        $command = '';
+
+        if ($sshCredential) {
+            $command = sprintf(
+                'curl -fsSL %s | bash',
+                route('host-connect', [$sshCredential->api_key]),
+            );
+        }
+
+        return Inertia::render('Infrastructure/ConnectHost', [
+            'command' => $command,
         ]);
     }
 

@@ -12,7 +12,9 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 class Deployment extends Model
 {
     use HasFactory;
+
     public $table = 'deployment';
+
     protected $fillable = [
         'project_id',
         'name',
@@ -34,6 +36,7 @@ class Deployment extends Model
         'last_deployed_commit',
         'deployment_duration',
     ];
+
     public function domain(): BelongsTo
     {
         return $this->belongsTo(Domain::class, 'primary_domain_id', 'id');
@@ -58,6 +61,7 @@ class Deployment extends Model
     {
         return $this->morphedByMany(Server::class, 'resource', 'deployment_resources');
     }
+
     public function credentials(): MorphToMany
     {
         return $this->morphedByMany(Credential::class, 'resource', 'deployment_resources');

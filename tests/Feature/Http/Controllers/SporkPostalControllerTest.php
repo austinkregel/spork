@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Email;
@@ -13,7 +15,7 @@ class SporkPostalControllerTest extends TestCase
 
     public function test_postal_route_is_accessible()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/postal');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/communication/postal');
 
         $response->assertStatus(200);
     }
@@ -34,23 +36,23 @@ class SporkPostalControllerTest extends TestCase
                 'encryption' => 'ssl',
                 'username' => '',
                 'password' => '',
-            ]
+            ],
         ]);
 
-        $this->app->bind(ImapCredentialService::class, fn() => $this->mock(ImapCredentialService::class));
-        
+        $this->app->bind(ImapCredentialService::class, fn () => $this->mock(ImapCredentialService::class));
+
         $email = Email::factory()->create([
             'credential_id' => $credential->id,
         ]);
 
-        $response = $this->get("http://spork.localhost/-/postal/{$email->id}");
+        $response = $this->get("http://spork.localhost/-/communication/postal/{$email->id}");
 
         $response->assertStatus(200);
     }
 
     public function test_postal_route_loads_expected_data()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/postal');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/communication/postal');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Postal/Inbox')

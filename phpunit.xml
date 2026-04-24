@@ -24,8 +24,14 @@
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="mysql"/>
+        <env name="DB_CONNECTION" value="mysql-testing"/>
         <env name="DB_DATABASE" value="testing"/>
+        <!-- Prevent committed bootstrap/cache artifacts from overriding phpunit.xml env values -->
+        <env name="APP_CONFIG_CACHE" value="/tmp/laravel-config-testing.php"/>
+        <env name="APP_ROUTES_CACHE" value="/tmp/laravel-routes-testing.php"/>
+        <env name="APP_EVENTS_CACHE" value="/tmp/laravel-events-testing.php"/>
+        <env name="APP_SERVICES_CACHE" value="/tmp/laravel-services-testing.php"/>
+        <env name="APP_PACKAGES_CACHE" value="/tmp/laravel-packages-testing.php"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
@@ -33,5 +39,6 @@
         <env name="LOG_CHANNEL" value="null"/>
         <env name="XDEBUG_MODE" value="coverage"/>
         <env name="SCOUT_DRIVER" value="null"/>
+        <env name="BROADCAST_DRIVER" value="null"/>
     </php>
 </phpunit>

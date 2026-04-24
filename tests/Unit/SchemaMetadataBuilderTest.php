@@ -18,7 +18,7 @@ class SchemaMetadataBuilderTest extends TestCase
         parent::tearDown();
     }
 
-    public function testBuildReturnsFieldDefinitionsAndFilters(): void
+    public function test_build_returns_field_definitions_and_filters(): void
     {
         $connection = Mockery::mock(ConnectionInterface::class);
         $descriptionRows = [
@@ -41,4 +41,3 @@ class SchemaMetadataBuilderTest extends TestCase
         $this->assertSame(['name'], $result['filters']);
     }
 }
-

@@ -3,10 +3,9 @@ import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
 
 const passwordInput = ref(null);
 const currentPasswordInput = ref(null);
@@ -25,12 +24,12 @@ const updatePassword = () => {
         onError: () => {
             if (form.errors.password) {
                 form.reset('password', 'password_confirmation');
-                passwordInput.value.focus();
+                passwordInput.value?.focus?.();
             }
 
             if (form.errors.current_password) {
                 form.reset('current_password');
-                currentPasswordInput.value.focus();
+                currentPasswordInput.value?.focus?.();
             }
         },
     });
@@ -49,41 +48,44 @@ const updatePassword = () => {
 
         <template #form>
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="current_password" value="Current Password" />
-                <TextInput
-                    id="current_password"
-                    ref="currentPasswordInput"
-                    v-model="form.current_password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="current-password"
-                />
-                <InputError :message="form.errors.current_password" class="mt-2" />
+                <GlassField v-slot="{ id, describedby, invalid }" label="Current Password" :error="form.errors.current_password">
+                    <GlassInput
+                        :id="id"
+                        ref="currentPasswordInput"
+                        v-model="form.current_password"
+                        type="password"
+                        autocomplete="current-password"
+                        :invalid="invalid"
+                        :describedby="describedby"
+                    />
+                </GlassField>
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="password" value="New Password" />
-                <TextInput
-                    id="password"
-                    ref="passwordInput"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
-                <InputError :message="form.errors.password" class="mt-2" />
+                <GlassField v-slot="{ id, describedby, invalid }" label="New Password" :error="form.errors.password">
+                    <GlassInput
+                        :id="id"
+                        ref="passwordInput"
+                        v-model="form.password"
+                        type="password"
+                        autocomplete="new-password"
+                        :invalid="invalid"
+                        :describedby="describedby"
+                    />
+                </GlassField>
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
-                <InputError :message="form.errors.password_confirmation" class="mt-2" />
+                <GlassField v-slot="{ id, describedby, invalid }" label="Confirm Password" :error="form.errors.password_confirmation">
+                    <GlassInput
+                        :id="id"
+                        v-model="form.password_confirmation"
+                        type="password"
+                        autocomplete="new-password"
+                        :invalid="invalid"
+                        :describedby="describedby"
+                    />
+                </GlassField>
             </div>
         </template>
 
@@ -92,9 +94,9 @@ const updatePassword = () => {
                 Saved.
             </ActionMessage>
 
-            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <GlassButton type="submit" :disabled="form.processing">
                 Save
-            </PrimaryButton>
+            </GlassButton>
         </template>
     </FormSection>
 </template>

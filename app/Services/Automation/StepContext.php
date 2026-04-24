@@ -33,7 +33,7 @@ class StepContext
         return $this->globals;
     }
 
-    public function record(int $index, array $items = null): void
+    public function record(int $index, ?array $items = null): void
     {
         $data = $items ?? [];
 
@@ -71,5 +71,3 @@ class StepContext
         return array_is_list($data) && collect($data)->every(fn ($item) => is_array($item));
     }
 }
-
-

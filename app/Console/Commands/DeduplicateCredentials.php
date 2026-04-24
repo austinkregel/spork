@@ -111,7 +111,6 @@ class DeduplicateCredentials extends Command
     /**
      * Repoint known relationships that reference credentials.
      *
-     * @param  \App\Models\Credential  $canonical
      * @param  \Illuminate\Database\Eloquent\Collection<int,\App\Models\Credential>  $duplicates
      */
     private function repointRelations(Credential $canonical, Collection $duplicates): void
@@ -139,5 +138,3 @@ class DeduplicateCredentials extends Command
             ->update(['credential_id' => $canonical->id]);
     }
 }
-
-

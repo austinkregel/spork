@@ -6,8 +6,9 @@ namespace App\Services\Server;
 
 use App\Contracts\Services\ServerServiceContract;
 use Illuminate\Support\Arr;
+use Nette\NotImplementedException;
 
-class LibvirtService implements ServerServiceContract
+class LibvirtService // implements ServerServiceContract
 {
     protected $resource;
 
@@ -307,6 +308,16 @@ class LibvirtService implements ServerServiceContract
     public function findAllSshkeys(): array
     {
         throw new NotImplementedException('SSH Key management is not supported');
+    }
+
+    public function createSshKey(string $name, string $publicKey): array
+    {
+        throw new NotImplementedException('SSH Key management is not supported');
+    }
+
+    public function findSshKeyByFingerprint(?string $fingerprint): ?array
+    {
+        return null;
     }
 
     public function createServerKey(array $config): SshKeylike

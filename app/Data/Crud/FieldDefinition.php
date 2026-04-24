@@ -19,8 +19,7 @@ class FieldDefinition implements Arrayable, JsonSerializable
         public readonly ?string $default = null,
         public readonly ?int $maxLength = null,
         public readonly array $extra = [],
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array<object>|object[]  $rows
@@ -126,4 +125,3 @@ class FieldDefinition implements Arrayable, JsonSerializable
         return $this->toArray();
     }
 }
-

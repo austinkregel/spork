@@ -7,9 +7,10 @@ namespace App\Http\Controllers\Spork;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Models\Project;
-use App\Models\Research;
-use App\Models\Task;
+use App\Projects\ProjectTemplates;
 use App\Services\Development\DescribeTableService;
+use App\Services\Projects\ProjectAttachmentService;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -39,6 +40,16 @@ class ProjectsController extends Controller
             'pages.domain',
             'research',
             'credentials',
+            'servers.tags',
+            'domains',
+            'budgets',
+            'accounts',
+            'transactions',
+            'externalRssFeeds',
+            'people',
+            'threads',
+            'automations',
+            'tasks',
             'deployments.domain',
             'deployments.server',
             'deployments.domains',
@@ -47,26 +58,6 @@ class ProjectsController extends Controller
 
         return Inertia::render('Projects/Project', [
             'project' => $project,
-            'daily_tasks' => $project->tasks()
-                ->where('status', '!=', 'done')
-                ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
-                ->where('type', 'daily')
-                ->get(),
-            'today_tasks' => $project->tasks()
-                ->where('status', '!=', 'done')
-                ->where('status', '!=', 'Blocked')
-
-                ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
-                ->where(function ($query) {
-                    $query->where('start_date', '<=', now())
-                        ->orWhere('end_date', '>=', now())
-                        ->orWhereNull('end_date');
-                })
-                ->get(),
-            'future_tasks' => $project->tasks()
-                ->where('status', '=', 'Blocked')
-                ->whereIn('project_id', auth()->user()->projects()->pluck('project_id'))
-                ->get(),
         ]);
     }
 
@@ -115,70 +106,106 @@ class ProjectsController extends Controller
 
     }
 
-    public function attach(Project $project)
+    public function attach(Request $request, Project $project, ProjectAttachmentService $attachments)
     {
-        //    request()
-        request()->validate([
-            'resource_type' => \Illuminate\Validation\Rule::in([
-                \App\Models\Credential::class,
-                \App\Models\Page::class,
-                Research::class,
-                Task::class,
-            ]),
+        $data = $request->validate([
+            'resource_type' => ['required', 'string'],
+            'resource_id' => ['required', 'integer'],
         ]);
 
-        if (\DB::table('project_resources')->where([
-            'resource_type' => request()->get('resource_type'),
-            'resource_id' => request()->get('resource_id'),
-            'project_id' => $project->id,
-        ])->exists()) {
-            return response([
-                'message' => 'Already exists',
-            ], 422);
-        }
+        $attachments->attach(
+            project: $project,
+            resource_type: $data['resource_type'],
+            resource_id: (int) $data['resource_id'],
+        );
 
-        \DB::table('project_resources')->insert([
-            'resource_type' => request()->get('resource_type'),
-            'resource_id' => request()->get('resource_id'),
-            'project_id' => $project->id,
-            'settings' => '{}',
-        ]);
+        return response()->json([], 204);
     }
 
-    public function detach(Project $project)
+    public function detach(Request $request, Project $project, ProjectAttachmentService $attachments)
     {
-        //    request()
-        request()->validate([
-            'resource_type' => \Illuminate\Validation\Rule::in([
-                \App\Models\Credential::class,
-                \App\Models\Page::class,
-                Research::class,
-                Task::class,
-            ]),
+        $data = $request->validate([
+            'resource_type' => ['required', 'string'],
+            'resource_id' => ['required', 'integer'],
         ]);
 
-        \DB::table('project_resources')->where([
-            'resource_type' => request()->get('resource_type'),
-            'resource_id' => request()->get('resource_id'),
-            'project_id' => $project->id,
-        ])->delete();
+        $attachments->detach(
+            project: $project,
+            resource_type: $data['resource_type'],
+            resource_id: (int) $data['resource_id'],
+        );
+
+        return response()->json([], 204);
     }
 
-    public function create()
-    {
-        $description = (new DescribeTableService)->describe(new Project);
+    public function create(
+        DescribeTableService $description_service,
+        ProjectTemplates $templates,
+    ) {
+        $description = $description_service->describe(new Project);
 
         return Inertia::render('Projects/Create', [
             'description' => $description,
+            'project_templates' => $templates->forFrontend(),
         ]);
     }
 
-    public function store(StoreProjectRequest $request)
-    {
-        $project = new Project;
-        $project->forceFill($request->all());
-        $project->save();
+    public function store(
+        StoreProjectRequest $request,
+        ConnectionInterface $db,
+        ProjectAttachmentService $attachment_service,
+        ProjectTemplates $templates,
+    ) {
+        $data = $request->validated();
+
+        $attachments = $data['attachments'] ?? [];
+        unset($data['attachments']);
+
+        $data['settings'] = $this->normalizeSettings($data['settings'] ?? null);
+        if (is_array($data['settings'] ?? null) && array_key_exists('template', $data['settings'])) {
+            $data['settings']['template'] = $templates->normalizeKey((string) $data['settings']['template']);
+        }
+
+        /** @var Project $project */
+        $project = null;
+
+        $db->transaction(function () use (&$project, $data, $attachments, $attachment_service): void {
+            $project = new Project;
+            $project->forceFill($data);
+            $project->save();
+
+            foreach ($attachments as $attachment) {
+                $attachment_service->attach(
+                    project: $project,
+                    resource_type: (string) ($attachment['resource_type'] ?? ''),
+                    resource_id: (int) ($attachment['resource_id'] ?? 0),
+                );
+            }
+        });
 
         return redirect()->route('projects.show', $project);
+    }
+
+    private function normalizeSettings(mixed $settings): ?array
+    {
+        if ($settings === null) {
+            return null;
+        }
+
+        if (is_array($settings)) {
+            return $settings;
+        }
+
+        if (is_string($settings) && trim($settings) === '') {
+            return null;
+        }
+
+        if (is_string($settings)) {
+            $decoded = json_decode($settings, true);
+
+            return is_array($decoded) ? $decoded : null;
+        }
+
+        return null;
     }
 }

@@ -1,69 +1,86 @@
 <template>
   <div class="p-4 sm:p-6 lg:p-8">
-    <div class="sm:flex sm:items-center">
+    <div v-if="header || description" class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
-        <h1 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">{{ header }}</h1>
-        <p class="mt-2 text-sm text-stone-700 dark:text-stone-200">{{ description }}</p>
+        <h1 class="text-base font-semibold leading-6 text-stone-900 dark:text-stone-50">
+          {{ header }}
+        </h1>
+        <p v-if="description" class="mt-1 text-sm text-stone-600 dark:text-stone-300">
+          {{ description }}
+        </p>
       </div>
     </div>
-    <div class="mt-8 flow-root">
-      <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <table class="w-full rounded overflow-x-hidden divide-y divide-stone-300 dark:divide-stone-950 bg-white dark:bg-stone-950 rounded">
-            <thead>
+
+    <GlassSurface class="mt-6 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)]">
+          <thead class="bg-stone-100/40 dark:bg-stone-800/40">
             <tr>
-              <th v-for="header in headers" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-stone-900 dark:text-stone-50 sm:pl-3">
-                {{  header.name }}
+              <th
+                v-for="(column, idx) in headers"
+                :key="column.name + idx"
+                scope="col"
+                class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-stone-600 dark:text-stone-300"
+              >
+                {{ column.name }}
               </th>
             </tr>
-            </thead>
-            <tbody class="bg-white dark:bg-stone-900">
-            <ContextMenu as="tr" v-for="item in items" :key="item" class="even:bg-stone-50 dark:even:bg-stone-800">
-              <td v-for="header in headers" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-stone-900 dark:text-stone-50 sm:pl-3">
-                {{ parseTheAccessor(header, item) }}
+          </thead>
+          <tbody class="divide-y divide-[var(--color-glass-border-light)] dark:divide-[var(--color-glass-border-dark)]">
+            <ContextMenu
+              v-for="(item, rowIdx) in items"
+              :key="rowIdx"
+              as="tr"
+              class="transition-colors motion-reduce:transition-none hover:bg-stone-100/50 dark:hover:bg-stone-700/40"
+            >
+              <td
+                v-for="(column, colIdx) in headers"
+                :key="column.name + colIdx + '-' + rowIdx"
+                class="whitespace-nowrap px-4 py-2 text-sm text-stone-700 dark:text-stone-200"
+              >
+                {{ parseTheAccessor(column, item) }}
               </td>
-
               <template #items>
-                <slot name="context-items" :item="item"></slot>
+                <slot name="context-items" :item="item" />
               </template>
             </ContextMenu>
-
-            <tr v-if="items?.length === 0">
-              <td :colspan="headers.length + 1" class="text-center p-4 dark:text-stone-50">
+            <tr v-if="!items || items.length === 0">
+              <td
+                :colspan="headers.length"
+                class="px-4 py-6 text-center text-sm text-stone-500 dark:text-stone-400"
+              >
                 No data available
               </td>
             </tr>
-            </tbody>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </div>
-    </div>
+    </GlassSurface>
   </div>
 </template>
 
 <script setup>
-import dayjs from 'dayjs';
-import ContextMenu from '@/Components/ContextMenus/ContextMenu.vue'
+import GlassSurface from '@/Components/Glass/GlassSurface.vue';
+import ContextMenu from '@/Components/ContextMenus/ContextMenu.vue';
+
 defineProps({
-  headers: Array,
-  items: Array,
-  header: String,
-  description: String,
-})
+  headers: { type: Array, default: () => [] },
+  items: { type: Array, default: () => [] },
+  header: { type: String, default: null },
+  description: { type: String, default: null },
+});
 
-const parseTheAccessor = (header, value) => {
-  if (typeof header.accessor === 'function') {
-      try {
-          return header.accessor(value)
-      } catch (e) {
-          console.error('Unable to execute the header accessor from header:', header, e);
-          return 'an error occurred, check console for logs';
-      }
+const parseTheAccessor = (column, value) => {
+  if (typeof column.accessor === 'function') {
+    try {
+      return column.accessor(value);
+    } catch (e) {
+      console.error('Unable to execute the column accessor:', column, e);
+      return 'an error occurred, check console for logs';
+    }
   }
 
-  if (!value) {
-      return header.name
-  }
-  return value[header?.accessor] ?? header.name;
-}
+  if (!value) return column.name;
+  return value[column?.accessor] ?? column.name;
+};
 </script>

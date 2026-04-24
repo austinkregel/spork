@@ -12,9 +12,11 @@ use App\Events\Models\Budget\BudgetUpdated;
 use App\Events\Models\Budget\BudgetUpdating;
 use App\Models\Crud;
 use App\Models\Taggable;
+use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use App\Models\User;
+use App\Navigation\Pillar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +25,7 @@ use Spatie\Tags\HasTags;
 class Budget extends Model implements Crud, Taggable
 {
     use HasFactory;
+    use HasProjectResource;
     use HasTags;
     use ScopeQSearch;
     use ScopeRelativeSearch;
@@ -104,5 +107,13 @@ class Budget extends Model implements Crud, Taggable
     public function isFinite(): bool
     {
         return $this->count !== null;
+    }
+
+    /**
+     * Opt-in: surface this model under Finance pillar → Manage in the glass sub-nav.
+     */
+    public static function pillar(): ?Pillar
+    {
+        return Pillar::FINANCE;
     }
 }

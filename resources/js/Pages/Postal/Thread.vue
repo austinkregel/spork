@@ -1,160 +1,209 @@
 <template>
-    <AppLayout title="Dashboard">
-        <!-- component -->
-        <main class="grid grid-cols-3 overflow-hidden">
-            <section class="flex flex-col pt-3 bg-stone-50 dark:bg-stone-900  overflow-y-scroll" style="height: calc(100vh - 65px);">
-                <ul class="divide-y divide-stone-200 dark:divide-stone-700">
-                    <li v-for="thread in page.props.threads.data" class="p-4 px-3 transition hover:bg-slate-100 dark:hover:bg-slate-600">
-                        <Link :href="route('inbox.show', thread.id)" class="flex flex-col">
-                            <h3 class="text-lg font-semibold dark:text-stone-50 truncate">{{ thread.name}}</h3>
-                            <div class="text-sm truncate dark:text-stone-200">{{ thread.participants.map(p => p.name).join(", ") }}</div>
-                        </Link>
-                      <div class="flex flex-wrap pt-1">
-                        <div class="text-md italic text-stone-400 dark:text-stone-200">{{ thread.description }}</div>
-                        <p class="text-sm text-stone-400">{{ thread.human_timestamp}}</p>
-                      </div>
-                    </li>
-                </ul>
-            </section>
-            <section class="relative border-l-2 dark:border-stone-800 col-span-2 flex flex-col bg-white dark:bg-stone-800 overflow-y-scroll" style="height: calc(100vh - 65px);">
-                <div class="sticky z-0 bg-white dark:bg-stone-800 top-0 flex justify-between items-center h-24 border-b-2 dark:border-stone-700 p-4">
-                    <div class="flex space-x-4 items-center">
-                        <div class="isolate flex -space-x-2 overflow-hidden">
-                            <img v-for="(participant, i) in thread.participants.slice(0, 10)" :class="'z-'+i+( i > 0? '0' : '')" class="relative  inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-stone-600"
-                                 :src="participant?.photo_url ?? ('/storage/'+participant.id+'.png')" alt="" />
-                        </div>
-                        <div class="flex flex-col">
-                            <h3 class="font-semibold text-lg dark:text-stone-50 truncate">{{
-                                thread.participants.map(particpant =>
-                                    particpant.name).join(', ')
-                              }}</h3>
-                            <p class="text-light text-stone-400 dark:text-stone-200">{{thread.topic}}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <ul class="flex text-stone-400 space-x-4">
-                            <li class="w-6 h-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
-                                </svg>
-                            </li>
-                            <li class="w-6 h-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </li>
+  <AppLayout :title="thread?.name ?? 'Conversation'">
+    <div class="flex h-[calc(100vh-4rem)] min-h-0 w-full">
+      <aside
+        class="hidden w-full max-w-sm shrink-0 flex-col border-r border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-[var(--color-glass-surface-light)] dark:bg-[var(--color-glass-surface-dark)] backdrop-blur-glass md:flex xl:w-96"
+        aria-label="Threads"
+      >
+        <header class="border-b border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] px-4 py-3">
+          <h1 class="text-base font-semibold text-stone-900 dark:text-stone-50">Conversations</h1>
+        </header>
+        <ul
+          v-if="threads.length"
+          class="min-h-0 flex-1 divide-y divide-[var(--color-glass-border-light)] overflow-y-auto dark:divide-[var(--color-glass-border-dark)]"
+        >
+          <li v-for="t in threads" :key="t.id">
+            <Link
+              :href="route('communication.chat.show', t.id)"
+              :class="[
+                'flex flex-col gap-1 px-4 py-3 transition-colors motion-reduce:transition-none focus:outline-none focus-visible:bg-indigo-500/10',
+                thread?.id === t.id
+                  ? 'bg-indigo-500/10'
+                  : 'hover:bg-stone-100/60 dark:hover:bg-stone-800/40',
+              ]"
+            >
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="truncate text-sm font-semibold text-stone-900 dark:text-stone-50">{{ t.name }}</h3>
+                <span class="shrink-0 text-xs text-stone-500 dark:text-stone-400">{{ t.human_timestamp }}</span>
+              </div>
+              <p class="truncate text-xs text-stone-500 dark:text-stone-400">
+                {{ t.participants.map((p) => p.name).join(', ') }}
+              </p>
+            </Link>
+          </li>
+        </ul>
+        <GlassEmptyState
+          v-else
+          icon="ChatBubbleLeftRightIcon"
+          title="No conversations"
+          description="Threads will appear here once they're started."
+          class="m-3"
+        />
+      </aside>
 
-                            <li class="w-6 h-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                                </svg>
-                            </li>
-                            <li class="w-6 h-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </li>
-                            <li class="w-6 h-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                                </svg>
-                            </li>
-                        </ul>
-                    </div>
+      <section class="flex min-h-0 min-w-0 flex-1 flex-col">
+        <header
+          class="flex shrink-0 items-center justify-between gap-4 border-b border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-[var(--color-glass-surface-light)] dark:bg-[var(--color-glass-surface-dark)] backdrop-blur-glass px-4 py-3 sm:px-6"
+        >
+          <div class="flex min-w-0 items-center gap-3">
+            <div class="flex -space-x-2">
+              <img
+                v-for="(participant, i) in participantStack"
+                :key="participant.id ?? i"
+                :src="avatarFor(participant)"
+                alt=""
+                class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-stone-800"
+              />
+            </div>
+            <div class="min-w-0">
+              <h2 class="truncate text-sm font-semibold text-stone-900 dark:text-stone-50">
+                {{ thread?.participants.map((p) => p.name).join(', ') }}
+              </h2>
+              <p v-if="thread?.topic" class="truncate text-xs text-stone-500 dark:text-stone-400">
+                {{ thread.topic }}
+              </p>
+            </div>
+          </div>
+        </header>
+
+        <article class="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6">
+          <ol v-if="thread?.messages?.length" class="flex flex-col gap-3">
+            <li
+              v-for="message in thread.messages"
+              :key="message.id ?? message.uuid ?? message.originated_at"
+              class="flex items-end gap-3"
+              :class="message.is_user ? 'justify-end' : 'justify-start'"
+            >
+              <img
+                v-if="!message.is_user"
+                :src="avatarFor(message.from_person)"
+                alt=""
+                class="h-8 w-8 shrink-0 rounded-full"
+              />
+              <div
+                :class="[
+                  'max-w-xl space-y-1 rounded-2xl px-3 py-2 shadow-sm',
+                  message.is_user
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-[var(--color-glass-surface-strong-light)] text-stone-900 backdrop-blur-glass dark:bg-[var(--color-glass-surface-strong-dark)] dark:text-stone-100',
+                ]"
+              >
+                <div :class="['text-xs', message.is_user ? 'text-indigo-100' : 'text-stone-500 dark:text-stone-400']">
+                  <span class="font-medium">{{ message?.from_person?.name }}</span>
+                  <span class="ml-1">· {{ formatDate(message.originated_at) }}</span>
                 </div>
-                <section class="flex-grow bg-gray-300 dark:bg-zinc-900">
-                    <article class="px-4 mt-4 text-stone-500 dark:text-stone-50 leading-7 tracking-wider gap-1 flex flex-col-reverse">
-                        <div v-for="message in thread.messages" class="w-full flex gap-4 flex-wrap">
-                            <div class="mt-5">
-                                <img :src="message?.from_person?.photo_url ?? ('/storage/'+message.from_person.id+'.png')" alt="" class="h-8 w-8 rounded-full" />
-                            </div>
+                <img
+                  v-if="message.thumbnail_url || message.message?.startsWith('https://tenor.com')"
+                  :src="message.thumbnail_url ?? message.message"
+                  :alt="message.message"
+                  class="w-64 rounded-md"
+                />
+                <Markdown
+                  v-if="message.message"
+                  :source="message.message"
+                  :class="['prose prose-sm max-w-none', message.is_user ? 'prose-invert' : 'dark:prose-invert']"
+                />
+              </div>
+              <img
+                v-if="message.is_user"
+                :src="avatarFor(message.from_person)"
+                alt=""
+                class="h-8 w-8 shrink-0 rounded-full"
+              />
+            </li>
+          </ol>
+          <GlassEmptyState
+            v-else
+            icon="ChatBubbleBottomCenterTextIcon"
+            title="No messages yet"
+            description="Be the first to say something."
+          />
+        </article>
 
-                            <div>
-                                <div class="-my-1 text-xxs text-black dark:text-stone-400">{{message?.from_person?.name}} -- {{ formatDate(message.originated_at) }}</div>
-                                <div
-                                    :class="[message.is_user ? 'bg-indigo-600': ' bg-blue-600']"
-                                    class="px-2 py-1 flex rounded-lg shadow"
-                                >
-                                    <img v-if="message.thumbnail_url || message.message?.startsWith('https://tenor.com')" :src="message.thumbnail_url ?? message.message" :alt="message.message" class="w-64"/>
-                                    <div v-else-if="message.thumbnail_url">{{message.thumbnail_url}}</div>
-                                    <Markdown v-else :source="message.message" class="prose dark:prose-invert"></Markdown>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                </section>
-                <section class=" flex flex-col border dark:border-zinc-900 bg-stone-50 dark:bg-zinc-950">
-                    <textarea class="bg-stone-50 dark:bg-stone-900 p-2  m-2 rounded-xl dark:border-stone-600" placeholder="Type your reply here..." rows="3"></textarea>
-                    <div class="flex items-center justify-between p-2">
-                        <button class="h-6 w-6 text-stone-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                            </svg>
-                        </button>
-                        <button class="bg-purple-600 dark:bg-purple-700 text-white px-6 py-2 rounded-xl">Reply</button>
-                    </div>
-                </section>
-            </section>
-        </main>
-    </AppLayout>
+        <footer
+          class="shrink-0 border-t border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-[var(--color-glass-surface-light)] dark:bg-[var(--color-glass-surface-dark)] backdrop-blur-glass p-3"
+        >
+          <form class="flex flex-col gap-2" @submit.prevent="reply">
+            <label for="reply" class="sr-only">Reply</label>
+            <textarea
+              id="reply"
+              v-model="replyText"
+              rows="3"
+              placeholder="Type your reply…"
+              class="block w-full rounded-md border border-stone-300 bg-white/70 px-3 py-2 text-sm text-stone-900 shadow-sm placeholder:text-stone-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-stone-600 dark:bg-stone-800/70 dark:text-stone-100 dark:placeholder:text-stone-500"
+            />
+            <div class="flex items-center justify-between">
+              <GlassIconButton variant="ghost" size="sm" type="button" label="Attach file">
+                <PaperClipIcon class="h-4 w-4" aria-hidden="true" />
+              </GlassIconButton>
+              <GlassButton type="submit" :disabled="!replyText.trim()" :icon-right="PaperAirplaneIcon">
+                Reply
+              </GlassButton>
+            </div>
+          </form>
+        </footer>
+      </section>
+    </div>
+  </AppLayout>
 </template>
 
-
 <script setup>
-import { ref, computed } from 'vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue';
-import CrudView from "@/Components/Spork/CrudView.vue";
-import SporkInput from "@/Components/Spork/SporkInput.vue";
-import {buildUrl} from "@kbco/query-builder";
-import Markdown from 'vue3-markdown-it';
+import { computed, ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { PaperAirplaneIcon, PaperClipIcon } from '@heroicons/vue/24/outline';
 
+import AppLayout from '@/Layouts/AppLayout.vue';
+import Markdown from '@/Components/Spork/Molecules/Markdown.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassIconButton from '@/Components/Glass/GlassIconButton.vue';
+import GlassEmptyState from '@/Components/Glass/GlassEmptyState.vue';
+
+dayjs.extend(utc);
+dayjs.extend(relativeTime);
 
 const page = usePage();
 
-const data = ref([]);
-const pagination = ref({});
 const thread = computed(() => page.props.thread);
+const threads = computed(() => page.props.threads?.data ?? []);
 
-const hasErrors = (error) => {
-  if (!this.form.errors) {
-    return '';
-  }
+const replyText = ref('');
 
-  return this.form.errors[error] ?? null;
-};
-const save = async (form) => {
-  if (!form.id) {
-    await axios.post('/api/crud/servers', form);
-  } else {
-    console.log('No edit method defined')
-  }
-};
-const onDelete = async (data) => {
-  await axios.delete('/api/crud/servers/' + form.id);
-};
-const onExecute = async({ actionToRun, selectedItems}) => {
-  try {
-    await this.$store.dispatch('executeAction', {
-      url: actionToRun.url,
-      data: {
-        selectedItems
-      },
-    });
+const participantStack = computed(() => thread.value?.participants?.slice(0, 5) ?? []);
 
-  } catch (e) {
-    console.log(e.message, 'error');
-  }
+function avatarFor(person) {
+  if (!person) return '';
+  return person.photo_url ?? `/storage/${person.id}.png`;
 }
-const formatDate = (d) => dayjs(d * 1000).fromNow();
+
+function reply() {
+  if (!replyText.value.trim()) return;
+  // Reply submission wiring is handled by the existing chat backend; this is a stub
+  // until that flow is finished. We still clear the input for UX feedback.
+  replyText.value = '';
+}
+
+function normalizeTimestamp(value) {
+  if (value === null || value === undefined) {
+    return dayjs.invalid();
+  }
+  if (typeof value === 'number') {
+    const seconds = value > 1e12 ? value / 1000 : value;
+    return dayjs.unix(seconds).utc();
+  }
+  const numeric = Number(value);
+  if (!Number.isNaN(numeric)) {
+    const seconds = numeric > 1e12 ? numeric / 1000 : numeric;
+    return dayjs.unix(seconds).utc();
+  }
+  return dayjs.utc(value);
+}
+
+function formatDate(value) {
+  const instance = normalizeTimestamp(value);
+  if (!instance.isValid()) return '';
+  return instance.fromNow();
+}
 </script>
-
-<style scoped>
-
-</style>

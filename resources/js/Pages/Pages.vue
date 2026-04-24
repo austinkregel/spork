@@ -1,178 +1,150 @@
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Pages">
         <template #header>
-            <h2 class="font-semibold text-xl text-stone-800 dark:text-stone-200 leading-tight">
-                Pages
-            </h2>
+            <h2 class="text-xl font-semibold leading-tight text-stone-800 dark:text-stone-200">Pages</h2>
         </template>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-stone-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <!-- We need to figure out a better way to get the crud actions. -->
-                    <crud-view
-                        :form="form"
-                        singular="Page"
-                        @destroy="onDelete"
-                        @index="({ page, limit, ...args}) => fetch({ page, limit, ...args })"
-                        @execute="onExecute"
-                        @save="save"
-                        :save="save"
-                        :data="data"
-                        :paginator="pagination"
-                    >
-                        <template #modal-title>
-                            <div>
-                                Create a page
+        <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <GlassSurface class="overflow-hidden">
+                <crud-view
+                    :form="form"
+                    singular="Page"
+                    :data="data"
+                    :paginator="pagination"
+                    :save="save"
+                    @destroy="onDelete"
+                    @index="({ page, limit, ...args}) => fetch({ page, limit, ...args })"
+                    @execute="onExecute"
+                    @save="save"
+                >
+                    <template #modal-title>Create a page</template>
+                    <template v-slot:data="{ data }">
+                        <div class="flex flex-col">
+                            <div class="text-base font-semibold text-stone-900 dark:text-stone-50">{{ data.title }}</div>
+                            <div class="text-xs text-stone-500 dark:text-stone-400">{{ data.uri }}</div>
+                        </div>
+                    </template>
+                    <template #no-data>No pages</template>
+
+                    <template #form>
+                        <div class="grid grid-cols-6 gap-4">
+                            <div class="col-span-6">
+                                <glass-field label="Title">
+                                    <glass-input v-model="form.title" name="title" />
+                                </glass-field>
                             </div>
-                        </template>
-                        <template v-slot:data="{ data }">
-                            <div class="flex flex-col">
-                                <div class="text-lg text-left">
-                                    {{ data.title }}
-                                </div>
-                                <div class="flex flex-wrap gap-2">
-                                    <div class="text-xs dark:text-stone-300">
-                                        {{ data }}
-                                    </div>
-                                </div>
+                            <div class="col-span-6">
+                                <glass-field label="URI">
+                                    <glass-input v-model="form.uri" name="uri" />
+                                </glass-field>
                             </div>
-                        </template>
-                        <template #no-data>No pages</template>
-
-                        <template #form>
-                            <div>
-                                <div class="grid grid-cols-6 gap-4 mt-2">
-                                    <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">title</label>
-                                        <spork-input v-model="form.title" type="text" name="title" id="title" />
-                                    </div>
-
-                                    <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">URI</label>
-                                        <spork-input v-model="form.uri" type="text" name="name" id="name" />
-                                    </div>
-                                    <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">route</label>
-                                        <spork-input v-model="form.route" type="text" name="name" id="name" />
-                                    </div>
-                                    <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">Middleware</label>
-                                        <spork-input v-model="form.settings.type" type="text" name="name" id="name" />
-                                    </div>
-
-                                    <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">Subtitle</label>
-                                        <spork-input v-model="form.subtitle" type="text" name="name" id="name" />
-                                    </div>
-                                    <div class="col-span-6">
-                                        <label for="excerpt" class="block text-sm font-medium">Excerpt</label>
-                                        <spork-input v-model="form.excerpt" type="text" name="excerpt" id="excerpt" />
-                                    </div>
-                                    <div class="col-span-6">
-                                        <label for="view" class="block text-sm font-medium">View</label>
-                                        <spork-input v-model="form.view" type="text" name="view" id="view" />
-                                    </div>
-                                    <div class="col-span-6">
-                                        <label for="redirect" class="block text-sm font-medium">redirect</label>
-                                        <input v-model="form.redirect" type="checkbox" class="ring-stone-600 bg-stone-700"/>
-                                    </div>
-                                    <div class="col-span-6">
-                                        <label for="name" class="block text-sm font-medium">Is Active?</label>
-                                        <input v-model="form.is_active" type="checkbox" class="ring-stone-600 bg-stone-700"/>
-                                    </div>
-                                </div>
+                            <div class="col-span-6">
+                                <glass-field label="Route">
+                                    <glass-input v-model="form.route" name="route" />
+                                </glass-field>
                             </div>
-                        </template>
-
-                    </crud-view>
-                </div>
-            </div>
+                            <div class="col-span-6">
+                                <glass-field label="Middleware">
+                                    <glass-input v-model="form.settings.type" name="middleware" />
+                                </glass-field>
+                            </div>
+                            <div class="col-span-6">
+                                <glass-field label="Subtitle">
+                                    <glass-input v-model="form.subtitle" name="subtitle" />
+                                </glass-field>
+                            </div>
+                            <div class="col-span-6">
+                                <glass-field label="Excerpt">
+                                    <glass-input v-model="form.excerpt" name="excerpt" />
+                                </glass-field>
+                            </div>
+                            <div class="col-span-6">
+                                <glass-field label="View">
+                                    <glass-input v-model="form.view" name="view" />
+                                </glass-field>
+                            </div>
+                            <div class="col-span-6">
+                                <label class="flex items-center gap-2 text-sm font-medium text-stone-700 dark:text-stone-200">
+                                    <input v-model="form.redirect" type="checkbox" class="h-4 w-4 rounded border-stone-300 text-indigo-600 focus:ring-indigo-500 dark:border-stone-600">
+                                    Redirect
+                                </label>
+                            </div>
+                            <div class="col-span-6">
+                                <label class="flex items-center gap-2 text-sm font-medium text-stone-700 dark:text-stone-200">
+                                    <input v-model="form.is_active" type="checkbox" class="h-4 w-4 rounded border-stone-300 text-indigo-600 focus:ring-indigo-500 dark:border-stone-600">
+                                    Is active
+                                </label>
+                            </div>
+                        </div>
+                    </template>
+                </crud-view>
+            </GlassSurface>
         </div>
     </AppLayout>
 </template>
 
 <script>
 import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import axios from 'axios';
+import dayjs from 'dayjs';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import CrudView from "@/Components/Spork/CrudView.vue";
-import SporkInput from "@/Components/Spork/SporkInput.vue";
-import {buildUrl} from "@kbco/query-builder";
+import GlassSurface from "@/Components/Glass/GlassSurface.vue";
+import GlassField from "@/Components/Glass/GlassField.vue";
+import GlassInput from "@/Components/Glass/GlassInput.vue";
+import { buildUrl } from "@kbco/query-builder";
+
 export default {
-    components: {
-        CrudView,
-        AppLayout,
-        SporkInput
-    },
+    components: { CrudView, AppLayout, GlassSurface, GlassField, GlassInput },
     setup() {
         return {
             createOpen: ref(false),
-            form: ref(({
-                name: '',
-                settings: {},
-            })),
+            form: ref({ name: '', settings: {} }),
             data: ref([]),
             pagination: ref({}),
-
-        }
+        };
     },
     watch: {
-        date(to, from) {
-            this.form.remind_at = dayjs(to).startOf('day').utc().format("YYYY-MM-DD HH:mm:ss")
-        }
+        date(to) {
+            this.form.remind_at = dayjs(to).startOf('day').utc().format("YYYY-MM-DD HH:mm:ss");
+        },
     },
     methods: {
         hasErrors(error) {
-            if (!this.form.errors) {
-                return '';
-            }
-
+            if (!this.form.errors) return '';
             return this.form.errors[error] ?? null;
-        },
-        dateFormat(contact) {
-            return '<span class="text-stone-900">' + contact.starts_at  + '  at </span>' +
-                '<span class="text-stone-800">' + dayjs(contact.last_occurrence || contact.remind_at).format('h:mma') + '</span>'
         },
         async save(form) {
             if (!form.id) {
                 await axios.post('/api/crud/pages', form);
             } else {
-                console.log('No edit method defined')
+                console.log('No edit method defined');
             }
         },
-        async onDelete(data) {
-            await axios.delete('/api/crud/pages/' + form.id);
+        async onDelete() {
+            await axios.delete('/api/crud/pages/' + this.form.id);
         },
-        async onExecute({ actionToRun, selectedItems}) {
+        async onExecute({ actionToRun, selectedItems }) {
             try {
                 await this.$store.dispatch('executeAction', {
                     url: actionToRun.url,
-                    data: {
-                        selectedItems
-                    },
+                    data: { selectedItems },
                 });
-
             } catch (e) {
                 console.log(e.message, 'error');
             }
         },
         async fetch({ page, limit, ...args }) {
-            const { data: { data, ...pagination} } = await axios.get(buildUrl(
+            const { data: { data, ...pagination } } = await axios.get(buildUrl(
                 '/api/crud/pages', {
                     page, limit,
                     ...args,
-                    include: []
-                }
+                    include: [],
+                },
             ));
 
             this.data = data;
             this.pagination = pagination;
-        }
+        },
     },
-
-}
+};
 </script>
-
-<style scoped>
-
-</style>

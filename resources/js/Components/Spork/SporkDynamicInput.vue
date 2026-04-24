@@ -1,207 +1,148 @@
 <template>
-    <div class="w-full relative flex flex-col divide-y divide-stone-700 dark:divide-stone-800">
-      <!-- An editable label -->
-        <input
-            :value="modelValue.name"
-            @input="$emit('update:modelValue', {
-                ...modelValue,
-                name: $event.target.value
-            })"
-            :disabled="!editableLabel"
-            :class="inputClasses(!editableLabel)"
-            class="rounded-t-md text-xs leading-loose tracking-wide font-bold py-0 px-4" placeholder="text" type="text"
-        />
-        <label
-            class="flex  dark:placeholder-stone-300 rounded-b-md"
-            v-if="type !== 'object' && type !== 'select'"
-            :class="[type === 'checkbox' ? 'pl-4 pt-4': 'p-0']"
-        >
-          <input
-              class="py-2 px-3 block sm:text-sm rounded-b-md"
-              :class="inputClasses(disabledInput)"
-              :value="modelValue.value"
-              @input="$emit('update:modelValue', {
-                    ...modelValue,
-                    value: $event.target.value
-                })"
-              v-if="type === 'text' || !type"
-              :type="type"
-              :disabled="disabledInput"
-          />
-          <input
-              class="py-2 px-3 block sm:text-sm rounded-b-md"
-              :class="inputClasses(disabledInput)"
-              :value="modelValue.value"
-              @input="$emit('update:modelValue', {
-                    ...modelValue,
-                    value: $event.target.value
-                })"
-              v-else-if="['number', 'numeric', 'int', 'bigint'].includes(type)"
-              type="number"
-              :disabled="disabledInput"
-          />
-            <textarea
-                class="py-2 px-3 block sm:text-sm rounded-b-md h-20"
-                :class="inputClasses(disabledInput)"
-                :value="modelValue.value"
-                @input="$emit('update:modelValue', {
-                    ...modelValue,
-                    value: $event.target.value
-                })"
-                v-else-if="type === 'textarea'"
-                :disabled="disabledInput"
-            ></textarea>
-          <span
-              class="py-2 px-3 block sm:text-sm rounded-b-md"
-              v-else-if="['checkbox', 'tinyint'].includes(type)"
-          >
+    <div class="relative flex w-full flex-col gap-2">
+        <label class="block text-xs font-semibold uppercase tracking-wide text-stone-700 dark:text-stone-300">
             <input
-                :class="inputClasses(disabledInput)"
-                :value="modelValue.value"
-                @input="$emit('update:modelValue', {
-                    ...modelValue,
-                    value: $event.target.value
-                })"
-                type="checkbox"
-                :disabled="disabledInput"
-            />
-          </span>
-
-          <input
-              class="py-2 px-3 block sm:text-sm rounded-b-md"
-              :class="inputClasses(disabledInput)"
-              :value="modelValue.value"
-              @input="$emit('update:modelValue', {
-                    ...modelValue,
-                    value: $event.target.value
-                })"
-              v-else-if="['date', 'datetime'].includes(type)"
-              type="datetime-local"
-              :disabled="disabledInput"
-          />
+                :value="modelValue.name"
+                :disabled="!editableLabel"
+                :class="labelClasses"
+                placeholder="Field name"
+                type="text"
+                @input="emit('update:modelValue', { ...modelValue, name: $event.target.value })"
+            >
         </label>
-        <div v-if="Array.isArray(modelValue.value)" class="flex flex-col gap-2 mt-2">
-              <div v-for="(option, i) in modelValue.value" :key="i" class="flex items-center ml-4 gap-2">
-                  <input
-                      class="py-2 px-3 block sm:text-sm rounded-md"
-                      :class="inputClasses(disabledInput)"
-                      :value="option"
-                      @input="$emit('update:modelValue', {
-                          ...modelValue,
-                          value: modelValue.value.map((v, j) => i === j ? $event.target.value : v)
-                      })"
-                      type="text"
-                      :disabled="disabledInput"
-                  />
 
-                  <SporkButton xsmall danger @click="() => $emit('update:modelValue', {
-                      ...modelValue,
-                      value: modelValue.value.filter((v, j) => i !== j)
-                  })">
-                      <TrashIcon class="w-4 h-4" />
-                  </SporkButton>
-              </div>
+        <template v-if="type !== 'object' && type !== 'select'">
+            <GlassInput
+                v-if="!type || type === 'text'"
+                :model-value="modelValue.value"
+                :disabled="disabledInput"
+                @update:model-value="(v) => emit('update:modelValue', { ...modelValue, value: v })"
+            />
+            <GlassInput
+                v-else-if="['number', 'numeric', 'int', 'bigint'].includes(type)"
+                type="number"
+                :model-value="modelValue.value"
+                :disabled="disabledInput"
+                @update:model-value="(v) => emit('update:modelValue', { ...modelValue, value: v })"
+            />
+            <textarea
+                v-else-if="type === 'textarea'"
+                :value="modelValue.value"
+                :disabled="disabledInput"
+                rows="4"
+                class="block w-full rounded-md border border-stone-300 bg-white/70 px-3 py-2 text-sm text-stone-900 shadow-sm placeholder:text-stone-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-stone-600 dark:bg-stone-800/70 dark:text-stone-100 dark:placeholder:text-stone-500"
+                @input="emit('update:modelValue', { ...modelValue, value: $event.target.value })"
+            />
+            <label
+                v-else-if="['checkbox', 'tinyint'].includes(type)"
+                class="flex items-center gap-2 text-sm text-stone-700 dark:text-stone-200"
+            >
+                <input
+                    type="checkbox"
+                    :checked="!!modelValue.value"
+                    :disabled="disabledInput"
+                    class="h-4 w-4 rounded border-stone-300 text-indigo-600 focus:ring-indigo-500 dark:border-stone-600"
+                    @change="emit('update:modelValue', { ...modelValue, value: $event.target.checked })"
+                >
+                Enabled
+            </label>
+            <GlassInput
+                v-else-if="['date', 'datetime'].includes(type)"
+                type="datetime-local"
+                :model-value="modelValue.value"
+                :disabled="disabledInput"
+                @update:model-value="(v) => emit('update:modelValue', { ...modelValue, value: v })"
+            />
+        </template>
 
-            <SporkButton xsmall @click="() => $emit('update:modelValue', {
-                ...modelValue,
-                value: [...modelValue.value, '']
-            })">
+        <div v-if="Array.isArray(modelValue.value)" class="ml-2 flex flex-col gap-2">
+            <div v-for="(option, i) in modelValue.value" :key="i" class="flex items-center gap-2">
+                <GlassInput
+                    class="flex-1"
+                    :model-value="option"
+                    :disabled="disabledInput"
+                    @update:model-value="(v) => emit('update:modelValue', { ...modelValue, value: modelValue.value.map((existing, j) => i === j ? v : existing) })"
+                />
+                <GlassButton
+                    variant="destructive"
+                    size="sm"
+                    aria-label="Remove option"
+                    @click="emit('update:modelValue', { ...modelValue, value: modelValue.value.filter((_, j) => i !== j) })"
+                >
+                    <TrashIcon class="h-4 w-4" />
+                </GlassButton>
+            </div>
+            <GlassButton
+                variant="ghost"
+                size="sm"
+                @click="emit('update:modelValue', { ...modelValue, value: [...modelValue.value, ''] })"
+            >
                 Add
-            </SporkButton>
-          </div>
-        <SporkSelect
-            v-if="type === 'select'"
-            :modelValue="modelValue"
-            :disabled="disabledInput"
-            @update:modelValue="$emit('update:modelValue', $event)"
-        >
-            <template #options>
-            <option v-for="option in options" :key="option">{{ prettyOptionName(option?.name)}}</option>
-            </template>
-        </SporkSelect>
-
-
-        <div v-if="errors" class="flex flex-col">
-            <div v-for="error in errors" :key="error" class="text-red-500 dark:text-red-400 px-4 text-xs py-1"> {{ error }}</div>
+            </GlassButton>
         </div>
 
-        <div class="absolute top-0 right-0 mt-8 mr-10" v-if="modelValue?.name === 'uuid'">
-            <button @click="fillUuid" class="border py-0.5 px-1 rounded-lg text-xs tracking-wider font-bold" >
-                Fill
-            </button>
+        <GlassSelect
+            v-if="type === 'select'"
+            :model-value="modelValue.value"
+            :disabled="disabledInput"
+            @update:model-value="(v) => emit('update:modelValue', { ...modelValue, value: v })"
+        >
+            <option v-for="option in options" :key="option?.id ?? option?.name ?? option" :value="option?.value ?? option?.id ?? option">
+                {{ prettyOptionName(option?.name ?? option) }}
+            </option>
+        </GlassSelect>
+
+        <div v-if="errors" class="flex flex-col">
+            <div v-for="error in errors" :key="error" class="text-xs text-red-500 dark:text-red-400">{{ error }}</div>
+        </div>
+
+        <div v-if="modelValue?.name === 'uuid'" class="absolute right-2 top-0">
+            <GlassButton variant="ghost" size="sm" @click="fillUuid">Fill</GlassButton>
         </div>
     </div>
 </template>
 
 <script setup>
+import { computed } from 'vue';
+import axios from 'axios';
 import { TrashIcon } from "@heroicons/vue/24/outline";
-import SporkSelect from "@/Components/Spork/SporkSelect.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
+import GlassInput from "@/Components/Glass/GlassInput.vue";
+import GlassSelect from "@/Components/Glass/GlassSelect.vue";
+import GlassButton from "@/Components/Glass/GlassButton.vue";
 
-const $emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue']);
 
-const {
-  modelValue,
-  type,
-  autofocus,
-  disabledInput,
-  editableLabel,
-  error,
-  options,
-} = defineProps({
-  modelValue: Object,
-  type: String,
-  autofocus: Boolean,
-  disabledInput: {
-    type: Boolean,
-    default: () => true,
-  },
-  editableLabel: {
-    type: Boolean,
-    default: () => false,
-  },
-    errors: Array | null,
-    options: {
-        type: Array,
-        default: () => [],
-    },
-})
-// emits: ['update:modelValue'],
+const props = defineProps({
+    modelValue: Object,
+    type: String,
+    autofocus: Boolean,
+    disabledInput: { type: Boolean, default: true },
+    editableLabel: { type: Boolean, default: false },
+    errors: { type: Array, default: null },
+    options: { type: Array, default: () => [] },
+});
+
 const prettyOptionName = (option) => {
-  if (typeof option === 'object') {
-    return option.en;
-  }
-
-  return option;
+    if (typeof option === 'object' && option !== null) {
+        return option.en ?? option.name ?? '';
+    }
+    return option;
 };
-const inputClasses = (disabled) => {
-  let baseClasses = [];
-  if (type !== 'checkbox') {
-    baseClasses.push('w-full');
-  }
 
-  baseClasses.push('border', 'p-1');
-
-  if (disabled) {
-    baseClasses.push('bg-stone-200', 'border-stone-200', 'dark:border-stone-900', 'dark:bg-slate-800/50', 'dark:placeholder-stone-300')
-  } else {
-    baseClasses.push('bg-stone-50', 'border-stone-50', 'dark:border-stone-700', 'dark:bg-stone-700', 'dark:placeholder-stone-300')
-  }
-
-  return baseClasses;
-};
+const labelClasses = computed(() => [
+    'block w-full rounded-md border bg-transparent px-3 py-1 text-xs font-semibold uppercase tracking-wide text-stone-800 dark:text-stone-200',
+    props.editableLabel
+        ? 'border-stone-300 dark:border-stone-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'
+        : 'border-transparent cursor-not-allowed',
+]);
 
 const fillUuid = () => {
     axios.get(route('spork.uuid'))
         .then(({ data }) => {
-            $emit('update:modelValue', {
-                ...modelValue,
-                value: data.uuid
-            });
+            emit('update:modelValue', { ...props.modelValue, value: data.uuid });
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
         });
-}
+};
 </script>
-

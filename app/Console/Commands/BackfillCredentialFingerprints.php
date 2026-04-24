@@ -54,6 +54,3 @@ class BackfillCredentialFingerprints extends Command
         return Command::SUCCESS;
     }
 }
-
-
-

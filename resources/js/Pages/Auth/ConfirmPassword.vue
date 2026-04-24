@@ -1,12 +1,10 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { useForm } from '@inertiajs/vue3';
+import GlassAuthLayout from '@/Layouts/GlassAuthLayout.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
 
 const form = useForm({
     password: '',
@@ -18,46 +16,43 @@ const submit = () => {
     form.post(route('password.confirm'), {
         onFinish: () => {
             form.reset();
-
-            passwordInput.value.focus();
+            passwordInput.value?.focus?.();
         },
     });
 };
 </script>
 
 <template>
-    <Head title="Secure Area" />
-
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <div class="mb-4 text-sm text-stone-600 dark:text-stone-400">
-            This is a secure area of the application. Please confirm your password before continuing.
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
+    <GlassAuthLayout
+        title="Secure Area"
+        heading="Confirm your password"
+        subheading="This area is protected — please verify it's you."
+    >
+        <form class="space-y-4" @submit.prevent="submit">
+            <GlassField
+                v-slot="{ id, describedby, invalid }"
+                label="Password"
+                :error="form.errors.password"
+                required
+            >
+                <GlassInput
+                    :id="id"
                     ref="passwordInput"
                     v-model="form.password"
                     type="password"
-                    class="mt-1 block w-full"
-                    required
                     autocomplete="current-password"
+                    required
                     autofocus
+                    :invalid="invalid"
+                    :describedby="describedby"
                 />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+            </GlassField>
 
-            <div class="flex justify-end mt-4">
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <div class="flex justify-end pt-2">
+                <GlassButton type="submit" :disabled="form.processing">
                     Confirm
-                </PrimaryButton>
+                </GlassButton>
             </div>
         </form>
-    </AuthenticationCard>
+    </GlassAuthLayout>
 </template>

@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class FetchDomainsForCredential implements ShouldQueue
 {
@@ -44,9 +45,31 @@ class FetchDomainsForCredential implements ShouldQueue
             return;
         }
 
-        $this->batch()->add([match ($this->credential->service) {
+        $nextJob = match ($this->credential->service) {
             Credential::CLOUDFLARE => new CloudflareSyncAndPurgeJob($this->credential, $this->user),
             Credential::DIGITAL_OCEAN => new DigitalOceanDomainsSyncJob($this->credential, $this->user),
-        }]);
+            default => null,
+        };
+
+        if (! $nextJob) {
+            Log::error('Unsupported credential service for FetchDomainsForCredential', [
+                'credential_id' => $this->credential->id,
+                'credential_type' => $this->credential->type,
+                'credential_service' => $this->credential->service,
+                'batch_id' => $this->batch()?->id,
+            ]);
+
+            return;
+        }
+
+        $batch = $this->batch();
+
+        if ($batch) {
+            $batch->add([$nextJob]);
+
+            return;
+        }
+
+        $dispatcher->dispatch($nextJob);
     }
 }

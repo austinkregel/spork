@@ -25,7 +25,8 @@ class TransactionFactory extends Factory
             'amount' => $this->faker->numberBetween(2, 100),
             'account_id' => fn () => Account::factory()->create()->account_id,
             'date' => $this->faker->date(),
-            'pending' => $this->faker->boolean(),
+            // Most transactions are settled; tests should opt-in to pending explicitly.
+            'pending' => false,
             'category_id' => $this->faker->numberBetween(2, 1000),
             'transaction_id' => Str::random(32),
             'transaction_type' => 'depository',

@@ -53,6 +53,7 @@ class CrudCacheCommand extends Command
             if (! $force && ! $this->repository->needsRefresh($table)) {
                 $skipped++;
                 $this->line("Skipping {$table}, cache is fresh.");
+
                 continue;
             }
 
@@ -238,4 +239,3 @@ class CrudCacheCommand extends Command
         $this->error($message);
     }
 }
-

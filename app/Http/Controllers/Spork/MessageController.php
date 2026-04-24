@@ -5,55 +5,114 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Spork;
 
 use App\Models\Message;
+use App\Models\Thread;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class MessageController
 {
-    public function show($thread)
+    public function index(?Thread $thread = null)
     {
-        return Inertia::render('Postal/Thread', [
-            'threads' => $this->getPaginatedThreads(),
-            'thread' => \App\Models\Thread::query()
-                ->whereHas('participants', function ($query) {
-                    $query->where('person_id', auth()->user()->person->id);
-                })
-                ->with(['messages' => function ($query) {
-                    $query->orderByDesc('originated_at')
-                        ->limit(15);
-                }, 'participants' => function ($query) {
-                    $query->where('name', 'not like', '%bridge bot%');
-                }, 'messages.toPerson', 'messages.fromPerson'])
-                ->whereHas('messages')
-                ->orderBy('origin_server_ts')
-                ->findOrFail($thread),
+        $threads = $this->getPaginatedThreads();
+
+        $activeThreadModel = $thread ?? $this->pickDefaultThread($threads);
+
+        return Inertia::render('Conversations/Hub', [
+            'threads' => $threads,
+            'activeThread' => $this->resolveActiveThread($activeThreadModel),
+            'composer' => [
+                'emoji' => ['😀', '😂', '😍', '👍', '🎉', '🙏', '🔥', '🚀'],
+                'formattingShortcuts' => ['bold', 'italic', 'code'],
+            ],
+            'labels' => [
+                'title' => 'Unified Chat',
+            ],
         ]);
     }
 
-    public function index()
+    public function show(Thread $thread)
     {
-        return Inertia::render('Postal/Index', [
-            'threads' => $this->getPaginatedThreads(),
-        ]);
+        return $this->index($thread);
     }
 
     protected function getPaginatedThreads(): LengthAwarePaginator
     {
-        return \App\Models\Thread::query()
+        return $this->constrainThreadsToUser(Thread::query())
             ->whereHas('messages')
-            ->addSelect(
-                [
-                    'latest_message_at' => Message::query()
-                        ->selectRaw('MAX(date(messages.originated_at))')
-                        ->whereColumn('thread_id', 'threads.id'),
-                ]
-            )
+            ->select('threads.*')
+            ->addSelect([
+                'latest_message_at' => Message::query()
+                    ->selectRaw('UNIX_TIMESTAMP(originated_at)')
+                    ->whereColumn('thread_id', 'threads.id')
+                    ->orderByDesc('originated_at')
+                    ->limit(1),
+                'latest_message_preview' => Message::query()
+                    ->select('message')
+                    ->whereColumn('thread_id', 'threads.id')
+                    ->orderByDesc('originated_at')
+                    ->limit(1),
+            ])
             ->with([
                 'participants' => function ($query) {
                     $query->where('name', 'not like', '%bridge bot%');
                 },
             ])
-            ->orderByDesc('origin_server_ts')
+            ->orderByDesc('latest_message_at')
             ->paginate(request('limit', 10), ['*'], 'page', 1);
+    }
+
+    protected function resolveActiveThread(?Thread $thread): ?Thread
+    {
+        if (! $thread) {
+            return null;
+        }
+
+        return $this->constrainThreadsToUser(Thread::query())
+            ->with([
+                'participants' => function ($query) {
+                    $query->where('name', 'not like', '%bridge bot%');
+                },
+                'messages' => function ($query) {
+                    $query->select('messages.*')
+                        ->with([
+                            'fromPerson',
+                            'toPerson',
+                            'reactions' => function ($relation) {
+                                $relation->with('person');
+                            },
+                        ])
+                        ->orderBy('originated_at')
+                        ->limit(150);
+                },
+            ])
+            ->find($thread->id);
+    }
+
+    protected function pickDefaultThread(LengthAwarePaginator $threads): ?Thread
+    {
+        return collect($threads->items())->filter()->first();
+    }
+
+    protected function constrainThreadsToUser(Builder $query): Builder
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return $query;
+        }
+
+        $personId = $user->person?->id;
+
+        return $query->whereHas('participants', function (Builder $participants) use ($user, $personId) {
+            $participants->where(function (Builder $conditions) use ($user, $personId) {
+                $conditions->where('people.user_id', $user->id);
+
+                if ($personId) {
+                    $conditions->orWhere('people.id', $personId);
+                }
+            });
+        });
     }
 }

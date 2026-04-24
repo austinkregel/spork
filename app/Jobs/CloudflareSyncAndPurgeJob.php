@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Models\Credential;
+use App\Models\DnsZone;
 use App\Models\Domain;
 use App\Services\Factories\DomainServiceFactory;
 use App\Services\Factories\RegistrarServiceFactory;
@@ -54,8 +55,14 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
                     continue;
                 }
 
+                $dnsZone = $this->syncDnsZone($domain);
+
                 if (empty($localDomain->cloudflare_id)) {
                     $localDomain->cloudflare_id = $domain['id'];
+                }
+
+                if ($localDomain->dns_zone_id !== $dnsZone?->id) {
+                    $localDomain->dns_zone_id = $dnsZone?->id;
                 }
 
                 if ($localDomain->isDirty()) {
@@ -68,7 +75,7 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
                 }
                 $dnsResults = $this->service->getDns($localDomain->cloudflare_id);
                 foreach ($dnsResults as $dnsRecord) {
-                    $localDomain->records()->firstOrCreate([
+                    $localDomain->records()->updateOrCreate([
                         'type' => $dnsRecord['type'],
                         'name' => $dnsRecord['name'],
                     ], [
@@ -77,6 +84,7 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
                         'value' => $dnsRecord['content'],
                         'priority' => $dnsRecord['priority'],
                         'proxied_through_cloudflare' => $dnsRecord['proxied_through_cloudflare'],
+                        'dns_zone_id' => $dnsZone?->id,
                     ]);
 
                     if (! $localDomain->wasRecentlyCreated) {
@@ -96,5 +104,31 @@ class CloudflareSyncAndPurgeJob extends AbstractSyncDomainResource
             }
         } while ($domains->hasMorePages());
         Model::setEventDispatcher($dispatcher);
+    }
+
+    protected function syncDnsZone(array $domain): ?DnsZone
+    {
+        $zone = DnsZone::query()->firstOrNew([
+            'external_id' => $domain['id'],
+            'credential_id' => $this->credential->id,
+        ]);
+
+        $zone->user_id = $zone->user_id ?? $this->credential->user_id;
+        $zone->name = $domain['domain'];
+        $zone->provider = Credential::CLOUDFLARE;
+        $zone->account = $this->credential->settings['account_id'] ?? null;
+        $zone->settings = array_merge($zone->settings ?? [], [
+            'name_servers' => $domain['name_servers'] ?? [],
+            'original_name_servers' => $domain['original_name_servers'] ?? [],
+            'price' => $domain['price'] ?? null,
+        ]);
+
+        if ($zone->isDirty()) {
+            $zone->save();
+        } elseif (! $zone->exists) {
+            $zone->save();
+        }
+
+        return $zone;
     }
 }

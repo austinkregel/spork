@@ -3,12 +3,10 @@ import { ref, computed, watch } from 'vue';
 import { router, useForm, usePage } from '@inertiajs/vue3';
 import ActionSection from '@/Components/ActionSection.vue';
 import ConfirmsPassword from '@/Components/ConfirmsPassword.vue';
-import DangerButton from '@/Components/DangerButton.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
+import GlassSurface from '@/Components/Glass/GlassSurface.vue';
 
 const props = defineProps({
     requiresConfirmation: Boolean,
@@ -126,7 +124,7 @@ const disableTwoFactorAuthentication = () => {
                 You have not enabled two factor authentication.
             </h3>
 
-            <div class="mt-3 max-w-xl text-sm text-stone-600 dark:text-stone-400">
+            <div class="mt-3 max-w-xl text-sm text-stone-600 dark:text-stone-300">
                 <p>
                     When two factor authentication is enabled, you will be prompted for a secure, random token during authentication. You may retrieve this token from your phone's Google Authenticator application.
                 </p>
@@ -134,7 +132,7 @@ const disableTwoFactorAuthentication = () => {
 
             <div v-if="twoFactorEnabled">
                 <div v-if="qrCode">
-                    <div class="mt-4 max-w-xl text-sm text-stone-600 dark:text-stone-400">
+                    <div class="mt-4 max-w-xl text-sm text-stone-600 dark:text-stone-300">
                         <p v-if="confirming" class="font-semibold">
                             To finish enabling two factor authentication, scan the following QR code using your phone's authenticator application or enter the setup key and provide the generated OTP code.
                         </p>
@@ -144,108 +142,107 @@ const disableTwoFactorAuthentication = () => {
                         </p>
                     </div>
 
-                    <div class="mt-4 p-2 inline-block bg-white" v-html="qrCode" />
+                    <div class="mt-4 inline-block rounded-md bg-white p-2" v-html="qrCode" />
 
-                    <div v-if="setupKey" class="mt-4 max-w-xl text-sm text-stone-600 dark:text-stone-400">
+                    <div v-if="setupKey" class="mt-4 max-w-xl text-sm text-stone-600 dark:text-stone-300">
                         <p class="font-semibold">
                             Setup Key: <span v-html="setupKey"></span>
                         </p>
                     </div>
 
-                    <div v-if="confirming" class="mt-4">
-                        <InputLabel for="code" value="Code" />
-
-                        <TextInput
-                            id="code"
-                            v-model="confirmationForm.code"
-                            type="text"
-                            name="code"
-                            class="block mt-1 w-1/2"
-                            inputmode="numeric"
-                            autofocus
-                            autocomplete="one-time-code"
-                            @keyup.enter="confirmTwoFactorAuthentication"
-                        />
-
-                        <InputError :message="confirmationForm.errors.code" class="mt-2" />
+                    <div v-if="confirming" class="mt-4 max-w-md">
+                        <GlassField v-slot="{ id, describedby, invalid }" label="Code" :error="confirmationForm.errors.code">
+                            <GlassInput
+                                :id="id"
+                                v-model="confirmationForm.code"
+                                type="text"
+                                name="code"
+                                inputmode="numeric"
+                                autofocus
+                                autocomplete="one-time-code"
+                                :invalid="invalid"
+                                :describedby="describedby"
+                                @enter="confirmTwoFactorAuthentication"
+                            />
+                        </GlassField>
                     </div>
                 </div>
 
                 <div v-if="recoveryCodes.length > 0 && ! confirming">
-                    <div class="mt-4 max-w-xl text-sm text-stone-600 dark:text-stone-400">
+                    <div class="mt-4 max-w-xl text-sm text-stone-600 dark:text-stone-300">
                         <p class="font-semibold">
                             Store these recovery codes in a secure password manager. They can be used to recover access to your account if your two factor authentication device is lost.
                         </p>
                     </div>
 
-                    <div class="grid gap-1 max-w-xl mt-4 px-4 py-4 font-mono text-sm bg-stone-100 dark:bg-stone-900 rounded-lg">
-                        <div v-for="code in recoveryCodes" :key="code">
-                            {{ code }}
+                    <GlassSurface class="mt-4 max-w-xl p-4">
+                        <div class="grid gap-1 font-mono text-sm text-stone-700 dark:text-stone-200">
+                            <div v-for="code in recoveryCodes" :key="code">
+                                {{ code }}
+                            </div>
                         </div>
-                    </div>
+                    </GlassSurface>
                 </div>
             </div>
 
-            <div class="mt-5">
+            <div class="mt-5 flex flex-wrap gap-2">
                 <div v-if="! twoFactorEnabled">
                     <ConfirmsPassword @confirmed="enableTwoFactorAuthentication">
-                        <PrimaryButton type="button" :class="{ 'opacity-25': enabling }" :disabled="enabling">
+                        <GlassButton type="button" :disabled="enabling">
                             Enable
-                        </PrimaryButton>
+                        </GlassButton>
                     </ConfirmsPassword>
                 </div>
 
-                <div v-else>
+                <template v-else>
                     <ConfirmsPassword @confirmed="confirmTwoFactorAuthentication">
-                        <PrimaryButton
+                        <GlassButton
                             v-if="confirming"
                             type="button"
-                            class="mr-3"
-                            :class="{ 'opacity-25': enabling }"
                             :disabled="enabling"
                         >
                             Confirm
-                        </PrimaryButton>
+                        </GlassButton>
                     </ConfirmsPassword>
 
                     <ConfirmsPassword @confirmed="regenerateRecoveryCodes">
-                        <SecondaryButton
+                        <GlassButton
                             v-if="recoveryCodes.length > 0 && ! confirming"
-                            class="mr-3"
+                            variant="secondary"
                         >
                             Regenerate Recovery Codes
-                        </SecondaryButton>
+                        </GlassButton>
                     </ConfirmsPassword>
 
                     <ConfirmsPassword @confirmed="showRecoveryCodes">
-                        <SecondaryButton
+                        <GlassButton
                             v-if="recoveryCodes.length === 0 && ! confirming"
-                            class="mr-3"
+                            variant="secondary"
                         >
                             Show Recovery Codes
-                        </SecondaryButton>
+                        </GlassButton>
                     </ConfirmsPassword>
 
                     <ConfirmsPassword @confirmed="disableTwoFactorAuthentication">
-                        <SecondaryButton
+                        <GlassButton
                             v-if="confirming"
-                            :class="{ 'opacity-25': disabling }"
+                            variant="ghost"
                             :disabled="disabling"
                         >
                             Cancel
-                        </SecondaryButton>
+                        </GlassButton>
                     </ConfirmsPassword>
 
                     <ConfirmsPassword @confirmed="disableTwoFactorAuthentication">
-                        <DangerButton
+                        <GlassButton
                             v-if="! confirming"
-                            :class="{ 'opacity-25': disabling }"
+                            variant="destructive"
                             :disabled="disabling"
                         >
                             Disable
-                        </DangerButton>
+                        </GlassButton>
                     </ConfirmsPassword>
-                </div>
+                </template>
             </div>
         </template>
     </ActionSection>

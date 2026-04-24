@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 Route::redirect('/login', '/flight/login');
 
+Route::domain('dionysis.kregel.host')
+->group(function () {
+    Route::any('privacy-hook-please-dont-disable', function () {
+        info('dionysis.kregel.host', request()->all());
+
+        return 'ok';
+    });
+});
+
 Route::domain('echo.kregel.dev')
 //    ->middleware('throttle:5')
     ->withoutMiddleware(['web'])
@@ -13,10 +22,6 @@ Route::prefix('api')
     ->domain(config('app.env') == 'production' ? 'spork.zone' : 'spork.localhost')
     ->middleware(config('jetstream.middleware', ['web']))
     ->group(base_path('routes/crud.php'));
-
-Route::middleware('web')
-    ->domain(config('app.env') == 'production' ? 'petoskey.today' : 'petoskey.localhost')
-    ->group(base_path('routes/pages/petoskey.php'));
 
 Route::middleware('web')
     ->domain(config('app.env') == 'production' ? 'spork.zone' : 'spork.localhost')

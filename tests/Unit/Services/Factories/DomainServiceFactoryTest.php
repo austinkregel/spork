@@ -16,6 +16,7 @@ class DomainServiceFactoryTest extends TestCase
     {
         $credential = new Credential([
             'service' => Credential::CLOUDFLARE,
+            'api_key' => 'fake global key',
             'settings' => [
                 'email' => 'user@example.com',
                 'account_id' => 'account',
@@ -23,7 +24,7 @@ class DomainServiceFactoryTest extends TestCase
             'access_token' => 'fake-token',
         ]);
 
-        $factory = new DomainServiceFactory();
+        $factory = new DomainServiceFactory;
 
         $service = $factory->make($credential);
 
@@ -35,6 +36,7 @@ class DomainServiceFactoryTest extends TestCase
         $credential = new Credential([
             'service' => Credential::DIGITAL_OCEAN,
             'api_key' => 'fake-api-key',
+            'access_token' => 'fake-token',
             'settings' => [],
         ]);
 
@@ -42,12 +44,10 @@ class DomainServiceFactoryTest extends TestCase
             $mock->shouldReceive('authenticate')->once();
         }));
 
-        $factory = new DomainServiceFactory();
+        $factory = new DomainServiceFactory;
 
         $service = $factory->make($credential);
 
         $this->assertInstanceOf(DigitalOceanService::class, $service);
     }
 }
-
-

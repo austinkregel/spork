@@ -6,6 +6,8 @@ namespace Tests\Unit\Services\Registrar;
 
 use App\Models\Credential;
 use App\Services\Registrar\CloudflareRegistrarService;
+use Carbon\Carbon;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -14,12 +16,85 @@ class CloudflareRegistrarServiceTest extends TestCase
     protected function makeCredential(): Credential
     {
         return new Credential([
+            'api_key' => 'fake global key',
             'access_token' => 'fake-token',
             'settings' => [
                 'email' => 'user@example.com',
                 'account_id' => 'account-123',
             ],
         ]);
+    }
+
+    public function test_get_domains_returns_paginator_with_mapped_domains(): void
+    {
+        Http::fake([
+            CloudflareRegistrarService::CLOUDFLARE_URL.'accounts/*/registrar/domains*' => Http::response([
+                'success' => true,
+                'result' => [
+                    [
+                        'registry_object_id' => 'reg-1',
+                        'name' => 'example.com',
+                        'expires_at' => '2030-01-01T00:00:00Z',
+                        'locked' => true,
+                        'auto_renew' => false,
+                        'privacy' => true,
+                    ],
+                ],
+                'result_info' => [
+                    'total_count' => 1,
+                    'per_page' => 100,
+                ],
+            ], 200),
+        ]);
+
+        $service = new CloudflareRegistrarService($this->makeCredential());
+
+        $paginator = $service->getDomains(100, 2);
+
+        $this->assertSame(1, $paginator->total());
+        $this->assertCount(1, $paginator->items());
+
+        $domain = $paginator->items()[0];
+        $this->assertSame('reg-1', $domain['id']);
+        $this->assertSame('example.com', $domain['domain']);
+        $this->assertInstanceOf(Carbon::class, $domain['expires_at']);
+        $this->assertSame(false, $domain['is_expired']);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'GET'
+                && str_contains((string) $request->url(), '/accounts/account-123/registrar/domains')
+                && $request['per_page'] === 100
+                && $request['page'] === 2;
+        });
+    }
+
+    public function test_get_domains_throws_when_response_is_unsuccessful(): void
+    {
+        Http::fake([
+            CloudflareRegistrarService::CLOUDFLARE_URL.'accounts/*/registrar/domains*' => Http::response([
+                'success' => false,
+            ], 500),
+        ]);
+
+        $service = new CloudflareRegistrarService($this->makeCredential());
+
+        $this->expectException(RequestException::class);
+
+        $service->getDomains();
+    }
+
+    public function test_it_requires_email_account_id_and_access_token(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new CloudflareRegistrarService(new Credential([
+            'api_key' => 'fake global key',
+            'access_token' => '',
+            'settings' => [
+                'email' => '',
+                'account_id' => '',
+            ],
+        ]));
     }
 
     public function test_get_domain_ns_returns_current_nameservers(): void
@@ -144,5 +219,3 @@ class CloudflareRegistrarServiceTest extends TestCase
         $service->renewDomain('example.com', 1);
     }
 }
-
-

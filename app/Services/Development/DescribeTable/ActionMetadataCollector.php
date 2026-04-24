@@ -13,8 +13,7 @@ class ActionMetadataCollector
 {
     public function __construct(
         private readonly ?array $actionClasses = null,
-    ) {
-    }
+    ) {}
 
     /**
      * @return ActionMetadata[]
@@ -43,4 +42,3 @@ class ActionMetadataCollector
         return $actions;
     }
 }
-

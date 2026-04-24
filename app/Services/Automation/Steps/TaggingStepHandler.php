@@ -64,5 +64,3 @@ class TaggingStepHandler
         return ['output' => sprintf('Tagging %s: %s %d tags', $class, $action, count($attachable))];
     }
 }
-
-

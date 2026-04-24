@@ -63,11 +63,11 @@ class BatchJobController extends Controller
         $paginator = new LengthAwarePaginator(
             array_map(function ($batch) {
 
-                if (!empty($batch->failed_job_ids)) {
+                if (! empty($batch->failed_job_ids)) {
                     $batch->jobs = \DB::table('failed_jobs')
                         ->select('*')
-                            ->whereIn('uuid', is_string($batch->failed_job_ids) ? json_decode($batch->failed_job_ids, true) : $batch->failed_job_ids)
-                            ->orderByDesc('failed_at')
+                        ->whereIn('uuid', is_string($batch->failed_job_ids) ? json_decode($batch->failed_job_ids, true) : $batch->failed_job_ids)
+                        ->orderByDesc('failed_at')
                         ->get()
                         ->map(function ($job) {
                             $job->parsed_exception = (new Stacktrace)->parse($job->exception);

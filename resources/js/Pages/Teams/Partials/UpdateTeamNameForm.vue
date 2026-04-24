@@ -2,10 +2,9 @@
 import { useForm } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
 
 const props = defineProps({
     team: Object,
@@ -35,35 +34,32 @@ const updateTeamName = () => {
         </template>
 
         <template #form>
-            <!-- Team Owner Information -->
             <div class="col-span-6">
-                <InputLabel value="Team Owner" />
+                <div class="block text-sm font-medium text-stone-700 dark:text-stone-200">Team Owner</div>
 
                 <div class="flex items-center mt-2">
-                    <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.name">
+                    <img class="w-12 h-12 rounded-full object-cover ring-1 ring-stone-200 dark:ring-stone-700" :src="team.owner.profile_photo_url" :alt="team.owner.name">
 
                     <div class="ml-4 leading-tight">
-                        <div class="text-stone-900 dark:text-white">{{ team.owner.name }}</div>
-                        <div class="text-stone-700 dark:text-stone-300 text-sm">
+                        <div class="text-stone-900 dark:text-stone-100">{{ team.owner.name }}</div>
+                        <div class="text-stone-600 dark:text-stone-300 text-sm">
                             {{ team.owner.email }}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Team Name -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Team Name" />
-
-                <TextInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    :disabled="! permissions.canUpdateTeam"
-                />
-
-                <InputError :message="form.errors.name" class="mt-2" />
+                <GlassField v-slot="{ id, describedby, invalid }" label="Team Name" :error="form.errors.name">
+                    <GlassInput
+                        :id="id"
+                        v-model="form.name"
+                        type="text"
+                        :disabled="! permissions.canUpdateTeam"
+                        :invalid="invalid"
+                        :describedby="describedby"
+                    />
+                </GlassField>
             </div>
         </template>
 
@@ -72,9 +68,9 @@ const updateTeamName = () => {
                 Saved.
             </ActionMessage>
 
-            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <GlassButton type="submit" :disabled="form.processing">
                 Save
-            </PrimaryButton>
+            </GlassButton>
         </template>
     </FormSection>
 </template>

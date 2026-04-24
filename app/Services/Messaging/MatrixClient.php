@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Messaging;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class MatrixClient
 {
@@ -77,13 +78,68 @@ class MatrixClient
         string $body,
         string $room,
         string $jwt,
-    ) {
-        $eventId = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer '.$jwt,
-        ])->post('https://matrix.'.$this->homeserver.'/_matrix/client/r0/rooms/'.$room.'/send/m.room.message', [
+        ?string $inReplyToEvent = null,
+    ): array {
+        $payload = [
             'msgtype' => 'm.text',
             'body' => $body,
-        ])->json();
+        ];
+
+        if ($inReplyToEvent) {
+            $payload['m.relates_to'] = [
+                'm.in_reply_to' => [
+                    'event_id' => $inReplyToEvent,
+                ],
+            ];
+        }
+
+        return Http::withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$jwt,
+        ])->post('https://matrix.'.$this->homeserver.'/_matrix/client/r0/rooms/'.$room.'/send/m.room.message', $payload)->json();
+    }
+
+    public function sendReaction(
+        string $room,
+        string $targetEventId,
+        string $emoji,
+        string $jwt,
+    ): array {
+        $payload = [
+            'm.relates_to' => [
+                'rel_type' => 'm.annotation',
+                'event_id' => $targetEventId,
+                'key' => $emoji,
+            ],
+        ];
+
+        return Http::withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$jwt,
+        ])->put(
+            'https://matrix.'.$this->homeserver.'/_matrix/client/v3/rooms/'.$room.'/send/m.reaction/'.Str::uuid(),
+            $payload
+        )->json();
+    }
+
+    public function redactEvent(
+        string $room,
+        string $eventId,
+        string $jwt,
+        ?string $reason = null,
+    ): array {
+        $payload = [];
+
+        if ($reason) {
+            $payload['reason'] = $reason;
+        }
+
+        return Http::withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$jwt,
+        ])->put(
+            'https://matrix.'.$this->homeserver.'/_matrix/client/v3/rooms/'.$room.'/redact/'.$eventId.'/'.Str::uuid(),
+            $payload
+        )->json();
     }
 }

@@ -40,7 +40,7 @@ const close = () => {
 };
 
 const submit = () => {
-  form.post(route('banking.manual-transactions.store'), {
+  form.post(route('finance.banking.manual-transactions.store'), {
     preserveScroll: true,
     onSuccess: close,
   });

@@ -22,6 +22,7 @@ use App\Services\Condition\LessThanOperator;
 use App\Services\Condition\LessThanOrEqualToOperator;
 use App\Services\Condition\StartsWithOperator;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Psr\Log\LoggerInterface;
 
 class ConditionService implements ConditionServiceContract
@@ -60,6 +61,13 @@ class ConditionService implements ConditionServiceContract
             return true;
         }
 
+        // Pre-validation: only evaluate a tag against a payload if at least one condition parameter
+        // can be resolved to a meaningful value in that payload. This prevents cross-domain
+        // tags (e.g. transaction-only tags) from being evaluated against emails/articles/etc.
+        if (! $this->payloadHasAnyResolvableConditionValue($item, $additionalValueData)) {
+            return false;
+        }
+
         $returnedValue = true;
         /** @var Condition $condition */
         foreach ($item->conditions as $condition) {
@@ -89,6 +97,33 @@ class ConditionService implements ConditionServiceContract
         return $returnedValue;
     }
 
+    protected function payloadHasAnyResolvableConditionValue(Conditionable $item, array $additionalData): bool
+    {
+        /** @var Condition $condition */
+        foreach ($item->conditions as $condition) {
+            $parameter = (string) $condition->parameter;
+
+            // config:* is always resolvable; allow evaluation.
+            if (str_contains($parameter, 'config:')) {
+                return true;
+            }
+
+            // Domain-aware guard: if the payload contains the root object referenced by any condition,
+            // we allow evaluation (even if a nested property is null). This prevents cross-domain tagging
+            // while preserving existing logging/behavior when the correct domain key exists.
+            $root = explode('.', $parameter, 2)[0];
+            if ($root === 'user') {
+                return true;
+            }
+
+            if (\Illuminate\Support\Arr::has($additionalData, $root)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected function logCondition(Condition $condition, bool $passesCondition, $value)
     {
         $this->logger->info(
@@ -112,7 +147,7 @@ class ConditionService implements ConditionServiceContract
         }
 
         if ($parameter === 'user') {
-            return auth()->user() ?? null;
+            return Auth::user();
         }
 
         // This can be an single dimensions, or a multidimensional array

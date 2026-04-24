@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Models\Credential;
 use App\Models\Person;
 use App\Models\User;
+use App\Services\Messaging\EmailBodySanitizer;
 use App\Services\Messaging\ImapFactoryService;
 use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
@@ -27,7 +28,7 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
         $this->since = now()->subMonth();
     }
 
-    public function handle(ImapFactoryService $imapFactory): void
+    public function handle(ImapFactoryService $imapFactory, EmailBodySanitizer $sanitizer): void
     {
         if ($this->batch()?->cancelled()) {
             return;
@@ -48,13 +49,14 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
 
             if (empty($trackedMessage)) {
                 $body = $imapService->findMessage((string) $message['id']);
+                $safeText = $sanitizer->safeTextFromBase64($body['body'] ?? null);
                 $trackedMessage = $this->credential->emails()->create([
                     'email_id' => $message['id'],
                     'from_email' => (empty($message['from']['email']) ? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
                     'to_email' => (empty($message['to']['email']) ? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
                     'sent_at' => $message['date'],
                     'subject' => $body['subject'],
-                    'message' => $body['body'],
+                    'message_text' => $safeText,
                     'seen' => $body['seen'],
                     'spam' => $body['spam'],
                     'answered' => $body['answered'],
@@ -63,7 +65,7 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
                 $body = $imapService->findMessage((string) $message['id']);
                 collect([
                     'sent_at' => $message['date'],
-                    'message' => $body['body'],
+                    'message_text' => $sanitizer->safeTextFromBase64($body['body'] ?? null),
                     'from_email' => (empty($message['from']['email']) ? null : $message['from']['email']) ?? $message['addressed-from']['email'] ?? null,
                     'to_email' => (empty($message['to']['email']) ? null : $message['to']['email']) ?? $message['addressed-to']['email'] ?? null,
                     'subject' => $body['subject'],
@@ -78,7 +80,7 @@ class SyncMailboxIfCredentialsAreSet implements ShouldQueue
 
                 if ($trackedMessage->isDirty([
                     'sent_at',
-                    'message',
+                    'message_text',
                     'seen',
                     'spam',
                     'answered',

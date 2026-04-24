@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 namespace App\Notifications;
 
-use App\Notifications\AbstractNotification;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
-
 class AutomationGenericNotification extends AbstractNotification
 {
     public function __construct(
@@ -32,5 +26,3 @@ class AutomationGenericNotification extends AbstractNotification
         ];
     }
 }
-
-

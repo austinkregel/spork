@@ -3,11 +3,9 @@ import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import ActionSection from '@/Components/ActionSection.vue';
-import DialogModal from '@/Components/DialogModal.vue';
-import InputError from '@/Components/InputError.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import GlassModal from '@/Components/Glass/GlassModal.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
 
 defineProps({
     sessions: Array,
@@ -87,55 +85,42 @@ const closeModal = () => {
                 </div>
             </div>
 
-            <div class="flex items-center mt-5">
-                <PrimaryButton @click="confirmLogout">
+            <div class="mt-5 flex items-center">
+                <GlassButton @click="confirmLogout">
                     Log Out Other Browser Sessions
-                </PrimaryButton>
+                </GlassButton>
 
                 <ActionMessage :on="form.recentlySuccessful" class="ml-3">
                     Done.
                 </ActionMessage>
             </div>
 
-            <!-- Log Out Other Devices Confirmation Modal -->
-            <DialogModal :show="confirmingLogout" @close="closeModal">
-                <template #title>
-                    Log Out Other Browser Sessions
-                </template>
-
-                <template #content>
+            <GlassModal :open="confirmingLogout" title="Log Out Other Browser Sessions" size="md" @close="closeModal">
+                <p class="text-sm text-stone-700 dark:text-stone-200">
                     Please enter your password to confirm you would like to log out of your other browser sessions across all of your devices.
+                </p>
 
-                    <div class="mt-4">
-                        <TextInput
-                            ref="passwordInput"
-                            v-model="form.password"
-                            type="password"
-                            class="mt-1 block w-3/4"
-                            placeholder="Password"
-                            autocomplete="current-password"
-                            @keyup.enter="logoutOtherBrowserSessions"
-                        />
-
-                        <InputError :message="form.errors.password" class="mt-2" />
-                    </div>
-                </template>
+                <div class="mt-4">
+                    <GlassInput
+                        ref="passwordInput"
+                        v-model="form.password"
+                        type="password"
+                        class="w-3/4"
+                        placeholder="Password"
+                        autocomplete="current-password"
+                        :invalid="!!form.errors.password"
+                        @enter="logoutOtherBrowserSessions"
+                    />
+                    <p v-if="form.errors.password" class="mt-2 text-xs text-red-500 dark:text-red-400">{{ form.errors.password }}</p>
+                </div>
 
                 <template #footer>
-                    <SecondaryButton @click="closeModal">
-                        Cancel
-                    </SecondaryButton>
-
-                    <PrimaryButton
-                        class="ml-3"
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                        @click="logoutOtherBrowserSessions"
-                    >
+                    <GlassButton variant="secondary" @click="closeModal">Cancel</GlassButton>
+                    <GlassButton :disabled="form.processing" @click="logoutOtherBrowserSessions">
                         Log Out Other Browser Sessions
-                    </PrimaryButton>
+                    </GlassButton>
                 </template>
-            </DialogModal>
+            </GlassModal>
         </template>
     </ActionSection>
 </template>

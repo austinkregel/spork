@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\ModelQuery;
+use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Navigation\Pillar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +19,7 @@ use Spatie\Tags\HasTags;
 class Automation extends Model implements Crud, ModelQuery, Taggable
 {
     use HasFactory;
+    use HasProjectResource;
     use HasTags;
     use ScopeQSearch;
     use ScopeRelativeSearch;
@@ -59,6 +62,12 @@ class Automation extends Model implements Crud, ModelQuery, Taggable
     {
         return $this->hasMany(AutomationStep::class)->orderBy('order');
     }
+
+    /**
+     * Opt-in: surface this model under Automations pillar → Manage in the glass sub-nav.
+     */
+    public static function pillar(): ?Pillar
+    {
+        return Pillar::AUTOMATIONS;
+    }
 }
-
-

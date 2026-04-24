@@ -43,7 +43,7 @@ const applyingTags = ref(false);
         </template>
 
         <template #items="{ close }">
-          <ContextMenuLink :href="'/-/banking/transactions/'+transaction.id">Inspect Transaction</ContextMenuLink>
+          <ContextMenuLink :href="'/-/finance/banking/transactions/'+transaction.id">Inspect Transaction</ContextMenuLink>
         </template>
     </ContextMenu>
   </div>

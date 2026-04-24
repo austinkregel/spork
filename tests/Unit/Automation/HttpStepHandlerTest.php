@@ -61,5 +61,3 @@ class HttpStepHandlerTest extends TestCase
         $this->assertSame('HTTP step requires a valid URL', $res['error']);
     }
 }
-
-

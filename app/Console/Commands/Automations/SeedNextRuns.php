@@ -45,5 +45,3 @@ class SeedNextRuns extends Command
         return self::SUCCESS;
     }
 }
-
-

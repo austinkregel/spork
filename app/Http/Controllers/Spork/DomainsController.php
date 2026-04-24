@@ -14,7 +14,7 @@ class DomainsController extends Controller
     {
         $domain->load('records');
 
-        return Inertia::render('Domain', [
+        return Inertia::render('Infrastructure/Domain/Show', [
             'domain' => $domain,
         ]);
     }

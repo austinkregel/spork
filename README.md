@@ -29,6 +29,7 @@ $ ./bin/sail up -d
 -  [x] Jira task syncing
 -  [x] Running scripts on servers remotely
 -  [x] Beeper authentication via Email Token
+-  [x] CalDAV + CardDAV server backed by `Person` and `Event` models — see [docs/dav-server.md](docs/dav-server.md)
 
 
 ## Planned 
@@ -47,3 +48,7 @@ $ ./bin/sail up -d
 ## Screenshots
 
 ![screenshot-dashboard-2024-02-25.png](/resources/screenshots/screenshot-dashboard-2024-02-25.png)
+
+## Contributing / AI agents
+
+Conventions, architecture, tooling, and the cross-cutting systems (auto-CRUD, tagging, conditions, code reflection) are documented in [AGENTS.md](AGENTS.md). Cursor users also get glob-scoped rules under [`.cursor/rules/`](.cursor/rules). Read those before opening a PR.

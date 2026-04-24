@@ -13,10 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
-        // api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
+        then: function () {
+            \Illuminate\Support\Facades\Route::group([], __DIR__.'/../routes/dav.php');
+        },
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(fn () => route('login'));
@@ -29,8 +31,15 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->throttleApi();
         $middleware->statefulApi();
+        $middleware->validateCsrfTokens(except: [
+            'dav',
+            'dav/*',
+            '.well-known/carddav',
+            '.well-known/caldav',
+        ]);
         $middleware->alias([
             'server_auth' => \App\Http\Middleware\ServerAccessable::class,
+            'dav' => \App\Http\Middleware\PrepareDavRequest::class,
         ]);
         $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, \App\Http\Middleware\TrustProxies::class);
     })

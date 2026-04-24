@@ -52,7 +52,11 @@ class ApplyCredentialsObserver
         $user = auth()->check() ? auth()->user() : null;
 
         foreach ($this->permissions as $basePermission) {
-            $this->createPermission($basePermission, $model);
+            $permission = $this->createPermission($basePermission, $model);
+
+            if ($user) {
+                $user->givePermissionTo($permission);
+            }
         }
     }
 

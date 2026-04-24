@@ -1,0 +1,10 @@
+---
+description: Always read AGENTS.md first. Project root and tooling baseline.
+alwaysApply: true
+---
+
+The canonical contributor + agent guide for this repo is [AGENTS.md](mdc:AGENTS.md). Read it before making changes.
+
+- Project root: `/-/reforged-spork`. Use absolute paths rooted there in shell commands.
+- Use `/usr/local/bin/sail` for every Laravel / Docker command (never `./vendor/bin/sail`, never bare `php artisan`).
+- Tests run via `/usr/local/bin/sail phpunit` only. The `test` alias is broken in this project.

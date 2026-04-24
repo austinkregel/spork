@@ -4,25 +4,43 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Console\Commands\Article\ResetDefaultArticleSocialFeedsCommand;
+use App\Console\Commands\CreateCredentialCommand;
 use App\Console\Commands\CrudCacheCommand;
+use App\Console\Commands\Finance\AnalyzeTransactionPatternsCommand;
+use App\Console\Commands\Finance\ResetStandardAutomatedTagsCommand;
+use App\Console\Commands\Finance\ResetStandardBudgetsCommand;
+use App\Console\Commands\Infrastructure\CreateMonitorBridgeCredentialCommand;
+use App\Console\Commands\Infrastructure\DumpNamecheapApiResponseCommand;
+use App\Console\Commands\Infrastructure\ListenToCommandServerCommand;
+use App\Console\Commands\Infrastructure\UpdateNamecheapWhoisCommand;
+use App\Console\Commands\Messaging\BackfillEmailMessageText;
+use App\Console\Commands\Messaging\RenameDirectMessageThreads;
+use App\Console\Commands\Navigation\CacheNavigationCommand;
+use App\Console\Commands\SyncPlaidTransactionsCommand;
+use App\Console\Commands\SyncPrivacyTransactionsCommand;
 use App\Contracts\Repositories\CredentialRepositoryContract;
 use App\Contracts\Repositories\MatrixClientSyncRepositoryContract;
 use App\Contracts\Repositories\ProjectRepositoryContract;
 use App\Contracts\Services\CloudflareDomainServiceContract;
 use App\Contracts\Services\CloudflareRegistrarServiceContract;
 use App\Contracts\Services\ConditionServiceContract;
+use App\Contracts\Services\Crm\MonicaClientContract;
 use App\Contracts\Services\Development\DescribeTableServiceContract;
 use App\Contracts\Services\DigitalOceanServiceContract;
 use App\Contracts\Services\Documents\HtmlJsonDataLinkingServiceContract;
 use App\Contracts\Services\Documents\PdfParserServiceContract;
 use App\Contracts\Services\Documents\PdfReaderServiceContract;
+use App\Contracts\Services\Finance\PrivacyServiceContract;
 use App\Contracts\Services\GeocodingServiceContract;
 use App\Contracts\Services\HttpServiceContract;
 use App\Contracts\Services\ImapServiceContract;
 use App\Contracts\Services\JiraServiceContract;
 use App\Contracts\Services\Messaging\ImapFactoryServiceContract;
+use App\Contracts\Services\Messaging\MatrixServiceContract;
 use App\Contracts\Services\MustacheTemplateService;
 use App\Contracts\Services\NamecheapServiceContract;
+use App\Contracts\Services\Navigation\NavigationRegistryContract;
 use App\Contracts\Services\News\NewsServiceContract;
 use App\Contracts\Services\News\RssServiceContract;
 use App\Contracts\Services\PlaidServiceContract;
@@ -36,18 +54,49 @@ use App\Repositories\MatrixClientSyncRepository;
 use App\Repositories\ProjectRepository;
 use App\Services\Code;
 use App\Services\ConditionService;
+use App\Services\Crm\MonicaClient;
+use App\Services\Dav\Support\CurrentDavAuth;
 use App\Services\Development\DescribeTableService;
 use App\Services\Documents\HtmlJsonDataLinkingService;
 use App\Services\Documents\PdfParserService;
 use App\Services\Documents\PdfReaderService;
 use App\Services\Domain\CloudflareDomainService;
 use App\Services\Finance\PlaidService;
+use App\Services\Finance\PrivacyService;
 use App\Services\Geocoding\GoogleMapsGeocodingService;
 use App\Services\HttpService;
 use App\Services\JiraService;
 use App\Services\Messaging\ImapCredentialService;
 use App\Services\Messaging\ImapFactoryService;
+use App\Services\Messaging\Matrix\Handlers\AccountData\BreadcrumbsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\CrossSigningEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\DirectChatsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\IgnoredAccountEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\LocalNotificationSettingsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\MatrixClientInformationEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\MegolmBackupEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\RecentEmojiEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\SecretStorageDefaultKeyEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\SecretStorageKeyEventHandler;
+use App\Services\Messaging\Matrix\Handlers\AccountData\WebSettingsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\IgnoredRoomEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomAvatarEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomCanonicalAliasEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomCreateEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomEncryptionEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomMemberEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomMessageEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomNameEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomPowerLevelsEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomReactionEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomRedactionEventHandler;
+use App\Services\Messaging\Matrix\Handlers\Rooms\RoomTopicEventHandler;
+use App\Services\Messaging\Matrix\MatrixEventHandlerRegistry;
+use App\Services\Messaging\Matrix\MatrixEventSupport;
+use App\Services\Messaging\Matrix\MatrixService;
 use App\Services\MustacheService;
+use App\Services\Navigation\CrudPillarNavigationCollector;
+use App\Services\Navigation\NavigationRegistry;
 use App\Services\News\NewsService;
 use App\Services\News\RssFeedService;
 use App\Services\Registrar\CloudflareRegistrarService;
@@ -60,6 +109,7 @@ use App\Services\SshService;
 use App\Services\Weather\OpenWeatherService;
 use App\Services\Weather\WeatherApiService;
 use App\Services\Weather\WeatherGovApiService;
+use App\Services\Weather\WeatherServiceWithFailover;
 use App\Spork;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -71,6 +121,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
 class AppServiceProvider extends ServiceProvider
@@ -89,10 +140,45 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(CrudPillarNavigationCollector::class, fn () => CrudPillarNavigationCollector::discover());
+        $this->app->singleton(NavigationRegistryContract::class, function ($app) {
+            return new NavigationRegistry($app->make(CrudPillarNavigationCollector::class));
+        });
+
         // Repositories
         $this->app->bind(CredentialRepositoryContract::class, CredentialRepository::class);
         $this->app->bind(ProjectRepositoryContract::class, ProjectRepository::class);
         $this->app->bind(MatrixClientSyncRepositoryContract::class, MatrixClientSyncRepository::class);
+
+        $this->app->singleton(MatrixEventSupport::class, fn ($app) => new MatrixEventSupport($app->make(LoggerInterface::class)));
+
+        $this->app->singleton(MatrixEventHandlerRegistry::class, function ($app) {
+            return new MatrixEventHandlerRegistry([
+                $app->make(MatrixClientInformationEventHandler::class),
+                $app->make(LocalNotificationSettingsEventHandler::class),
+                $app->make(RecentEmojiEventHandler::class),
+                $app->make(SecretStorageKeyEventHandler::class),
+                $app->make(SecretStorageDefaultKeyEventHandler::class),
+                $app->make(CrossSigningEventHandler::class),
+                $app->make(MegolmBackupEventHandler::class),
+                $app->make(WebSettingsEventHandler::class),
+                $app->make(BreadcrumbsEventHandler::class),
+                $app->make(DirectChatsEventHandler::class),
+                $app->make(IgnoredAccountEventHandler::class),
+                $app->make(RoomNameEventHandler::class),
+                $app->make(RoomCreateEventHandler::class),
+                $app->make(RoomMemberEventHandler::class),
+                $app->make(RoomTopicEventHandler::class),
+                $app->make(RoomEncryptionEventHandler::class),
+                $app->make(RoomAvatarEventHandler::class),
+                $app->make(RoomCanonicalAliasEventHandler::class),
+                $app->make(RoomPowerLevelsEventHandler::class),
+                $app->make(RoomRedactionEventHandler::class),
+                $app->make(RoomReactionEventHandler::class),
+                $app->make(RoomMessageEventHandler::class),
+                $app->make(IgnoredRoomEventHandler::class),
+            ]);
+        });
 
         // Services - News
         $this->app->bind(NewsServiceContract::class, NewsService::class);
@@ -104,15 +190,17 @@ class AppServiceProvider extends ServiceProvider
 
         // Services - Finance
         $this->app->bind(PlaidServiceContract::class, PlaidService::class);
+        $this->app->bind(PrivacyServiceContract::class, PrivacyService::class);
 
         // Services - Messaging
         $this->app->bind(ImapServiceContract::class, ImapCredentialService::class);
         $this->app->bind(ImapFactoryServiceContract::class, ImapFactoryService::class);
+        $this->app->bind(MatrixServiceContract::class, MatrixService::class);
 
         // Services - Weather
-        $this->app->bind(WeatherServiceContract::class, OpenWeatherService::class);
-        // Note: WeatherApiService and WeatherGovApiService also implement WeatherServiceContract
-        // but OpenWeatherService is the default implementation
+        $this->app->bind(WeatherServiceContract::class, WeatherServiceWithFailover::class);
+        // Note: WeatherServiceWithFailover uses OpenWeatherService as primary and WeatherApiService as fallback
+        // WeatherGovApiService also implements WeatherServiceContract but is not currently used
 
         // Services - Jira
         $this->app->bind(JiraServiceContract::class, JiraService::class);
@@ -138,6 +226,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Services - HTTP
         $this->app->bind(HttpServiceContract::class, HttpService::class);
+        $this->app->bind(MonicaClientContract::class, MonicaClient::class);
 
         // Services - SSH
         $this->app->bind(SshServiceContract::class, SshService::class);
@@ -148,6 +237,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Services - Template
         $this->app->bind(MustacheTemplateService::class, MustacheService::class);
+
+        // Services - Dav
+        $this->app->singleton(CurrentDavAuth::class);
 
         // Other
         $this->app->alias(Operator::class, 'operator');
@@ -161,8 +253,27 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CrudCacheCommand::class,
+                CreateCredentialCommand::class,
+                SyncPrivacyTransactionsCommand::class,
+                SyncPlaidTransactionsCommand::class,
+                AnalyzeTransactionPatternsCommand::class,
+                ResetStandardAutomatedTagsCommand::class,
+                ResetStandardBudgetsCommand::class,
+                ResetDefaultArticleSocialFeedsCommand::class,
+                BackfillEmailMessageText::class,
+                RenameDirectMessageThreads::class,
+                ListenToCommandServerCommand::class,
+                CreateMonitorBridgeCredentialCommand::class,
+                \App\Console\Commands\Infrastructure\CreateMonitorDashboardCredentialCommand::class,
+                \App\Console\Commands\Infrastructure\RefreshMonitorDashboardTokenCommand::class,
+                UpdateNamecheapWhoisCommand::class,
+                DumpNamecheapApiResponseCommand::class,
+                CacheNavigationCommand::class,
             ]);
         }
+
+        // Warm Crud→pillar navigation once at boot (reflection), not per-request.
+        $this->app->make(CrudPillarNavigationCollector::class);
 
         // Policies
         Gate::policy(\App\Models\Automation::class, \App\Policies\AutomationPolicy::class);

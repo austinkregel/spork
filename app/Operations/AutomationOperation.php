@@ -6,7 +6,6 @@ namespace App\Operations;
 
 use App\Models\Automation;
 use App\Models\AutomationStep;
-use App\Services\Automation\DuskExecutor;
 use App\Services\Automation\StepRunner;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -48,5 +47,3 @@ class AutomationOperation extends Operation
         }
     }
 }
-
-

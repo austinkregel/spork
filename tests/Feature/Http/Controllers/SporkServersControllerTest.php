@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Credential;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class SporkServersControllerTest extends TestCase
@@ -18,7 +22,7 @@ class SporkServersControllerTest extends TestCase
 
     public function test_servers_route_is_accessible()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/servers');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/infrastructure/servers');
 
         $response->assertStatus(200);
     }
@@ -27,7 +31,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/infrastructure/servers/{$server->id}");
 
         $response->assertStatus(200);
     }
@@ -36,7 +40,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/console");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/infrastructure/servers/{$server->id}/console");
 
         $response->assertStatus(200);
     }
@@ -45,7 +49,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/keys");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/infrastructure/servers/{$server->id}/keys");
 
         $response->assertStatus(200);
     }
@@ -54,7 +58,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/workers");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/infrastructure/servers/{$server->id}/workers");
 
         $response->assertStatus(200);
     }
@@ -63,7 +67,7 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/crontab");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/infrastructure/servers/{$server->id}/crontab");
 
         $response->assertStatus(200);
     }
@@ -72,14 +76,14 @@ class SporkServersControllerTest extends TestCase
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}/logs");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/infrastructure/servers/{$server->id}/logs");
 
         $response->assertStatus(200);
     }
 
     public function test_servers_route_loads_expected_data()
     {
-        $response = $this->actingAsUser()->get('http://spork.localhost/-/servers');
+        $response = $this->actingAsUser()->get('http://spork.localhost/-/infrastructure/servers');
 
         $response->assertInertia(fn ($page) => $page
             ->component('Infrastructure/Index')
@@ -87,11 +91,41 @@ class SporkServersControllerTest extends TestCase
         );
     }
 
+    public function test_servers_route_loads_provider_optional_servers()
+    {
+        $this->actingAsUser();
+        $user = $this->user;
+
+        $ssh = Credential::factory()->create([
+            'user_id' => $user->id,
+            'type' => Credential::TYPE_SSH,
+            'service' => Credential::TYPE_SSH,
+        ]);
+
+        $ssh->servers()->create([
+            'server_id' => (string) Str::uuid(),
+            'name' => 'baremetal-01',
+            'status' => 'online',
+            'connection_type' => 'agent',
+            'machine_id' => 'machine-test-001',
+        ]);
+
+        $response = $this->actingAs($user)->get('http://spork.localhost/-/infrastructure/servers');
+
+        $response->assertInertia(fn ($page) => $page
+            ->component('Infrastructure/Index')
+            ->has('servers')
+            ->where('servers', fn ($servers) => collect($servers)
+                ->contains(fn ($server) => ($server['name'] ?? null) === 'baremetal-01' && ($server['provider'] ?? null) === Credential::TYPE_SSH)
+            )
+        );
+    }
+
     public function test_servers_server_route_loads_expected_data()
     {
         $server = \App\Models\Server::factory()->create();
 
-        $response = $this->actingAsUser()->get("http://spork.localhost/-/servers/{$server->id}");
+        $response = $this->actingAsUser()->get("http://spork.localhost/-/infrastructure/servers/{$server->id}");
 
         $response->assertInertia(fn ($page) => $page
             ->component('Infrastructure/Show')

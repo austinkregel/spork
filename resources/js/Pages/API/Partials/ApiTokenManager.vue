@@ -4,16 +4,12 @@ import { useForm } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import ActionSection from '@/Components/ActionSection.vue';
 import Checkbox from '@/Components/Checkbox.vue';
-import ConfirmationModal from '@/Components/ConfirmationModal.vue';
-import DangerButton from '@/Components/DangerButton.vue';
-import DialogModal from '@/Components/DialogModal.vue';
 import FormSection from '@/Components/FormSection.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
-import TextInput from '@/Components/TextInput.vue';
+import GlassModal from '@/Components/Glass/GlassModal.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
 
 const props = defineProps({
     tokens: Array,
@@ -85,22 +81,20 @@ const deleteApiToken = () => {
             </template>
 
             <template #form>
-                <!-- Token Name -->
                 <div class="col-span-6 sm:col-span-4">
-                    <InputLabel for="name" value="Name" />
-                    <TextInput
-                        id="name"
-                        v-model="createApiTokenForm.name"
-                        type="text"
-                        class="mt-1 block w-full"
-                        autofocus
-                    />
-                    <InputError :message="createApiTokenForm.errors.name" class="mt-2" />
+                    <GlassField v-slot="{ id, describedby, invalid }" label="Name" :error="createApiTokenForm.errors.name">
+                        <GlassInput
+                            :id="id"
+                            v-model="createApiTokenForm.name"
+                            :invalid="invalid"
+                            :describedby="describedby"
+                            autofocus
+                        />
+                    </GlassField>
                 </div>
 
-                <!-- Token Permissions -->
                 <div v-if="availablePermissions.length > 0" class="col-span-6">
-                    <InputLabel for="permissions" value="Permissions" />
+                    <div class="block text-sm font-medium text-stone-700 dark:text-stone-200">Permissions</div>
 
                     <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div v-for="permission in availablePermissions" :key="permission">
@@ -118,9 +112,9 @@ const deleteApiToken = () => {
                     Created.
                 </ActionMessage>
 
-                <PrimaryButton :class="{ 'opacity-25': createApiTokenForm.processing }" :disabled="createApiTokenForm.processing">
+                <GlassButton type="submit" :disabled="createApiTokenForm.processing">
                     Create
-                </PrimaryButton>
+                </GlassButton>
             </template>
         </FormSection>
 
@@ -170,86 +164,38 @@ const deleteApiToken = () => {
             </div>
         </div>
 
-        <!-- Token Value Modal -->
-        <DialogModal :show="displayingToken" @close="displayingToken = false">
-            <template #title>
-                API Token
-            </template>
-
-            <template #content>
-                <div>
-                    Please copy your new API token. For your security, it won't be shown again.
-                </div>
-
-                <div v-if="$page.props.jetstream.flash.token" class="mt-4 bg-stone-100 dark:bg-stone-900 px-4 py-2 rounded font-mono text-sm text-stone-500 break-all">
-                    {{ $page.props.jetstream.flash.token }}
-                </div>
-            </template>
-
+        <GlassModal :open="displayingToken" title="API Token" size="md" @close="displayingToken = false">
+            <p>Please copy your new API token. For your security, it won't be shown again.</p>
+            <div
+                v-if="$page.props.jetstream.flash.token"
+                class="mt-4 break-all rounded-md border border-[var(--color-glass-border-light)] dark:border-[var(--color-glass-border-dark)] bg-stone-100/70 dark:bg-stone-900/70 px-4 py-2 font-mono text-sm text-stone-700 dark:text-stone-200"
+            >
+                {{ $page.props.jetstream.flash.token }}
+            </div>
             <template #footer>
-                <SecondaryButton @click="displayingToken = false">
-                    Close
-                </SecondaryButton>
+                <GlassButton variant="secondary" @click="displayingToken = false">Close</GlassButton>
             </template>
-        </DialogModal>
+        </GlassModal>
 
-        <!-- API Token Permissions Modal -->
-        <DialogModal :show="managingPermissionsFor != null" @close="managingPermissionsFor = null">
-            <template #title>
-                API Token Permissions
-            </template>
-
-            <template #content>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div v-for="permission in availablePermissions" :key="permission">
-                        <label class="flex items-center">
-                            <Checkbox v-model:checked="updateApiTokenForm.permissions" :value="permission" />
-                            <span class="ml-2 text-sm text-stone-600 dark:text-stone-400">{{ permission }}</span>
-                        </label>
-                    </div>
-                </div>
-            </template>
-
+        <GlassModal :open="managingPermissionsFor != null" title="API Token Permissions" size="md" @close="managingPermissionsFor = null">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <label v-for="permission in availablePermissions" :key="permission" class="flex items-center">
+                    <Checkbox v-model:checked="updateApiTokenForm.permissions" :value="permission" />
+                    <span class="ml-2 text-sm text-stone-600 dark:text-stone-400">{{ permission }}</span>
+                </label>
+            </div>
             <template #footer>
-                <SecondaryButton @click="managingPermissionsFor = null">
-                    Cancel
-                </SecondaryButton>
-
-                <PrimaryButton
-                    class="ml-3"
-                    :class="{ 'opacity-25': updateApiTokenForm.processing }"
-                    :disabled="updateApiTokenForm.processing"
-                    @click="updateApiToken"
-                >
-                    Save
-                </PrimaryButton>
+                <GlassButton variant="secondary" @click="managingPermissionsFor = null">Cancel</GlassButton>
+                <GlassButton :disabled="updateApiTokenForm.processing" @click="updateApiToken">Save</GlassButton>
             </template>
-        </DialogModal>
+        </GlassModal>
 
-        <!-- Delete Token Confirmation Modal -->
-        <ConfirmationModal :show="apiTokenBeingDeleted != null" @close="apiTokenBeingDeleted = null">
-            <template #title>
-                Delete API Token
-            </template>
-
-            <template #content>
-                Are you sure you would like to delete this API token?
-            </template>
-
+        <GlassModal :open="apiTokenBeingDeleted != null" title="Delete API Token" size="sm" @close="apiTokenBeingDeleted = null">
+            <p class="text-sm text-stone-700 dark:text-stone-200">Are you sure you would like to delete this API token?</p>
             <template #footer>
-                <SecondaryButton @click="apiTokenBeingDeleted = null">
-                    Cancel
-                </SecondaryButton>
-
-                <DangerButton
-                    class="ml-3"
-                    :class="{ 'opacity-25': deleteApiTokenForm.processing }"
-                    :disabled="deleteApiTokenForm.processing"
-                    @click="deleteApiToken"
-                >
-                    Delete
-                </DangerButton>
+                <GlassButton variant="secondary" @click="apiTokenBeingDeleted = null">Cancel</GlassButton>
+                <GlassButton variant="destructive" :disabled="deleteApiTokenForm.processing" @click="deleteApiToken">Delete</GlassButton>
             </template>
-        </ConfirmationModal>
+        </GlassModal>
     </div>
 </template>

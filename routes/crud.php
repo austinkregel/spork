@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 if (! function_exists('developerRoute')) {
     function developerRoute($name, $model)
     {
-        Route::prefix('crud')->group(function () use ($name) {
+        Route::prefix('crud')->name('crud.')->group(function () use ($name) {
             Route::get($name, [\App\Http\Controllers\Spork\LocalAdminController::class, 'index'])->name($name.'.index');
 
             Route::post($name.'', [\App\Http\Controllers\Spork\LocalAdminController::class, 'store'])->name($name.'.store');

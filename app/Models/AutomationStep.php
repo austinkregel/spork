@@ -37,5 +37,3 @@ class AutomationStep extends Model implements ModelQuery
         return $this->belongsTo(Automation::class);
     }
 }
-
-

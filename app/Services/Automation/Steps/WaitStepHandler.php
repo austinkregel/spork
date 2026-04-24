@@ -32,5 +32,3 @@ class WaitStepHandler
         return ['output' => sprintf('Waited %d ms', $ms)];
     }
 }
-
-

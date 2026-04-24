@@ -10,6 +10,7 @@ services:
         user: 'root'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
+            - 'echo.kregel.dev:127.0.0.1'
         environment:
             WWWUSER: '${WWWUSER}'
             WWWGROUP: '${WWWGROUP}'
@@ -87,6 +88,8 @@ services:
                 - 'http://meilisearch:7700/health'
             retries: 3
             timeout: 5s
+        ports:
+          - 7700:7700
 
 #    matrix-bot:
 #       build:
@@ -98,6 +101,14 @@ services:
 #           - sail
 #       depends_on:
 #           - mariadb
+
+#    proton-bridge:
+#        container_name: proton-bridge
+#        image: shenxn/protonmail-bridge:latest
+#        volumes:
+#            - ./.protonmail:/root
+#        networks:
+#            - sail
 networks:
     sail:
         driver: bridge
@@ -110,3 +121,5 @@ volumes:
         driver: local
     composer_cache:
         driver: local
+#    protonmail:
+#        driver: local

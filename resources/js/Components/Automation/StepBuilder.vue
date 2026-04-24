@@ -110,9 +110,12 @@ const removeStep = (idx) => {
 
 <template>
   <div class="space-y-3">
-    <div class="flex items-center justify-between">
-      <h3 class="text-sm font-medium text-stone-800 dark:text-stone-200">Steps</h3>
-      <button type="button" @click="addStep" class="px-3 py-1.5 text-xs rounded-md bg-indigo-500 dark:bg-indigo-600 text-white">
+    <div class="flex items-center justify-end">
+      <button
+        type="button"
+        @click="addStep"
+        class="inline-flex items-center gap-1.5 rounded-md bg-indigo-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-colors motion-reduce:transition-none hover:bg-indigo-600 active:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
+      >
         Add step
       </button>
     </div>

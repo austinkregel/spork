@@ -11,6 +11,7 @@ use App\Models\Domain;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Http;
+use RuntimeException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class CloudflareDomainService implements CloudflareDomainServiceContract
@@ -23,10 +24,13 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
 
     protected string $accountId;
 
+    protected string $accessToken;
+
     public function __construct(
         public Credential $credential
     ) {
-        $this->apiKey = $credential->access_token;
+        $this->apiKey = $credential->api_key;
+        $this->accessToken = $this->credential->access_token;
         $this->email = $credential->settings['email'];
         $this->accountId = $credential->settings['account_id'];
     }
@@ -40,6 +44,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
             'X-Auth-Key' => $this->apiKey,
             'Content-Type' => 'application/json',
             'X-Auth-Email' => $this->email,
+            'Authorization' => 'Bearer '.$this->accessToken,
         ])->get(static::CLOUDFLARE_URL.'/zones', [
             'per_page' => $limit,
             'page' => $page,
@@ -68,6 +73,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         Http::withHeaders([
             'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
+            'Authorization' => 'Bearer '.$this->accessToken,
         ])->delete(static::CLOUDFLARE_URL."/zones/$domain/dns_records/$dnsRecordId");
     }
 
@@ -89,6 +95,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         $response = Http::withHeaders([
             'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
+            'Authorization' => 'Bearer '.$this->accessToken,
         ])->post(static::CLOUDFLARE_URL.'/zones', [
             'account' => [
                 'id' => $this->accountId,
@@ -119,6 +126,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         $response = Http::withHeaders([
             'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
+            'Authorization' => 'Bearer '.$this->accessToken,
         ])->get(static::CLOUDFLARE_URL."/zones/$domain/dns_records", array_merge([
             'per_page' => $limit,
             'page' => $page,
@@ -126,8 +134,8 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
 
         $data = $response->json('result');
 
-        if (! isset($data)) {
-            dd($response->json());
+        if (! is_array($data)) {
+            throw $response->toException() ?? new RuntimeException('Cloudflare DNS response missing result array.');
         }
 
         return new LengthAwarePaginator(
@@ -151,7 +159,14 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
             'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
             'content-type' => 'application/json',
+            'Authorization' => 'Bearer '.$this->accessToken,
         ])->post(static::CLOUDFLARE_URL."/zones/$domain/dns_records", $dnsRecordArray);
+
+        info('Tried to create DNS record', [
+            'response' => $response->json(),
+            'dnsRecordArray' => $dnsRecordArray,
+            'domain' => $domain,
+        ]);
 
         $id = $response->json('result.id');
 
@@ -165,6 +180,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         $response = Http::withHeaders([
             'X-Auth-Key' => $this->apiKey,
             'x-auth-email' => $this->email,
+            'Authorization' => 'Bearer '.$this->accessToken,
             'content-type' => 'application/json',
         ])->get(static::CLOUDFLARE_URL."/zones/$domain/email/routing");
 
@@ -229,6 +245,7 @@ class CloudflareDomainService implements CloudflareDomainServiceContract
         $zone = $domain->cloudflare_id;
         $response = Http::withHeaders([
             'X-Auth-Key' => $this->apiKey,
+            'Authorization' => 'Bearer '.$this->accessToken,
             'x-auth-email' => $this->email,
             'content-type' => 'application/json',
         ])->get(static::CLOUDFLARE_URL."/zones/$zone/dns_analytics/report/bytime?".http_build_query([

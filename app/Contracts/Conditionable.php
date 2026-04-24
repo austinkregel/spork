@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property Collection $conditions
+ * @property bool $must_all_conditions_pass
  */
 interface Conditionable
 {

@@ -1,11 +1,9 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { useForm } from '@inertiajs/vue3';
+import GlassAuthLayout from '@/Layouts/GlassAuthLayout.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
 
 defineProps({
     status: String,
@@ -21,41 +19,43 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Forgot Password" />
-
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <div class="mb-4 text-sm text-stone-600 dark:text-stone-400">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
-        </div>
-
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
+    <GlassAuthLayout
+        title="Forgot Password"
+        heading="Reset your password"
+        subheading="Enter your email and we'll send you a reset link."
+    >
+        <p
+            v-if="status"
+            class="mb-4 rounded-md bg-emerald-100 px-3 py-2 text-sm font-medium text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200"
+            role="status"
+        >
             {{ status }}
-        </div>
+        </p>
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
+        <form class="space-y-4" @submit.prevent="submit">
+            <GlassField
+                v-slot="{ id, describedby, invalid }"
+                label="Email"
+                :error="form.errors.email"
+                required
+            >
+                <GlassInput
+                    :id="id"
                     v-model="form.email"
                     type="email"
-                    class="mt-1 block w-full"
+                    autocomplete="username"
                     required
                     autofocus
-                    autocomplete="username"
+                    :invalid="invalid"
+                    :describedby="describedby"
                 />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+            </GlassField>
 
-            <div class="flex items-center justify-end mt-4">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Email Password Reset Link
-                </PrimaryButton>
+            <div class="flex justify-end pt-2">
+                <GlassButton type="submit" :disabled="form.processing">
+                    Email password reset link
+                </GlassButton>
             </div>
         </form>
-    </AuthenticationCard>
+    </GlassAuthLayout>
 </template>

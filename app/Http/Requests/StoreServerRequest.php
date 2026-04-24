@@ -17,7 +17,7 @@ class StoreServerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if (! $this->hasHeader('Authentication')) {
+        if (! $this->hasHeader('Authorization')) {
             info('no auth header');
 
             return false;
@@ -58,7 +58,7 @@ class StoreServerRequest extends FormRequest
             return false;
         }
 
-        [$bearer, $token] = explode(' ', $this->header('Authentication'), 2);
+        [$bearer, $token] = explode(' ', $this->header('Authorization'), 2);
         $credential = Credential::firstWhere('api_key', $token);
 
         if (! $credential) {

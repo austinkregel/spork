@@ -6,6 +6,7 @@ namespace App\Services\Server;
 
 use App\Contracts\Services\ServerServiceContract;
 use Ovh\Api;
+use RuntimeException;
 
 class OVHCloudService implements ServerServiceContract
 {
@@ -85,5 +86,15 @@ class OVHCloudService implements ServerServiceContract
         $result = $this->ovh->get('/cloud/project/sshkey');
 
         return $result;
+    }
+
+    public function createSshKey(string $name, string $publicKey): array
+    {
+        throw new RuntimeException('SSH key management not implemented for OVHCloudService.');
+    }
+
+    public function findSshKeyByFingerprint(?string $fingerprint): ?array
+    {
+        return null;
     }
 }

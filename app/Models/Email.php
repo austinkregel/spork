@@ -28,6 +28,7 @@ class Email extends Model
         'from_email',
         'credential_id',
         'subject',
+        'message_text',
         'sent_at',
         'seen',
         'spam',

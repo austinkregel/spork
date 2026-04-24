@@ -12,7 +12,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
-class UniqueCredentialForOwner implements ValidationRule, DataAwareRule
+class UniqueCredentialForOwner implements DataAwareRule, ValidationRule
 {
     /**
      * @var array<string, mixed>
@@ -21,8 +21,7 @@ class UniqueCredentialForOwner implements ValidationRule, DataAwareRule
 
     public function __construct(
         private readonly User $user,
-    ) {
-    }
+    ) {}
 
     /**
      * Run the validation rule.
@@ -127,5 +126,3 @@ class UniqueCredentialForOwner implements ValidationRule, DataAwareRule
         $query->whereIn('user_id', $userIds);
     }
 }
-
-

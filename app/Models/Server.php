@@ -14,6 +14,7 @@ use App\Events\Models\Server\ServerUpdating;
 use App\Models\Traits\HasOwner;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
+use App\Navigation\Pillar;
 use App\Observers\ApplyCredentialsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,7 +39,12 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     use ScopeRelativeSearch;
 
     public $fillable = [
+        'credential_id',
+        'provider_credential_id',
         'server_id',
+        'provider_server_id',
+        'machine_id',
+        'connection_type',
         'name',
         'vcpu',
         'memory',
@@ -54,6 +60,7 @@ class Server extends Model implements Crud, ModelQuery, Taggable
         'booted_at',
         'turned_off_at',
         'os',
+        'telemetry',
     ];
 
     public $dispatchesEvents = [
@@ -68,14 +75,21 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     protected function casts(): array
     {
         return [
+            'last_ping_at' => 'datetime',
             'turned_off_at' => 'datetime',
             'booted_at' => 'datetime',
+            'telemetry' => 'array',
         ];
     }
 
     public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
+    }
+
+    public function providerCredential(): BelongsTo
+    {
+        return $this->belongsTo(Credential::class, 'provider_credential_id');
     }
 
     public function projects(): MorphToMany
@@ -99,5 +113,18 @@ class Server extends Model implements Crud, ModelQuery, Taggable
     public function services(): HasMany
     {
         return $this->hasMany(ServerService::class);
+    }
+
+    public function domains(): HasMany
+    {
+        return $this->hasMany(Domain::class);
+    }
+
+    /**
+     * Opt-in: surface this model under Infrastructure pillar → Manage in the glass sub-nav.
+     */
+    public static function pillar(): ?Pillar
+    {
+        return Pillar::INFRASTRUCTURE;
     }
 }

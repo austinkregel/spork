@@ -14,7 +14,7 @@
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 
         @routes
-        @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
+        @vite(['resources/js/app.js'])
         @inertiaHead
     </head>
     <body class="font-sans antialiased bg-white dark:bg-stone-900 relative text-black dark:text-white">

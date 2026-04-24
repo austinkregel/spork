@@ -11,6 +11,9 @@ use App\Events\Models\Project\ProjectDeleted;
 use App\Events\Models\Project\ProjectDeleting;
 use App\Events\Models\Project\ProjectUpdated;
 use App\Events\Models\Project\ProjectUpdating;
+use App\Models\Finance\Account as FinanceAccount;
+use App\Models\Finance\Budget as FinanceBudget;
+use App\Models\Finance\Transaction as FinanceTransaction;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use App\Observers\ApplyCredentialsObserver;
@@ -18,6 +21,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -82,9 +86,126 @@ class Project extends Model implements Crud, ModelQuery, Taggable
         );
     }
 
+    public function servers(): MorphToMany
+    {
+        return $this->morphedByMany(
+            Server::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
+    public function domains(): MorphToMany
+    {
+        return $this->morphedByMany(
+            Domain::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
+    public function budgets(): MorphToMany
+    {
+        return $this->morphedByMany(
+            FinanceBudget::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
+    public function accounts(): MorphToMany
+    {
+        return $this->morphedByMany(
+            FinanceAccount::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
+    public function transactions(): MorphToMany
+    {
+        return $this->morphedByMany(
+            FinanceTransaction::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
+    public function externalRssFeeds(): MorphToMany
+    {
+        return $this->morphedByMany(
+            ExternalRssFeed::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
+    public function people(): MorphToMany
+    {
+        return $this->morphedByMany(
+            Person::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
+    public function threads(): MorphToMany
+    {
+        return $this->morphedByMany(
+            Thread::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
+    public function automations(): MorphToMany
+    {
+        return $this->morphedByMany(
+            Automation::class,
+            'resource',
+            'project_resources'
+        );
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(ProjectMembership::class);
+    }
+
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'project_memberships')
+            ->withPivot(['role', 'invited_at', 'accepted_at', 'declined_at'])
+            ->withTimestamps();
+    }
+
+    public function isOwnedBy(User $user): bool
+    {
+        return $this->user_id === $user->getKey();
+    }
+
+    public function membershipFor(User $user): ?ProjectMembership
+    {
+        return $this->memberships()
+            ->where('user_id', $user->getKey())
+            ->first();
+    }
+
+    public function hasAcceptedMember(User $user): bool
+    {
+        if ($this->isOwnedBy($user)) {
+            return true;
+        }
+
+        return $this->memberships()
+            ->where('user_id', $user->getKey())
+            ->whereNotNull('accepted_at')
+            ->exists();
     }
 
     public function deployments(): HasMany

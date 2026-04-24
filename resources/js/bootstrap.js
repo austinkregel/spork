@@ -33,7 +33,7 @@ window.axios.interceptors.request.use(function (config) {
 window.axios.interceptors.request.use(function (config) {
     return config;
 }, function (error) {
-    playSound('error');
+    window.playSound?.('error');
     const status = error?.response?.status
     if (status === 401) {
         window.location = "/login"

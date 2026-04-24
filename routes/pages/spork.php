@@ -4,6 +4,18 @@ declare(strict_types=1);
 
 use App\Actions\Spork\CustomAction;
 use App\Http\Controllers;
+use App\Http\Controllers\Api\Infrastructure\ActivityFeedController;
+use App\Http\Controllers\Api\Infrastructure\BulkOperationController;
+use App\Http\Controllers\Api\Infrastructure\DnsZoneChangeController;
+use App\Http\Controllers\Api\Infrastructure\DnsZoneRecordController;
+use App\Http\Controllers\Api\Infrastructure\DomainContactController;
+use App\Http\Controllers\Api\Infrastructure\DomainLinkController;
+use App\Http\Controllers\Api\Infrastructure\InfrastructureOverviewController;
+use App\Http\Controllers\Api\Infrastructure\MonitorBridgeTokenController;
+use App\Http\Controllers\Api\Infrastructure\ProvisionInfrastructureController;
+use App\Http\Controllers\Api\Infrastructure\ServerLinkController;
+use App\Http\Controllers\Spork\PillarLandingController;
+use App\Models\Thread;
 use App\Services\Programming\LaravelProgrammingStyle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,12 +26,6 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-
-    if (\Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures()) {
-        Route::delete('/user', [\Laravel\Jetstream\Http\Controllers\Inertia\CurrentUserController::class, 'destroy'])
-            ->name('current-user.destroy');
-    }
-
     $instances = LaravelProgrammingStyle::instancesOf(CustomAction::class);
 
     foreach ($instances->constructorProperty('slug') as $file => $classAndSlug) {
@@ -37,6 +43,15 @@ Route::middleware([
     Route::post('/api/mail/destroy', Controllers\Api\Mail\DestroyMailController::class);
 
     Route::post('/api/message/reply', Controllers\Api\Message\ReplyController::class);
+    Route::get('/api/media/unfurl', Controllers\Api\MediaUnfurlController::class)->name('api.media.unfurl');
+    Route::post('/api/chat/threads/{thread}/archive', [Controllers\Api\ThreadActionController::class, 'archive'])->name('api.chat.threads.archive');
+    Route::post('/api/chat/threads/{thread}/unarchive', [Controllers\Api\ThreadActionController::class, 'unarchive'])->name('api.chat.threads.unarchive');
+    Route::post('/api/chat/threads/{thread}/mute', [Controllers\Api\ThreadActionController::class, 'mute'])->name('api.chat.threads.mute');
+    Route::post('/api/chat/threads/{thread}/unmute', [Controllers\Api\ThreadActionController::class, 'unmute'])->name('api.chat.threads.unmute');
+    Route::delete('/api/chat/threads/{thread}', [Controllers\Api\ThreadActionController::class, 'destroy'])->name('api.chat.threads.destroy');
+    Route::delete('/api/chat/messages/{message}', [Controllers\Api\ThreadActionController::class, 'destroyMessage'])->name('api.chat.messages.destroy');
+    Route::post('/api/chat/messages/{message}/reactions', [Controllers\Api\MessageReactionController::class, 'store'])->name('api.chat.messages.reactions.store');
+    Route::delete('/api/chat/messages/{message}/reactions', [Controllers\Api\MessageReactionController::class, 'destroy'])->name('api.chat.messages.reactions.destroy');
 
     Route::post('/api/plaid/create-link-token', Controllers\Api\Plaid\CreateLinkTokenController::class);
     Route::post('/api/plaid/exchange-token', Controllers\Api\Plaid\ExchangeTokenController::class);
@@ -45,15 +60,52 @@ Route::middleware([
     Route::get('/api/suggest/operations', [Controllers\Api\SuggestController::class, 'operations'])->name('api.suggest.operations');
 
     Route::post('/api/projects/{project}/tasks', Controllers\Api\Projects\CreateTaskController::class);
+    Route::post('/api/projects/{project}/research', Controllers\Api\Projects\CreateResearchController::class);
     Route::post('/api/credentials', [Controllers\Api\CredentialController::class, 'store']);
 
+    Route::get('/api/calendar/events', [Controllers\Spork\CalendarController::class, 'events'])->name('api.calendar.events');
+    Route::post('/api/calendar/events', [Controllers\Spork\CalendarController::class, 'store'])->name('api.calendar.events.store');
+    Route::put('/api/calendar/events/{event}', [Controllers\Spork\CalendarController::class, 'update'])->name('api.calendar.events.update');
+    Route::delete('/api/calendar/events/{event}', [Controllers\Spork\CalendarController::class, 'destroy'])->name('api.calendar.events.destroy');
+
     Route::get('/user/api-query', Controllers\User\ApiQueryController::class)->middleware(\Illuminate\Auth\Middleware\Authenticate::class)->name('user.api-query');
+
+    Route::prefix('api/infrastructure')
+        ->name('api.infrastructure.')
+        ->group(function (): void {
+            Route::get('overview', InfrastructureOverviewController::class)->name('overview');
+
+            Route::get('monitor-bridge/token', MonitorBridgeTokenController::class)->name('monitor-bridge.token');
+
+            Route::post('servers/{server}/links', ServerLinkController::class)->name('servers.links.store');
+            Route::post('domains/{domain}/link', [DomainLinkController::class, 'store'])->name('domains.link.store');
+            Route::delete('domains/{domain}/link', [DomainLinkController::class, 'destroy'])->name('domains.link.destroy');
+
+            Route::post('dns-zones/{dnsZone}/records', [DnsZoneRecordController::class, 'store'])->name('dns-zones.records.store');
+            Route::delete('dns-zones/{dnsZone}/records/{record}', [DnsZoneRecordController::class, 'destroy'])->name('dns-zones.records.destroy');
+            Route::post('dns-zones/{dnsZone}/apply', DnsZoneChangeController::class)->name('dns-zones.apply');
+
+            Route::get('contacts', [DomainContactController::class, 'index'])->name('contacts.index');
+            Route::post('domains/{domain}/contacts', [DomainContactController::class, 'store'])->name('contacts.store');
+            Route::put('domains/{domain}/contacts/{contact}', [DomainContactController::class, 'update'])->name('contacts.update');
+            Route::delete('domains/{domain}/contacts/{contact}', [DomainContactController::class, 'destroy'])->name('contacts.destroy');
+
+            Route::get('activity/servers', [ActivityFeedController::class, 'servers'])->name('activity.servers');
+            Route::get('activity/domains', [ActivityFeedController::class, 'domains'])->name('activity.domains');
+
+            Route::post('bulk-operations', [BulkOperationController::class, 'store'])->name('bulk-operations.store');
+            Route::get('bulk-operations/{operation}', [BulkOperationController::class, 'show'])->name('bulk-operations.show');
+
+            Route::post('provision', [ProvisionInfrastructureController::class, 'store'])->name('provision.store');
+            Route::get('provision/{provisionRequest}', [ProvisionInfrastructureController::class, 'show'])->name('provision.show');
+
+        });
 });
 
 Route::redirect('/', '/flight/login');
 
 Route::get('/post-login', function () {
-	return redirect()->intended(\App\Providers\AppServiceProvider::HOME);
+    return redirect()->intended(\App\Providers\AppServiceProvider::HOME);
 })->middleware('auth')->name('post-login');
 
 Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
@@ -68,58 +120,15 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
         return response('', 204);
     });
 
-    Route::get('/rss-feeds', fn () => Inertia::render('RssFeeds/Index', [
-        'feeds' => \App\Models\Article::query()->latest('last_modified')
-            ->with('author.tags')
-            ->paginate()
-            ->items(),
-        'pagination' => \App\Models\Article::query()->latest('last_modified')
-            ->with('author.tags')
-            ->paginate(),
-    ]));
     Route::get('/batch-jobs', [Controllers\Spork\BatchJobController::class, 'index'])->name('batch-jobs.index');
     Route::get('/batch-jobs/{batch_job}', [Controllers\Spork\BatchJobController::class, 'show'])->name('batch-jobs.show');
 
-    Route::get('/projects', [Controllers\Spork\ProjectsController::class, 'index'])->name('projects.index');
-    Route::get('/projects/create', [Controllers\Spork\ProjectsController::class, 'create'])->name('projects.create');
-    Route::post('projects', [Controllers\Spork\ProjectsController::class, 'store'])->name('projects.store');
-    Route::get('/projects/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('projects.show');
-    Route::post('project/{project}/attach', [Controllers\Spork\ProjectsController::class, 'attach'])->name('project.attach');
-    Route::post('project/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach'])->name('project.detach');
+    Route::get('/manage/{slug}', [Controllers\Spork\ManageController::class, 'show'])->name('manage.show');
+    Route::get('/manage', [Controllers\Spork\ManageController::class, 'index'])->name('manage.index');
+
+    Route::get('/settings', Controllers\Spork\SettingsController::class)->name('settings');
 
     Route::get('/pages/create', [Controllers\Spork\PagesController::class, 'create'])->name('pages');
-
-    Route::get('/servers', [Controllers\Spork\ServersController::class, 'index'])->name('servers.index');
-    Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
-    Route::get('/servers/{server}/console', [Controllers\Spork\ServersController::class, 'console'])->name('servers.console');
-    Route::get('/servers/{server}/keys', [Controllers\Spork\ServersController::class, 'keys'])->name('servers.keys');
-    Route::get('/servers/{server}/workers', [Controllers\Spork\ServersController::class, 'workers'])->name('servers.workers');
-    Route::get('/servers/{server}/crontab', [Controllers\Spork\ServersController::class, 'crontab'])->name('servers.crontab');
-    Route::get('/servers/{server}/logs', [Controllers\Spork\ServersController::class, 'logs'])->name('servers.logs');
-
-    Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
-
-    Route::post('deployment/{deployment}/detach', [Controllers\Spork\DeploymentController::class, 'detach'])->name('deployment.detach');
-    Route::post('deployment/{deployment}/attach', [Controllers\Spork\DeploymentController::class, 'attach'])->name('deployment.attach');
-    Route::post('deployment/{deployment}/deploy', [Controllers\Spork\DeploymentController::class, 'deploy'])->name('project.deploy');
-
-    Route::prefix('/banking')->name('banking.')->group(function () {
-        Route::get('/', [Controllers\Spork\BankingController::class, 'overview'])->name('overview');
-        Route::get('/accounts', [Controllers\Spork\BankingController::class, 'accounts'])->name('accounts');
-        Route::get('/budgets', [Controllers\Spork\BankingController::class, 'budgets'])->name('budgets');
-        Route::get('/transactions', [Controllers\Spork\BankingController::class, 'transactions'])->name('transactions');
-        Route::get('/settings', [Controllers\Spork\BankingController::class, 'settings'])->name('settings');
-
-        Route::post('/manual-transactions', [Controllers\Spork\ManualTransactionController::class, 'store'])
-            ->name('manual-transactions.store');
-        Route::put('/preferences/pins', [Controllers\Spork\BankingPreferenceController::class, 'updatePins'])
-            ->name('preferences.pins');
-        Route::put('/preferences/settings', [Controllers\Spork\BankingPreferenceController::class, 'updateSettings'])
-            ->name('preferences.settings');
-    });
-
-    Route::get('/file-manager', Controllers\Spork\FileManagerController::class)->name('file-manager.index');
-    Route::post('/file-manager/default', [Controllers\Spork\FileManagerController::class, 'updateFileManager'])->name('file-manager.update-default');
 
     Route::get('kvm', function () {
         $vmName = 'ubuntu22.04';
@@ -143,41 +152,140 @@ Route::prefix('-')->middleware(['auth:sanctum', config('jetstream.auth_session')
         }
     });
 
-    Route::get('/inbox', [Controllers\Spork\MessageController::class, 'index'])->name('inbox');
-    Route::get('/inbox/{message}', [Controllers\Spork\MessageController::class, 'show'])->name('inbox.show');
-    Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
-    Route::get('/postal/{email}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
+    // ----- Finance pillar -----
+    Route::prefix('finance')->name('finance.')->group(function () {
+        Route::get('/', PillarLandingController::class)->name('landing');
+        Route::prefix('banking')->name('banking.')->group(function () {
+            Route::get('/', [Controllers\Spork\BankingController::class, 'overview'])->name('overview');
+            Route::get('/accounts', [Controllers\Spork\BankingController::class, 'accounts'])->name('accounts');
+            Route::get('/budgets', [Controllers\Spork\BankingController::class, 'budgets'])->name('budgets');
+            Route::get('/budgets/{budget}', [Controllers\Spork\BankingBudgetController::class, 'show'])->name('budgets.show');
+            Route::get('/transactions', [Controllers\Spork\BankingController::class, 'transactions'])->name('transactions');
+            Route::get('/privacy', [Controllers\Spork\BankingController::class, 'privacy'])->name('privacy');
+            Route::get('/settings', [Controllers\Spork\BankingController::class, 'settings'])->name('settings');
 
-    Route::get('/automation', [Controllers\Spork\AutomationController::class, 'index'])->name('automation.index');
-    Route::get('/automation/tags', [Controllers\Spork\AutomationController::class, 'tags'])->name('automation.tags');
-    Route::get('/automation/tags/{tag}', [Controllers\Spork\AutomationController::class, 'show'])->name('automation.tags.show');
+            Route::post('/budgets', [Controllers\Spork\BankingBudgetsController::class, 'store'])->name('budgets.store');
+            Route::put('/budgets/{budget}', [Controllers\Spork\BankingBudgetsController::class, 'update'])->name('budgets.update');
+            Route::delete('/budgets/{budget}', [Controllers\Spork\BankingBudgetsController::class, 'destroy'])->name('budgets.destroy');
 
-    Route::prefix('/automation')->name('automation.')->group(function () {
+            Route::put('/transactions/{transaction}/tags', [Controllers\Spork\BankingTransactionTagsController::class, 'update'])
+                ->name('transactions.tags.update');
+
+            Route::post('/manual-transactions', [Controllers\Spork\ManualTransactionController::class, 'store'])
+                ->name('manual-transactions.store');
+            Route::put('/preferences/pins', [Controllers\Spork\BankingPreferenceController::class, 'updatePins'])
+                ->name('preferences.pins');
+            Route::put('/preferences/settings', [Controllers\Spork\BankingPreferenceController::class, 'updateSettings'])
+                ->name('preferences.settings');
+        });
+    });
+
+    // ----- Communication pillar -----
+    Route::prefix('communication')->name('communication.')->group(function () {
+        Route::get('/', PillarLandingController::class)->name('landing');
+        Route::get('/postal', [Controllers\Spork\InboxController::class, 'index'])->name('postal.index');
+        Route::get('/postal/{email}', [Controllers\Spork\InboxController::class, 'show'])->name('postal.show');
+        Route::get('/chat', [Controllers\Spork\MessageController::class, 'index'])->name('chat');
+        Route::get('/chat/{thread}', [Controllers\Spork\MessageController::class, 'show'])->name('chat.show');
+        Route::get('/inbox', fn () => redirect()->route('communication.chat'))->name('inbox');
+        Route::get('/inbox/{thread}', fn (Thread $thread) => redirect()->route('communication.chat.show', $thread))->name('inbox.show');
+        Route::prefix('calendar')->name('calendar.')->group(function () {
+            Route::get('/', [Controllers\Spork\CalendarController::class, 'index'])->name('index');
+            Route::get('/fullscreen', [Controllers\Spork\CalendarController::class, 'fullscreen'])->name('fullscreen');
+        });
+    });
+
+    // ----- Feeds pillar -----
+    Route::prefix('feeds')->name('feeds.')->group(function () {
+        Route::get('/', PillarLandingController::class)->name('landing');
+        Route::get('/rss-feeds', [Controllers\Spork\RssFeedsController::class, 'index'])->name('rss-feeds.index');
+        Route::get('/rss-feeds/{socialFeed}', [Controllers\Spork\RssFeedsController::class, 'show'])->name('rss-feeds.show');
+        Route::post('/rss-feeds/{socialFeed}/make-public', [Controllers\Spork\RssFeedsController::class, 'makePublic'])->name('rss-feeds.make-public');
+        Route::post('/rss-feeds/{socialFeed}/make-private', [Controllers\Spork\RssFeedsController::class, 'makePrivate'])->name('rss-feeds.make-private');
+        Route::get('/articles/{article}', [Controllers\Spork\RssFeedsController::class, 'article'])->name('articles.show');
+    });
+
+    // ----- Projects pillar -----
+    Route::prefix('projects')->name('projects.')->group(function () {
+        Route::get('/', PillarLandingController::class)->name('landing');
+        Route::get('/list', [Controllers\Spork\ProjectsController::class, 'index'])->name('index');
+        Route::post('/', [Controllers\Spork\ProjectsController::class, 'store'])->name('store');
+        Route::get('/create', [Controllers\Spork\ProjectsController::class, 'create'])->name('create');
+
+        Route::get('/wizard', [Controllers\Spork\Projects\WizardController::class, 'start'])->name('wizard.start');
+        Route::post('/wizard/reset', [Controllers\Spork\Projects\WizardController::class, 'reset'])->name('wizard.reset');
+        Route::get('/wizard/{step}', [Controllers\Spork\Projects\WizardController::class, 'show'])->name('wizard.show');
+        Route::post('/wizard/{step}', [Controllers\Spork\Projects\WizardController::class, 'store'])->name('wizard.store');
+        Route::get('/research', [Controllers\Spork\ResearchController::class, 'index'])->name('research.index');
+        Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');
+        Route::get('/assets', [Controllers\Spork\AssetController::class, 'index'])->name('assets.index');
+        Route::post('/{project}/attach', [Controllers\Spork\ProjectsController::class, 'attach'])->name('attach');
+        Route::post('/{project}/detach', [Controllers\Spork\ProjectsController::class, 'detach'])->name('detach');
+        Route::get('/{project}/members', [Controllers\Spork\Projects\ProjectMemberController::class, 'index'])->name('members.index');
+        Route::post('/{project}/members', [Controllers\Spork\Projects\ProjectMemberController::class, 'invite'])->name('members.invite');
+        Route::delete('/{project}/members/{member}', [Controllers\Spork\Projects\ProjectMemberController::class, 'destroy'])->name('members.destroy');
+        Route::get('/{project}', [Controllers\Spork\ProjectsController::class, 'show'])->name('show');
+    });
+
+    // ----- Automations pillar -----
+    Route::prefix('automations')->name('automations.')->group(function () {
+        Route::get('/', PillarLandingController::class)->name('landing');
+        Route::get('/workspace', [Controllers\Spork\AutomationController::class, 'index'])->name('workspace');
+        Route::get('/operations', [Controllers\Spork\AutomationOperationsController::class, 'index'])->name('operations.index');
+        Route::get('/tags', [Controllers\Spork\AutomationController::class, 'tags'])->name('tags');
+        Route::get('/tags/{tag}', [Controllers\Spork\AutomationController::class, 'show'])->name('tags.show');
+
+        Route::post('/tags', Controllers\Spork\AutomationTagsController::class)
+            ->name('tags.store');
+        Route::patch('/tags/{tag}', [Controllers\Spork\AutomationTagsController::class, 'update'])
+            ->name('tags.update');
+
+        Route::post('/tags/{tag}/conditions', [Controllers\Spork\AutomationTagConditionsController::class, 'store'])
+            ->name('tags.conditions.store');
+        Route::put('/tags/{tag}/conditions/{condition}', [Controllers\Spork\AutomationTagConditionsController::class, 'update'])
+            ->name('tags.conditions.update');
+        Route::delete('/tags/{tag}/conditions/{condition}', [Controllers\Spork\AutomationTagConditionsController::class, 'destroy'])
+            ->name('tags.conditions.destroy');
+
         Route::resource('automations', Controllers\Spork\AutomationsController::class)
             ->parameters(['automations' => 'automation']);
         Route::post('automations/{automation}/run-now', [Controllers\Spork\AutomationsController::class, 'runNow'])
-            ->name('automations.run-now');
+            ->name('run-now');
 
-        // Steps management
         Route::post('automations/{automation}/steps', [Controllers\Spork\AutomationsController::class, 'storeStep'])
-            ->name('automations.steps.store');
+            ->name('steps.store');
         Route::put('automations/{automation}/steps/{step}', [Controllers\Spork\AutomationsController::class, 'updateStep'])
-            ->name('automations.steps.update');
+            ->name('steps.update');
         Route::delete('automations/{automation}/steps/{step}', [Controllers\Spork\AutomationsController::class, 'destroyStep'])
-            ->name('automations.steps.destroy');
+            ->name('steps.destroy');
     });
-    Route::get('/manage/{slug}', [Controllers\Spork\ManageController::class, 'show'])->name('manage.show');
-    Route::get('/manage', [Controllers\Spork\ManageController::class, 'index'])->name('manage.index');
 
-    Route::get('/settings', Controllers\Spork\SettingsController::class);
-    Route::get('/tag-manager', Controllers\Spork\TagManagerController::class);
-    Route::get('/tag-manager/{tag}', [Controllers\Spork\TagManagerController::class, 'show']);
+    // ----- Infrastructure pillar -----
+    Route::prefix('infrastructure')->name('infrastructure.')->group(function () {
+        Route::get('/', PillarLandingController::class)->name('landing');
+        Route::get('/servers', [Controllers\Spork\ServersController::class, 'index'])->name('servers.index');
+        Route::get('/servers/{server}', [Controllers\Spork\ServersController::class, 'show'])->name('servers.show');
+        Route::get('/servers/{server}/console', [Controllers\Spork\ServersController::class, 'console'])->name('servers.console');
+        Route::get('/servers/{server}/keys', [Controllers\Spork\ServersController::class, 'keys'])->name('servers.keys');
+        Route::get('/servers/{server}/workers', [Controllers\Spork\ServersController::class, 'workers'])->name('servers.workers');
+        Route::get('/servers/{server}/crontab', [Controllers\Spork\ServersController::class, 'crontab'])->name('servers.crontab');
+        Route::get('/servers/{server}/logs', [Controllers\Spork\ServersController::class, 'logs'])->name('servers.logs');
+        Route::get('/create', [Controllers\Spork\ServersController::class, 'create'])->name('create');
+        Route::get('/connect-host', [Controllers\Spork\ServersController::class, 'connectHost'])->name('connect-host');
+        Route::get('/providers/{credential}/options', Controllers\Api\Infrastructure\ProviderOptionsController::class)->name('providers.options');
 
-    Route::get('/research', [Controllers\Spork\ResearchController::class, 'index'])->name('research.index');
-    Route::get('/research/{research}', [Controllers\Spork\ResearchController::class, 'show'])->name('research.show');
+        Route::get('/domains/{domain}', [Controllers\Spork\DomainsController::class, 'show'])->name('domains.show');
 
-    Route::get('/assets', [Controllers\Spork\AssetController::class, 'index'])->name('assets.index');
+        Route::post('deployment/{deployment}/detach', [Controllers\Spork\DeploymentController::class, 'detach'])->name('deployment.detach');
+        Route::post('deployment/{deployment}/attach', [Controllers\Spork\DeploymentController::class, 'attach'])->name('deployment.attach');
+        Route::post('deployment/{deployment}/deploy', [Controllers\Spork\DeploymentController::class, 'deploy'])->name('project.deploy');
+
+        Route::prefix('cms')->name('cms.')->group(function (): void {
+            Route::get('/pages/create', fn () => redirect()->route('pages'))->name('pages.create');
+        });
+    });
 });
+
 Route::middleware([
     'web',
     config('jetstream.auth_session'),
@@ -189,15 +297,10 @@ Route::middleware([
     Route::post('/api/uninstall', Controllers\UninstallNewProvider::class);
     Route::post('/api/enable', Controllers\EnableProviderController::class);
     Route::post('/api/disable', Controllers\DisableProviderController::class);
-    Route::get('/-/development', [Controllers\Spork\DevelopmentController::class, 'index'])->name('development.index');
 
-    Route::get('/-/logic', Controllers\Spork\LogicController::class);
+    Route::get('/-/settings/dev/logic', Controllers\Spork\LogicController::class)->name('settings.dev.logic');
     Route::post('/api/logic/add-listener-for-event', Controllers\Logic\AddListenerForEventController::class);
     Route::post('/api/logic/remove-listener-for-event', Controllers\Logic\RemoveListenerForEventController::class);
-    Route::get('/api/files/{basepath}', [Controllers\Spork\FileManagerController::class, 'show'])
-        ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\TrimStrings::class]);
-    Route::put('/api/files/{basepath}', [Controllers\Spork\FileManagerController::class, 'update'])
-        ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\TrimStrings::class]);
 
     Route::get('/api/uuid', function () {
         return response()->json(['uuid' => \Ramsey\Uuid\Uuid::uuid4()->toString()]);

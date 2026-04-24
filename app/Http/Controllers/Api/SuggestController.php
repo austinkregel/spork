@@ -85,7 +85,7 @@ class SuggestController extends Controller
         }
 
         $items = $query->limit((int) $request->input('limit', 20))
-                    ->get();
+            ->get();
 
         $data = $items->map(function (Model $m) use ($table) {
             $label = null;
@@ -98,10 +98,10 @@ class SuggestController extends Controller
                 $label = $m->getAttribute('title');
             }
 
-            $label ??= class_basename($m) . ' #' . $m->getKey();
+            $label ??= class_basename($m).' #'.$m->getKey();
 
-            if ($m->credential) { 
-                $label = $label . ' #' . $m->credential->name;
+            if ($m->credential) {
+                $label = $label.' #'.$m->credential->name;
             }
 
             return [
@@ -126,5 +126,3 @@ class SuggestController extends Controller
         return response()->json(['data' => $operations]);
     }
 }
-
-

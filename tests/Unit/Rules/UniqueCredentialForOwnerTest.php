@@ -95,5 +95,3 @@ class UniqueCredentialForOwnerTest extends TestCase
         $this->assertTrue($failed, 'Validation should fail within the same team scope.');
     }
 }
-
-

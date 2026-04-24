@@ -23,21 +23,21 @@ class CrudCacheCommandTest extends TestCase
     {
         parent::setUp();
         $this->basePath = storage_path('framework/testing/crud-cache-command');
-        (new Filesystem())->deleteDirectory($this->basePath);
+        (new Filesystem)->deleteDirectory($this->basePath);
     }
 
     protected function tearDown(): void
     {
         Mockery::close();
-        (new Filesystem())->deleteDirectory($this->basePath);
+        (new Filesystem)->deleteDirectory($this->basePath);
         $this->app->forgetInstance(TableDescriptionFactory::class);
         $this->app->forgetInstance(TableDescriptionRepository::class);
         parent::tearDown();
     }
 
-    public function testCommandCachesTableMetadata(): void
+    public function test_command_caches_table_metadata(): void
     {
-        $repository = new TableDescriptionRepository(new Filesystem(), $this->basePath);
+        $repository = new TableDescriptionRepository(new Filesystem, $this->basePath);
         $this->app->instance(TableDescriptionRepository::class, $repository);
 
         $description = new TableDescription(
@@ -66,4 +66,3 @@ class CrudCacheCommandTest extends TestCase
         $this->assertFileExists($repository->pathFor('example_models'));
     }
 }
-

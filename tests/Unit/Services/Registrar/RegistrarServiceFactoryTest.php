@@ -17,10 +17,11 @@ class RegistrarServiceFactoryTest extends TestCase
     {
         $credential = new Credential([
             'service' => Credential::NAMECHEAP,
+            'api_key' => 'fake global key',
             'settings' => [],
         ]);
 
-        $factory = new RegistrarServiceFactory();
+        $factory = new RegistrarServiceFactory;
 
         $service = $factory->make($credential);
 
@@ -31,6 +32,7 @@ class RegistrarServiceFactoryTest extends TestCase
     {
         $credential = new Credential([
             'service' => Credential::CLOUDFLARE,
+            'api_key' => 'fake global key',
             'settings' => [
                 'email' => 'user@example.com',
                 'account_id' => 'account',
@@ -38,7 +40,7 @@ class RegistrarServiceFactoryTest extends TestCase
             'access_token' => 'fake-token',
         ]);
 
-        $factory = new RegistrarServiceFactory();
+        $factory = new RegistrarServiceFactory;
 
         $service = $factory->make($credential);
 
@@ -49,6 +51,7 @@ class RegistrarServiceFactoryTest extends TestCase
     {
         $credential = new Credential([
             'service' => Credential::ENOM,
+            'api_key' => 'fake global key',
             'settings' => [
                 'api_user' => 'api-user',
                 'username' => 'api-user',
@@ -56,12 +59,10 @@ class RegistrarServiceFactoryTest extends TestCase
             ],
         ]);
 
-        $factory = new RegistrarServiceFactory();
+        $factory = new RegistrarServiceFactory;
 
         $service = $factory->make($credential);
 
         $this->assertInstanceOf(TucowsEnomService::class, $service);
     }
 }
-
-

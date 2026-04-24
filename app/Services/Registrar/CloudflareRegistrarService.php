@@ -9,6 +9,8 @@ use App\Models\Credential;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
+use RuntimeException;
 
 class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
 {
@@ -20,12 +22,27 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
 
     protected string $accountId;
 
+    protected string $accessToken;
+
     public function __construct(
         public Credential $credential
     ) {
-        $this->apiKey = $credential->access_token;
-        $this->email = $credential->settings['email'];
-        $this->accountId = $credential->settings['account_id'];
+        $this->apiKey = $credential->api_key;
+        $this->accessToken = $this->credential->access_token;
+        $this->email = (string) data_get($credential->settings, 'email', '');
+        $this->accountId = (string) data_get($credential->settings, 'account_id', '');
+
+        if ($this->email === '') {
+            throw new InvalidArgumentException('Cloudflare registrar credential is missing settings.email');
+        }
+
+        if ($this->accountId === '') {
+            throw new InvalidArgumentException('Cloudflare registrar credential is missing settings.account_id');
+        }
+
+        if ($this->accessToken === '') {
+            throw new InvalidArgumentException('Cloudflare registrar credential is missing access_token');
+        }
     }
 
     /*
@@ -33,11 +50,24 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
      */
     public function getDomains(int $limit = 10, int $page = 1): LengthAwarePaginator
     {
-        $domains = Http::withHeaders([
+        $response = Http::timeout(30)->retry(2, 250)->withHeaders([
             'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer '.$this->accessToken,
             'X-Auth-Email' => $this->email,
             'X-Auth-Key' => $this->apiKey,
-        ])->get(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains', []);
+        ])->get(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains', [
+            'per_page' => $limit,
+            'page' => $page,
+        ]);
+
+        if (! $response->successful()) {
+            throw $response->toException() ?? new RuntimeException('Cloudflare registrar request failed.');
+        }
+
+        $result = $response->json('result');
+        if (! is_array($result)) {
+            throw new RuntimeException('Cloudflare registrar response missing result array.');
+        }
 
         return new LengthAwarePaginator(
             array_map(fn ($zone) => [
@@ -45,13 +75,13 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
                 'domain' => $zone['name'],
                 'expires_at' => $expiresAt = Carbon::parse($zone['expires_at']),
                 'created_at' => $expiresAt->copy()->subYear(),
-                'is_expired' => $expiresAt->isAfter(now()),
+                'is_expired' => $expiresAt->isBefore(now()),
                 'is_locked' => $zone['locked'],
                 'is_auto_renewing' => $zone['auto_renew'],
                 'has_whois_guard' => $zone['privacy'],
-            ], $domains->json('result')),
-            $domains->json('result_info.total_count'),
-            $domains->json('result_info.per_page')
+            ], $result),
+            (int) ($response->json('result_info.total_count') ?? count($result)),
+            (int) ($response->json('result_info.per_page') ?? $limit)
         );
     }
 
@@ -60,6 +90,7 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'X-Auth-Email' => $this->email,
+            'Authorization' => 'Bearer '.$this->accessToken,
             'X-Auth-Key' => $this->apiKey,
         ])->get(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains/'.$domain);
 
@@ -80,6 +111,7 @@ class CloudflareRegistrarService implements CloudflareRegistrarServiceContract
     {
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer '.$this->accessToken,
             'X-Auth-Email' => $this->email,
             'X-Auth-Key' => $this->apiKey,
         ])->put(static::CLOUDFLARE_URL.'accounts/'.$this->accountId.'/registrar/domains/'.$domain.'/nameservers', [

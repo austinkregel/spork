@@ -36,7 +36,7 @@ class Domain extends Model implements Crud, ModelQuery, Taggable
     use ScopeRelativeSearch;
     use Searchable;
 
-    public $fillable = ['name', 'verification_key', 'cloudflare_id', 'domain_id', 'registered_at'];
+    public $fillable = ['name', 'verification_key', 'cloudflare_id', 'domain_id', 'registered_at', 'server_id', 'dns_zone_id', 'credential_id'];
 
     public $dispatchesEvents = [
         'created' => DomainCreated::class,
@@ -71,6 +71,21 @@ class Domain extends Model implements Crud, ModelQuery, Taggable
     public function credential(): BelongsTo
     {
         return $this->belongsTo(Credential::class);
+    }
+
+    public function server(): BelongsTo
+    {
+        return $this->belongsTo(Server::class);
+    }
+
+    public function dnsZone(): BelongsTo
+    {
+        return $this->belongsTo(DnsZone::class);
+    }
+
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(DomainContact::class);
     }
 
     public function getActivitylogOptions(): LogOptions

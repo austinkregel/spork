@@ -1,48 +1,39 @@
 <template>
-    <ServerInfrastucture title="SSH Console" :server="server">
-      <div class="xl:pl-96">
-        <div class="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
-          <div>
-            <div ref="xterm" class="xterm">
-              <div></div>
-            </div>
-          </div>
+    <ServerInfrastucture title="SSH Console" :server="server" :navigation="navigation">
+        <div class="space-y-4">
+            <GlassCard
+                title="Backed by the central monitor server. This is separate from SSH."
+                subtitle="Monitor PTY"
+            />
+
+            <MonitorTerminalPanel
+                :client-id="monitorClientId"
+                :server-label="server.ip_address ?? server.name"
+            />
         </div>
-      </div>
     </ServerInfrastucture>
 </template>
 
 <script setup>
-import 'xterm/css/xterm.css'
-import { Terminal } from 'xterm'
-import { FitAddon } from 'xterm-addon-fit'
-import { WebLinksAddon } from 'xterm-addon-web-links'
-import { Unicode11Addon } from 'xterm-addon-unicode11'
 import ServerInfrastucture from "@/Layouts/ServerInfrastucture.vue";
-import {onMounted, onRenderTracked, ref} from "vue";
-import { AttachAddon } from '@xterm/addon-attach';
+import GlassCard from "@/Components/Glass/GlassCard.vue";
+import MonitorTerminalPanel from "@/Components/Infrastructure/MonitorTerminalPanel.vue";
+import { computed } from "vue";
+import { buildServerNavigation } from '@/Pages/Infrastructure/serverNavigation';
 
-const { server } = defineProps({
-    server: Object,
-})
-const xterm = ref(null);
+const props = defineProps({
+    server: {
+        type: Object,
+        required: true,
+    },
+});
 
-onMounted(() => {
+const navigation = computed(() => buildServerNavigation(props.server));
 
-  const $term = new Terminal({
-    allowProposedApi: true,
-  })
-  const $fitAddon = new FitAddon()
-  $term.loadAddon($fitAddon)
-  $term.loadAddon(new WebLinksAddon())
-  $term.loadAddon(new Unicode11Addon())
-
-  $term.open(xterm.value)
-  $term.unicode.activeVersion = '11'
-  $fitAddon.fit()
-  $term.onTitleChange((title) => $emit('title-change', title))
-  console.log('App.Models.Server.'+server.id, AdminChannel);
-
-
-})
+const monitorClientId = computed(() => {
+    const telemetry = props.server?.telemetry;
+    const payload = telemetry?.payload;
+    const cid = payload?.clientId ?? payload?.client_id ?? payload?.client ?? null;
+    return (typeof cid === 'string' && cid.trim()) ? cid.trim() : props.server.name;
+});
 </script>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,6 +25,8 @@ class SporkDashboardControllerTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Dashboard')
             ->has('notifications')
+            ->has('news')
+            ->has('news_tags')
         );
     }
 }

@@ -25,7 +25,7 @@ class NamecheapServiceTest extends TestCase
 
     public function test_get_tlds_returns_registerable_tlds(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -51,9 +51,37 @@ XML;
         $this->assertTrue($tlds[0]['registerable']);
     }
 
+    public function test_get_domains_handles_single_domain_object_shape(): void
+    {
+        $xml = <<<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<ApiResponse Status="OK">
+  <Errors />
+  <CommandResponse Type="namecheap.domains.getList">
+    <DomainGetListResult>
+      <Domain ID="1" Name="example.com" IsExpired="false" IsLocked="false" AutoRenew="false" WhoisGuard="ENABLED" Created="2020-01-01" Expires="2030-01-01" />
+    </DomainGetListResult>
+    <Paging TotalItems="1" CurrentPage="1" PageSize="10" />
+  </CommandResponse>
+</ApiResponse>
+XML;
+
+        Http::fake([
+            NamecheapService::NAMECHEAP_URL.'*' => Http::response($xml, 200),
+        ]);
+
+        $service = new NamecheapService($this->makeCredential());
+
+        $domains = $service->getDomains(10, 1);
+
+        $this->assertCount(1, $domains->items());
+        $this->assertSame('example.com', $domains->items()[0]['domain']);
+        $this->assertTrue($domains->items()[0]['has_whois_guard']);
+    }
+
     public function test_get_tlds_throws_on_error(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="ERROR">
   <Errors>
@@ -77,7 +105,7 @@ XML;
 
     public function test_search_domain_maps_available_result(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -102,7 +130,7 @@ XML;
 
     public function test_search_domain_throws_on_error(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="ERROR">
   <Errors>
@@ -124,7 +152,7 @@ XML;
 
     public function test_register_domain_maps_success_result(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -150,7 +178,7 @@ XML;
 
     public function test_register_domain_throws_on_error(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="ERROR">
   <Errors>
@@ -172,7 +200,7 @@ XML;
 
     public function test_renew_domain_maps_success_result(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -198,7 +226,7 @@ XML;
 
     public function test_renew_domain_throws_on_error(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="ERROR">
   <Errors>
@@ -218,5 +246,3 @@ XML;
         $service->renewDomain('example.com', 1);
     }
 }
-
-

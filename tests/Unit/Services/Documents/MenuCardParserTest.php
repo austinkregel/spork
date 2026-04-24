@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Services\Documents;
 
 use App\Services\Documents\MenuCardParser;
-use App\Services\Documents\PdfParserService;
 use Mockery;
 use Tests\TestCase;
 
@@ -13,7 +12,7 @@ class MenuCardParserTest extends TestCase
 {
     public function test_get_all_identifiers_parses_expected_codes(): void
     {
-        $pdfText = <<<TXT
+        $pdfText = <<<'TXT'
 This recall affects products from Store A
 Package #1A4X Some product description
 Another line of text
@@ -32,5 +31,3 @@ TXT;
         $this->assertContains('1A4X', $identifiers);
     }
 }
-
-

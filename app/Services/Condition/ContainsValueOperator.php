@@ -8,8 +8,28 @@ class ContainsValueOperator extends AbstractLogicalOperator
 {
     public function compute(mixed $needle, mixed $haystack): bool
     {
+        // Guard: empty needles would match everything (e.g. str_contains('foo', '') === true).
+        if ($needle === null) {
+            return false;
+        }
+
+        if (is_string($needle) && trim($needle) === '') {
+            return false;
+        }
+
         if (is_array($haystack)) {
-            return in_array($needle, $haystack);
+            // Preserve the original "in_array" semantics for exact matches first.
+            if (in_array($needle, $haystack)) {
+                return true;
+            }
+
+            foreach ($haystack as $item) {
+                if (str_contains(strtolower((string) $item), strtolower((string) $needle))) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         if (is_object($haystack)) {

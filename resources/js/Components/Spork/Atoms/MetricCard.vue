@@ -2,7 +2,7 @@
 import Loading from "@/Components/Spork/Atoms/Loading.vue";
 const { title, value, loading, subTitle} = defineProps({
     title: String,
-    value: Number,
+    value: [Number, String],
     loading: Boolean,
     subTitle: String,
 })

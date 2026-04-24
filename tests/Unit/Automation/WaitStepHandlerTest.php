@@ -28,11 +28,9 @@ class WaitStepHandlerTest extends TestCase
             'config' => ['ms' => 5],
         ]);
 
-        $handler = new WaitStepHandler();
+        $handler = new WaitStepHandler;
         $res = $handler->execute($automation, $step);
 
         $this->assertSame(['output' => 'Waited 5 ms'], $res);
     }
 }
-
-

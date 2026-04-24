@@ -63,25 +63,25 @@ class Article extends Model implements ModelQuery, Taggable
 
     public static function fromFeedItem(ExternalRssFeed $feed, FeedItem $item): self
     {
-        if ($post = self::firstWhere('external_guid', $item->getUuidIfExists())) {
-            return $post;
-        }
+        // Calculate the external_guid value that will be used for the unique constraint
+        $external_guid = $item->getUuidIfExists() ?? $item->getUrl();
 
-        $post = new Article;
-        // If the item's GUID is a v4 UUID, we may as well use it as our UUID.
-        $post->uuid = $item->getUuidIfExists();
-        $post->external_guid = $item->getUuidIfExists() ?? $item->getUrl();
-        $post->author_id = $feed->id;
-        $post->author_type = get_class($feed);
-        $post->headline = $item->getTitle();
-        $post->content = $item->getContent();
-        $post->attachment = $item->getUrl();
-        $post->url = $item->getUrl();
-        $post->created_at = $item->getPublishedAt();
-        $post->last_modified = $item->getPublishedAt();
-        $post->save();
-
-        return $post;
+        // Use updateOrCreate to handle duplicates gracefully and prevent race conditions
+        return self::updateOrCreate(
+            ['external_guid' => $external_guid],
+            [
+                // If the item's GUID is a v4 UUID, we may as well use it as our UUID.
+                'uuid' => $item->getUuidIfExists(),
+                'author_id' => $feed->id,
+                'author_type' => get_class($feed),
+                'headline' => $item->getTitle(),
+                'content' => $item->getContent(),
+                'attachment' => $item->getUrl(),
+                'url' => $item->getUrl(),
+                'created_at' => $item->getPublishedAt(),
+                'last_modified' => $item->getPublishedAt(),
+            ]
+        );
     }
 
     public function author(): MorphTo

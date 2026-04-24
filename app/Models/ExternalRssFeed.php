@@ -11,6 +11,7 @@ use App\Events\Models\ExternalRssFeed\ExternalRssFeedDeleted;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedDeleting;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedUpdated;
 use App\Events\Models\ExternalRssFeed\ExternalRssFeedUpdating;
+use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +25,7 @@ use Spatie\Tags\HasTags;
 class ExternalRssFeed extends Model implements Crud, Taggable
 {
     use HasFactory;
+    use HasProjectResource;
     use HasTags;
     use LogsActivity;
     use ScopeQSearch;

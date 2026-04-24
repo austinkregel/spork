@@ -12,6 +12,7 @@ use App\Events\Models\Account\AccountUpdated;
 use App\Events\Models\Account\AccountUpdating;
 use App\Models\Credential;
 use App\Models\Crud;
+use App\Models\Traits\HasProjectResource;
 use App\Models\Traits\ScopeQSearch;
 use App\Models\Traits\ScopeRelativeSearch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Account extends Model implements Crud
 {
     use HasFactory;
+    use HasProjectResource;
     use LogsActivity;
     use ScopeQSearch;
     use ScopeRelativeSearch;

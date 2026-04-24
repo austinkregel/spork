@@ -15,7 +15,9 @@ class MatrixSyncJob implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct() {}
+    public function __construct(
+        protected bool $historical = false,
+    ) {}
 
     /**
      * Execute the job.
@@ -32,10 +34,11 @@ class MatrixSyncJob implements ShouldQueue
             'Authorization' => 'Bearer '.$credential->access_token,
         ])
             ->get($credential->settings['matrix_server'].'/_matrix/client/v3/sync', [
-                'since' => $nextBatch,
+                'since' => $this->historical ? null : $nextBatch,
                 'timeout' => 30000,
             ])
             ->json();
+
         $nextBatch = $rooms['next_batch'];
 
         $repository->process($rooms, $credential, $credential->user);

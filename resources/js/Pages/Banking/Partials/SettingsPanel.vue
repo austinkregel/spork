@@ -15,7 +15,7 @@ const settings = reactive({
 });
 
 const save = () => {
-  router.put(route('banking.preferences.settings'), {
+  router.put(route('finance.banking.preferences.settings'), {
     settings,
   }, {
     preserveScroll: true,
@@ -25,11 +25,6 @@ const save = () => {
 
 <template>
   <div class="space-y-6">
-    <div>
-      <h1 class="text-2xl text-stone-900 dark:text-white font-semibold">Settings</h1>
-      <p class="text-sm text-stone-500 dark:text-stone-400">Customize your banking dashboard preferences.</p>
-    </div>
-
     <div class="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-6 space-y-6 shadow-sm">
       <div class="space-y-2">
         <label class="text-sm text-stone-700 dark:text-stone-300 font-medium">Default Tab</label>
@@ -66,7 +61,7 @@ const save = () => {
 
       <button
         type="button"
-        class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+        class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
         @click="save"
       >
         Save Preferences

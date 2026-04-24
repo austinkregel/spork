@@ -25,7 +25,7 @@ class TucowsEnomServiceTest extends TestCase
 
     public function test_get_tlds_returns_registerable_tlds(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -53,7 +53,7 @@ XML;
 
     public function test_search_domain_maps_available_result(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -78,7 +78,7 @@ XML;
 
     public function test_register_domain_maps_success_result(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -104,7 +104,7 @@ XML;
 
     public function test_renew_domain_maps_success_result(): void
     {
-        $xml = <<<XML
+        $xml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <ApiResponse Status="OK">
   <Errors />
@@ -128,5 +128,3 @@ XML;
         $this->assertSame('999', $result['transaction_id']);
     }
 }
-
-

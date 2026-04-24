@@ -12,4 +12,3 @@ interface DescribeTableServiceContract
 
     public function describeTable(string $table): array;
 }
-

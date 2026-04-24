@@ -81,7 +81,7 @@
                         >
                         </multiselect>
                         <div class="w-1/2">
-                            <SporkInput v-model="filters[$i].text" />
+                            <GlassInput v-model="filters[$i].text" />
                         </div>
 
                         <div>
@@ -148,15 +148,13 @@ import ActionButton from "@/Components/ActionButton.vue";
 import { buildUrl } from '@kbco/query-builder';
 import Multiselect from "vue-select";
 import 'vue-json-pretty/lib/styles.css';
-import SporkInput from "@/Components/Spork/SporkInput.vue";
-import SporkButton from "@/Components/Spork/SporkButton.vue";
+import GlassInput from "@/Components/Glass/GlassInput.vue";
 import DynamicIcon from "@/Components/DynamicIcon.vue";
 
 export default {
     components: {
         DynamicIcon,
-        SporkButton,
-        SporkInput,
+        GlassInput,
         ActionButton,
         VueJsonPretty,
         Multiselect,

@@ -1,108 +1,120 @@
 <template>
-    <AppLayout title="Dashboard">
-    <div class="w-full border-b dark:border-slate-700 dark:bg-stone-950">
-            <div  class="max-w-7xl mx-auto px-8 py-4 flex items-center gap-2 font-semibold text-2xl text-stone-800 dark:text-stone-200 leading-tight">
-                <Link href="/-/projects" class="underline">
-                    Projects
-                </Link>
-                <ChevronRightIcon class="h-5 w-5 flex-shrink-0 text-stone-400" aria-hidden="true" />
-                <span>Create</span>
-            </div>
+  <AppLayout title="Create Project">
+    <template #header>
+      <div class="flex items-center gap-2 text-sm font-medium text-stone-700 dark:text-stone-200">
+        <Link href="/-/projects/list" class="hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-sm">
+          Projects
+        </Link>
+        <ChevronRightIcon class="h-4 w-4 text-stone-400" aria-hidden="true" />
+        <span class="text-stone-900 dark:text-stone-50">Create</span>
+      </div>
+    </template>
+
+    <div class="mx-auto flex w-full max-w-3xl flex-col gap-6 p-4 sm:p-6 lg:p-8">
+      <GlassCard
+        title="Create a Project"
+        subtitle="Pick a starting template and jump into the project workspace."
+      />
+
+      <GlassCard v-if="hasAnyErrors" :tone="'strong'" class="border-red-300 dark:border-red-500/40">
+        <div class="text-sm font-semibold text-red-700 dark:text-red-300">Fix the highlighted fields</div>
+        <pre class="mt-2 overflow-auto text-xs text-red-700 dark:text-red-300">{{ errors }}</pre>
+      </GlassCard>
+
+      <GlassCard title="Details">
+        <div class="grid grid-cols-1 gap-4">
+          <GlassField v-slot="{ id, describedby, invalid }" label="Project name" required>
+            <GlassInput
+              :id="id"
+              v-model="name"
+              placeholder="e.g. Automation Ops"
+              :invalid="invalid"
+              :describedby="describedby"
+              required
+            />
+          </GlassField>
+
+          <GlassField label="Goal" hint="What outcome are you driving toward?">
+            <textarea
+              v-model="goal"
+              rows="3"
+              placeholder="What outcome are you driving toward?"
+              class="block w-full rounded-md border border-stone-300 bg-white/70 px-3 py-2 text-sm text-stone-900 shadow-sm placeholder:text-stone-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-stone-600 dark:bg-stone-800/70 dark:text-stone-100 dark:placeholder:text-stone-500"
+            />
+          </GlassField>
         </div>
+      </GlassCard>
 
-        <div class="max-w-4xl w-full mx-auto py-8 px-4  gap-4">
-            <div class="rounded-lg p-4 bg-stone-300 dark:bg-stone-800 shadow-lg">
-              <pre>{{ errors }}</pre>
-                <form @submit.prevent="createProject">
-                    <div v-for="(field, i) in form">
-                        <SporkDynamicInput
-                            :key="i+'.form-value'"
-                            v-model="form[i]"
-                            type="text"
-                            :disabled-input="!description.fillable.includes(field.name)"
-                            :editable-label="false"
-                            :errors="errors?.[field.name]"
-                            class="mt-4"
-                        />
-                    </div>
-                  <div>
+      <GlassCard title="Template" subtitle="Choose how this project starts.">
+        <ProjectTemplatePicker v-model="templateKey" :templates="project_templates" />
+      </GlassCard>
 
-                    <div class="mt-4 px-4 text-gray-300 lowercase text-sm">Type</div>
-                    <SporkSelect v-model="type" class="mt-1">
-                      <template #options>
-                        <optgroup label="Deployments">
-                          <option value="laravel_deployment">Laravel Deployment</option>
-                          <option value="github_pages_deployment">Github Pages Deployment</option>
-                          <option value="static_site_deployment">Static Site Deployment</option>
-                        </optgroup>
-                        <optgroup label="Research">
-                          <option value="goal_oriented_research">Goal Oriented Research</option>
-                          <option value="exploratory_research">Exploratory Research</option>
-                        </optgroup>
-                        <optgroup label="Perpetual">
-                          <option value="perpetual">Perpetual</option>
-                        </optgroup>
-                      </template>
-
-                    </SporkSelect>
-                  </div>
-
-                    <button
-                        class="inline-flex items-center border shadow-sm font-medium rounded-md focus:outline-none px-2 py-1 mt-4"
-                        type="submit"
-                    >
-                        Create
-                    </button>
-                </form>
-            </div>
-        </div>
-    </AppLayout>
+      <div class="flex items-center justify-end gap-2">
+        <GlassButton variant="secondary" :disabled="saving" @click="router.visit('/-/projects/list')">
+          Cancel
+        </GlassButton>
+        <GlassButton :disabled="saving || !name" @click="createProject">
+          {{ saving ? 'Creating…' : 'Create project' }}
+        </GlassButton>
+      </div>
+    </div>
+  </AppLayout>
 </template>
 
 <script setup>
-import {usePage, Link, router} from "@inertiajs/vue3";
-import AppLayout from "@/Layouts/AppLayout.vue";
-import { ChevronRightIcon, PlusIcon } from "@heroicons/vue/24/solid";
-import { ref } from "vue";
-import SporkDynamicInput from "@/Components/Spork/SporkDynamicInput.vue";
-import SporkSelect from "@/Components/Spork/SporkSelect.vue";
-import SporkLabel from "@/Components/Spork/SporkLabel.vue";
+import { computed, ref } from 'vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import { ChevronRightIcon } from '@heroicons/vue/24/solid';
 
-const $page = usePage()
+import AppLayout from '@/Layouts/AppLayout.vue';
+import GlassCard from '@/Components/Glass/GlassCard.vue';
+import GlassField from '@/Components/Glass/GlassField.vue';
+import GlassInput from '@/Components/Glass/GlassInput.vue';
+import GlassButton from '@/Components/Glass/GlassButton.vue';
+import ProjectTemplatePicker from '@/Components/Projects/ProjectTemplatePicker.vue';
 
-const { description } = defineProps({
-    description: Object,
-})
+const page = usePage();
 
-const form = ref(['name', 'settings'].map(field => ({
-    name: field,
-    value: ''
-})));
-const type = ref(null);
+const props = defineProps({
+  description: Object,
+  project_templates: Array,
+});
+
 const errors = ref(null);
-const createProject = () => {
-    router.post('/-/projects', form.value.reduce((carry, f) => ({
-      ...carry,
-      [f.name]: f.value
-    }), {
-      user_id: $page?.props?.auth?.user?.id
-    }), {
-        preserveScroll: true,
-        onSuccess: () => Promise.all([
+const saving = ref(false);
 
-        ]),
-        onError: (error) => {
-            errors.value = Object.keys(error).reduce((acc, key) => {
-                return {
-                    ...acc,
-                    [key]:[error[key]]
-                };
-            }, {});
-        },
-        onFinish: () => {
-            console.log('finished')
-        },
-    })
+const name = ref('');
+const templateKey = ref(props.project_templates?.[0]?.key ?? 'custom');
+const goal = ref('');
+
+const hasAnyErrors = computed(() => !!errors.value && Object.keys(errors.value).length > 0);
+
+function createProject() {
+  saving.value = true;
+  errors.value = null;
+
+  router.post(
+    '/-/projects',
+    {
+      name: name.value,
+      user_id: page?.props?.auth?.user?.id,
+      settings: {
+        template: templateKey.value,
+        goal: goal.value || null,
+      },
+    },
+    {
+      preserveScroll: true,
+      onError: (error) => {
+        errors.value = Object.keys(error).reduce(
+          (acc, key) => ({ ...acc, [key]: [error[key]] }),
+          {},
+        );
+      },
+      onFinish: () => {
+        saving.value = false;
+      },
+    },
+  );
 }
-
 </script>

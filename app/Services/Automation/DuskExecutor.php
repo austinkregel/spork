@@ -16,7 +16,6 @@ class DuskExecutor
      * Browser execution can be wired via laravel-console-dusk later;
      * tests should mock this class where needed.
      *
-     * @param  Automation  $automation
      * @param  AutomationStep[]  $steps
      * @return array{output?:string,error?:string}
      */
@@ -43,5 +42,3 @@ class DuskExecutor
         return ['output' => implode("\n", $lines)];
     }
 }
-
-

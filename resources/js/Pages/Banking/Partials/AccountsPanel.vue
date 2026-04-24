@@ -10,23 +10,17 @@ const props = defineProps({
   },
 });
 
-const search = ref('');
 const pinnedOrder = ref([...(props.accountsData?.preferences?.pinned_accounts ?? [])]);
+const linkAccountRef = ref(null);
 
 const accounts = computed(() => {
-  const list = props.accountsData?.accounts ?? [];
-
-  if (!search.value) {
-    return list;
-  }
-
-  return list.filter((account) => account.name?.toLowerCase().includes(search.value.toLowerCase()));
+  return props.accountsData?.accounts ?? [];
 });
 
 const isPinned = (accountId) => pinnedOrder.value.includes(accountId);
 
 const persistPins = () => {
-  router.put(route('banking.preferences.pins'), {
+  router.put(route('finance.banking.preferences.pins'), {
     type: 'accounts',
     order: pinnedOrder.value,
   }, {
@@ -43,27 +37,47 @@ const togglePin = (accountId) => {
 
   persistPins();
 };
+
+const linkNewAccount = async () => {
+  await linkAccountRef.value?.linkAccount?.();
+};
 </script>
 
 <template>
   <div class="space-y-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl text-stone-900 dark:text-white font-semibold">Accounts</h1>
-        <p class="text-sm text-stone-500 dark:text-stone-400">View balances, pin favorites, and manage connections.</p>
-      </div>
-      <div class="flex items-center gap-3">
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Search accounts"
-          class="rounded-xl bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 px-3 py-2 text-sm text-stone-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-stone-500 focus:border-stone-500"
-        />
-      </div>
-    </div>
+    <!-- logic-only plaid linker; we render the button where we want it -->
+    <LinkAccount ref="linkAccountRef" variant="hidden" :accounts="[]" />
 
-    <div class="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4 shadow-sm">
-      <LinkAccount :accounts="accountsData?.accounts ?? []" />
+    <div class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div
+          v-for="account in accounts"
+          :key="`tile-${account.account_id}`"
+          class="rounded-xl bg-stone-950/90 dark:bg-stone-950 text-white shadow-sm p-4"
+        >
+          <div class="text-xl font-semibold truncate">{{ account.name }}</div>
+          <div class="mt-1">
+            <span class="text-xl font-semibold">
+              {{ Number(account.available ?? account.balance).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) }}
+            </span>
+            <span class="text-sm text-stone-400">
+              /
+              {{ Number(account.balance ?? account.available ?? 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) }}
+            </span>
+          </div>
+          <div class="text-xs text-stone-400">from {{ account.credential?.name ?? '—' }}</div>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button
+          type="button"
+          class="px-3 py-2 rounded-lg bg-indigo-500 dark:bg-indigo-600 text-white text-sm shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
+          @click="linkNewAccount"
+        >
+          Link new account
+        </button>
+      </div>
     </div>
 
     <div class="space-y-3">
@@ -85,7 +99,7 @@ const togglePin = (accountId) => {
           </div>
           <button
             type="button"
-            class="text-xs px-3 py-1 rounded-lg border bg-white dark:bg-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+            class="text-xs px-3 py-1 rounded-lg border bg-white dark:bg-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50 dark:focus-visible:ring-offset-stone-950"
             :class="isPinned(account.account_id) ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400' : 'border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300'"
             @click="togglePin(account.account_id)"
           >
@@ -93,7 +107,7 @@ const togglePin = (accountId) => {
           </button>
         </div>
       </div>
-      <p v-if="accounts.length === 0" class="text-sm text-stone-500 dark:text-stone-400">No accounts match your search.</p>
+      <p v-if="accounts.length === 0" class="text-sm text-stone-500 dark:text-stone-400">No accounts found.</p>
     </div>
   </div>
 </template>

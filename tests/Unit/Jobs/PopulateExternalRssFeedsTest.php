@@ -40,5 +40,3 @@ class PopulateExternalRssFeedsTest extends TestCase
             ]);
     }
 }
-
-
